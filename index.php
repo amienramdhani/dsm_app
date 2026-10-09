@@ -3278,6 +3278,20 @@ html body :is(#app,.modal) :is(#main,#view,#mbody) table.rgT.v7rgSum tfoot td.bs
 html body :is(#app,.modal) :is(#main,#view,#mbody) table.rgT.v7rgSum tbody td.bs{background:color-mix(in srgb,var(--bb) 35%,#fff)!important;border-left:3px solid var(--bb)!important}
 html body :is(#app,.modal) :is(#main,#view,#mbody) table.rgT.v7rgSum tfoot td.bs{background:var(--bb)!important;color:var(--bc)!important}
 html body :is(#app,.modal) :is(#main,#view,#mbody) table.rgT.v7rgNt thead th{vertical-align:bottom!important}
+/* ===== v7: modal salin KPI ===== */
+.v7kc{font-size:12.5px}
+.v7kcH{font:800 10.5px Inter,system-ui,sans-serif;letter-spacing:.06em;color:#3D4A5C;margin:14px 0 6px}
+.v7kcO{display:flex;flex-wrap:wrap;gap:6px}
+.v7kcO label{display:flex;align-items:center;gap:6px;border:1px solid #D5DEE9;border-radius:9px;padding:6px 10px;cursor:pointer;font-weight:600}
+.v7kcO small{color:#7C8899;font-weight:500}
+.v7kcR{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;cursor:pointer}
+.v7kcR:hover{background:#F4F7FB}.v7kcR.sub{padding-left:26px}
+.v7kcR small{color:#7C8899}
+.v7kcS{margin-left:auto;font:800 9.5px Inter,system-ui,sans-serif;border-radius:999px;padding:2px 8px;white-space:nowrap}
+.v7kcS.o{background:#FDEBDD;color:#B4530B}.v7kcS.f{background:#EEF1F5;color:#5B6778}
+.v7kcW{margin:10px 0 0;padding:8px 10px;background:#FFF4D6;color:#8A5A00;border-radius:8px;font-weight:600}
+.v7kcF{margin-top:14px;position:sticky;bottom:0;background:#fff;padding:10px 0 2px}
+.v7kc input[type=checkbox],.v7kc input[type=radio]{accent-color:#0B5CAD;width:15px;height:15px}
 /*V7UX-CSS-END*/
 </style></head><body><div id="login" class="dlPage"><div class="dl-splash" aria-hidden="true"><div class="dl-splash-box"><img src="assets/dsm-logo.jpg" alt="DSM"><div class="dl-sweep"></div></div></div>
 <div class="dl-wave"></div>
@@ -4774,6 +4788,34 @@ function v6KpiPanel(v){v.insertAdjacentHTML('beforeend',panel('Atur KPI · Super
  $('v6kLoad').onclick=()=>v6KLoad();per.onchange=()=>v6KLoad();
  $('v6kCopy').onclick=async()=>{const to=prompt('Salin semua KPI '+V6K.period+' ke bulan (YYYY-MM):');if(!to)return;$('v6kMsg').textContent='Menyalin…';try{const r=await rpc('apiKpiCopy',TOKEN,V6K.period,to.trim(),'salin KPI '+V6K.period);$('v6kMsg').innerHTML='<b style="color:#15803d">✓ '+r.count+' indikator disalin ke '+esc(to)+'. Target RGM dikosongkan — isi lagi.</b>';per.value=to.trim();v6KLoad();}catch(e){$('v6kMsg').innerHTML='<b style="color:#b91c1c">'+esc(e.message||e)+'</b>';}};}
 async function v6KLoad(keep){$('v6kBox').innerHTML='<p class="hint v6load">Memuat…</p>';try{V6K=await rpc('apiKpiGet',TOKEN,$('v6kPer').value);$('v6kCopy').disabled=false;if(!keep)V6KSEL=null;v6KDraw();}catch(e){$('v6kBox').innerHTML='<p class="v6rmErr">'+esc(e.message||e)+'</p>';}}
+/* v7: salin KPI (sebagian/semua kelompok) ke region lain */
+function v6KCloneOpen(src){
+ const key=n=>Object.keys(V6K.cfg).find(x=>x.toUpperCase()===String(n).toUpperCase()),rows=JSON.parse(JSON.stringify(V6K.cfg[key(src)]||[]));
+ const G=[...new Set(rows.map(r=>String(r.group||'').trim().toUpperCase()).filter(Boolean))],gOf=list=>[...new Set((list||[]).map(r=>String(r.group||'').trim().toUpperCase()).filter(Boolean))];
+ const cnt=g=>rows.filter(r=>String(r.group||'').trim().toUpperCase()===g).length,bob=g=>rows.filter(r=>String(r.group||'').trim().toUpperCase()===g).reduce((a,r)=>a+(+r.weight||0),0);
+ const item=(n,sub,big)=>{if(n.toUpperCase()===src.toUpperCase())return '';const have=gOf(V6K.cfg[key(n)]);const st=have.length?`<span class="v7kcS o">punya ${esc(have.join(' + '))}</span>`:`<span class="v7kcS f">${sub?'ikut big region':'belum diisi'}</span>`;
+  return `<label class="v7kcR${sub?' sub':''}"><input type="checkbox" class="v7kcT" value="${esc(n)}" data-have="${esc(have.join('|'))}" data-sub="${sub?1:''}"><b>${esc(n)}</b>${sub?`<small> · ${esc(big)}</small>`:''}${st}</label>`;};
+ const bigs=V6K.tree.map(t=>item(t.big,false)).join(''),subs=V6K.tree.flatMap(t=>t.subs.map(s=>item(s,true,t.big))).join('');
+ modal('Salin KPI '+src+' · '+V6K.period,`<div class="v7kc">
+  <div class="v7kcH">KELOMPOK YANG DISALIN</div><div class="v7kcO">${G.map(g=>`<label><input type="checkbox" class="v7kcG" value="${esc(g)}" checked> ${esc(g)} <small>· ${cnt(g)} indikator · bobot ${bob(g)}</small></label>`).join('')}</div>
+  <div class="v7kcH">KALAU REGION TUJUAN SUDAH PUNYA KELOMPOK YANG SAMA</div><div class="v7kcO"><label><input type="radio" name="v7kcM" value="skip" checked> Lewati, jangan diubah</label><label><input type="radio" name="v7kcM" value="over"> Timpa kelompok itu</label></div>
+  <div class="v7kcH">BIG REGION TUJUAN</div><label class="v7kcR"><input type="checkbox" id="v7kcAll"><b>Pilih semua yang belum diisi</b></label>${bigs}
+  <div class="v7kcH">SUB REGION (OPSIONAL, BIAR PUNYA KPI SENDIRI)</div>${subs||'<p class="hint">Tidak ada sub region.</p>'}
+  <div class="v7kcW" id="v7kcW" hidden></div>
+  <div class="toolbar v7kcF"><input class="fi" id="v7kcReason" placeholder="Alasan (opsional)" value="Disalin dari ${esc(src)}" style="max-width:320px"><button class="chip primary" type="button" id="v7kcGo">Salin & publish</button><span id="v7kcMsg" class="hint">0 region dipilih</span></div></div>`);
+ const T=()=>[...document.querySelectorAll('.v7kcT:checked')],SG=()=>[...document.querySelectorAll('.v7kcG:checked')].map(x=>x.value),over=()=>document.querySelector('input[name=v7kcM]:checked').value==='over';
+ const upd=()=>{const g=SG(),t=T(),hit=t.filter(x=>x.dataset.have.split('|').some(h=>g.includes(h)));$('v7kcMsg').textContent=t.length+' region dipilih';const w=$('v7kcW');w.hidden=!hit.length;w.textContent=hit.length?(over()?`${hit.length} region sudah punya kelompok yang sama → kelompok itu DITIMPA, kelompok lain tetap.`:`${hit.length} region sudah punya kelompok yang sama → kelompok itu dilewati.`):'';};
+ document.querySelectorAll('.v7kcT,.v7kcG,input[name=v7kcM]').forEach(x=>x.addEventListener('change',upd));
+ $('v7kcAll').onchange=e=>{document.querySelectorAll('.v7kcT').forEach(x=>{if(!x.dataset.sub&&!x.dataset.have)x.checked=e.target.checked;});upd();};
+ $('v7kcGo').onclick=async()=>{const g=SG(),t=T();if(!g.length||!t.length){$('v7kcMsg').innerHTML='<b style="color:#b91c1c">Pilih minimal 1 kelompok dan 1 region.</b>';return;}
+  const reason=($('v7kcReason').value.trim()||'Disalin dari '+src).padEnd(5,'.');$('v7kcGo').disabled=true;let ok=0,skip=0;const err=[];
+  for(const x of t){const name=x.value,cur=JSON.parse(JSON.stringify(V6K.cfg[key(name)]||[])),have=gOf(cur);let next=cur,changed=false;
+   for(const gg of g){if(have.includes(gg)){if(!over())continue;next=next.filter(r=>String(r.group||'').trim().toUpperCase()!==gg);}next=next.concat(JSON.parse(JSON.stringify(rows.filter(r=>String(r.group||'').trim().toUpperCase()===gg))));changed=true;}
+   if(!changed){skip++;continue;}
+   $('v7kcMsg').textContent='Menyalin ke '+name+'…';try{await rpc('apiKpiSaveRegion',TOKEN,V6K.period,name,next,reason);ok++;}catch(e){err.push(name+': '+(e.message||e));}}
+  await v6KLoad(true);v6KDraw();$('v7kcGo').disabled=false;
+  $('v7kcMsg').innerHTML=`<b style="color:#15803d">✓ Disalin ke ${ok} region</b>${skip?` · ${skip} dilewati`:''}${err.length?`<br><b style="color:#b91c1c">${esc(err.join(' · '))}</b>`:''}`;};
+}
 function v6KCount(name){const k=Object.keys(V6K.cfg).find(x=>x.toUpperCase()===String(name).toUpperCase());return k?V6K.cfg[k].length:0;}
 function v6KDraw(){const side=V6K.tree.map(t=>`<div class="v6kBig"><button type="button" class="v6kItem ${V6KSEL&&V6KSEL.kind==='R'&&V6KSEL.name===t.big?'on':''}" data-kr="${esc(t.big)}"><b>${esc(t.big)}</b><span class="${v6KCount(t.big)?'ok':'bad'}">${v6KCount(t.big)?v6KCount(t.big)+' indikator':'belum diisi'}</span></button>${t.subs.map(s=>`<button type="button" class="v6kItem sub ${V6KSEL&&V6KSEL.name===s?'on':''}" data-kr="${esc(s)}" data-sub="1">${esc(s)}<span class="${v6KCount(s)?'own':''}">${v6KCount(s)?'KPI sendiri · '+v6KCount(s):'ikut Big Region'}</span></button>`).join('')}</div>`).join('')
   +`<div class="v6kHead">RGM</div>`+V6K.rgms.map(r=>`<button type="button" class="v6kItem ${V6KSEL&&V6KSEL.kind==='G'&&V6KSEL.name===r.nik?'on':''}" data-kg="${esc(r.nik)}"><b>${esc(r.nama)}</b><small>${esc(r.bigs.join(' · ')||r.wilayah||'-')}</small><span class="${r.rows.length?'own':''}">${r.rows.length?'KPI sendiri · '+r.rows.length:'ikut KPI Big Region'}</span></button>`).join('');
@@ -4806,7 +4848,7 @@ function v6KEditor(){const S=V6KSEL,rgm=S.kind==='G',m=$('v6kMain'),ownB=rgm?S.r
  <div class="v6kSums">${v6KSumHtml(sums)}</div>
  ${rgm?v6KPrevHtml():''}
  <div class="toolbar"><button class="chip" type="button" id="v6kAdd">+ Indikator</button>${rgm?`<select class="fi" id="v6kCopyFrom" style="width:auto"><option value="">Salin dari RGM lain…</option>${V6K.rgms.filter(x=>x.nik!==S.name&&x.rows.length).map(x=>`<option value="${esc(x.nik)}">${esc(x.nama)} (${x.rows.length} indikator)</option>`).join('')}</select>`:''}${S.kind==='R'&&S.sub&&!V6KROWS.length?`<button class="chip" type="button" id="v6kFromBig">Mulai dari KPI ${esc(S.big)}</button>`:''}${rgm&&!V6KROWS.length?`<button class="chip" type="button" id="v6kFromBig">Mulai dari KPI ${esc(S.rgm.wilayah||'')}</button>`:''}</div>
- <div class="toolbar"><input class="fi" id="v6kReason" placeholder="Alasan perubahan" style="max-width:320px"><button class="chip primary" type="button" id="v6kSave"${bad.length?' disabled title="Bobot tiap kelompok harus 100"':''}>Simpan & publish</button>${(S.sub||rgm)&&V6KROWS.length?`<button class="chip" type="button" id="v6kClear">Hapus KPI sendiri</button>`:''}<span id="v6kSMsg" class="hint"></span></div>`;
+ <div class="toolbar"><input class="fi" id="v6kReason" placeholder="Alasan perubahan" style="max-width:320px"><button class="chip primary" type="button" id="v6kSave"${bad.length?' disabled title="Bobot tiap kelompok harus 100"':''}>Simpan & publish</button>${!rgm&&v6KCount(S.name)?`<button class="chip" type="button" id="v6kClone">Salin ke region lain…</button>`:''}${(S.sub||rgm)&&V6KROWS.length?`<button class="chip" type="button" id="v6kClear">Hapus KPI sendiri</button>`:''}<span id="v6kSMsg" class="hint"></span></div>`;
  m.querySelectorAll('[data-k]').forEach(el=>el.onchange=()=>{const r=V6KROWS[+el.dataset.i],k=el.dataset.k;if(k==='types')r.types=el.value.split('|').map(s=>s.trim()).filter(Boolean);else r[k]=el.value;if(k==='metric'){if(!['QTY','DA'].includes(el.value))r.types=[];r.minDA=el.value==='NOO'?1:2;v6KEditor();}else if(k==='brand'){r.types=[];v6KEditor();}else if(k==='target'||k==='minDA'){v6KEditor();}else v6KSums();});
  m.querySelectorAll('[data-kb]').forEach(el=>el.onchange=()=>{const r=V6KROWS[+el.dataset.i];r.bigs=[...m.querySelectorAll(`[data-kb][data-i="${el.dataset.i}"]`)].filter(x=>x.checked).map(x=>x.dataset.kb);v6KEditor();});
  m.querySelectorAll('[data-krev]').forEach(b=>b.onclick=()=>{V6KROWS[+b.dataset.krev].target='';v6KEditor();});
@@ -4821,6 +4863,7 @@ function v6KEditor(){const S=V6KSEL,rgm=S.kind==='G',m=$('v6kMain'),ownB=rgm?S.r
  if($('v6kCopyFrom'))$('v6kCopyFrom').onchange=e=>{const o=V6K.rgms.find(x=>x.nik===e.target.value);if(!o)return;if(V6KROWS.length&&!confirm('Indikator yang sekarang diganti dengan milik '+o.nama+'. Big Region disesuaikan ke milik RGM ini dan target dikosongkan (ikut otomatis). Lanjut?'))return;V6KROWS=JSON.parse(JSON.stringify(o.rows)).map(r=>Object.assign(r,{bigs:ownB.length?[...ownB]:r.bigs,target:''}));v6KEditor();};
  if($('v6kFromBig'))$('v6kFromBig').onclick=()=>{const src=rgm?S.rgm.wilayah:S.big,k=Object.keys(V6K.cfg).find(x=>x.toUpperCase()===String(src).toUpperCase());V6KROWS=JSON.parse(JSON.stringify(k?V6K.cfg[k]:[])).map(r=>Object.assign(r,rgm?{bigs:[...ownB],target:''}:{}));v6KEditor();};
  const save=async rows=>{const reason=$('v6kReason').value.trim();if(reason.length<5){$('v6kSMsg').innerHTML='<b style="color:#b91c1c">Isi alasan minimal 5 karakter.</b>';return;}$('v6kSMsg').textContent='Menyimpan & publish…';try{const r=rgm?await rpc('apiKpiSaveRgm',TOKEN,V6K.period,S.name,rows,reason):await rpc('apiKpiSaveRegion',TOKEN,V6K.period,S.name,rows,reason);await v6KLoad(true);if(rgm)V6KSEL.rgm=V6K.rgms.find(x=>x.nik===S.name);const k=Object.keys(V6K.cfg).find(x=>x.toUpperCase()===S.name.toUpperCase());V6KROWS=JSON.parse(JSON.stringify(rgm?V6KSEL.rgm.rows:k?V6K.cfg[k]:[]));v6KDraw();$('v6kSMsg').innerHTML='<b style="color:#15803d">✓ Tersimpan ('+r.count+' indikator).</b>';}catch(e){$('v6kSMsg').innerHTML='<b style="color:#b91c1c">'+esc(e.message||e)+'</b>';}};
+ if($('v6kClone'))$('v6kClone').onclick=()=>v6KCloneOpen(S.name);
  $('v6kSave').onclick=()=>{if(rgm&&V6KROWS.some(r=>!(r.bigs||[]).length)){$('v6kSMsg').innerHTML='<b style="color:#b91c1c">Centang minimal satu Big Region di tiap indikator.</b>';return;}save(V6KROWS);};
  if($('v6kClear'))$('v6kClear').onclick=()=>{if(confirm(rgm?'Hapus KPI RGM ini? RGM kembali ikut KPI Big Region.':'Hapus KPI sub region ini? Tim kembali ikut KPI '+S.big+'.'))save([]);};v6KSums();}
 
