@@ -110,7 +110,7 @@ function cleanupAuth_(): void { db_()->prepare('DELETE FROM _sessions WHERE unti
 // Perangkat (Paket 11 / #37) — sliding session + manajemen perangkat
 // ------------------------------------------------------------------
 
-const DEVICE_MAX = 4;
+const DEVICE_MAX = 5;
 const DEVICE_IDLE_MS_NORMAL = 30 * 86400000; // 30 hari tanpa aktivitas
 const DEVICE_IDLE_MS_ADMIN = 7 * 86400000;   // 7 hari untuk ADMIN / SUPER ADMIN
 const DEVICE_TOUCH_MS = 600000;              // perpanjang sesi & "terakhir aktif" paling sering tiap 10 menit
