@@ -308,7 +308,7 @@ function rgmRuleCheck_(array $oldMeta, array $meta): void {
 
 const KPI_CFG_HEADS = ['PERIODE', 'WILAYAH_KPI', 'KELOMPOK_KPI', 'METRIK', 'BRAND', 'BOBOT', 'BATAS_SKOR', 'INDIKATOR_ID', 'LABEL', 'TYPE_FILTER', 'MIN_QTY_DA', 'AKTIF', 'TYPE_WAJIB', 'MIN_QTY_PER_PROMOTOR'];
 const KPI_RGM_HEADS = ['PERIODE', 'NIK', 'NAMA', 'KELOMPOK_KPI', 'INDIKATOR_ID', 'LABEL', 'METRIK', 'BRAND', 'TYPE_FILTER', 'BIG_REGIONS', 'BOBOT', 'BATAS_SKOR', 'TARGET', 'MIN_QTY_DA'];
-const KPI_METRIC_COL = ['QTY' => 'ST', 'DA' => 'DA', 'NOO' => 'NOO', 'OMZET' => 'OMZET'];
+const KPI_METRIC_COL = ['QTY' => 'ST', 'DA' => 'DA', 'NOO' => 'NOO', 'IDDLE' => 'IDDLE', 'OMZET' => 'OMZET'];
 
 function kpiMonth_($v): string {
     $t = text_($v);
@@ -346,15 +346,17 @@ function rgmPolicies_(array $meta): array {
         $c = ['period' => kpiMonth_($col($r, 'PERIODE')), 'nik' => text_($col($r, 'NIK')), 'group' => text_($col($r, 'KELOMPOK_KPI')), 'indicator' => text_($col($r, 'INDIKATOR_ID')), 'label' => text_($col($r, 'LABEL')),
             'metric' => js_upper(text_($col($r, 'METRIK'))), 'brand' => js_or(text_($col($r, 'BRAND')), 'ALL'),
             'types' => $split($col($r, 'TYPE_FILTER')), 'bigs' => $split($col($r, 'BIG_REGIONS')),
-            'weight' => kpiNum_($col($r, 'BOBOT')), 'cap' => kpiNum_($col($r, 'BATAS_SKOR')), 'target' => kpiNum_($col($r, 'TARGET')), 'minDA' => js_or(kpiNum_($col($r, 'MIN_QTY_DA')), 2), 'minNOO' => js_or(kpiNum_($col($r, 'MIN_QTY_DA')), 1)];
+            'weight' => kpiNum_($col($r, 'BOBOT')), 'cap' => kpiNum_($col($r, 'BATAS_SKOR')), 'target' => kpiNum_($col($r, 'TARGET')), 'minDA' => js_or(kpiNum_($col($r, 'MIN_QTY_DA')), js_upper(text_($col($r, 'METRIK'))) === 'IDDLE' ? 1 : 2), 'minNOO' => js_or(kpiNum_($col($r, 'MIN_QTY_DA')), 1)];
         if (!preg_match('/^\d{4}-\d{2}$/', $c['period'])) fail_($line . 'PERIODE harus YYYY-MM.');
         $p = js_find($meta['people'], fn($x) => $x['nik'] === $c['nik']);
         if (!$p || $p['role'] !== 'RGM') fail_($line . 'NIK ' . $c['nik'] . ' bukan RGM.');
         if ($c['group'] === '') fail_($line . 'KELOMPOK_KPI kosong.');
-        if (!in_array($c['metric'], ['QTY', 'DA', 'NOO', 'OMZET'], true)) fail_($line . 'METRIK harus QTY/DA/NOO/OMZET.');
+        if (!in_array($c['metric'], ['QTY', 'DA', 'NOO', 'IDDLE', 'OMZET'], true)) fail_($line . 'METRIK harus QTY/DA/NOO/IDDLE/OMZET.');
         $gt0 = fn($x) => $x !== null && !(is_float($x) && is_nan($x)) && $x > 0;
         if (!$gt0($c['weight']) || !$gt0($c['cap'])) fail_($line . 'BOBOT dan BATAS_SKOR harus > 0.');
         if ($c['target'] !== null && ((is_float($c['target']) && is_nan($c['target'])) || $c['target'] < 0)) fail_($line . 'TARGET tidak valid.');
+        if ($c['metric'] === 'IDDLE' && $c['minDA'] != 1) fail_($line . 'Dealer IDDLE memakai minimum 1 unit net.');
+        if ($c['metric'] === 'IDDLE' && $c['label'] === '') $c['label'] = 'Dealer IDDLE ' . $c['brand'];
         if ($c['types'] && !in_array($c['metric'], ['QTY', 'DA'], true)) fail_($line . 'TYPE_FILTER hanya untuk QTY atau DA.');
         foreach ($c['bigs'] as $b) if (!in_array(js_upper($b), $bigs, true)) fail_($line . 'Big Region ' . $b . ' tidak ada di Region Map.');
         $k = implode('¦', [$c['period'], $c['nik'], $c['group'], $c['metric'], $c['brand'], $c['indicator'], implode('|', $c['bigs']), implode('|', $c['types'])]);
@@ -373,7 +375,7 @@ function rgmPolicies_(array $meta): array {
 
 const TARGET_INPUT = 'Target_Input';
 const TARGET_INPUT_FIXED = ['PERIODE TARGET', 'NIK SALES', 'NAMA SALES'];
-const TARGET_INPUT_METRIC = ['ST' => 'QTY', 'DA' => 'DA', 'NOO' => 'NOO', 'OMZET' => 'OMZET'];
+const TARGET_INPUT_METRIC = ['ST' => 'QTY', 'DA' => 'DA', 'NOO' => 'NOO', 'IDDLE' => 'IDDLE', 'OMZET' => 'OMZET'];
 
 function targetInputCols_(array $heads): array {
     $seen = []; $cols = [];
@@ -383,7 +385,7 @@ function targetInputCols_(array $heads): array {
         if (isset($seen[$h])) fail_('Target_Input: kolom "' . $h . '" dobel (kolom ' . $seen[$h] . ' dan ' . ($i + 1) . ').');
         $seen[$h] = $i + 1;
         if (in_array($h, TARGET_INPUT_FIXED, true)) continue;
-        if (!preg_match('/^(ST|DA|NOO|OMZET) (.+)$/u', $h, $m)) fail_('Target_Input: header "' . $h . '" tidak dikenali. Pakai format ST <BRAND>, DA <BRAND>, NOO <BRAND>, atau OMZET <BRAND>.');
+        if (!preg_match('/^(ST|DA|NOO|IDDLE|OMZET) (.+)$/u', $h, $m)) fail_('Target_Input: header "' . $h . '" tidak dikenali. Pakai format ST <BRAND>, DA <BRAND>, NOO <BRAND>, IDDLE <BRAND>, atau OMZET <BRAND>.');
         $cols[] = ['i' => $i, 'metric' => TARGET_INPUT_METRIC[$m[1]], 'brand' => js_trim($m[2])];
     }
     foreach (['PERIODE TARGET', 'NIK SALES'] as $k) if (!isset($seen[$k])) fail_('Target_Input: kolom wajib ' . $k . ' tidak ada.');

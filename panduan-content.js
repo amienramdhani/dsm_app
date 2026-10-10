@@ -13,6 +13,7 @@ glossary:[
  ['SO (Sell Out)','Penjualan dari dealer ke konsumen akhir.'],
  ['NOO','New Open Outlet: dealer baru yang mulai order pada periode berjalan.'],
  ['Dealer Aktif','Dealer yang punya order pada periode terpilih.'],
+ ['Dealer IDDLE','Dealer-brand yang kembali order ST (QTY net positif) setelah tepat 2 bulan penuh kosong. Contoh Oktober: Juli order, Agustus–September kosong, Oktober order = 1. Jeda 3 bulan atau lebih serta dealer baru tidak dihitung. ALL menjumlahkan pasangan dealer-brand.'],
  ['DOS','Days of Stock: perkiraan stok cukup untuk berapa hari penjualan, dihitung dari stok dibagi laju jual harian.'],
  ['Target','Angka yang harus dicapai pada periode terpilih.'],
  ['Aktual / MTD','Month To Date: total dari tanggal 1 sampai data terakhir yang dipublish.'],
@@ -82,7 +83,7 @@ topics:[
 
  {id:'k-skor',group:'kpi',title:'Skor & Indikator KPI',roles:'all',
   intro:'Target, capaian, bobot indikator, dan skor akhir.',
-  baca:[['Bobot','Kontribusi tiap indikator pada skor akhir.'],['Capaian','Aktual ÷ Target per indikator.'],['Skor','Capaian dikalikan bobot, lalu dijumlahkan.']],
+  baca:[['Bobot','Kontribusi tiap indikator pada skor akhir.'],['Capaian','Aktual ÷ Target per indikator.'],['Dealer IDDLE','Hitungan per brand: Juli > 0, Agustus ≤ 0, September ≤ 0, Oktober > 0. Satu dealer-brand dihitung sekali. Histori ST belum lengkap ditandai menunggu; bukan nol.'],['Skor','Capaian dikalikan bobot, lalu dijumlahkan.']],
   warna:'Header tiap indikator punya warna berbeda (ST biru, SO oranye, Dealer Aktif tosca, NOO ungu, Omzet cokelat).',
   aksi:[['Desktop','Buka node pohon KPI untuk rincian level di bawahnya.'],['HP','Tap baris untuk membuka.']],
   kasus:'Saat 1-on-1, bandingkan skor tiap anggota pada indikator yang sama.',

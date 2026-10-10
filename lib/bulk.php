@@ -40,7 +40,7 @@ function targetInputTemplate_(array $db): array {
         '1 baris = 1 sales untuk 1 periode. File ini sudah berisi target bulan berjalan; edit nilainya lalu upload kembali.',
         'PERIODE TARGET format YYYY-MM. KOSONG = target belum diisi; 0 = memang tidak diwajibkan.',
         'Key upsert: PERIODE TARGET + NIK SALES. NAMA SALES hanya referensi dan diabaikan saat upload.',
-        'Kolom target: ST <BRAND>, DA <BRAND>, NOO <BRAND>, OMZET <BRAND>.'], ['PERIODE TARGET','NIK SALES'], ['NAMA SALES']);
+        'Kolom target: ST <BRAND>, DA <BRAND>, NOO <BRAND>, IDDLE <BRAND>, OMZET <BRAND>.'], ['PERIODE TARGET','NIK SALES'], ['NAMA SALES']);
 }
 
 // ------------------------------------------------------------------

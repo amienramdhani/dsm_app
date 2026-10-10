@@ -55,7 +55,7 @@ function kpiSuper_($token): array {
     if ($u['role'] !== 'SUPER ADMIN') fail_('Khusus Super Admin.');
     return ['db' => $db, 'u' => $u];
 }
-function kpiMinDa_(array $p) { return $p['metric'] === 'NOO' ? js_or($p['minNOO'] ?? null, 1) : js_or($p['minDA'] ?? null, 2); }
+function kpiMinDa_(array $p) { if ($p['metric'] === 'IDDLE') return 1; return $p['metric'] === 'NOO' ? js_or($p['minNOO'] ?? null, 1) : js_or($p['minDA'] ?? null, 2); }
 
 function apiKpiGet($token, $period = null) {
     $c = kpiSuper_($token); $db = $c['db']; $periods = kpiPeriods_($db);
@@ -96,13 +96,18 @@ function kpiCleanRows_($rows): array {
         $r = ['group' => js_upper(text_($x['group'] ?? null)), 'metric' => $metric, 'brand' => js_or(js_upper(text_($x['brand'] ?? null)), 'ALL'), 'weight' => kpiNum_($x['weight'] ?? null), 'cap' => kpiNum_($x['cap'] ?? null),
             'indicator' => preg_replace('/[^A-Z0-9_]/', '_', js_upper(text_($x['indicator'] ?? null))), 'label' => text_($x['label'] ?? null),
             'types' => array_values(array_filter(array_map('text_', is_array($x['types'] ?? null) ? $x['types'] : []), fn($v) => $v !== '')),
-            'minDA' => kn_or(kpiNum_($x['minDA'] ?? null), $metric === 'NOO' ? 1 : 2),
+            'minDA' => kn_or(kpiNum_($x['minDA'] ?? null), in_array($metric, ['NOO', 'IDDLE'], true) ? 1 : 2),
             'must' => array_values(array_filter(array_map('text_', is_array($x['must'] ?? null) ? $x['must'] : []), fn($v) => $v !== '')),
             'perProm' => (function($v){ $n = kpiNum_($v); return ($n === null || (is_float($n) && is_nan($n)) || $n < 1) ? 0 : $n; })($x['perProm'] ?? null),
             'bigs' => array_values(array_filter(array_map('text_', is_array($x['bigs'] ?? null) ? $x['bigs'] : []), fn($v) => $v !== '')), 'target' => kpiNum_($x['target'] ?? null)];
         $line = 'Indikator ' . ($i + 1) . ': ';
         if ($r['group'] === '') fail_($line . 'kelompok kosong.');
-        if (!in_array($r['metric'], ['QTY', 'DA', 'NOO', 'OMZET'], true)) fail_($line . 'pilih metrik.');
+        if (!in_array($r['metric'], ['QTY', 'DA', 'NOO', 'IDDLE', 'OMZET'], true)) fail_($line . 'pilih metrik.');
+        if ($r['metric'] === 'IDDLE') {
+            if ($r['types']) fail_($line . 'Dealer IDDLE tidak memakai filter TYPE.');
+            if ($r['minDA'] != 1) fail_($line . 'Dealer IDDLE memakai minimum 1 unit net.');
+            if ($r['label'] === '') $r['label'] = 'Dealer IDDLE ' . $r['brand'];
+        }
         if (!($r['weight'] > 0)) fail_($line . 'bobot harus > 0.');
         if (!($r['cap'] > 0)) $r['cap'] = 120;
         if ($r['minDA'] < 1 || floor($r['minDA']) != $r['minDA']) fail_($line . 'minimal unit harus bilangan bulat ≥ 1.');
@@ -241,7 +246,7 @@ function apiTargetGet($token, $period = null, $big = null, $sub = null) {
         $k = targetKey_($mt, $bn, '');
         if (!isset($cols[$k])) $cols[$k] = ['key' => $k, 'metric' => $mt, 'brand' => $bn, 'indicator' => '', 'label' => KPI_METRIC_COL[$mt] . ' ' . $bn, 'extra' => true, 'free' => true];
     }
-    $order = ['QTY' => 0, 'DA' => 1, 'NOO' => 2, 'OMZET' => 3];
+    $order = ['QTY' => 0, 'DA' => 1, 'NOO' => 2, 'IDDLE' => 3, 'OMZET' => 4];
     $cl = js_sort(array_values($cols), fn($a, $b) => (truthy($a['indicator']) ? 1 : 0) - (truthy($b['indicator']) ? 1 : 0) ?: $order[$a['metric']] - $order[$b['metric']] ?: ($a['brand'] === 'ALL' ? -1 : ($b['brand'] === 'ALL' ? 1 : lc($a['brand'], $b['brand']))));
     $rows = js_sort($rows, fn($a, $b) => lc($a['sub'], $b['sub']) ?: lc($a['asmNama'], $b['asmNama']) ?: ($a['vac'] ? 1 : 0) - ($b['vac'] ? 1 : 0) ?: lc($a['nama'], $b['nama']));
     $tree = kpiTree_($db);

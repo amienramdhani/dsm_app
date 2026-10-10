@@ -90,6 +90,8 @@ function coverageView_(array $db, string $period, array $ids, string $kind, $act
     return PortalCore::memo('view', $mk, function () use ($db, $period, $kind, $selected, $mk) {
         $sel = js_set($selected); $parts = $db['parts'];
         $view = $db; $view['coverage'] = []; $view['cubes'] = []; $view['_vid'] = 'v' . md5($mk);
+        // Histori dealer-brand tetap utuh walau PIC/region berubah. Hanya untuk hitungan KPI IDDLE.
+        $view['_iddleHistory'] = ['vid' => PortalCore::vid($db), 'cubes' => $db['cubes'], 'coverage' => $db['coverage'], 'parts' => $parts];
         if (!empty($db['stock'])) {
             $view['stock']['coverage'] = [];
             if (isset($db['stock']['moves'])) $view['stock']['moves'] = js_filter($db['stock']['moves'], fn($t) => !truthy($t['region'] ?? '') || isset($sel[(string) $t['region']]));

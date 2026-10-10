@@ -184,6 +184,60 @@ final class PortalCore {
         return ['qty' => $q, 'omzet' => self::round($a), 'aksesori' => self::round($acc), 'da' => $da, 'noo' => $noo, 'outlets' => count($customers), 'nota' => count($docs), 'nooPending' => $pending];
     }
 
+    /**
+     * Dealer IDDLE: tepat dua bulan kalender penuh tanpa ST net positif,
+     * lalu kembali order. Untuk Oktober: Juli > 0, Agustus <= 0,
+     * September <= 0, Oktober > 0. Hitung sekali per dealer-brand.
+     * Histori tidak dibatasi Sales/PIC; aktual tetap memakai rows cakupan KPI.
+     * null = histori ST belum lengkap, bukan aktual nol.
+     */
+    public static function dealerIddle(array $rows, array $db, string $period, $brand = 'ALL', ?array &$qualifiedPairs = null): ?int {
+        $qualifiedPairs = [];
+        $months = [self::prev($period)];
+        $months[] = self::prev($months[0]); $months[] = self::prev($months[1]);
+        $history = $db['_iddleHistory'] ?? $db;
+        $key = (string) ($history['vid'] ?? self::vid($history)) . '|' . $period;
+        $index = self::memo('iddle-history', $key, function () use ($history, $months) {
+            $out = [];
+            foreach ($months as $month) foreach ($history['cubes'][$month] ?? [] as $r) {
+                if (substr((string) $r['date'], 0, 7) !== $month) continue;
+                $region = (string) ($r['region'] ?? '');
+                $cut = $history['parts']['ST'][$month][$region]['cutoff'] ?? $history['coverage'][$month]['cutoff'] ?? self::end($month);
+                if (strcmp((string) $r['date'], (string) $cut) > 0) continue;
+                $pair = jkey([(string) $r['customer'], (string) $r['brand']]);
+                $out[$pair]['q'][$month] = ($out[$pair]['q'][$month] ?? 0) + $r['q'];
+                if ($region !== '' && $r['q'] != 0) $out[$pair]['regions'][$region] = true;
+            }
+            return $out;
+        });
+        $current = []; $all = !truthy($brand) || $brand === 'ALL';
+        foreach ($rows as $r) {
+            if ((!$all && $r['brand'] !== $brand) || substr((string) $r['date'], 0, 7) !== $period) continue;
+            $pair = jkey([(string) $r['customer'], (string) $r['brand']]);
+            $current[$pair]['q'] = ($current[$pair]['q'] ?? 0) + $r['q'];
+            $region = (string) ($r['region'] ?? '');
+            if ($region !== '' && $r['q'] != 0) $current[$pair]['regions'][$region] = true;
+        }
+        $count = 0;
+        foreach ($current as $pair => $now) {
+            if ($now['q'] <= 0) continue;
+            $past = $index[$pair] ?? [];
+            // Order di salah satu bulan jeda sudah pasti tidak memenuhi aturan.
+            if (($past['q'][$months[0]] ?? 0) > 0 || ($past['q'][$months[1]] ?? 0) > 0) continue;
+            $regions = array_keys(($now['regions'] ?? []) + ($past['regions'] ?? []));
+            if (!$regions) $regions = $db['selectedRegions'] ?? [];
+            foreach ($months as $month) {
+                $cuts = [];
+                if (isset($history['parts']) && $regions) {
+                    foreach ($regions as $region) $cuts[] = $history['parts']['ST'][$month][$region]['cutoff'] ?? null;
+                } else $cuts[] = $history['coverage'][$month]['cutoff'] ?? null;
+                foreach ($cuts as $cut) if (!$cut || strcmp((string) $cut, self::end($month)) < 0) { $qualifiedPairs = null; return null; }
+            }
+            if (($past['q'][$months[2]] ?? 0) > 0) { $count++; $qualifiedPairs[] = $pair; }
+        }
+        return $count;
+    }
+
     /** Indeks target per (periode, brand, metrik, indikator) agar target() tidak menyapu semua baris. */
     private static function targetIndex(array $meta): array {
         return self::memo('tidx', (string) count($meta['targets'] ?? []), function () use ($meta) {
@@ -223,7 +277,8 @@ final class PortalCore {
                     if ($types) $rows = js_filter($rows, fn($r) => in_array($r['type'], $types, true));
                 } else $rows = js_filter($all, fn($r) => (!$types || in_array($r['type'], $types, true)));
                 $a = self::metrics($rows, $db, $period, $c['brand'], js_or($c['minDA'] ?? null, 2), js_or($c['minNOO'] ?? null, 1), $c['must'] ?? [], $c['perProm'] ?? 0);
-                $actual = ['QTY' => $a['qty'], 'DA' => $a['da'], 'NOO' => $a['noo'], 'OMZET' => $a['omzet']][$c['metric']] ?? null;
+                $iddlePairs = null;
+                $actual = $c['metric'] === 'IDDLE' ? self::dealerIddle($rows, $db, $period, $c['brand'], $iddlePairs) : (['QTY' => $a['qty'], 'DA' => $a['da'], 'NOO' => $a['noo'], 'OMZET' => $a['omzet']][$c['metric']] ?? null);
                 $state = 'BERLAKU'; $score = null; $ach = null; $tg = $c['target'] ?? null;
                 // Paket 10: target kosong → otomatis dari target Big Region (manual, kalau tidak ada: jumlah target sales). Hanya QTY/DA brand tertentu tanpa filter type.
                 $autoVal = null; $auto = false;
@@ -233,9 +288,10 @@ final class PortalCore {
                 }
                 if ($tg === null) { $state = 'TIDAK DIWAJIBKAN'; } // target kosong = tidak ikut hitungan, tanpa peringatan
                 elseif ($tg === 0 || $tg === 0.0) $state = 'TIDAK DIWAJIBKAN';
+                elseif ($c['metric'] === 'IDDLE' && $actual === null) { $state = 'HISTORI ST BELUM LENGKAP'; $pending = true; }
                 elseif ($c['metric'] === 'NOO' && $a['nooPending']) { $state = 'VERIFIKASI RETUR'; $pending = true; }
                 else { $ach = $actual / $tg * 100; $score = min($c['cap'], max(0, $ach)); $weighted += $score * $c['weight']; $weights += $c['weight']; }
-                $indicators[] = ['indicator' => $c['indicator'] ?? null, 'label' => js_or($c['label'] ?? null, $c['metric'] . ' ' . $c['brand'] . (($c['bigs'] ?? []) ? ' · ' . implode(' + ', $c['bigs']) : '')), 'types' => $types, 'bigs' => $c['bigs'] ?? [], 'minDA' => js_or($c['minDA'] ?? null, 2), 'metric' => $c['metric'], 'brand' => $c['brand'], 'weight' => $c['weight'], 'cap' => $c['cap'], 'target' => $tg ?? 0, 'actual' => $actual, 'ach' => $ach, 'score' => $score, 'state' => $state, 'regionBased' => (bool) $bigs, 'targetAuto' => $auto, 'autoValue' => $autoVal, 'manualTarget' => $c['target'] ?? null];
+                $indicators[] = ['indicator' => $c['indicator'] ?? null, 'label' => js_or($c['label'] ?? null, ($c['metric'] === 'IDDLE' ? 'Dealer IDDLE' : $c['metric']) . ' ' . $c['brand'] . (($c['bigs'] ?? []) ? ' · ' . implode(' + ', $c['bigs']) : '')), 'types' => $types, 'bigs' => $c['bigs'] ?? [], 'minDA' => js_or($c['minDA'] ?? null, 2), 'metric' => $c['metric'], 'brand' => $c['brand'], 'weight' => $c['weight'], 'cap' => $c['cap'], 'target' => $tg ?? 0, 'actual' => $actual, 'iddlePairs' => $iddlePairs, 'ach' => $ach, 'score' => $score, 'state' => $state, 'regionBased' => (bool) $bigs, 'targetAuto' => $auto, 'autoValue' => $autoVal, 'manualTarget' => $c['target'] ?? null];
             }
             $groups[] = ['name' => $group, 'score' => $pending || !$weights ? null : $weighted / $weights, 'pending' => $pending, 'na' => !$pending && !$weights, 'indicators' => $indicators];
         }
@@ -266,14 +322,16 @@ final class PortalCore {
                 $types = $c['types'] ?? [];
                 $t = self::target($db['meta'], $period, $ids, $c['brand'], $c['metric'], js_or($c['indicator'] ?? null, ''));
                 $a = self::metrics($types ? js_filter($rows, fn($r) => in_array($r['type'], $types, true)) : $rows, $db, $period, $c['brand'], js_or($c['minDA'] ?? null, 2), js_or($c['minNOO'] ?? null, 1), $c['must'] ?? [], $c['perProm'] ?? 0);
-                $actual = ['QTY' => $a['qty'], 'DA' => $a['da'], 'NOO' => $a['noo'], 'OMZET' => $a['omzet']][$c['metric']] ?? null;
+                $iddlePairs = null;
+                $actual = $c['metric'] === 'IDDLE' ? self::dealerIddle($rows, $db, $period, $c['brand'], $iddlePairs) : (['QTY' => $a['qty'], 'DA' => $a['da'], 'NOO' => $a['noo'], 'OMZET' => $a['omzet']][$c['metric']] ?? null);
                 $state = 'BERLAKU'; $score = null; $ach = null;
                 if ($t['value'] == 0 && !$t['missing']) $state = 'TIDAK DIWAJIBKAN';
+                elseif ($t['value'] > 0 && $c['metric'] === 'IDDLE' && $actual === null) { $state = 'HISTORI ST BELUM LENGKAP'; $pending = true; $tentative = true; }
                 elseif ($t['value'] > 0) {
                     $ach = $actual / $t['value'] * 100; $score = min($c['cap'], max(0, $ach)); $weighted += $score * $c['weight']; $weights += $c['weight'];
                     if ($c['metric'] === 'NOO' && $a['nooPending']) { $state = 'SEMENTARA · verifikasi retur'; $tentative = true; }
                 } else { $state = 'TIDAK DIWAJIBKAN'; }
-                $indicators[] = ['indicator' => $c['indicator'] ?? null, 'label' => $c['label'] ?? null, 'types' => $types, 'minDA' => js_or($c['minDA'] ?? null, 2), 'metric' => $c['metric'], 'brand' => $c['brand'], 'weight' => $c['weight'], 'cap' => $c['cap'], 'target' => $t['value'], 'actual' => $actual, 'ach' => $ach, 'score' => $score, 'state' => $state];
+                $indicators[] = ['indicator' => $c['indicator'] ?? null, 'label' => js_or($c['label'] ?? null, $c['metric'] === 'IDDLE' ? 'Dealer IDDLE ' . $c['brand'] : null), 'types' => $types, 'minDA' => js_or($c['minDA'] ?? null, 2), 'metric' => $c['metric'], 'brand' => $c['brand'], 'weight' => $c['weight'], 'cap' => $c['cap'], 'target' => $t['value'], 'actual' => $actual, 'iddlePairs' => $iddlePairs, 'ach' => $ach, 'score' => $score, 'state' => $state];
             }
             $groups[] = ['name' => $group, 'score' => !$weights ? null : $weighted / $weights, 'pending' => $pending && !$weights, 'partial' => $pending && (bool) $weights, 'na' => !$pending && !$weights, 'indicators' => $indicators];
         }
@@ -429,7 +487,7 @@ final class PortalCore {
             $p = self::month($r['PERIODE'] ?? null); $nik = text_($r['NIK'] ?? null); $b = text_($r['BRAND'] ?? null); $metric = js_upper(text_($r['METRIK'] ?? null));
             $value = self::number($r['TARGET'] ?? null); $indicator = text_($r['INDIKATOR_ID'] ?? null); $k = jkey([$p, $nik, $b, $metric, $indicator]);
             if (!isset($pids[$nik]) || !$pids[$nik]['sales']) fail_('Target hanya untuk portofolio Sales: ' . $nik);
-            if ($b === '' || !in_array($metric, ['QTY', 'DA', 'NOO', 'OMZET'], true) || $value < 0) fail_('Target tidak valid.');
+            if ($b === '' || !in_array($metric, ['QTY', 'DA', 'NOO', 'IDDLE', 'OMZET'], true) || $value < 0) fail_('Target tidak valid.');
             if (isset($tk[$k])) fail_('Target duplikat: ' . $k);
             $tk[$k] = true;
             $targets[] = ['period' => $p, 'nik' => $nik, 'brand' => $b, 'metric' => $metric, 'target' => $value, 'indicator' => $indicator];
@@ -441,7 +499,7 @@ final class PortalCore {
             $p['weight'] = self::number($r['BOBOT'] ?? null); $p['cap'] = self::number($r['BATAS_SKOR'] ?? null);
             $p['indicator'] = text_($r['INDIKATOR_ID'] ?? null); $p['label'] = text_($r['LABEL'] ?? null);
             $p['types'] = uniq(array_values(array_filter(array_map('text_', explode('|', text_($r['TYPE_FILTER'] ?? null))), fn($x) => $x !== '')));
-            $p['minDA'] = text_($r['MIN_QTY_DA'] ?? null) !== '' ? self::number($r['MIN_QTY_DA']) : 2;
+            $p['minDA'] = text_($r['MIN_QTY_DA'] ?? null) !== '' ? self::number($r['MIN_QTY_DA']) : ($p['metric'] === 'IDDLE' ? 1 : 2);
             $p['minNOO'] = text_($r['MIN_QTY_DA'] ?? null) !== '' ? self::number($r['MIN_QTY_DA']) : 1;
             $p['must'] = uniq(array_values(array_filter(array_map('text_', explode('|', text_($r['TYPE_WAJIB'] ?? null))), fn($x) => $x !== '')));
             $p['perProm'] = text_($r['MIN_QTY_PER_PROMOTOR'] ?? null) !== '' ? self::number($r['MIN_QTY_PER_PROMOTOR']) : 0;
@@ -449,8 +507,9 @@ final class PortalCore {
             if ($p['must'] && $p['perProm']) fail_('TYPE_WAJIB dan MIN_QTY_PER_PROMOTOR tidak boleh dipakai bersamaan.');
             if ($p['perProm'] && (is_nan((float) $p['perProm']) || $p['perProm'] < 1)) fail_('MIN_QTY_PER_PROMOTOR harus angka minimal 1.');
             if ($p['perProm'] && $p['brand'] === 'ALL') fail_('MIN_QTY_PER_PROMOTOR butuh BRAND tertentu.');
-            if ($p['region'] === '' || $p['group'] === '' || $p['brand'] === '' || !in_array($p['metric'], ['QTY', 'DA', 'NOO', 'OMZET'], true) || $p['weight'] <= 0 || $p['cap'] <= 0) fail_('Konfigurasi KPI tidak valid.');
+            if ($p['region'] === '' || $p['group'] === '' || $p['brand'] === '' || !in_array($p['metric'], ['QTY', 'DA', 'NOO', 'IDDLE', 'OMZET'], true) || $p['weight'] <= 0 || $p['cap'] <= 0) fail_('Konfigurasi KPI tidak valid.');
             if (!(is_int($p['minDA']) || (is_float($p['minDA']) && is_finite($p['minDA']) && floor($p['minDA']) == $p['minDA'])) || $p['minDA'] < 1) fail_('MIN_QTY_DA harus bilangan bulat minimal 1.');
+            if ($p['metric'] === 'IDDLE' && $p['minDA'] != 1) fail_('Dealer IDDLE memakai QTY net positif (minimum 1 unit).');
             if ($p['types'] && !in_array($p['metric'], ['QTY', 'DA'], true)) fail_('TYPE_FILTER hanya untuk QTY atau DA.');
             if (($p['types'] || $p['must'] || $p['perProm'] || ($p['metric'] === 'DA' && $p['minDA'] != 2) || ($p['metric'] === 'NOO' && $p['minNOO'] != 1)) && $p['indicator'] === '') fail_('Isi INDIKATOR_ID untuk aturan khusus.');
             foreach ($p['types'] as $t) {
