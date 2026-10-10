@@ -306,7 +306,7 @@ function rgmRuleCheck_(array $oldMeta, array $meta): void {
 // KpiAdmin.gs
 // ------------------------------------------------------------------
 
-const KPI_CFG_HEADS = ['PERIODE', 'WILAYAH_KPI', 'KELOMPOK_KPI', 'METRIK', 'BRAND', 'BOBOT', 'BATAS_SKOR', 'INDIKATOR_ID', 'LABEL', 'TYPE_FILTER', 'MIN_QTY_DA', 'AKTIF'];
+const KPI_CFG_HEADS = ['PERIODE', 'WILAYAH_KPI', 'KELOMPOK_KPI', 'METRIK', 'BRAND', 'BOBOT', 'BATAS_SKOR', 'INDIKATOR_ID', 'LABEL', 'TYPE_FILTER', 'MIN_QTY_DA', 'AKTIF', 'TYPE_WAJIB', 'MIN_QTY_PER_PROMOTOR'];
 const KPI_RGM_HEADS = ['PERIODE', 'NIK', 'NAMA', 'KELOMPOK_KPI', 'INDIKATOR_ID', 'LABEL', 'METRIK', 'BRAND', 'TYPE_FILTER', 'BIG_REGIONS', 'BOBOT', 'BATAS_SKOR', 'TARGET', 'MIN_QTY_DA'];
 const KPI_METRIC_COL = ['QTY' => 'ST', 'DA' => 'DA', 'NOO' => 'NOO', 'OMZET' => 'OMZET'];
 

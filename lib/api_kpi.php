@@ -67,7 +67,7 @@ function apiKpiGet($token, $period = null) {
     $cfg = [];
     foreach ($db['meta']['policies'] ?? [] as $p) {
         if ($p['period'] !== $period) continue;
-        $cfg[(string) $p['region']][] = ['group' => $p['group'], 'metric' => $p['metric'], 'brand' => $p['brand'], 'weight' => $p['weight'], 'cap' => $p['cap'], 'indicator' => $p['indicator'] ?? null, 'label' => $p['label'] ?? null, 'types' => js_or($p['types'] ?? null, []), 'minDA' => kpiMinDa_($p)];
+        $cfg[(string) $p['region']][] = ['group' => $p['group'], 'metric' => $p['metric'], 'brand' => $p['brand'], 'weight' => $p['weight'], 'cap' => $p['cap'], 'indicator' => $p['indicator'] ?? null, 'label' => $p['label'] ?? null, 'types' => js_or($p['types'] ?? null, []), 'minDA' => kpiMinDa_($p), 'must' => js_or($p['must'] ?? null, []), 'perProm' => js_or($p['perProm'] ?? null, 0)];
     }
     $rgms = [];
     foreach ($db['meta']['people'] as $p) {
@@ -97,6 +97,8 @@ function kpiCleanRows_($rows): array {
             'indicator' => preg_replace('/[^A-Z0-9_]/', '_', js_upper(text_($x['indicator'] ?? null))), 'label' => text_($x['label'] ?? null),
             'types' => array_values(array_filter(array_map('text_', is_array($x['types'] ?? null) ? $x['types'] : []), fn($v) => $v !== '')),
             'minDA' => kn_or(kpiNum_($x['minDA'] ?? null), $metric === 'NOO' ? 1 : 2),
+            'must' => array_values(array_filter(array_map('text_', is_array($x['must'] ?? null) ? $x['must'] : []), fn($v) => $v !== '')),
+            'perProm' => (function($v){ $n = kpiNum_($v); return ($n === null || (is_float($n) && is_nan($n)) || $n < 1) ? 0 : $n; })($x['perProm'] ?? null),
             'bigs' => array_values(array_filter(array_map('text_', is_array($x['bigs'] ?? null) ? $x['bigs'] : []), fn($v) => $v !== '')), 'target' => kpiNum_($x['target'] ?? null)];
         $line = 'Indikator ' . ($i + 1) . ': ';
         if ($r['group'] === '') fail_($line . 'kelompok kosong.');
@@ -104,9 +106,12 @@ function kpiCleanRows_($rows): array {
         if (!($r['weight'] > 0)) fail_($line . 'bobot harus > 0.');
         if (!($r['cap'] > 0)) $r['cap'] = 120;
         if ($r['minDA'] < 1 || floor($r['minDA']) != $r['minDA']) fail_($line . 'minimal unit harus bilangan bulat ≥ 1.');
-        $special = $r['types'] || ($r['metric'] === 'DA' && $r['minDA'] != 2) || ($r['metric'] === 'NOO' && $r['minDA'] != 1);
+        if (($r['must'] || $r['perProm']) && $r['metric'] !== 'DA') fail_($line . 'Type wajib / minimal per promotor hanya untuk metrik DA.');
+        if ($r['must'] && $r['perProm']) fail_($line . 'Pilih salah satu: type wajib atau minimal per promotor.');
+        if ($r['perProm'] && $r['brand'] === 'ALL') fail_($line . 'Minimal per promotor butuh brand tertentu.');
+        $special = $r['must'] || $r['perProm'] || $r['types'] || ($r['metric'] === 'DA' && $r['minDA'] != 2) || ($r['metric'] === 'NOO' && $r['minDA'] != 1);
         if ($special && $r['indicator'] === '') {
-            $base = preg_replace('/[^A-Z0-9_]/', '_', $r['metric'] . '_' . $r['brand'] . ($r['types'] ? '_TYPE' : '') . ($special && !$r['types'] ? '_MIN' . js_str($r['minDA']) : ''));
+            $base = preg_replace('/[^A-Z0-9_]/', '_', $r['metric'] . '_' . $r['brand'] . ($r['types'] ? '_TYPE' : '') . ($r['perProm'] ? '_PROMOTOR' : ($r['must'] ? '_QUALITY' : ($special && !$r['types'] ? '_MIN' . js_str($r['minDA']) : ''))));
             $k = $base; $n = 2; while (isset($used[$k])) $k = $base . $n++;
             $r['indicator'] = $k;
         }
@@ -145,7 +150,7 @@ function apiKpiSaveRegion($token, $period, $region, $rows, $reason = null) {
         kpiCommit_($c['u'], $db, ['KPI_Config'], 'KPI ' . $region . ' ' . $period . ($clean ? ' (' . count($clean) . ' indikator)' : ' dihapus'), $reason, function () use ($clean, $period, $region, $node) {
             $g = kpiGrid_('KPI_Config', KPI_CFG_HEADS);
             $g['rows'] = array_values(js_filter($g['rows'], fn($r) => !(kpiMonth_($r['PERIODE'] ?? null) === $period && js_upper(text_($r['WILAYAH_KPI'] ?? null)) === js_upper($region))));
-            foreach ($clean as $r) $g['rows'][] = ['PERIODE' => $period, 'WILAYAH_KPI' => $node ? $node['big'] : $region, 'KELOMPOK_KPI' => $r['group'], 'METRIK' => $r['metric'], 'BRAND' => $r['brand'], 'BOBOT' => $r['weight'], 'BATAS_SKOR' => $r['cap'], 'INDIKATOR_ID' => $r['indicator'], 'LABEL' => $r['label'], 'TYPE_FILTER' => implode('|', $r['types']), 'MIN_QTY_DA' => kpiMinCell_($r), 'AKTIF' => 'TRUE'];
+            foreach ($clean as $r) $g['rows'][] = ['PERIODE' => $period, 'WILAYAH_KPI' => $node ? $node['big'] : $region, 'KELOMPOK_KPI' => $r['group'], 'METRIK' => $r['metric'], 'BRAND' => $r['brand'], 'BOBOT' => $r['weight'], 'BATAS_SKOR' => $r['cap'], 'INDIKATOR_ID' => $r['indicator'], 'LABEL' => $r['label'], 'TYPE_FILTER' => implode('|', $r['types']), 'MIN_QTY_DA' => kpiMinCell_($r), 'AKTIF' => 'TRUE', 'TYPE_WAJIB' => implode('|', $r['must']), 'MIN_QTY_PER_PROMOTOR' => $r['perProm'] ?: ''];
             kpiPut_('KPI_Config', $g);
         });
         return ['ok' => true, 'count' => count($clean)];

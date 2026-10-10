@@ -143,7 +143,14 @@ final class PortalCore {
         });
     }
 
-    public static function metrics(array $rows, array $db, string $period, $brand = null, $minDA = 2, $minNOO = 1): array {
+    /** Jumlah promotor dealer untuk brand tertentu (Master_Promotor, kolom PROMOTOR <BRAND>). 0 bila tidak ada. */
+    public static function promotorCount($customer, $brand): float {
+        static $m = null; if ($m === null) $m = attrMap_('PROMOTOR');
+        foreach (($m[$customer]['brands'] ?? []) as $b) if (js_upper($b[0]) === js_upper(js_str($brand))) return (float) $b[1];
+        return 0.0;
+    }
+    public static function metrics(array $rows, array $db, string $period, $brand = null, $minDA = 2, $minNOO = 1, array $must = [], $perProm = 0): array {
+        $mq = []; $aq = [];
         $q = 0; $a = 0; $acc = 0; $pairs = []; $pairOf = []; $docs = []; $customers = []; $byPair = [];
         $all = !truthy($brand) || $brand === 'ALL';
         foreach ($rows as $r) {
@@ -154,12 +161,15 @@ final class PortalCore {
             $ik = $r['customer'] . "\x1f" . $r['brand'];
             if (!isset($pairs[$ik])) { $pairs[$ik] = 0; $pairOf[$ik] = $r; }
             $pairs[$ik] += $r['q'];
+            if ($must && in_array($r['type'], $must, true)) $mq[$ik] = ($mq[$ik] ?? 0) + $r['q'];
+            if ($perProm > 0) $aq[$ik] = ($aq[$ik] ?? 0) + ($r['aq'] ?? 0);
             $byPair[$ik][] = $r;
         }
         $da = 0; $noo = 0; $pending = false;
         $first = $db['first'] ?? []; $unl = $db['unlinked'] ?? [];
         foreach ($pairs as $ik => $v) {
-            if ($v >= $minDA) $da++;
+            if ($perProm > 0) { $pr0 = $pairOf[$ik]; if (($aq[$ik] ?? 0) >= $perProm * max(1, self::promotorCount($pr0['customer'], $pr0['brand']))) $da++; }
+            elseif ($v >= $minDA && (!$must || ($mq[$ik] ?? 0) >= 1)) $da++;
             if ($v > 0) {
                 $pr = $pairOf[$ik];
                 $customers[(string) $pr['customer']] = true;
@@ -212,7 +222,7 @@ final class PortalCore {
                     foreach (uniq($bigs) as $bg) foreach ($byReg[$bg] ?? [] as $r) $rows[] = $r;
                     if ($types) $rows = js_filter($rows, fn($r) => in_array($r['type'], $types, true));
                 } else $rows = js_filter($all, fn($r) => (!$types || in_array($r['type'], $types, true)));
-                $a = self::metrics($rows, $db, $period, $c['brand'], js_or($c['minDA'] ?? null, 2), js_or($c['minNOO'] ?? null, 1));
+                $a = self::metrics($rows, $db, $period, $c['brand'], js_or($c['minDA'] ?? null, 2), js_or($c['minNOO'] ?? null, 1), $c['must'] ?? [], $c['perProm'] ?? 0);
                 $actual = ['QTY' => $a['qty'], 'DA' => $a['da'], 'NOO' => $a['noo'], 'OMZET' => $a['omzet']][$c['metric']] ?? null;
                 $state = 'BERLAKU'; $score = null; $ach = null; $tg = $c['target'] ?? null;
                 // Paket 10: target kosong → otomatis dari target Big Region (manual, kalau tidak ada: jumlah target sales). Hanya QTY/DA brand tertentu tanpa filter type.
@@ -255,7 +265,7 @@ final class PortalCore {
                 if ($c['group'] !== $group) continue;
                 $types = $c['types'] ?? [];
                 $t = self::target($db['meta'], $period, $ids, $c['brand'], $c['metric'], js_or($c['indicator'] ?? null, ''));
-                $a = self::metrics($types ? js_filter($rows, fn($r) => in_array($r['type'], $types, true)) : $rows, $db, $period, $c['brand'], js_or($c['minDA'] ?? null, 2), js_or($c['minNOO'] ?? null, 1));
+                $a = self::metrics($types ? js_filter($rows, fn($r) => in_array($r['type'], $types, true)) : $rows, $db, $period, $c['brand'], js_or($c['minDA'] ?? null, 2), js_or($c['minNOO'] ?? null, 1), $c['must'] ?? [], $c['perProm'] ?? 0);
                 $actual = ['QTY' => $a['qty'], 'DA' => $a['da'], 'NOO' => $a['noo'], 'OMZET' => $a['omzet']][$c['metric']] ?? null;
                 $state = 'BERLAKU'; $score = null; $ach = null;
                 if ($t['value'] == 0 && !$t['missing']) $state = 'TIDAK DIWAJIBKAN';
@@ -433,10 +443,16 @@ final class PortalCore {
             $p['types'] = uniq(array_values(array_filter(array_map('text_', explode('|', text_($r['TYPE_FILTER'] ?? null))), fn($x) => $x !== '')));
             $p['minDA'] = text_($r['MIN_QTY_DA'] ?? null) !== '' ? self::number($r['MIN_QTY_DA']) : 2;
             $p['minNOO'] = text_($r['MIN_QTY_DA'] ?? null) !== '' ? self::number($r['MIN_QTY_DA']) : 1;
+            $p['must'] = uniq(array_values(array_filter(array_map('text_', explode('|', text_($r['TYPE_WAJIB'] ?? null))), fn($x) => $x !== '')));
+            $p['perProm'] = text_($r['MIN_QTY_PER_PROMOTOR'] ?? null) !== '' ? self::number($r['MIN_QTY_PER_PROMOTOR']) : 0;
+            if (($p['must'] || $p['perProm']) && $p['metric'] !== 'DA') fail_('TYPE_WAJIB dan MIN_QTY_PER_PROMOTOR hanya untuk METRIK DA.');
+            if ($p['must'] && $p['perProm']) fail_('TYPE_WAJIB dan MIN_QTY_PER_PROMOTOR tidak boleh dipakai bersamaan.');
+            if ($p['perProm'] && (is_nan((float) $p['perProm']) || $p['perProm'] < 1)) fail_('MIN_QTY_PER_PROMOTOR harus angka minimal 1.');
+            if ($p['perProm'] && $p['brand'] === 'ALL') fail_('MIN_QTY_PER_PROMOTOR butuh BRAND tertentu.');
             if ($p['region'] === '' || $p['group'] === '' || $p['brand'] === '' || !in_array($p['metric'], ['QTY', 'DA', 'NOO', 'OMZET'], true) || $p['weight'] <= 0 || $p['cap'] <= 0) fail_('Konfigurasi KPI tidak valid.');
             if (!(is_int($p['minDA']) || (is_float($p['minDA']) && is_finite($p['minDA']) && floor($p['minDA']) == $p['minDA'])) || $p['minDA'] < 1) fail_('MIN_QTY_DA harus bilangan bulat minimal 1.');
             if ($p['types'] && !in_array($p['metric'], ['QTY', 'DA'], true)) fail_('TYPE_FILTER hanya untuk QTY atau DA.');
-            if (($p['types'] || ($p['metric'] === 'DA' && $p['minDA'] != 2) || ($p['metric'] === 'NOO' && $p['minNOO'] != 1)) && $p['indicator'] === '') fail_('Isi INDIKATOR_ID untuk aturan khusus.');
+            if (($p['types'] || $p['must'] || $p['perProm'] || ($p['metric'] === 'DA' && $p['minDA'] != 2) || ($p['metric'] === 'NOO' && $p['minNOO'] != 1)) && $p['indicator'] === '') fail_('Isi INDIKATOR_ID untuk aturan khusus.');
             foreach ($p['types'] as $t) {
                 $ok = false;
                 foreach ($products as $x) if ($x['device'] && $x['type'] === $t && ($p['brand'] === 'ALL' || $x['brand'] === $p['brand'])) { $ok = true; break; }
@@ -494,9 +510,9 @@ final class PortalCore {
             if (!isset($peopleIds[$t['nik']])) fail_('NIK historis hilang dari master: ' . js_str($t['nik']) . '. Nonaktifkan akun, jangan hapus master.');
             $period = substr($t['date'], 0, 7); $region = js_or($t['region'] ?? null, '');
             $k = jkey([$t['date'], $t['nik'], $t['customer'], $p['brand'], $p['type'], $region]);
-            if (!isset($cubes[$period][$k])) $cubes[$period][$k] = ['date' => $t['date'], 'region' => $region, 'nik' => $t['nik'], 'customer' => $t['customer'], 'brand' => $p['brand'], 'type' => $p['type'], 'q' => 0, 'a' => 0, 'acc' => 0, 'docs' => []];
+            if (!isset($cubes[$period][$k])) $cubes[$period][$k] = ['date' => $t['date'], 'region' => $region, 'nik' => $t['nik'], 'customer' => $t['customer'], 'brand' => $p['brand'], 'type' => $p['type'], 'q' => 0, 'a' => 0, 'acc' => 0, 'aq' => 0, 'docs' => []];
             $c = &$cubes[$period][$k];
-            $c['q'] += $p['device'] ? $t['qty'] : 0; $c['a'] += $t['amount']; $c['acc'] += $p['device'] ? 0 : $t['amount'];
+            $c['q'] += $p['device'] ? $t['qty'] : 0; $c['a'] += $t['amount']; $c['acc'] += $p['device'] ? 0 : $t['amount']; $c['aq'] += $p['device'] ? 0 : $t['qty'];
             $c['docs'][jkey([$t['company'], $t['doc']])] = 1;
             unset($c);
             if (!isset($custs[$t['customer']])) $missing[$t['customer']] = true;
