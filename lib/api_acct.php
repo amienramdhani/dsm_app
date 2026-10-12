@@ -29,6 +29,7 @@ function acctUsage_(array $db, string $nik): array {
         $n = count(array_filter(array_slice($g, 1), fn($r) => text_($r[$i] ?? null) === $nik));
         if ($n) { $out['refs'][] = ['sheet' => $c['sheet'], 'col' => $c['col'], 'what' => $c['what'], 'count' => $n]; $out['total'] += $n; }
     }
+    if(function_exists('tmAccountReferences_')) foreach(tmAccountReferences_($nik) as $r){$out['refs'][]=$r;$out['total']+=$r['count'];}
     $ms = readGrid_('Master_Sales'); $h = array_map('text_', $ms[0]); $ni = array_search('NIK KARYAWAN', $h, true); $pi = array_search('POSISI', $h, true);
     foreach (array_slice($ms, 1) as $r) if (text_($r[$ni] ?? null) === $nik) $out['roles'][] = PortalCore::position($r[$pi] ?? null, 2);
     return $out;
@@ -41,6 +42,7 @@ function apiAccountMergePreview($token, $keep, $drop) {
     $inSheet = fn($n) => js_some(array_slice($ms, 1), fn($r) => text_($r[$ni] ?? null) === $n);
     if (!$pk && !$inSheet($keep)) fail_('Akun yang dipertahankan (' . $keep . ') tidak ditemukan.');
     $u = acctUsage_($db, $drop); $block = [];
+    foreach($u['refs'] as $ref) if(str_starts_with($ref['sheet'],'_tm_')) $block[]='Akun masih memiliki '.$ref['count'].' referensi Telemarketing. Nonaktifkan akun agar histori tetap utuh.';
     if ($drop === $c['u']['nik']) $block[] = 'Tidak bisa menggabungkan akun yang sedang dipakai login.';
     $dealerRef = js_find($u['refs'], fn($r) => $r['sheet'] === 'Master_Customer');
     if ($dealerRef && !($pk && truthy($pk['sales'] ?? false))) $block[] = 'Akun ' . $drop . ' memegang ' . $dealerRef['count'] . ' dealer, tapi ' . $keep . ' bukan Sales. Transfer dealernya dulu atau pilih akun Sales.';

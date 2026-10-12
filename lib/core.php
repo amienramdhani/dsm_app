@@ -6,7 +6,7 @@
 require_once __DIR__ . '/js.php';
 
 final class PortalCore {
-    const LEVEL = ['SALES' => 1, 'ASM' => 2, 'RGM' => 3, 'ADMIN' => 3.5, 'HEAD OF SALES' => 4, 'CHIEF OPERATING OFFICER' => 5, 'CHIEF COMMERCIAL OFFICER' => 5, 'BOARD OF DIRECTOR' => 6, 'SUPER ADMIN' => 7];
+    const LEVEL = ['TELEMARKETING' => 1, 'SALES' => 1, 'ASM' => 2, 'RGM' => 3, 'ADMIN' => 3.5, 'HEAD OF SALES' => 4, 'CHIEF OPERATING OFFICER' => 5, 'CHIEF COMMERCIAL OFFICER' => 5, 'BOARD OF DIRECTOR' => 6, 'SUPER ADMIN' => 7];
 
     /** Versi data orang; menghapus cache saat snapshot berganti. */
     public static string $ver = '';
@@ -97,13 +97,13 @@ final class PortalCore {
                 foreach ($people as $p) if ($p['nik'] === $nik || (in_array($p['role'], ['SALES', 'ASM', 'RGM'], true) && in_array($p['wilayah'] ?? null, $ar, true))) $o[] = $p['nik'];
                 return $o;
             }
-            if (self::lv($root['role']) >= 4) return array_map(fn($p) => $p['nik'], $people);
+            if (self::lv($root['role']) >= 4) return array_map(fn($p) => $p['nik'], array_values(array_filter($people, fn($p) => $p['role'] !== 'TELEMARKETING')));
             $set = [$nik => true]; $list = [$nik]; $changed = true;
             while ($changed) {
                 $changed = false;
                 foreach ($people as $p) {
                     $a = $p['atasan'] ?? '';
-                    if ($a !== '' && $a !== null && isset($set[(string) $a]) && !isset($set[(string) $p['nik']])) { $set[(string) $p['nik']] = true; $list[] = $p['nik']; $changed = true; }
+                    if ($p['role'] !== 'TELEMARKETING' && $a !== '' && $a !== null && isset($set[(string) $a]) && !isset($set[(string) $p['nik']])) { $set[(string) $p['nik']] = true; $list[] = $p['nik']; $changed = true; }
                 }
             }
             return $list;
@@ -363,6 +363,7 @@ final class PortalCore {
         $total = self::metrics($rows, $db, $period);
         $idSet = js_set($ids);
         $bl = array_map(fn($r) => $r['brand'], $rows);
+        if (isset($db['_tm'])) foreach ($db['_tm']['pairs'] as $pair) $bl[] = $pair['brand'];
         foreach ($db['meta']['targets'] ?? [] as $t) if ($t['period'] === $period && isset($idSet[(string) $t['nik']]) && !truthy($t['indicator'] ?? '') && $t['brand'] !== 'ALL') $bl[] = $t['brand'];
         $brands = js_sort_default(uniq($bl));
         $brandRows = array_map(fn($b) => ['brand' => $b, 'current' => self::metrics($rows, $db, $period, $b), 'previous' => self::metrics($previous, $db, $pp, $b), 'target' => self::target($db['meta'], $period, $ids, $b, 'QTY'), 'targetDA' => self::target($db['meta'], $period, $ids, $b, 'DA'), 'targetNOO' => self::target($db['meta'], $period, $ids, $b, 'NOO')], $brands);
@@ -394,7 +395,15 @@ final class PortalCore {
             $ds = array_map(fn($r) => $r['date'], $history); sort($ds, SORT_STRING); $last = $ds ? end($ds) : null;
             $currentQty = 0; foreach ($current as $r) $currentQty += $r['q'];
             $status = $currentQty >= 2 ? 'AKTIF' : ($currentQty > 0 ? 'BELUM MINIMUM DA' : (in_array($pp, $periods, true) ? 'DA BULAN LALU' : (!$periods ? 'BELUM ORDER' : (in_array($ppp, $periods, true) ? 'IDLE' : 'PASIF'))));
-            $customers[] = ['id' => $id, 'nama' => js_or($c['nama'] ?? null, 'Master belum tersedia'), 'nik' => js_or($c['nik'] ?? null, $current[0]['nik'] ?? null), 'region' => $c['region'] ?? '', 'kota' => $c['kota'] ?? '', 'alamat' => $c['alamat'] ?? '', 'hp' => $c['hp'] ?? '', 'status' => $status, 'last' => $last, 'jeda' => $last ? (int) floor($cutDays - iso_days($last)) : null, 'current' => self::metrics($current, $db, $period), 'previous' => self::metrics($old, $db, $pp), 'brands' => array_map(fn($b) => array_merge(['brand' => $b], self::metrics($current, $db, $period, $b)), $brands)];
+            $bs = []; $bsr = []; $mi = fn($p) => (int) substr($p, 0, 4) * 12 + (int) substr($p, 5, 2); $thr = function_exists('brandStatusThresholds_') ? brandStatusThresholds_() : ['*' => [2, 3]];
+            foreach ($brands as $b) {
+                $nb = []; foreach ($hist as $r) if ($r['brand'] === $b) { $k = substr($r['date'], 0, 7); $nb[$k] = ($nb[$k] ?? 0) + $r['q']; }
+                $pb = array_keys(array_filter($nb, fn($q) => $q > 0)); if (!$pb) continue; sort($pb, SORT_STRING);
+                $cq = 0; foreach ($current as $r) if ($r['brand'] === $b) $cq += $r['q'];
+                [$ti, $tp] = $thr[js_upper($b)] ?? $thr['*']; $first = $db['first'][jkey([$id, $b])] ?? null; $g = $mi($period) - $mi(end($pb));
+                $bsr[$b] = ['last' => end($pb), 'gap' => $g, 'idle' => $ti, 'pasif' => $tp, 'months' => $pb]; $bs[$b] = $cq > 0 ? ($first && substr($first['date'], 0, 7) === $period ? 'NOO' : 'AKTIF') : ($g < $ti ? 'BULAN' : ($g < $tp ? 'IDLE' : 'PASIF'));
+            }
+            $customers[] = ['id' => $id, 'nama' => js_or($c['nama'] ?? null, 'Master belum tersedia'), 'nik' => js_or($c['nik'] ?? null, $current[0]['nik'] ?? null), 'region' => $c['region'] ?? '', 'kota' => $c['kota'] ?? '', 'alamat' => $c['alamat'] ?? '', 'hp' => $c['hp'] ?? '', 'status' => $status, 'bs' => js_obj($bs), 'bsr' => js_obj($bsr), 'last' => $last, 'jeda' => $last ? (int) floor($cutDays - iso_days($last)) : null, 'current' => self::metrics($current, $db, $period), 'previous' => self::metrics($old, $db, $pp), 'brands' => array_map(fn($b) => array_merge(['brand' => $b], self::metrics($current, $db, $period, $b)), $brands)];
         }
         $types = [];
         foreach ($rows as $r) { if (!$r['q']) continue; $k = jkey([$r['brand'], $r['type']]); if (!isset($types[$k])) $types[$k] = ['brand' => $r['brand'], 'type' => $r['type'], 'qty' => 0]; $types[$k]['qty'] += $r['q']; }
@@ -445,6 +454,7 @@ final class PortalCore {
         $out = [];
         foreach (js_keys($map) as $k) {
             $p = $map[$k];
+            if ($p['role'] === 'TELEMARKETING' && (($map[$p['atasan']]['role'] ?? '') !== 'RGM')) fail_('Telemarketing wajib memiliki satu RGM sebagai Atasan Utama.');
             if ($p['atasan'] === $p['nik']) fail_('Atasan utama menunjuk diri sendiri: ' . $p['nik']);
             if ($p['atasan'] !== '' && !isset($map[$p['atasan']])) fail_('Atasan tidak ditemukan: ' . $p['atasan']);
             $seen = [$p['nik'] => true]; $n = $p['atasan'];

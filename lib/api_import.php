@@ -274,17 +274,19 @@ function apiSaveUser($token, $input) {
         $nik = text_($input['nik'] ?? null); $original = text_($input['original'] ?? null); $name = text_($input['nama'] ?? null);
         $role = text_($input['role'] ?? null); $region = text_($input['region'] ?? null); $boss = text_($input['atasan'] ?? null);
         $old = PortalCore::person($db['meta']['people'], $nik);
-        $allowedRoles = $isSuper ? array_map('strval', array_keys(PortalCore::LEVEL)) : ['SALES', 'ASM', 'RGM'];
+        $allowedRoles = $isSuper ? array_map('strval', array_keys(PortalCore::LEVEL)) : (($old['role'] ?? '') === 'TELEMARKETING' && tmCanManage_($u,$nik) ? ['TELEMARKETING'] : ['SALES', 'ASM', 'RGM']);
         if (!preg_match('/^[A-Za-z0-9._-]{2,60}$/', $nik) || $name === '' || mb_strlen($name) > 120 || !in_array($role, $allowedRoles, true)) fail_('NIK, nama, atau jabatan tidak valid.');
         if ($original !== '' && $original !== $nik) fail_('NIK akun tidak dapat diganti.');
         if (($original !== '' && !$old) || ($original === '' && $old)) fail_('User tidak ditemukan atau NIK sudah terdaftar.');
         if ($old && !canManageUser_($u, $old)) fail_('User di luar kewenangan.');
+        if (($old['role']??'')==='TELEMARKETING' && $role!=='TELEMARKETING' && tmAccountReferences_($nik)) fail_('Akun Telemarketing memiliki histori. Nonaktifkan akun dan gunakan NIK baru untuk jabatan lain agar histori tetap utuh.');
         if ($nik === $u['nik'] && ($role !== $old['role'] || $region !== ($old['region'] ?? '') || $boss !== ($old['atasan'] ?? ''))) fail_('Perubahan hak akun sendiri harus dilakukan Super Admin lain.');
         if (($old['role'] ?? null) === 'SUPER ADMIN' && $role !== 'SUPER ADMIN' && lastSuper_($db, $nik)) fail_('Super Admin aktif terakhir harus dipertahankan.');
         $rm = settings_()['regions']; $willRegion = '';
         foreach ($rm as $r) if (js_str($r['REGION'] ?? null) === $region) { $willRegion = js_str(js_or($r['WILAYAH_KPI'] ?? null, '')); break; }
-        if (!$isSuper && !in_array($willRegion, $u['adminRegions'] ?? [], true)) fail_('Region tujuan di luar penugasan.');
-        if (!$isSuper && $old && ($old['wilayah'] ?? null) !== $willRegion) fail_('Perpindahan antar big region melalui Super Admin.');
+        if (!$isSuper && $role !== 'TELEMARKETING' && !in_array($willRegion, $u['adminRegions'] ?? [], true)) fail_('Region tujuan di luar penugasan.');
+        if (!$isSuper && $role !== 'TELEMARKETING' && $old && ($old['wilayah'] ?? null) !== $willRegion) fail_('Perpindahan antar big region melalui Super Admin.');
+        if ($role === 'TELEMARKETING' && (!$boss || (person_($db, $boss)['role'] ?? '') !== 'RGM')) fail_('Pilih satu RGM sebagai Atasan Utama Telemarketing.');
         if ($boss !== '') {
             $b = PortalCore::person($db['meta']['people'], $boss);
             if (!$b || PortalCore::lv($b['role']) <= PortalCore::lv($role) || $b['role'] === 'ADMIN' || (!$isSuper && !canManageUser_($u, $b))) fail_('Atasan harus berada pada jabatan lebih tinggi dalam kewenangan.');

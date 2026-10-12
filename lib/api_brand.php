@@ -2,14 +2,22 @@
 /** Menu admin Brand: tambah / ubah catatan / nonaktifkan. Nonaktif hanya menyembunyikan brand dari pilihan upload baru; histori & laporan tetap utuh. */
 require_once __DIR__ . '/common.php';
 
-const BRAND_HEADS = ['BRAND', 'AKTIF', 'CATATAN', 'UPDATED_BY', 'UPDATED_AT'];
+const BRAND_HEADS = ['BRAND', 'AKTIF', 'CATATAN', 'UPDATED_BY', 'UPDATED_AT', 'IDLE_BULAN', 'PASIF_BULAN'];
+const BRAND_STD = '__STANDAR__';
 function brandMaster_(): array {
     if (isset($GLOBALS['DSM_BRM'])) return $GLOBALS['DSM_BRM'];
     $g = readGrid_('Master_Brand'); $out = [];
     if ($g) { $h = array_map('text_', $g[0]); $ix = array_flip($h);
         foreach (array_slice($g, 1) as $r) { $b = text_($r[$ix['BRAND'] ?? 0] ?? null); if ($b === '') continue;
-            $out[js_upper($b)] = ['brand' => $b, 'aktif' => js_upper(text_($r[$ix['AKTIF'] ?? 1] ?? 'TRUE')) !== 'FALSE', 'catatan' => text_($r[$ix['CATATAN'] ?? 2] ?? null), 'by' => text_($r[$ix['UPDATED_BY'] ?? 3] ?? null), 'at' => text_($r[$ix['UPDATED_AT'] ?? 4] ?? null)]; } }
+            $out[js_upper($b)] = ['brand' => $b, 'aktif' => js_upper(text_($r[$ix['AKTIF'] ?? 1] ?? 'TRUE')) !== 'FALSE', 'catatan' => text_($r[$ix['CATATAN'] ?? 2] ?? null), 'by' => text_($r[$ix['UPDATED_BY'] ?? 3] ?? null), 'at' => text_($r[$ix['UPDATED_AT'] ?? 4] ?? null), 'idle' => ($v = text_($r[$ix['IDLE_BULAN'] ?? 5] ?? null)) !== '' ? (int) $v : null, 'pasif' => ($v = text_($r[$ix['PASIF_BULAN'] ?? 6] ?? null)) !== '' ? (int) $v : null]; } }
     return $GLOBALS['DSM_BRM'] = $out;
+}
+/** Ambang status dealer per brand: ['*'=>[idle,pasif], 'ITEL'=>[idle,pasif], ...]. Kosong = ikut standar (default 2 dan 3 bulan). */
+function brandStatusThresholds_(): array {
+    if (isset($GLOBALS['DSM_BRT'])) return $GLOBALS['DSM_BRT'];
+    $m = brandMaster_(); $std = $m[BRAND_STD] ?? null; $si = max(1, (int) ($std['idle'] ?? 2)); $sp = max($si + 1, (int) ($std['pasif'] ?? 3)); $o = ['*' => [$si, $sp]];
+    foreach ($m as $k => $v) { if ($k === BRAND_STD || ($v['idle'] === null && $v['pasif'] === null)) continue; $i = $v['idle'] ?? $si; $p = $v['pasif'] ?? $sp; $o[$k] = [max(1, $i), max($i + 1, $p)]; }
+    return $GLOBALS['DSM_BRT'] = $o;
 }
 function brandInactive_(): array { $o = []; foreach (brandMaster_() as $k => $v) if (!$v['aktif']) $o[$v['brand']] = true; return $o; }
 function brandGuard_($token): array { return guard_($token, true); }
@@ -19,16 +27,17 @@ function brandRows_(array $meta): array {
         if (!isset($use[$k])) $use[$k] = ['brand' => $b, 'products' => 0, 'device' => 0]; $use[$k]['products']++; if (truthy($p['device'] ?? null)) $use[$k]['device']++; }
     $m = brandMaster_(); $rows = [];
     foreach (array_unique(array_merge(array_keys($use), array_keys($m))) as $k) {
-        $rows[] = ['brand' => $m[$k]['brand'] ?? $use[$k]['brand'], 'aktif' => $m[$k]['aktif'] ?? true, 'catatan' => $m[$k]['catatan'] ?? '', 'products' => $use[$k]['products'] ?? 0, 'device' => $use[$k]['device'] ?? 0, 'updatedBy' => $m[$k]['by'] ?? '', 'updatedAt' => $m[$k]['at'] ?? ''];
+        if ($k === BRAND_STD) continue;
+        $rows[] = ['brand' => $m[$k]['brand'] ?? $use[$k]['brand'], 'aktif' => $m[$k]['aktif'] ?? true, 'catatan' => $m[$k]['catatan'] ?? '', 'products' => $use[$k]['products'] ?? 0, 'device' => $use[$k]['device'] ?? 0, 'updatedBy' => $m[$k]['by'] ?? '', 'updatedAt' => $m[$k]['at'] ?? '', 'idle' => $m[$k]['idle'] ?? null, 'pasif' => $m[$k]['pasif'] ?? null];
     }
     return js_sort($rows, fn($a, $b) => lcn_($a['brand'], $b['brand']));
 }
-function apiBrandAdmin($token) { brandGuard_($token); $db = snapshot_(); return ['rows' => brandRows_($db['meta']), 'classifications'=>brandRuleRows_(), 'parents'=>brandRuleParents_(), 'categories'=>brandRuleCategories_()]; }
+function apiBrandAdmin($token) { brandGuard_($token); $db = snapshot_(); return ['thresholds' => ['std' => brandStatusThresholds_()['*']], 'rows' => brandRows_($db['meta']), 'classifications'=>brandRuleRows_(), 'parents'=>brandRuleParents_(), 'categories'=>brandRuleCategories_()]; }
 function brandWrite_(string $brand, bool $aktif, string $catatan, string $nik): void {
     ensureTable_('Master_Brand', BRAND_HEADS); $g = readGrid_('Master_Brand'); $rows = array_slice($g, 1); $now = gmdate('c'); $hit = false;
-    foreach ($rows as $i => $r) if (js_upper(text_($r[0] ?? null)) === js_upper($brand)) { $rows[$i] = [text_($r[0]), $aktif ? 'TRUE' : 'FALSE', $catatan, $nik, $now]; $hit = true; }
-    if (!$hit) $rows[] = [$brand, $aktif ? 'TRUE' : 'FALSE', $catatan, $nik, $now];
-    putTable_('Master_Brand', BRAND_HEADS, array_values($rows)); unset($GLOBALS['DSM_BRM']);
+    foreach ($rows as $i => $r) if (js_upper(text_($r[0] ?? null)) === js_upper($brand)) { $rows[$i] = [text_($r[0]), $aktif ? 'TRUE' : 'FALSE', $catatan, $nik, $now, $r[5] ?? '', $r[6] ?? '']; $hit = true; }
+    if (!$hit) $rows[] = [$brand, $aktif ? 'TRUE' : 'FALSE', $catatan, $nik, $now, '', ''];
+    putTable_('Master_Brand', BRAND_HEADS, array_values($rows)); unset($GLOBALS['DSM_BRM'], $GLOBALS['DSM_BRT']);
 }
 function apiBrandSave($token, $brand = null, $catatan = null, $aktif = null) {
     $u = brandGuard_($token);
@@ -150,3 +159,24 @@ function apiBrandClassificationSave($token,$input=null,$reason=null) {
     });
 }
 
+
+/** Simpan ambang status dealer (bulan tanpa order) per brand. $rows: [{brand, idle, pasif}], brand '*' = standar. Kosong = ikut standar. */
+function apiBrandThresholdSave($token, $rows = null, $reason = null) {
+    $u = brandGuard_($token); $rows = is_array($rows) ? $rows : []; $reason = text_($reason);
+    if (mb_strlen($reason) < 5) fail_('Isi alasan perubahan minimal 5 karakter.');
+    return with_lock_(function () use ($u, $rows) {
+        ensureTable_('Master_Brand', BRAND_HEADS); $g = readGrid_('Master_Brand'); $cur = array_slice($g, 1); $now = gmdate('c'); $by = [];
+        foreach ($cur as $i => $r) $by[js_upper(text_($r[0] ?? null))] = $i;
+        foreach ($rows as $x) {
+            $b = text_($x['brand'] ?? null); if ($b === '') continue; $key = $b === '*' ? BRAND_STD : js_upper($b);
+            $i = text_($x['idle'] ?? null); $p = text_($x['pasif'] ?? null);
+            foreach ([$i, $p] as $v) if ($v !== '' && (!ctype_digit($v) || (int) $v < 1 || (int) $v > 36)) fail_('Ambang bulan harus angka 1–36.');
+            if ($i !== '' && $p !== '' && (int) $p <= (int) $i) fail_('Pasif harus lebih besar dari Idle (' . ($b === '*' ? 'Standar' : $b) . ').');
+            if (isset($by[$key])) { $r = $cur[$by[$key]]; $cur[$by[$key]] = [text_($r[0]), $r[1] ?? 'TRUE', $r[2] ?? '', $u['nik'], $now, $i, $p]; }
+            else { $cur[] = [$b === '*' ? BRAND_STD : $b, 'TRUE', '', $u['nik'], $now, $i, $p]; $by[$key] = count($cur) - 1; }
+        }
+        putTable_('Master_Brand', BRAND_HEADS, array_values($cur)); unset($GLOBALS['DSM_BRM'], $GLOBALS['DSM_BRT']);
+        data_rev_bump_('Master'); audit_($u['nik'], 'BRAND_THRESHOLD', count($rows) . ' brand');
+        return ['thresholds' => brandStatusThresholds_()];
+    });
+}

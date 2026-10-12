@@ -155,7 +155,7 @@ function deviceList_(string $nik): array {
 /** Daftarkan perangkat baru (menegakkan batas 4/NIK) atau perbarui yang sudah ada. */
 function deviceRegisterOrTouch_(string $nik, string $deviceId, ?string $name, string $role = ''): void {
     devices_schema_();
-    // DSM v5: perangkat yang tidak aktif melewati batas idle (30 hari / 7 hari admin) otomatis gugur, jadi tidak memenuhi kuota 4 perangkat.
+    // DSM v5: perangkat yang tidak aktif melewati batas idle (30 hari / 7 hari admin) otomatis gugur, jadi tidak memenuhi kuota 5 perangkat.
     db_()->prepare('DELETE FROM _devices WHERE nik=? AND last_seen_ms < ?')->execute([$nik, now_ms() - deviceIdleMs_($role)]);
     $deviceId = substr(preg_replace('/[^a-zA-Z0-9_-]/', '', $deviceId), 0, 64);
     if ($deviceId === '') fail_('Perangkat tidak dikenali. Muat ulang halaman lalu coba lagi.');

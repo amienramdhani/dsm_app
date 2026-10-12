@@ -9,8 +9,15 @@ function apiBootstrap($token) {
         $ids = []; foreach ($db['meta']['people'] as $p) if ($p['nik'] === $me['atasan'] || ($p['atasan'] ?? null) === $me['atasan']) $ids[] = $p['nik'];
     } else $ids = $own;
     $exportAccess = $demo['active'] ? array_fill_keys(exportAccessTypeIds_(), false) : exportAccessForUser_($u);
+    if ($u['role'] === 'TELEMARKETING') $ids = array_merge([$u['nik']], $db['_tm']['ids'] ?? []);
     $set = js_set($ids);
     $periods = js_keys($db['coverage']); sort($periods, SORT_STRING); $periods = array_reverse($periods);
+    $tmSeen = true;
+    if (in_array($u['role'], ['ASM', 'RGM'], true) && function_exists('tmVisiblePairs_')) {
+        $tmSeen = false;
+        try { foreach ($db['meta']['people'] as $p) if ($p['role'] === 'TELEMARKETING' && ($p['atasan'] ?? '') === $u['nik'] || ($p['role'] === 'TELEMARKETING' && tmVisiblePairs_($db, $u, $p['nik'], tmLivePairs_($p['nik'])))) { $tmSeen = true; break; } } catch (Throwable $e) { $tmSeen = true; }
+    }
+    $u['tmVisible'] = $tmSeen;
     return ['user' => $u, 'people' => js_filter($db['meta']['people'], fn($p) => isset($set[(string) $p['nik']])), 'periods' => $periods, 'processed' => $db['processed'] ?? null, 'version' => $db['id'], 'exportAccess' => $exportAccess, 'demo' => $demo];
 }
 
@@ -129,7 +136,7 @@ function apiDashboard($token, $period, $selection) {
     $result['noData'] = !empty($db['noData']); $result['partial'] = !empty($db['partial']);
     $result['processed'] = $db['processed'] ?? null; $result['version'] = $db['id'];
     $result['scopeCount'] = count(js_filter($ids, fn($id) => truthy(person_($db, $id)['sales'] ?? false)));
-    return $result;
+    return tmDashboardFinish_($result, $u, $period);
 }
 
 // ------------------------------------------------------------------

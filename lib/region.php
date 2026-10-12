@@ -83,7 +83,7 @@ function monthSequence_(string $from, string $to): array {
 
 function coverageView_(array $db, string $period, array $ids, string $kind, $actor = null): array {
     PortalCore::month($period); // pengaman: di Apps Script periode rusak bikin loop tanpa akhir
-    $selected = RegionCore::sliceFor($db, $period, $ids, $kind);
+    $selected = !empty($db['_tm']) ? $db['_tm']['regions'] : RegionCore::sliceFor($db, $period, $ids, $kind);
     if (($actor['role'] ?? null) === 'ADMIN') $selected = js_filter($selected, fn($r) => in_array($r, $actor['adminRegions'] ?? [], true));
     if (!isset($db['parts'])) return $db;
     $mk = PortalCore::vid($db) . '|' . $period . '|' . $kind . '|' . js_stringify($selected);

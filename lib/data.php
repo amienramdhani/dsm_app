@@ -275,14 +275,15 @@ function snapshot_(): array {
     $id = prop_get_('ACTIVE');
     if (!$id) fail_('Belum ada data dipublikasikan.');
     $key = $id . '|' . (prop_get_('DEALER_CONTACT_STATE') ?? '');
-    if ($snap !== null && $snapId === $key) return $snap;
+    if ($snap !== null && $snapId === $key) return function_exists('tmScopedSnapshot_') ? tmScopedSnapshot_($snap) : $snap;
     $s = readJson_($id);
     PortalCore::resetMemo($id);
     PortalCore::adaptMeta($s['meta']);
     applyDealerContacts_($s['meta']);
     $s['id'] = $id; $s['_vid'] = $id;
     $snapId = $key;
-    return $snap = $s;
+    $snap = $s;
+    return function_exists('tmScopedSnapshot_') ? tmScopedSnapshot_($snap) : $snap;
 }
 
 function contactState_(): array {

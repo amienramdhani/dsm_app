@@ -87,10 +87,14 @@ function monthPointer_(array $entries): string {
 
 /** Baca baris dari penunjuk apa pun: "P:<id>", "M|…", atau id file JSON lama. */
 function dataRows_(string $ref): array {
+    $rows = dataRowsUnscoped_($ref);
+    return function_exists('tmFilterRows_') ? tmFilterRows_($rows) : $rows;
+}
+function dataRowsUnscoped_(string $ref): array {
     if (str_starts_with($ref, 'P:')) return partRowsSql_((int) substr($ref, 2));
     if (str_starts_with($ref, 'M|')) {
         $out = [];
-        foreach (array_filter(explode('|', substr($ref, 2)), fn($x) => $x !== '') as $one) foreach (dataRows_($one) as $t) $out[] = $t;
+        foreach (array_filter(explode('|', substr($ref, 2)), fn($x) => $x !== '') as $one) foreach (dataRowsUnscoped_($one) as $t) $out[] = $t;
         return $out;
     }
     return pubReadJsonRaw_($ref);
@@ -160,6 +164,10 @@ function movesRegionOk_(array $db, $region): bool {
  * $o: customer (string), out (true = hanya baris dengan outQty ≠ 0).
  */
 function stockMoves_(array $db, ?string $from, ?string $to, array $o = []): array {
+    $rows = stockMovesUnscoped_($db, $from, $to, $o);
+    return function_exists('tmFilterRows_') ? tmFilterRows_($rows) : $rows;
+}
+function stockMovesUnscoped_(array $db, ?string $from, ?string $to, array $o = []): array {
     if (empty($db['stock'])) return [];
     $snap = movesSnap_($db);
     $cust = isset($o['customer']) ? (string) $o['customer'] : null; $outOnly = !empty($o['out']);
@@ -197,6 +205,10 @@ function stockMoves_(array $db, ?string $from, ?string $to, array $o = []): arra
  * Hasil: [customer, sku, stock(sejak BASE), out(sejak BASE), sellout(>= $from), early(bool), st(sejak BASE), n(jumlah mutasi sejak BASE)].
  */
 function stockBalance_(array $db, string $asof, string $from): array {
+    $rows = stockBalanceUnscoped_($db, $asof, $from);
+    return function_exists('tmFilterRows_') ? tmFilterRows_($rows) : $rows;
+}
+function stockBalanceUnscoped_(array $db, string $asof, string $from): array {
     $snap = movesSnap_($db); $base = StockCore::BASE; $out = [];
     if ($snap === null) {
         foreach ($db['stock']['moves'] ?? [] as $t) {

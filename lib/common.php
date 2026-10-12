@@ -7,6 +7,7 @@ function people_(array $db): array { return $db['meta']['people']; }
 function person_(array $db, $nik): ?array { return PortalCore::person($db['meta']['people'], $nik); }
 
 function allowed_(array $db, array $user, $selection): array {
+    if (($user['role'] ?? '') === 'TELEMARKETING') return tmAllowedIds_($db, $user, $selection);
     $base = PortalCore::scope($db['meta']['people'], $user['nik']);
     if (!truthy($selection) || $selection === 'ALL') return $base;
     if (!in_array((string) $selection, array_map('strval', $base), true)) fail_('Data di luar cakupan.');

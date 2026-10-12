@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/target_number.php";
 /** KpiAdmin.gs — Atur KPI & Edit target di aplikasi. */
 require_once __DIR__ . '/activity.php';
 
@@ -265,7 +266,7 @@ function apiTargetSave($token, $period, $changes, $reason = null) {
         $list = [];
         foreach ($changes as $x) {
             $x = is_array($x) ? $x : [];
-            $nik = text_($x['nik'] ?? null); $p = PortalCore::person($db['meta']['people'], $nik); $v = kpiNum_($x['value'] ?? null); $m = js_upper(text_($x['metric'] ?? null));
+            $nik = text_($x['nik'] ?? null); $p = PortalCore::person($db['meta']['people'], $nik); $v = targetNumber_($x['value'] ?? null); $m = js_upper(text_($x['metric'] ?? null));
             if (!$p || !truthy($p['sales'] ?? false)) fail_('NIK ' . $nik . ' bukan Sales — target ASM/RGM tidak diisi di sini.');
             if ($u['role'] !== 'SUPER ADMIN' && !canManageUser_($u, $p)) fail_($p['nama'] . ' di luar wilayah admin Anda.');
             if (!isset(KPI_METRIC_COL[$m])) fail_('Metrik tidak valid.');

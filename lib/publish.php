@@ -216,7 +216,7 @@ function adminGuard_($token, ?array $db = null): array {
     return $u;
 }
 function canManageUser_(array $actor, array $target): bool {
-    return $actor['role'] === 'SUPER ADMIN' || ($actor['role'] === 'ADMIN' && in_array($target['role'], ['SALES', 'ASM', 'RGM'], true) && in_array($target['wilayah'] ?? null, $actor['adminRegions'] ?? [], true));
+    return $actor['role'] === 'SUPER ADMIN' || (function_exists('tmCanManage_') && ($target['role'] ?? '') === 'TELEMARKETING' && tmCanManage_($actor, $target['nik'])) || ($actor['role'] === 'ADMIN' && in_array($target['role'], ['SALES', 'ASM', 'RGM'], true) && in_array($target['wilayah'] ?? null, $actor['adminRegions'] ?? [], true));
 }
 function enforceUser_($token, $nik): array {
     $db = snapshot_(); $u = adminGuard_($token, $db); $target = PortalCore::person($db['meta']['people'], $nik);

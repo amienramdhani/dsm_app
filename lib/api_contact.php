@@ -11,14 +11,14 @@ function contactValues_($c): array { $c = is_array($c) ? $c : []; return ['pic' 
 function contactSame_($a, $b): bool { return js_stringify($a) === js_stringify($b); }
 function contactRegion_(array $db, $c): string { $p = js_find($db['meta']['people'], fn($p) => $p['nik'] === $c['nik']); return js_str(js_or($p['wilayah'] ?? null, '')); }
 function contactCanReview_(array $db, array $u, $c): bool { return !!$c && ($u['role'] === 'SUPER ADMIN' || ($u['role'] === 'ADMIN' && in_array(contactRegion_($db, $c), $u['adminRegions'] ?? [], true))); }
-function contactCanSubmit_(array $u, $c): bool { return !!$c && $u['role'] === 'SALES' && $c['nik'] === $u['nik']; }
+function contactCanSubmit_(array $u, $c): bool { return !!$c && (($u['role'] === 'SALES' && $c['nik'] === $u['nik']) || ($u['role'] === 'TELEMARKETING' && tmHasDealer_(tmLivePairs_($u['nik']), (string)$c['id']))); }
 function contactRevision_(array $db, $c): string { return hash_(js_stringify(['values' => contactValues_($c), 'owner' => $c['nik'], 'region' => contactRegion_($db, $c)])); }
 function contactPlain_($v): string { return preg_replace('/\D/', '', $v); }
 function contactHpOk_(string $hp): bool { return (bool) preg_match('/^[+0-9 ()-]{8,25}$/D', $hp); }
 
 function apiDealerContact($token, $id = null) {
     $db = snapshot_(); $u = guard_($token, false, false, $db); $c = $db['meta']['customers'][js_str($id)] ?? null;
-    if (!$c || !(in_array($c['nik'], PortalCore::scope($db['meta']['people'], $u['nik']), true) || contactCanReview_($db, $u, $c))) fail_('Dealer di luar cakupan.');
+    if (!$c || !(contactCanSubmit_($u, $c) || in_array($c['nik'], PortalCore::scope($db['meta']['people'], $u['nik']), true) || contactCanReview_($db, $u, $c))) fail_('Dealer di luar cakupan.');
     $state = contactState_();
     $rq = array_values(array_filter($state['requests'], fn($r) => $r['dealer'] === $id && ($r['actor'] === $u['nik'] || contactCanReview_($db, $u, $c))));
     return ['values' => contactValues_($c), 'canSubmit' => contactCanSubmit_($u, $c), 'canEdit' => contactCanReview_($db, $u, $c), 'revision' => contactRevision_($db, $c), 'requests' => array_reverse(array_slice($rq, -20))];
@@ -33,8 +33,8 @@ function apiSubmitDealerContact($token, $input = null) {
         foreach ($state['requests'] as $r) if ($r['dealer'] === $c['id'] && $r['status'] === 'PENDING') fail_('Dealer masih memiliki pengajuan menunggu persetujuan.');
         $before = contactValues_($c);
         if (!contactSame_($before, $input['before'] ?? null)) fail_('Kontak berubah. Buka ulang detail dealer.');
-        $after = ['pic' => text_($input['pic'] ?? null), 'hp' => text_($input['hp'] ?? null), 'alamat' => text_($input['alamat'] ?? null)]; $reason = text_($input['reason'] ?? null);
-        if (mb_strlen($after['pic']) > 120 || mb_strlen($after['alamat']) > 1000 || $after['alamat'] === '' || $after['pic'] === '') fail_('Isi nama PIC (maks.120) dan alamat (maks.1000).');
+        $after = ['pic' => $u['role'] === 'TELEMARKETING' ? $before['pic'] : text_($input['pic'] ?? null), 'hp' => text_($input['hp'] ?? null), 'alamat' => text_($input['alamat'] ?? null)]; $reason = text_($input['reason'] ?? null);
+        if (mb_strlen($after['pic']) > 120 || mb_strlen($after['alamat']) > 1000 || $after['alamat'] === '' || ($after['pic'] === '' && $u['role'] !== 'TELEMARKETING')) fail_('Isi nama PIC (maks.120) dan alamat (maks.1000).');
         $dg = strlen(contactPlain_($after['hp']));
         if (!contactHpOk_($after['hp']) || $dg < 8 || $dg > 15) fail_('Nomor HP harus 8–15 digit.');
         if (mb_strlen($reason) < 5 || mb_strlen($reason) > 500) fail_('Isi alasan 5–500 karakter.');

@@ -32,9 +32,10 @@ require_once __DIR__ . '/lib/api_menu.php';
 require_once __DIR__ . '/lib/api_export2.php';
 require_once __DIR__ . '/lib/api_brand.php';
 require_once __DIR__ . '/lib/rescache.php';
+require_once __DIR__ . '/lib/api_telemarketing.php';
 
 /** Fungsi yang boleh dipanggil dari browser (daftar putih). */
-const DSM_ALLOWED = ['apiBrandAdmin','apiBrandSave','apiBrandSetActive','apiBrandClassificationSave','apiTransactionExportRaw','apiCompare','apiGrowthType','apiHariLibur','apiExportSummary','apiDOS','apiKPIExportOptions','apiKPIExportData','apiDOSExportOptions','apiDOSExportData','apiBrandExportOptions','apiBrandExportData','apiExportDealerCsv','apiExportDealerExcel','apiExportDealerHistory','apiDealerHistory','apiDealerHistorySummary','apiTransactions','apiTransactionGroups','apiDealerStock','apiDealerDetail','apiTeam','apiAdminBanner','apiInfo','apiUploadInfo','apiSetInfoActive','apiDownloadInfo','apiDealerContact','apiSubmitDealerContact','apiContactRequests','apiReviewDealerContacts','apiSaveDealerContact','apiExportDealerContacts','apiStageContactBulk','apiCommitContactBulk','apiDealerTutupAjukan','apiDealerTutupProses','apiDealerTutupUpload','apiStartBackup','apiBackupSettings','apiHealthCheck',
+const DSM_ALLOWED = ['apiKpiValidation','apiOrderBoot','apiOrderList','apiTMAdmin','apiTMProfileSave','apiTMAssignmentSave','apiTMKpiSettings','apiTMKpiSave','apiTMKpiCopy','apiTMKpi','apiTMRank','apiTMBusinessSave','apiTMBoot','apiTMActivity','apiTMFollowUpSave','apiTMOrderSave','apiBrandAdmin','apiBrandSave','apiBrandSetActive','apiBrandClassificationSave','apiBrandThresholdSave','apiTransactionExportRaw','apiCompare','apiGrowthType','apiHariLibur','apiExportSummary','apiDOS','apiKPIExportOptions','apiKPIExportData','apiDOSExportOptions','apiDOSExportData','apiBrandExportOptions','apiBrandExportData','apiExportDealerCsv','apiExportDealerExcel','apiExportDealerHistory','apiDealerHistory','apiDealerHistorySummary','apiTransactions','apiTransactionGroups','apiDealerStock','apiDealerDetail','apiTeam','apiAdminBanner','apiInfo','apiUploadInfo','apiSetInfoActive','apiDownloadInfo','apiDealerContact','apiSubmitDealerContact','apiContactRequests','apiReviewDealerContacts','apiSaveDealerContact','apiExportDealerContacts','apiStageContactBulk','apiCommitContactBulk','apiDealerTutupAjukan','apiDealerTutupProses','apiDealerTutupUpload','apiStartBackup','apiBackupSettings','apiHealthCheck',
     'apiAccountMergePreview', 'apiAccountMergeCommit', 'apiAccountDeleteCheck', 'apiAccountDelete',
     'apiHariLiburAdmin', 'apiHariLiburSave', 'apiHariLiburHapus', 'apiRegionMapGet', 'apiRegionMapSave',
     'apiRegionBrandGet', 'apiKpiRgmPanel', 'apiRegionBrandSave', 'apiKpiGet', 'apiKpiSaveRegion', 'apiKpiSaveRgm', 'apiKpiCopy', 'apiTargetGet', 'apiTargetSave', 'apiCoverageMatrix',
@@ -60,7 +61,7 @@ const DSM_ALLOWED = ['apiBrandAdmin','apiBrandSave','apiBrandSetActive','apiBran
 ];
 
 /** Fungsi yang mengubah data (diblok saat Mode Demo). */
-const DSM_WRITE_FNS = ['apiBrandSave','apiBrandSetActive','apiBrandClassificationSave','apiSubmitDealerContact','apiReviewDealerContacts','apiSaveDealerContact','apiStageContactBulk','apiCommitContactBulk','apiDealerTutupAjukan','apiDealerTutupProses','apiDealerTutupUpload','apiStartBackup','apiBackupSettings','apiUploadInfo','apiSetInfoActive',
+const DSM_WRITE_FNS = ['apiTMKpiCopy','apiBrandThresholdSave','apiTMProfileSave','apiTMAssignmentSave','apiTMKpiSave','apiTMBusinessSave','apiTMFollowUpSave','apiTMOrderSave','apiBrandSave','apiBrandSetActive','apiBrandClassificationSave','apiSubmitDealerContact','apiReviewDealerContacts','apiSaveDealerContact','apiStageContactBulk','apiCommitContactBulk','apiDealerTutupAjukan','apiDealerTutupProses','apiDealerTutupUpload','apiStartBackup','apiBackupSettings','apiUploadInfo','apiSetInfoActive',
     'apiAccountMergeCommit','apiAccountDelete','apiHariLiburSave','apiHariLiburHapus','apiRegionMapSave','apiRegionBrandSave','apiKpiSaveRegion','apiKpiSaveRgm','apiKpiCopy','apiTargetSave','apiCheckpointRestore',
     'apiProductMasterSave','apiDealerBrandSetCutover','apiDealerBrandSet','apiStageUsers','apiCommitUsers','apiStatusBulkStage','apiStatusBulkCommit','apiDealerSave','apiDealerDelete','apiIndukBulkStage','apiIndukBulkCommit','apiUserPinExport','apiDealerRegionSave','apiDealerUploadStage','apiDealerUploadCommit',
     'apiStageDealers','apiCommitDealers','apiAddDealer','apiStageCustomerBulk','apiCommitCustomerBulk','apiStageDealerTransfer','apiCommitDealerTransfer','apiStageMasterBulk','apiCommitMasterBulk',
@@ -115,6 +116,7 @@ try {
     }
     $rf = new ReflectionFunction($fn);
     while (count($args) < $rf->getNumberOfParameters()) $args[] = null; // JS: argumen kosong = undefined
+    tmBeginRequest_($fn, $args);
     $ckey = dsm_cache_key_($fn, $args);
     if ($ckey !== null && ($hit = dsm_cache_get_($ckey)) !== null) { echo $hit; exit; }
     dsm_reply(['ok' => true, 'result' => $fn(...$args)], $ckey);

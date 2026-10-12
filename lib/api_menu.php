@@ -35,7 +35,7 @@ function apiTransactions($token, $period = null, $selection = null, $customer = 
     if (substr($from, 0, 7) !== $period || substr($to, 0, 7) !== $period || $from > $to || $to > $cut) fail_('Rentang tanggal harus dalam bulan pilihan, urut, dan tidak melewati cutoff.');
     if (!isset($db['raw'][$period]) || !truthy($db['raw'][$period])) return ['rows' => [], 'total' => 0, 'page' => 0, 'pageSize' => $size, 'sourceRows' => 0, 'totals' => ['qty' => 0, 'amount' => 0], 'from' => $from, 'to' => $to];
     $set = js_set($ids); $sel = isset($db['selectedRegions']) && $db['selectedRegions'] !== null && $db['selectedRegions'] !== false ? $db['selectedRegions'] : null;
-    $raw = js_filter(dataRows_((string) $db['raw'][$period]), fn($t) => in_set($set, $t['nik'] ?? null) && (!truthy($t['region'] ?? null) || $sel === null || in_array($t['region'], $sel, true)) && (!truthy($customer) || ($t['customer'] ?? null) === $customer) && $t['date'] >= $from && $t['date'] <= $to);
+    $raw = js_filter(dataRows_((string) $db['raw'][$period]), fn($t) => in_set($set, $t['nik'] ?? null) && (!truthy($t['region'] ?? null) || $sel === null || in_array($t['region'], $sel, true)) && (!truthy($customer) || ($t['customer'] ?? null) === $customer || custInduk_($db['meta'], $t['customer'] ?? '') === custInduk_($db['meta'], $customer)) && $t['date'] >= $from && $t['date'] <= $to);
     $all = PortalCore::groupedTransactions($raw, $db['meta']); $n = pageIdx_($page, count($all), $size);
     $all = sortRecords_($all, $sort, [fn($r) => $r['date'], fn($r) => $r['sj'], fn($r) => $r['nama'], fn($r) => $r['brand'], fn($r) => $r['type'], fn($r) => $r['qty'], fn($r) => $r['amount']]);
     $q = 0; $a = 0; foreach ($raw as $t) { $q += $t['qty']; $a += $t['amount']; } $dq = 0; foreach ($all as $g) $dq += (float) ($g['deviceQty'] ?? 0);
@@ -75,8 +75,9 @@ function apiDealerDetail($token, $period = null, $selection = null, $customer = 
     $source = snapshot_(); $u = guard_($token, false, false, $source); $ids = allowed_($source, $u, $selection);
     $db = coverageView_($source, $period, $ids, 'ST', $u); $set = js_set($ids); $known = $db['meta']['customers'][$customer] ?? null;
     $ownerDate = PortalCore::iso($db['coverage'][$period]['cutoff'] ?? null) ?: PortalCore::end($period);
-    $dbaIdx = dbaIndex_(); $picByBrand = []; $brandOwnedInScope = false;
+    $dbaIdx = dbaIndex_(); $picByBrand = []; $brandOwnedInScope = $u['role'] === 'TELEMARKETING' && tmHasDealer_(tmLivePairs_($u['nik']), (string)$customer);
     foreach (dbaPrimaryBrands_() as $picBrand) {
+        if ($u['role'] === 'TELEMARKETING' && !tmHasDealer_(tmLivePairs_($u['nik']), (string)$customer, $picBrand)) continue;
         $o = dealerBrandOwner_($db, (string)$customer, $picBrand, $ownerDate, $dbaIdx);
         $picByBrand[] = ['brand'=>$picBrand,'nik'=>$o['nik'],'nama'=>$o['nama'],'bigRegion'=>$o['big'],'region'=>$o['region'],'source'=>$o['source'],'effectiveFrom'=>$o['assignment']['from'] ?? ''];
         if ($o['nik'] !== '' && in_set($set, $o['nik'])) $brandOwnedInScope = true;
@@ -85,6 +86,7 @@ function apiDealerDetail($token, $period = null, $selection = null, $customer = 
     foreach (js_keys($db['cubes']) as $p) if (strcmp((string) $p, $period) <= 0) foreach (PortalCore::slice($db, (string) $p, $ids) as $r) if ($r['customer'] === $customer) $history[] = $r;
     $soHistory = false;
     foreach (stockMoves_($db, null, PortalCore::end(PortalCore::month($period)), ['customer' => (string) $customer, 'out' => true]) as $t) if ($t['customer'] === $customer && substr($t['date'], 0, 7) <= $period && truthy($t['outQty']) && StockCore::canSee($db, $ids, $customer)) { $soHistory = true; break; }
+    if ($u['role'] === 'TELEMARKETING' && !tmHasDealer_(tmLivePairs_($u['nik']), (string)$customer)) fail_('Dealer di luar penugasan.');
     if (!($known && in_set($set, $known['nik'] ?? null)) && !$brandOwnedInScope && !$history && !$soHistory) fail_('Dealer tidak tersedia dalam cakupan Anda.');
     $rows = js_filter(PortalCore::slice($db, $period, $ids), fn($r) => $r['customer'] === $customer);
     $bs = []; foreach ($db['meta']['products'] as $p) $bs[] = $p['brand']; $brands = array_values(array_unique($bs)); sort($brands, SORT_STRING);
