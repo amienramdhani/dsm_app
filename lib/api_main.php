@@ -262,7 +262,7 @@ function apiRankDetail($token, $period, $nik) {
     $source = snapshot_(); $u = guard_($token, false, false, $source); $period = js_str($period); $nik = js_str($nik);
     $p = person_($source, $nik);
     if (!rankDetailAllowed_($source, $u, $p)) fail_('Rincian KPI di luar izin peringkat.');
-    $ids = $p['role'] === 'ASM' ? PortalCore::scope($source['meta']['people'], $nik) : [$nik];
-    $db = coverageView_($source, $period, $ids, 'ST'); audit_($u['nik'], 'RANK_KPI', $nik);
+    $ids = in_array($p['role'], ['ASM', 'RGM'], true) ? PortalCore::scope($source['meta']['people'], $nik) : [$nik];
+    $db = coverageView_($source, $period, $ids, 'ST', $u); audit_($u['nik'], 'RANK_KPI', $nik);
     return ['nama' => $p['nama'], 'role' => $p['role'], 'region' => $p['wilayah'] ?? null, 'kpi' => PortalCore::kpi($db, $period, $ids, $p['wilayah'] ?? null, $p)];
 }

@@ -362,6 +362,71 @@ function apiTMActivity($token,$period,$nik=null,$filters=null) {
     $orders=[];foreach(tmQuery_('SELECT * FROM _tm_order WHERE nik=? AND date LIKE ? ORDER BY updated_at DESC',[$nik,$period.'-%']) as $r){$o=json_decode($r['data'],true);$full=($u['role']==='TELEMARKETING'&&$u['nik']===$nik)||tmCanManage_($u,$nik)||$u['role']==='SUPER ADMIN'||RegionCore::top($u['role']);if(!$full){if(!$r['dealer']||!tmHasDealer_($visible,$r['dealer']))continue;$brands=array_unique(array_column($o['items'],'brand'));if(array_filter($brands,fn($b)=>!tmHasDealer_($visible,$r['dealer'],$b)))continue;}if(!empty($filters['brand'])&&$filters['brand']!=='ALL'&&!in_array($filters['brand'],array_column($o['items'],'brand'),true))continue;if(!empty($filters['region'])&&$filters['region']!=='ALL'&&$o['region']!==$filters['region'])continue;$orders[]=array_merge($o,['id'=>$r['id'],'revision'=>(int)$r['revision']]);}
     return ['people'=>$people,'nik'=>$nik,'dealers'=>$queue,'fu'=>$fu,'orders'=>$orders,'staleDays'=>$threshold,'fullKpiVisible'=>true,'scopeCount'=>count($visible),'totalAssigned'=>count($live)];
 }
+/** Team overview + daily text report (Telemarketing activity, all roles that may see Telemarketing). */
+function tmTeamPeople_(array $db,array $u,string $period): array {
+    $ok=in_array($u['role'],['TELEMARKETING','ASM','RGM','ADMIN','SUPER ADMIN'],true)||RegionCore::top($u['role']);
+    if(!$ok)fail_('Akses ditolak.');$out=[];
+    foreach($db['meta']['people'] as $p){if(($p['role']??'')!=='TELEMARKETING')continue;if($u['role']==='TELEMARKETING'||tmCanViewPerson_($db,$u,$p,$period))$out[]=$p;}
+    return $out;
+}
+/** Sub region + Big Region for one dealer of one Telemarketing (assignment owner first, dealer master second). */
+function tmDealerPlace_(array $db,array $pairsOfNik,string $dealer,string $brand,string $manualRegion=''): array {
+    static $memo=[];$key=$dealer."\x1f".$brand."\x1f".$manualRegion;
+    foreach($pairsOfNik as $p)if($p['dealer']===$dealer&&($brand===''||$p['brand']===$brand)){$o=tmPairOwner_($db,$p);$sub=trim((string)$o['subregion']);$big=trim((string)$o['region']);if($sub!==''||$big!=='')return [$sub!==''?$sub:'Lainnya',$big!==''?js_upper($big):'LAINNYA'];}
+    if($dealer!==''&&!empty($db['meta']['customers'][$dealer])){$o=dealerOwner_($db,$dealer);$sub=trim((string)$o['subregion']);$big=trim((string)$o['region']);if($sub!==''||$big!=='')return [$sub!==''?$sub:'Lainnya',$big!==''?js_upper($big):'LAINNYA'];}
+    $m=trim($manualRegion);return [$m!==''?$m:'Lainnya','LAINNYA'];
+}
+function tmOrderQty_(array $o): float { $q=0;foreach((array)($o['items']??[]) as $i)$q+=(float)($i['qty']??0);return $q; }
+function tmTeamData_(array $db,array $u,string $period): array {
+    $today=tmToday_();$people=tmTeamPeople_($db,$u,$period);$niks=array_map(fn($p)=>$p['nik'],$people);$rows=[];
+    if(!$niks)return ['today'=>$today,'rows'=>[],'period'=>$period];
+    $in=implode(',',array_fill(0,count($niks),'?'));
+    $pairs=[];foreach(tmQuery_("SELECT dealer,brand,nik,sales_nik,assigned_at FROM _tm_assignment WHERE nik IN ($in)",$niks) as $r)$pairs[$r['nik']][]=$r;
+    $last=[];foreach(tmQuery_("SELECT nik,dealer,brand,date,next_date FROM _tm_fu WHERE nik IN ($in) AND date<=? AND date>=? ORDER BY date DESC,created_at DESC",array_merge($niks,[$today,date('Y-m-d',strtotime($today.' -400 days'))])) as $r){$k=$r['nik']."\x1f".$r['dealer']."\x1f".$r['brand'];if(!isset($last[$k]))$last[$k]=$r;}
+    $dealersFU=[];foreach(tmQuery_("SELECT nik,COUNT(DISTINCT dealer) AS n FROM _tm_fu WHERE nik IN ($in) AND date LIKE ? AND date<=? GROUP BY nik",array_merge($niks,[substr($today,0,7).'-%',$today])) as $r)$dealersFU[$r['nik']]=(int)$r['n'];
+    $owner=[];foreach($pairs as $n=>$list)foreach($list as $pr)$owner[tmPairKey_((string)$pr['dealer'],(string)$pr['brand'])]=$n;
+    $stMtd=[];$cut=$db['coverage'][$period]['cutoff']??PortalCore::end($period);
+    foreach($db['cubes'][$period]??[] as $cr){if(($cr['date']??'')>$cut)continue;$n=$owner[tmPairKey_((string)$cr['customer'],(string)$cr['brand'])]??null;if($n!==null)$stMtd[$n]=($stMtd[$n]??0)+(float)$cr['q'];}
+    $fuDone=[];foreach(tmQuery_("SELECT nik,dealer,brand FROM _tm_fu WHERE nik IN ($in) AND date=?",array_merge($niks,[$today])) as $r)$fuDone[$r['nik']][]=$r;
+    $orders=[];foreach(tmQuery_("SELECT nik,dealer,date,region,data FROM _tm_order WHERE nik IN ($in) AND (date LIKE ? OR date=?)",array_merge($niks,[$period.'-%',$today])) as $r){$o=json_decode($r['data'],true);if(($o['status']??'')!=='SAVED')continue;$orders[$r['nik']][]=['dealer'=>$r['dealer'],'date'=>$r['date'],'region'=>$r['region'],'qty'=>tmOrderQty_($o)];}
+    foreach($people as $p){
+        $nik=$p['nik'];$pp=$pairs[$nik]??[];$subCount=[];$dealers=[];$sched=0;
+        foreach($pp as $pair){$dealers[$pair['dealer']]=true;$pl=tmDealerPlace_($db,$pp,$pair['dealer'],$pair['brand']);$subCount[$pl[0]]=($subCount[$pl[0]]??0)+1;$l=$last[$nik."\x1f".$pair['dealer']."\x1f".$pair['brand']]??null;if(($l&&$l['next_date']===$today)||(!$l&&($pair['assigned_at']??'')<=$today))$sched++;}
+        arsort($subCount);$subs=array_keys($subCount);
+        $mtd=count(array_filter($orders[$nik]??[],fn($o)=>strpos($o['date'],$period.'-')===0));$tod=0;$byPlace=[];
+        foreach($orders[$nik]??[] as $o)if($o['date']===$today){$tod++;$pl=tmDealerPlace_($db,$pp,$o['dealer'],'',$o['region']);$byPlace[$pl[0]]=['big'=>$pl[1],'st'=>($byPlace[$pl[0]]['st']??0)+$o['qty'],'fu'=>$byPlace[$pl[0]]['fu']??0];}
+        foreach($fuDone[$nik]??[] as $f){$pl=tmDealerPlace_($db,$pp,$f['dealer'],$f['brand']);$byPlace[$pl[0]]=['big'=>$pl[1],'st'=>$byPlace[$pl[0]]['st']??0,'fu'=>($byPlace[$pl[0]]['fu']??0)+1];}
+        $boss=person_($db,$p['atasan']??null);$score=null;
+        try{$k=tmKpiCompute_($db,$nik,$period);$score=$k['score']??null;}catch(Throwable $e){$score=null;}
+        $rows[]=['nik'=>$nik,'nama'=>$p['nama'],'atasan'=>$boss['nama']??'','atasanRole'=>$boss['role']??'','subs'=>$subs,'dealers'=>count($dealers),'fuScheduled'=>$sched,'fuDone'=>count($fuDone[$nik]??[]),'orderToday'=>$tod,'orderMtd'=>$mtd,'stToday'=>array_sum(array_column($byPlace,'st')),'fuTotal'=>array_sum(array_column($byPlace,'fu')),'dealersFU'=>$dealersFU[$nik]??0,'stMtd'=>(int)round($stMtd[$nik]??0),'score'=>$score,'places'=>$byPlace];
+    }
+    usort($rows,fn($a,$b)=>($b['fuScheduled']<=>$a['fuScheduled'])?:strcmp($a['nama'],$b['nama']));
+    return ['today'=>$today,'period'=>$period,'rows'=>$rows];
+}
+function apiTMTeam($token,$period) {
+    PortalCore::month($period);$db=snapshot_();$u=guard_($token);$d=tmTeamData_($db,$u,$period);
+    foreach($d['rows'] as &$r){$pl=[];foreach($r['places'] as $name=>$x)$pl[]=['sub'=>$name,'st'=>(int)round($x['st']),'fu'=>(int)$x['fu']];usort($pl,fn($a,$b)=>($b['st']<=>$a['st'])?:($b['fu']<=>$a['fu']));$r['places']=$pl;}unset($r);
+    $d['canExport']=in_array($u['role'],['ADMIN','SUPER ADMIN'],true);return $d;
+}
+function apiTMDailyReport($token) {
+    $db=snapshot_();$u=guard_($token);$today=tmToday_();$d=tmTeamData_($db,$u,substr($today,0,7));$rows=$d['rows'];
+    foreach($rows as &$r){$r['total']=array_sum(array_column($r['places'],'st'));$r['fuTotal']=array_sum(array_column($r['places'],'fu'));}unset($r);
+    usort($rows,fn($a,$b)=>($b['total']<=>$a['total'])?:strcmp($a['nama'],$b['nama']));
+    $days=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];$mon=['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];$t=new DateTimeImmutable($today);
+    $n=fn($x)=>number_format((float)$x,0,',','.');
+    $L=['DAILY REPORT - TELEMARKETING','===========================',$days[(int)$t->format('w')].', '.(int)$t->format('j').' '.$mon[(int)$t->format('n')].' '.$t->format('Y'),'','NAMA | SUB REGION : Sell Thru - (FU)','==========================='];
+    $big=[];$gst=0;$gfu=0;
+    foreach($rows as $i=>$r){
+        $L[]=$r['nama'];$pl=$r['places'];uasort($pl,fn($a,$b)=>($b['st']<=>$a['st'])?:($b['fu']<=>$a['fu']));
+        foreach($pl as $name=>$x){$L[]='* '.$name.' : '.$n($x['st']).' - ('.$n($x['fu']).')';$big[$x['big']]=['st'=>($big[$x['big']]['st']??0)+$x['st'],'fu'=>($big[$x['big']]['fu']??0)+$x['fu']];}
+        if(count($pl)!==1)$L[]='Total : '.$n($r['total']).' - ('.$n($r['fuTotal']).')';
+        $gst+=$r['total'];$gfu+=$r['fuTotal'];if($i<count($rows)-1)$L[]='';
+    }
+    $L[]='===========================';uasort($big,fn($a,$b)=>$b['st']<=>$a['st']);
+    foreach($big as $name=>$x)$L[]=$name.' : '.$n($x['st']).' - ('.$n($x['fu']).')';
+    $L[]='__________________________________';$L[]='GRAND TOTAL : '.$n($gst).' - ('.$n($gfu).')';
+    return ['date'=>$today,'text'=>implode("\n",$L),'count'=>count($rows)];
+}
 function apiTMFollowUpSave($token,$input) {
     demoAssertWritable_($token);$u=guard_($token);if($u['role']!=='TELEMARKETING')fail_('FU dicatat oleh Telemarketing.');$input=(array)$input;
     return with_lock_(function()use($u,$input){$dealer=text_($input['dealer']??'');$brand=js_upper(text_($input['brand']??''));if(!tmHasDealer_(tmLivePairs_($u['nik']),$dealer,$brand))fail_('Dealer dan brand di luar penugasan.');$date=tmDate_(text_($input['date']??''));if($date>tmToday_())fail_('Tanggal FU tidak boleh di masa depan.');$next=text_($input['next']??'');if($next&&tmDate_($next)<$date)fail_('Tanggal FU berikutnya harus sesudah atau sama dengan tanggal FU.');$method=text_($input['method']??'');$result=text_($input['result']??'');$note=text_($input['note']??'');if(!in_array($method,['WhatsApp','Telepon','Kunjungan','Lainnya'],true)||!$result||mb_strlen($result)>180||mb_strlen($note)>4000)fail_('Isi metode dan hasil FU.');$id=uuid_();tmExec_('INSERT INTO _tm_fu (id,nik,dealer,brand,date,next_date,data,created_at) VALUES (?,?,?,?,?,?,?,?)',[$id,$u['nik'],$dealer,$brand,$date,$next,tmJson_(['method'=>$method,'result'=>$result,'note'=>$note]),iso_now()]);data_rev_bump_('Telemarketing');audit_($u['nik'],'TM_FU',$dealer.' '.$brand.' '.$result);return ['id'=>$id];});
@@ -392,11 +457,22 @@ function tmAccountReferences_(string $nik): array {
 }
 
 /** Read-only dealer audit for the signed-in Sales / ASM / RGM KPI. */
-function apiKpiValidation($token,$period,$groupIndex,$indicatorIndex,$asmFilter=null,$salesFilter=null) {
-    PortalCore::month($period);$source=snapshot_();$u=guard_($token,false,false,$source);
-    if(!in_array($u['role'],['SALES','ASM','RGM'],true))fail_('Validasi KPI hanya tersedia untuk KPI sendiri.');
-    $ids=PortalCore::scope($source['meta']['people'],$u['nik']);$db=coverageView_($source,$period,$ids,'ST',$u);
-    $k=PortalCore::kpi($db,$period,$ids,$u['wilayah']??null,$u);
+function apiKpiValidation($token,$period,$groupIndex,$indicatorIndex,$asmFilter=null,$salesFilter=null,$asOf=null) {
+    PortalCore::month($period);$source=snapshot_();$actor=guard_($token,false,false,$source);$asOf=text_($asOf??'');
+    if($asOf!==''){
+        if(!in_array($actor['role'],['ADMIN','SUPER ADMIN'],true))fail_('Kroscek validasi KPI hanya untuk Admin dan Super Admin.');
+        $u=person_($source,$asOf);if(!$u||!in_array($u['role'],['SALES','ASM','RGM'],true))fail_('Validasi KPI hanya untuk Sales, ASM, dan RGM.');
+        if(!in_array($actor['role'],['SUPER ADMIN'],true)&&!in_array($u['wilayah']??'',$actor['adminRegions']??[],true))fail_('Di luar wilayah Admin.');
+        audit_($actor['nik'],'ADMIN_VALIDASI_KPI',$asOf.' '.$period);
+    }else{
+        if(!in_array($actor['role'],['SALES','ASM','RGM'],true))fail_('Validasi KPI hanya tersedia untuk KPI sendiri.');
+        $u=$actor;
+    }
+    return kpiValidationCompute_($source,$u,$actor,$period,$groupIndex,$indicatorIndex,$asmFilter,$salesFilter,null);
+}
+function kpiValidationCompute_($source,$u,$actor,$period,$groupIndex,$indicatorIndex,$asmFilter,$salesFilter,$ctx) {
+    $ids=$ctx['ids']??PortalCore::scope($source['meta']['people'],$u['nik']);$db=$ctx['db']??coverageView_($source,$period,$ids,'ST',$actor);
+    $k=$ctx['k']??PortalCore::kpi($db,$period,$ids,$u['wilayah']??null,$u);
     $group=$k['groups'][(int)$groupIndex]??null;$i=$group['indicators'][(int)$indicatorIndex]??null;if(!$i)fail_('Indikator KPI tidak ditemukan.');
     $rgmPolicy=$u['role']==='RGM'?array_values(array_filter($db['meta']['rgmPolicies']??[],fn($r)=>$r['period']===$period&&$r['nik']===$u['nik'])):[];
     $policy=$rgmPolicy?:array_values(array_filter($db['meta']['policies']??[],fn($r)=>$r['period']===$period&&$r['region']===(($k['sub']??'')?:($u['wilayah']??''))));
@@ -447,4 +523,76 @@ function apiTMKpiCopy($token,$fromNik,$period,$targets=null,$mode=null,$withTarg
         if($done)data_rev_bump_('Telemarketing');
         return ['copied'=>$done,'skipped'=>$skipped];
     });
+}
+
+/** Pencarian Admin untuk kroscek KPI: nama atau NIK, semua Sales/ASM/RGM/Telemarketing dalam kewenangan. */
+function apiKpiSearch($token,$period,$q=null,$role=null) {
+    PortalCore::month($period);$source=snapshot_();$u=guard_($token,false,false,$source);
+    if(!in_array($u['role'],['ADMIN','SUPER ADMIN'],true))fail_('Pencarian kroscek KPI hanya untuk Admin dan Super Admin.');
+    $q=js_lower(text_($q??''));$role=text_($role??'');if(strlen($q)<2)return [];
+    $people=$source['meta']['people'];$out=[];$ids=[];
+    $all=array_map(fn($p)=>$p['nik'],$people);$db=coverageView_($source,$period,$all,'ST',$u);
+    foreach($people as $p){
+        if(!in_array($p['role'],['SALES','ASM','RGM','TELEMARKETING'],true))continue;if($role&&$role!=='ALL'&&$p['role']!==$role)continue;
+        if(strpos(js_lower($p['nama']),$q)===false&&strpos(js_lower((string)$p['nik']),$q)===false)continue;
+        if($u['role']==='ADMIN'&&!in_array($p['wilayah']??'',$u['adminRegions']??[],true)&&$p['role']!=='TELEMARKETING')continue;
+        $score=null;$status='';
+        try{
+            if($p['role']==='TELEMARKETING'){$k=tmKpiCompute_($source,$p['nik'],$period);$score=$k['score'];$status=$k['status'];}
+            else{$team=in_array($p['role'],['ASM','RGM'],true)?PortalCore::scope($people,$p['nik']):[$p['nik']];$k=PortalCore::kpi($db,$period,$team,$p['wilayah']??null,$p);$score=$k['score'];$status=$k['status'];}
+        }catch(\Throwable $e){}
+        $out[]=['nik'=>$p['nik'],'nama'=>$p['nama'],'role'=>$p['role'],'wilayah'=>$p['wilayah']??'','score'=>$score,'status'=>$status];
+        if(count($out)>=40)break;
+    }
+    audit_($u['nik'],'ADMIN_CARI_KPI',$q);
+    return $out;
+}
+
+/** Data export KPI lengkap (Admin/Super Admin). Excel disusun di browser dari data ini. */
+function apiKpiExport($token,$period) {
+    PortalCore::month($period);$source=snapshot_();$u=guard_($token,false,false,$source);
+    if(!in_array($u['role'],['ADMIN','SUPER ADMIN'],true))fail_('Export KPI hanya untuk Admin dan Super Admin.');
+    @set_time_limit(280);@ini_set('memory_limit','1024M');
+    $people=$source['meta']['people'];$admin=$u['role']==='ADMIN';$regs=$u['adminRegions']??[];
+    $inScope=fn($p)=>!$admin||in_array($p['wilayah']??'',$regs,true);
+    $all=array_map(fn($p)=>$p['nik'],$people);$db=coverageView_($source,$period,$all,'ST',$u);
+    $coverage=$db['coverage'][$period]??null;if(!$coverage)fail_('Periode belum tersedia.');
+    $pp=PortalCore::prev($period);
+    $cut=truthy($coverage['closed']??false)?PortalCore::end($pp):$pp.'-'.js_pad2(min((int)substr($coverage['cutoff'],8),(int)substr(PortalCore::end($pp),8)));
+    $byNik=[];foreach($people as $p)$byNik[(string)$p['nik']]=$p;
+    $climb=function($p,$role)use($byNik){$seen=[];$c=$p;while($c&&!isset($seen[$c['nik']])){$seen[$c['nik']]=1;if($c['role']===$role)return $c['nama'];$c=$byNik[(string)($c['atasan']??'')]??null;}return '';};
+    $kpiLite=function($k){return ['score'=>$k['score'],'status'=>$k['status'],'groups'=>array_map(fn($g)=>['name'=>$g['name'],'score'=>$g['score'],'indicators'=>array_map(fn($i)=>['label'=>$i['label']??($i['metric'].' '.$i['brand']),'metric'=>$i['metric'],'brand'=>$i['brand'],'weight'=>$i['weight'],'cap'=>$i['cap']??120,'target'=>$i['target'],'actual'=>$i['actual'],'ach'=>$i['ach'],'score'=>$i['score']??null],$g['indicators'])],$k['groups'])];};
+    // brand yang punya target di bulan itu
+    $bset=[];foreach($source['meta']['targets']??[] as $t)if($t['period']===$period&&!truthy($t['indicator']??'')&&$t['brand']!=='ALL'&&in_array($t['metric']??'QTY',['QTY','DA','NOO'],true))$bset[$t['brand']]=1;
+    $brands=array_keys($bset);sort($brands,SORT_STRING);
+    $brandData=function($ids)use($db,$period,$pp,$cut,$brands){
+        $rows=PortalCore::slice($db,$period,$ids);$prev=PortalCore::sliceCmp($db,$pp,$ids,$cut,$period);$o=[];
+        foreach($brands as $b){$c=PortalCore::metrics($rows,$db,$period,$b);$l=PortalCore::metrics($prev,$db,$pp,$b);
+            $o[]=['brand'=>$b,'tq'=>PortalCore::target($db['meta'],$period,$ids,$b,'QTY')['value'],'td'=>PortalCore::target($db['meta'],$period,$ids,$b,'DA')['value'],'tn'=>PortalCore::target($db['meta'],$period,$ids,$b,'NOO')['value'],
+                'cq'=>$c['qty'],'cd'=>$c['da'],'cn'=>$c['noo'],'lq'=>$l['qty'],'ld'=>$l['da'],'ln'=>$l['noo']];}
+        return $o;};
+    $sales=[];$asms=[];$rgms=[];$tele=[];$val=[];
+    foreach($people as $p){
+        if(!$inScope($p))continue;$role=$p['role'];
+        $base=['nik'=>$p['nik'],'nama'=>$p['nama'],'region'=>js_or($p['wilayah']??null,'Belum dipetakan'),'area'=>js_or($p['portfolio']??null,js_or($p['region']??null,'')),'asm'=>$role==='ASM'?$p['nama']:$climb($p,'ASM'),'rgm'=>$climb($p,'RGM'),'role'=>$role];
+        if(truthy($p['sales']??false)){
+            $k=PortalCore::kpi($db,$period,[$p['nik']],$p['wilayah']??null,$p);
+            $sales[]=$base+['merangkap'=>$role!=='SALES','kpi'=>$kpiLite($k),'brands'=>$brandData([$p['nik']])];
+            if($role==='SALES'){
+                $ctx=['ids'=>[$p['nik']],'db'=>$db,'k'=>$k];
+                foreach($k['groups'] as $gi=>$g)foreach($g['indicators'] as $ii=>$ind){
+                    try{$v=kpiValidationCompute_($source,$p,$u,$period,$gi,$ii,null,null,$ctx);}catch(\Throwable $e){continue;}
+                    foreach(['counted'=>'TERHITUNG','failed'=>'BELUM MEMENUHI'] as $key=>$st)foreach($v[$key] as $r)$val[]=[$p['nama'],$ind['label']??($ind['metric'].' '.$ind['brand']),$st,$r['dealer'],$r['name'],$r['qty'],$r['value'],$key==='failed'?$r['reason']:''];
+                }
+            }
+        }
+        if($role==='ASM'){$team=PortalCore::scope($people,$p['nik']);$k=PortalCore::kpi($db,$period,$team,$p['wilayah']??null,$p);$asms[]=$base+['kpi'=>$kpiLite($k),'brands'=>$brandData($team)];}
+        if($role==='RGM'){$team=PortalCore::scope($people,$p['nik']);$k=PortalCore::kpi($db,$period,$team,$p['wilayah']??null,$p);$own=array_filter($db['meta']['rgmPolicies']??[],fn($c)=>$c['period']===$period&&$c['nik']===$p['nik']);$rgms[]=$base+['kpi'=>$kpiLite($k),'ownPolicy'=>count($own)>0];}
+        if($role==='TELEMARKETING'){$a=account_($p['nik']);if($a&&!PortalCore::active($a['AKTIF']))continue;$k=tmKpiCompute_($source,$p['nik'],$period);$boss=$byNik[(string)($p['atasan']??'')]??null;
+            $tele[]=['nik'=>$p['nik'],'nama'=>$p['nama'],'atasan'=>$boss['nama']??'Belum ada atasan','region'=>$boss?js_or($boss['wilayah']??null,''):'','area'=>$boss?js_or($boss['portfolio']??null,js_or($boss['region']??null,'')):'','rgm'=>$boss?$climb($boss,'RGM'):'','kpi'=>$kpiLite($k)];}
+    }
+    $cmp=fn($a,$b)=>strcmp($a['region'],$b['region'])?:(strcmp($a['area']??'',$b['area']??'')?:strcmp($a['nama'],$b['nama']));
+    usort($sales,$cmp);usort($asms,$cmp);usort($rgms,$cmp);usort($tele,fn($a,$b)=>strcmp($a['atasan'],$b['atasan'])?:strcmp($a['nama'],$b['nama']));
+    audit_($u['nik'],'EXPORT_KPI',$period);
+    return ['period'=>$period,'cutoff'=>$coverage['cutoff'],'prevCut'=>$cut,'brands'=>$brands,'sales'=>$sales,'asm'=>$asms,'rgm'=>$rgms,'tele'=>$tele,'validation'=>$val];
 }

@@ -100,7 +100,9 @@ function exportAccessForUser_(array $u, ?array $rows = null): array {
 // ------------------------------------------------------------------
 
 function rankDetailAllowed_(array $db, array $u, ?array $p): bool {
-    if (!$p || !in_array($p['role'], ['SALES', 'ASM'], true)) return false;
+    if (!$p) return false;
+    if ($p['role'] === 'RGM') return in_array($u['role'], ['ADMIN', 'SUPER ADMIN'], true);
+    if (!in_array($p['role'], ['SALES', 'ASM'], true)) return false;
     if ($u['role'] === 'SUPER ADMIN' || $u['role'] === 'RGM' || RegionCore::top($u['role'])) return true;
     $ids = array_map('strval', PortalCore::scope($db['meta']['people'], $u['nik']));
     if ($u['role'] === 'ADMIN') return in_array((string) $p['nik'], $ids, true);
