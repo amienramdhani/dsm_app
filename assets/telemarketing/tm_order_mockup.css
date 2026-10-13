@@ -86,3 +86,28 @@
 #tmOrderForm .tmx-actions .tmx-download{background:#ffefc6;color:#744b00;border-color:#eed28a}
 @media(max-width:1100px){#tmOrderForm .tmx-layout{grid-template-columns:285px minmax(0,1fr);gap:16px}#tmOrderForm .tmx-below{grid-template-columns:1fr}#tmOrderForm .tmx-actionbar{align-items:flex-start;flex-direction:column}#tmOrderForm .tmx-actions{margin-left:auto}}
 @media(max-width:760px){#tmOrderForm.tmx-order-form{padding:12px}#tmOrderForm .tmx-layout{grid-template-columns:minmax(0,1fr);gap:20px}#tmOrderForm .tmx-sidebar{gap:13px}#tmOrderForm .tmx-card-body{padding:12px}#tmOrderForm input.fi,#tmOrderForm select.fi,#tmOrderForm textarea.fi{font-size:16px!important;min-height:44px}#tmOrderForm .tmx-segment label{min-height:44px}#tmOrderForm .tmx-item-head{align-items:flex-start;flex-wrap:wrap}#tmOrderForm .tmx-item-head h2{font-size:15px}#tmOrderForm .tmx-item-toolbar button{min-height:43px}#tmOrderForm .tmx-items-table{min-width:1050px}#tmOrderForm .tmx-items-table input.fi{font-size:16px!important;min-height:44px;height:44px}#tmOrderForm .tmx-items-table td{height:62px}#tmOrderForm .tmx-totalbar{grid-template-columns:1fr;gap:15px;padding:15px}#tmOrderForm .tmx-credit-fields{max-width:none;grid-template-columns:118px minmax(0,1fr)}#tmOrderForm #tmOrderTotal>strong{font-size:22px}#tmOrderForm .tmx-below{grid-template-columns:1fr;gap:15px}#tmOrderForm .tmx-notes textarea.fi{min-height:100px}#tmOrderForm .tmx-actionbar{align-items:stretch}#tmOrderForm .tmx-status{max-width:100%}#tmOrderForm .tmx-actions{display:grid;grid-template-columns:1fr 1fr;margin-left:0;gap:8px}#tmOrderForm .tmx-actions button{min-width:0;white-space:normal;min-height:44px}#tmOrderForm .tmx-actions .primary{grid-column:1/-1}}
+
+/* Barang pesanan jadi kartu bertumpuk saat layar sempit (HP, laptop kecil): tanpa scroll samping */
+@media(max-width:1180px){
+ html body #tmOrderForm .tmx-table-scroll{overflow:visible!important;border:0!important;background:transparent!important}
+ html body #tmOrderForm .tmx-items-table,html body #tmOrderForm .tmx-items-table tbody{display:block!important;min-width:0!important;width:100%!important}
+ html body #tmOrderForm .tmx-items-table colgroup,html body #tmOrderForm .tmx-items-table thead{display:none!important}
+ html body #tmOrderForm .tmx-items-table tbody tr{display:grid!important;grid-template-columns:1fr 1fr;gap:10px;border:1px solid #E3EBF5;border-left:5px solid #1E5FB8;border-radius:12px;padding:12px;margin-bottom:12px;background:#fff!important;box-shadow:0 3px 12px rgba(30,95,184,.08)}
+ html body #tmOrderForm .tmx-items-table td{display:block!important;height:auto!important;padding:0!important;border:0!important;min-width:0!important;text-align:left!important;white-space:normal!important}
+ html body #tmOrderForm .tmx-items-table td[data-l]:not(.tmx-index):not(:last-child)::before{content:attr(data-l);display:block;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#6B7C8D;margin-bottom:4px}
+ html body #tmOrderForm .tmx-items-table td.tmx-index{grid-column:1/-1;color:#1E5FB8;font-weight:800;font-size:13px!important}
+ html body #tmOrderForm .tmx-items-table td.tmx-index::before{content:'Barang '}
+ html body #tmOrderForm .tmx-items-table td:nth-child(3),html body #tmOrderForm .tmx-items-table td:nth-child(7),html body #tmOrderForm .tmx-items-table td:nth-child(8){grid-column:1/-1}
+ html body #tmOrderForm .tmx-items-table td:nth-child(7){text-align:right!important;font-weight:800;font-size:14px}
+ html body #tmOrderForm .tmx-items-table td:nth-child(8){text-align:right!important}
+ html body #tmOrderForm .tmx-items-table td:nth-child(5),html body #tmOrderForm .tmx-items-table td:nth-child(6){order:0}
+ html body #tmOrderForm .tmx-items-table input.fi,html body #tmOrderForm .tmx-items-table select.fi{height:40px;min-height:40px}
+}
+
+@media(max-width:1180px){
+ html body #tmOrderForm .tmx-items-table td{background:transparent!important;box-shadow:none!important}
+ html body #tmOrderForm .tmx-items-table td::before{background:transparent!important}
+ html body #tmOrderForm .tmx-items-table td:nth-child(1){order:0}html body #tmOrderForm .tmx-items-table td:nth-child(2){order:1}html body #tmOrderForm .tmx-items-table td:nth-child(4){order:2}html body #tmOrderForm .tmx-items-table td:nth-child(3){order:3}html body #tmOrderForm .tmx-items-table td:nth-child(5){order:4}html body #tmOrderForm .tmx-items-table td:nth-child(6){order:5}html body #tmOrderForm .tmx-items-table td:nth-child(7){order:6}html body #tmOrderForm .tmx-items-table td:nth-child(8){order:7}
+ html body #tmOrderForm .tmx-items-table input.fi,html body #tmOrderForm .tmx-items-table select.fi{width:100%!important;max-width:none!important}
+}
+@media(max-width:1180px){html body #tmOrderForm#tmOrderForm#tmOrderForm .tmx-items-table tbody tr td{background:transparent!important;box-shadow:none!important;border-left:0!important}}

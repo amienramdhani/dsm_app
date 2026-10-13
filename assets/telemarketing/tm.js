@@ -1,7 +1,7 @@
 /* DSM Telemarketing. Uses the existing DSM components, typography and navigation. */
 let tmState={boot:null,tab:'sales',person:'',filters:{q:'',brand:'ALL',big:'ALL',region:'ALL',state:'ALL'},activity:null,order:null,admin:null,adminPerson:'',config:null};
 function tmMenuAllowed(page,role){
- if(page==='tmfu')return role==='TELEMARKETING';
+ if(page==='tmfu')return false;
  if(page==='tmorder')return ['TELEMARKETING','SALES','ASM','RGM','ADMIN','SUPER ADMIN'].includes(role);
  if(page==='tmactivity'&&['ASM','RGM'].includes(role)&&BOOT?.user?.tmVisible===false)return false;
  if(page==='tmactivity')return ['TELEMARKETING','ASM','RGM','ADMIN','SUPER ADMIN','HEAD OF SALES','CHIEF OPERATING OFFICER','CHIEF COMMERCIAL OFFICER','BOARD OF DIRECTOR'].includes(role);
@@ -41,7 +41,7 @@ async function tmActivityPage(v,seq,home){
  const regionSource=tmIsMe()?(tmState.boot.dealers.map(d=>({big:d.bigRegion,region:d.subRegion}))):r.dealers;
  v.innerHTML=(!tmIsMe()?`<div class="toolbar"><label>Telemarketing<select class="fi" id="tmPerson">${tmOptions(r.people.map(p=>({value:p.nik,label:p.nama})),r.nik)}</select></label><span class="hint">${r.scopeCount||0} pasangan dealer–brand terlihat dari ${r.totalAssigned||0} penugasan. KPI pribadi tetap utuh.</span></div>`:'')+`<div class="toolbar tm-filterbox"><label>Cari dealer / kode / Sales<input class="fi" id="tmSearch" value="${esc(tmState.filters.q)}" placeholder="Nama atau kode dealer"></label><label>Brand<select class="fi" id="tmBrand">${tmOptions(brands,tmState.filters.brand,'Semua brand')}</select></label><label>Big Region<select class="fi" id="tmBig">${tmOptions(sortedUnique(regionSource.map(x=>x.big)),tmState.filters.big,'Semua Big Region')}</select></label><label>Region<select class="fi" id="tmRegion">${tmOptions(sortedUnique(regionSource.filter(x=>tmState.filters.big==='ALL'||x.big===tmState.filters.big).map(x=>x.region)),tmState.filters.region,'Semua region')}</select></label><label>Status FU<select class="fi" id="tmStatus">${tmOptions(Object.entries(labels).filter(([k])=>k!=='ALL').map(([value,label])=>({value,label})),tmState.filters.state,'Semua status FU')}</select></label><button class="chip primary" id="tmFilter">Tampilkan</button></div>`;
  const queue=r.dealers||[],count=s=>queue.filter(x=>x.state===s).length;
- v.innerHTML+=cards([['Perlu FU hari ini',num(count('TODAY')+count('NEVER')),'Jadwal hari ini + belum pernah FU','tmfu'],['FU terlambat',num(count('OVERDUE')),'Jadwal berikutnya sudah lewat','tmfu'],['Belum pernah FU',num(count('NEVER')),'Sejak tanggal penugasan','tmfu'],['Form Order',num(r.orders.length),'Bulan '+bulan(REPORT.period),'tmorder']]);
+ v.innerHTML+=cards([['Perlu FU hari ini',num(count('TODAY')+count('NEVER')),'Jadwal hari ini + belum pernah FU','tmactivity'],['FU terlambat',num(count('OVERDUE')),'Jadwal berikutnya sudah lewat','tmactivity'],['Belum pernah FU',num(count('NEVER')),'Sejak tanggal penugasan','tmfu'],['Form Order',num(r.orders.length),'Bulan '+bulan(REPORT.period),'tmorder']]);
  if(home){const k=await rpc('apiTMKpi',TOKEN,REPORT.period);if(seq!==SEQUENCE)return;v.innerHTML+=panel('KPI Telemarketing',kpiHtml(k.kpi),'Aktual otomatis dari transaksi resmi dealer–brand penugasan');v.innerHTML+=`<div class="toolbar"><button class="chip primary" id="tmNewOrder">+ Catat order</button><button class="chip" id="tmAllFU">Daftar Follow Up</button></div>`;}
  const qTable=table(['Dealer','Brand','Sales / Region','Terakhir FU','Umur FU','Jadwal berikutnya','Status','Aksi'],queue.map(d=>[tmIsMe()?customerButton({id:d.dealer,nama:d.name,kota:d.region}):esc(d.name)+'<small class="cellsub">'+esc(d.dealer)+'</small>',esc(d.brand),esc(d.sales)+'<small class="cellsub">'+esc(d.big+' / '+d.region)+'</small>',d.last?tgl(d.last):'Belum pernah',num(d.age)+' hari',d.next?tgl(d.next):'—',`<span class="tm-tag tm-${d.state.toLowerCase()}">${esc(labels[d.state])}${d.state==='OVERDUE'&&d.next?' '+Math.max(1,Math.round((new Date(tmToday()+'T00:00:00')-new Date(d.next+'T00:00:00'))/864e5))+' hari':''}</span>`,tmIsMe()?`<button class="chip" data-tm-fu="${esc(d.dealer)}" data-tm-brand="${esc(d.brand)}">Catat FU</button> <button class="chip" data-tm-order="${esc(d.dealer)}">Order</button>`:'—']));
  const fTable=table(['Tanggal','Dealer','Brand','Metode','Hasil','Catatan','FU berikutnya'],r.fu.map(f=>[tgl(f.date),esc(f.dealer),esc(f.brand),esc(f.method),esc(f.result),esc(f.note),f.next?tgl(f.next):'—']));
@@ -53,7 +53,7 @@ async function tmActivityPage(v,seq,home){
  $('tmFilter').onclick=()=>{tmState.filters={q:$('tmSearch').value.trim(),brand:$('tmBrand').value,big:$('tmBig').value,region:$('tmRegion').value,state:$('tmStatus').value};render();};
  $('tmBig').onchange=()=>{$('tmRegion').innerHTML=tmOptions(sortedUnique(regionSource.filter(x=>$('tmBig').value==='ALL'||x.big===$('tmBig').value).map(x=>x.region)),'ALL','Semua region');};
  $('tmSearch').onkeydown=e=>{if(e.key==='Enter')$('tmFilter').click();};
- if(home){$('tmNewOrder').onclick=()=>tmOpenOrder();$('tmAllFU').onclick=()=>navigateTo('tmfu');}
+ if(home){$('tmNewOrder').onclick=()=>tmOpenOrder();$('tmAllFU').onclick=()=>{tmState.area='q';navigateTo('tmactivity');};}
  tmBindActivity(v,r);bind();
 }
 function tmBindActivity(v,r){v.querySelectorAll('[data-tm-fu]').forEach(b=>b.onclick=()=>tmFollowUpForm(b.dataset.tmFu,b.dataset.tmBrand));v.querySelectorAll('[data-tm-order]').forEach(b=>b.onclick=()=>tmOpenOrder(b.dataset.tmOrder));v.querySelectorAll('[data-tm-preview]').forEach(b=>b.onclick=()=>tmPreviewOrder(r.orders.find(o=>o.id===b.dataset.tmPreview)));v.querySelectorAll('[data-tm-editorder]').forEach(b=>b.onclick=()=>{tmState.order=structuredClone(r.orders.find(o=>o.id===b.dataset.tmEditorder));navigateTo('tmorder');});}
@@ -87,10 +87,23 @@ function tmOrdersTable(orders){return table(['Nomor / Tanggal','Dealer','Sales p
 function tmEmptyItem(){return {uid:crypto.randomUUID(),mode:'manual',product:'',name:'',brand:'',color:'Hitam',qty:1,price:''};}
 function tmNewOrder(dealer=''){const b=tmState.boot,bu=b.businesses[0],d=b.dealers.find(d=>d.id===dealer);return {id:'',revision:0,number:'Nomor otomatis setelah disimpan',date:tmToday(),businessId:bu?.id||'',businessSnapshot:bu||null,company:bu?.name||'',dealerMode:dealer?'master':'manual',dealer,manualDealer:{name:'',owner:'',phone:'',address:''},dealerSnapshot:d?{id:d.id,name:d.name,owner:d.owner,phone:d.phone,address:d.address}:null,sales:BOOT.user.role==='SALES'?BOOT.user.nama:(d?.sales||BOOT.user.nama),region:d?.subRegion||b.regions?.[0]||'',refnote:'-',notes:'',createdBy:BOOT.user.nama,showPrice:true,creditMode:'NOMINAL',creditNote:0,payment:'CBD',topDays:0,status:'DRAFT',items:[tmEmptyItem()]};}
 async function tmOpenOrder(dealer=''){await tmEnsureBoot();tmState.order=tmNewOrder(dealer);closeModal();navigateTo('tmorder');}
+function tmOrderFilterBar(){return `<div class="toolbar tm-ofilter"><label>Dari tanggal<input class="fi" type="date" id="tmOfFrom"></label><label>Sampai tanggal<input class="fi" type="date" id="tmOfTo"></label><label class="tm-of-dealer">Cari dealer<input class="fi" id="tmOfDealer" placeholder="Nama / kode dealer"></label><div class="tm-of-quick"><button class="chip" type="button" data-tm-of="today">Hari ini</button><button class="chip" type="button" data-tm-of="7">7 hari</button><button class="chip" type="button" data-tm-of="month">Bulan ini</button><button class="chip" type="button" data-tm-of="reset">Reset</button></div></div><p class="hint" id="tmOfInfo"></p>`;}
+function tmOrderFilterInit(v,r){
+ const all=r.orders||[],$f=id=>document.getElementById(id);if(!$f('tmOfFrom'))return;
+ const apply=()=>{const f=$f('tmOfFrom').value,t=$f('tmOfTo').value,q=$f('tmOfDealer').value.trim().toLowerCase();
+  const rows=all.filter(o=>(!f||String(o.date)>=f)&&(!t||String(o.date)<=t)&&(!q||((o.dealerSnapshot?.name||'')+' '+(o.dealerSnapshot?.id||'')).toLowerCase().includes(q)));
+  $f('tmOrderRows').innerHTML=tmOrdersTable(rows);tmBindActivity(v,{...r,orders:rows});
+  const dl=new Set(rows.map(o=>o.dealerSnapshot?.id||o.dealerSnapshot?.name)).size;
+  $f('tmOfInfo').textContent=rows.length===all.length?`${all.length} order · ${dl} dealer (periode ${REPORT.period})`:`${rows.length} dari ${all.length} order · ${dl} dealer`;};
+ const iso=d=>d.toISOString().slice(0,10),today=tmToday();
+ const quick=k=>{const t=new Date(today+'T12:00:00Z');if(k==='reset'){$f('tmOfFrom').value='';$f('tmOfTo').value='';$f('tmOfDealer').value='';}else if(k==='today'){$f('tmOfFrom').value=today;$f('tmOfTo').value=today;}else if(k==='7'){const f=new Date(t);f.setUTCDate(f.getUTCDate()-6);$f('tmOfFrom').value=iso(f);$f('tmOfTo').value=today;}else{$f('tmOfFrom').value=today.slice(0,8)+'01';$f('tmOfTo').value=today;}apply();};
+ ['tmOfFrom','tmOfTo'].forEach(id=>$f(id).onchange=apply);$f('tmOfDealer').oninput=apply;
+ v.querySelectorAll('[data-tm-of]').forEach(b=>b.onclick=()=>quick(b.dataset.tmOf));apply();
+}
 async function tmOrderPage(v,seq){
  await tmEnsureBoot();if(seq!==SEQUENCE)return;const r=tmIsMe()?await rpc('apiTMActivity',TOKEN,REPORT.period,BOOT.user.nik):{orders:await rpc('apiOrderList',TOKEN,REPORT.period)};if(seq!==SEQUENCE)return;
- v.innerHTML=`<div class="toolbar"><button class="chip primary" id="tmOrderNew">+ Order baru</button><button class="chip" id="tmOrderClose">Daftar order</button></div><div id="tmOrderEditor"></div><div id="tmOrderList">${panel('Form Order',tmOrdersTable(r.orders))}</div>`;
- $('tmOrderNew').onclick=()=>{tmState.order=tmNewOrder();tmDrawOrder();};$('tmOrderClose').onclick=()=>{tmState.order=null;$('tmOrderEditor').innerHTML='';$('tmOrderList').hidden=false;};tmBindActivity(v,r);if(tmState.order)tmDrawOrder();
+ v.innerHTML=`<div class="toolbar"><button class="chip primary" id="tmOrderNew">+ Order baru</button><button class="chip" id="tmOrderClose">Daftar order</button></div><div id="tmOrderEditor"></div><div id="tmOrderList">${panel('Form Order',tmOrderFilterBar()+'<div id="tmOrderRows">'+tmOrdersTable(r.orders)+'</div>')}</div>`;
+ $('tmOrderNew').onclick=()=>{tmState.order=tmNewOrder();tmDrawOrder();};$('tmOrderClose').onclick=()=>{tmState.order=null;$('tmOrderEditor').innerHTML='';$('tmOrderList').hidden=false;};tmBindActivity(v,r);tmOrderFilterInit(v,r);if(tmState.order)tmDrawOrder();
 }
 function tmFormGroup(n,title,hint,body){return `<section class="panel tm-form-group" data-v2-skip-fold="1"><div class="ph"><span class="tm-group-number">${n}</span><h3>${esc(title)}</h3><span class="hint">${esc(hint)}</span></div><div class="pb">${body}</div></section>`;}
 function tmDrawOrder(){

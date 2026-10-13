@@ -154,3 +154,49 @@ html body #view .tt-t tfoot td{font-weight:800!important;color:#0F3F7A!important
 html body #view .tt-t tfoot td{font-weight:800!important;color:#0F3F7A!important;background:#E6F0FB!important}
 @media(min-width:761px){html body #view .tt-wrap{overflow:visible!important;scrollbar-gutter:auto}}
 .tt-t th[data-sk]{cursor:pointer;user-select:none}
+
+/* Catat order di popup dealer */
+html body .modal.tm-ordermodal{width:min(980px,96vw);max-width:96vw}
+.tm-ordermodal #tmOrderForm .tm-form-group{border:1px solid #E3EBF5;border-radius:14px;overflow:hidden;margin-bottom:12px;background:#fff}
+html body .tm-ordermodal #tmOrderForm .tm-form-group>.ph{padding:10px 12px!important;border-bottom:1px solid var(--gl,#CFE2F8)!important;background:var(--gc,#EAF3FD)!important;color:var(--gt,#1E5FB8)}
+.tm-ordermodal #tmOrderForm .tm-form-group>.ph h3{color:var(--gt,#1E5FB8)}
+.tm-ordermodal #tmOrderForm .tm-form-group>.ph .hint{color:#6B7C8D}
+.tm-ordermodal #tmOrderForm .tm-form-group>.ph .tm-group-number{background:var(--gl,#CFE2F8);color:var(--gt,#1E5FB8)}
+.tm-ordermodal #tmOrderForm .tm-form-group:nth-of-type(1){--gc:#EAF3FD;--gl:#CFE2F8;--gt:#1E5FB8}
+.tm-ordermodal #tmOrderForm .tm-form-group:nth-of-type(2){--gc:#E8F7F1;--gl:#C6EBDD;--gt:#0E7C6B}
+.tm-ordermodal #tmOrderForm .tm-form-group:nth-of-type(3){--gc:#F1EBFD;--gl:#DED2F8;--gt:#6D3FD8}
+.tm-ordermodal #tmOrderForm .tm-form-group:nth-of-type(4){--gc:#FFF0DD;--gl:#FBDDB6;--gt:#B45309}
+.tm-pop-tot{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tm-pop-tot span{background:#EAF3FD;border-radius:10px;padding:8px;font-size:10.5px;color:#6B7C8D;text-align:center}
+.tm-pop-tot b{display:block;font-size:14px;color:#14233A}.tm-pop-tot .gt{background:#E8F7F1}.tm-pop-tot .gt b{color:#0E7C6B}
+@media(max-width:760px){
+ html body .modal.tm-ordermodal{width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;border-radius:0}
+ .tm-ordermodal .tm-order-scroll{overflow:visible!important}
+ html body .tm-ordermodal .tm-order-table,html body .tm-ordermodal .tm-order-table tbody{display:block!important;min-width:0!important;width:100%!important}
+ html body .tm-ordermodal .tm-order-table thead{display:none!important}
+ html body .tm-ordermodal .tm-order-table tbody tr{display:grid!important;grid-template-columns:1fr 1fr;gap:8px;border:1px solid #E3EBF5;border-left:5px solid #1E5FB8;border-radius:12px;padding:10px;margin-bottom:10px;background:#fff;box-shadow:0 3px 12px rgba(30,95,184,.08)}
+ html body .tm-ordermodal .tm-order-table td{display:block!important;padding:0!important;border:0!important;min-width:0!important;text-align:left!important;white-space:normal!important}
+ html body .tm-ordermodal .tm-order-table td:not(:first-child):not(:last-child)::before{content:attr(data-l);display:block;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#6B7C8D;margin-bottom:3px}
+ html body .tm-ordermodal .tm-order-table td:first-child{grid-column:1/-1;font-weight:800;font-size:13px;color:#1E5FB8}
+ html body .tm-ordermodal .tm-order-table td:first-child::before{content:'Barang ';margin-right:0}
+ html body .tm-ordermodal .tm-sticky-actions{gap:6px!important;padding:8px!important;flex-wrap:wrap}
+ html body .tm-ordermodal .tm-sticky-actions .chip{flex:1 1 30%;padding:8px 6px;font-size:12px}
+ html body .tm-ordermodal .tm-order-table td:nth-child(3),html body .tm-ordermodal .tm-order-table td:nth-child(7),html body .tm-ordermodal .tm-order-table td:nth-child(8){grid-column:1/-1}
+ html body .tm-ordermodal .tm-order-table td:nth-child(7){text-align:right!important;font-weight:800}
+ html body .tm-ordermodal .tm-order-table td:nth-child(8){text-align:right!important}
+ html body .tm-ordermodal .tm-order-table td:first-child{order:0}
+}
+
+@media(max-width:760px){
+ html body .tm-ordermodal .tm-order-table td{background:transparent!important;box-shadow:none!important}
+ html body .tm-ordermodal .tm-order-table td::before{background:transparent!important}
+ html body .tm-ordermodal .tm-order-table td:nth-child(2){order:1}html body .tm-ordermodal .tm-order-table td:nth-child(4){order:2}html body .tm-ordermodal .tm-order-table td:nth-child(3){order:3}html body .tm-ordermodal .tm-order-table td:nth-child(5){order:4}html body .tm-ordermodal .tm-order-table td:nth-child(6){order:5}html body .tm-ordermodal .tm-order-table td:nth-child(7){order:6}html body .tm-ordermodal .tm-order-table td:nth-child(8){order:7}
+ html body .tm-ordermodal .tm-order-table input.fi,html body .tm-ordermodal .tm-order-table select.fi{width:100%!important;max-width:none!important;height:40px}
+}
+@media(max-width:760px){html body .tm-ordermodal #tmOrderForm#tmOrderForm .tm-order-table tbody tr td{background:transparent!important;box-shadow:none!important;border-left:0!important}}
+
+.tm-ofilter{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;padding:12px;margin-bottom:6px;background:#F3F8FE;border:1px solid #E3EBF5;border-radius:12px}
+.tm-ofilter label{display:grid;gap:4px;font-size:10.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#6B7C8D}
+.tm-ofilter .fi{min-width:140px}.tm-ofilter .tm-of-dealer{flex:1 1 200px}
+.tm-of-quick{display:flex;gap:6px;flex-wrap:wrap}
+@media(max-width:760px){.tm-ofilter label{flex:1 1 45%}.tm-ofilter .tm-of-dealer{flex:1 1 100%}.tm-ofilter .fi{min-width:0;width:100%}}
