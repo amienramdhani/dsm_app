@@ -52,8 +52,6 @@ function apiSyncRunNow($token = null) { fail_('Sinkron folder Google Drive tidak
 function apiSyncSchedule($token = null, $on = null) { apiSyncRunNow(); }
 function apiSyncRetry($token = null, $id = null) { apiSyncRunNow(); }
 function apiSyncFileDownload($token = null, $id = null) { apiSyncRunNow(); }
-function apiAIOptions($token = null) { fail_('AI Assistant belum tersedia di DSM versi server.'); }
-function apiAIChat($token = null) { apiAIOptions(); }
 
 function apiStartBackup($token) {
     guard_($token, true);
