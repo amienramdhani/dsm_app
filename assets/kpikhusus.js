@@ -131,7 +131,7 @@
   }
   function normItem(x) {
     const it = { ...x };
-    if (it.m === 'SO' || it.m === 'DOS') { it.basis = it.basis || 'MTD'; it.cats = [...(it.cats || [])]; }
+    if (it.m === 'SO' || it.m === 'DOS') { it.basis = it.basis || 'MTD'; if (it.basis === 'R30') it.n = it.n || 30; it.cats = [...(it.cats || [])]; }
     if (it.m === 'DA') { it.mode = it.mode || 'biasa'; it.minDA = it.minDA || 2; it.must = [...(it.must || [])]; it.perProm = it.perProm || 3; }
     if (it.m === 'DOS') { it.ruleMode = it.rule ? 'custom' : 'default'; it.rule = it.rule ? toUi(it.rule) : toUi(KK.rule); }
     return it;
@@ -146,7 +146,7 @@
   const chipsHtml = (list, picked, i, k, empty) => list.length ? `<div class="kkChips">${list.map(g => `<button type="button" data-act="chip" data-i="${i}" data-k="${k}" data-v="${E(g)}" class="${picked.includes(g) ? 'on' : ''}">${E(g)}</button>`).join('')}</div>` : `<div class="kkNote">${empty}</div>`;
   function itemHtml(it, i) {
     const brands = KK.brands, b = it.b;
-    const head = `<div class="kkLn"><span class="kkTy ${it.m}">${it.m}</span><select class="fi g" data-f="b" data-i="${i}"><option value="ALL" ${b === 'ALL' ? 'selected' : ''}>Semua Brand</option>${brands.map(x => `<option ${b === x ? 'selected' : ''}>${E(x)}</option>`).join('')}</select><input class="fi" style="width:80px" type="number" min="0" step="0.5" data-f="w" data-live="1" data-i="${i}" value="${it.w}" aria-label="Bobot"><span class="nt">%</span>${it.m === 'SO' || it.m === 'DOS' ? `<select class="fi" data-f="basis" data-i="${i}"><option value="MTD" ${it.basis !== 'R30' ? 'selected' : ''}>Bulan Berjalan</option><option value="R30" ${it.basis === 'R30' ? 'selected' : ''}>30 Hari Terakhir</option></select>` : ''}<button type="button" class="kkX" data-act="delI" data-i="${i}" aria-label="Hapus">✕</button></div>`;
+    const head = `<div class="kkLn"><span class="kkTy ${it.m}">${it.m}</span><select class="fi g" data-f="b" data-i="${i}"><option value="ALL" ${b === 'ALL' ? 'selected' : ''}>Semua Brand</option>${brands.map(x => `<option ${b === x ? 'selected' : ''}>${E(x)}</option>`).join('')}</select><input class="fi" style="width:80px" type="number" min="0" step="0.5" data-f="w" data-live="1" data-i="${i}" value="${it.w}" aria-label="Bobot"><span class="nt">%</span>${it.m === 'SO' || it.m === 'DOS' ? `<select class="fi" data-f="basis" data-i="${i}"><option value="MTD" ${it.basis !== 'R30' ? 'selected' : ''}>Bulan Berjalan</option><option value="R30" ${it.basis === 'R30' ? 'selected' : ''}>N Hari Terakhir</option></select>${it.basis === 'R30' ? `<input class="fi" type="number" min="3" max="90" style="width:64px" data-f="n" data-i="${i}" value="${it.n || 30}" title="Jumlah hari (3–90)"><span class="kkSub">hari</span>` : ''}` : ''}<button type="button" class="kkX" data-act="delI" data-i="${i}" aria-label="Hapus">✕</button></div>`;
     let body = '';
     if (it.m === 'ST') body = `<small class="nt">Target diisi di Edit Target (kolom ST reguler) · semua dealer, tanpa filter grade.</small>`;
     if (it.m === 'SO') body = `<div><span class="kkLbl" style="margin:0 0 4px">Grade dealer</span>${chipsHtml(gradesFor(b), it.cats, i, 'cats', 'Master Grade belum terisi untuk brand ini, semua dealer ikut dihitung.')}${it.cats.length ? '' : (gradesFor(b).length ? '<small class="nt">Tidak ada yang dipilih = semua grade.</small>' : '')}</div><small class="nt">Target SO diisi di tab Target SO.</small>`;
@@ -199,7 +199,7 @@
   }
   const payload = () => ({ replace: EDIT.replace, replaces: EDIT.replace ? EDIT.replaces : '', items: EDIT.items.map(i => {
     const o = { m: i.m, b: i.b, w: parseFloat(i.w) || 0 };
-    if (i.m === 'SO' || i.m === 'DOS') { o.basis = i.basis || 'MTD'; o.cats = i.cats; }
+    if (i.m === 'SO' || i.m === 'DOS') { o.basis = i.basis || 'MTD'; if (o.basis === 'R30') o.n = i.n || 30; o.cats = i.cats; }
     if (i.m === 'DA') { o.minDA = +i.minDA || 2; o.mode = i.mode; o.must = i.must; o.perProm = +i.perProm || 3; }
     if (i.m === 'DOS' && i.ruleMode === 'custom') o.rule = { tiers: i.rule.tiers.map(t => ({ from: +t.from, pts: +t.pts })), stok0: +i.rule.stok0, noSo: +i.rule.noSo };
     return o;
@@ -275,7 +275,8 @@
     if (f === 'replace') { EDIT.replace = t.checked; if (t.checked && !EDIT.replaces) EDIT.replaces = EDIT.p.groups[0]?.name || ''; app(); }
     else if (f === 'replaces') { EDIT.replaces = t.value; app(); }
     else if (f === 'b') { it.b = t.value; it.cats = []; it.must = []; app(); }
-    else if (f === 'basis') { it.basis = t.value; app(); }
+    else if (f === 'basis') { it.basis = t.value; if (t.value === 'R30' && !it.n) it.n = 30; app(); }
+    else if (f === 'n') { it.n = Math.min(90, Math.max(3, parseInt(t.value) || 30)); app(); }
     else if (f === 'minDA') { it.minDA = Math.max(1, parseInt(t.value) || 1); app(); }
     else if (f === 'mode') { it.mode = t.value; it.must = []; app(); }
     else if (f === 'perProm') { it.perProm = Math.max(1, num0(t.value)); app(); }
@@ -383,7 +384,7 @@
     return rs.sort((a, b) => { const x = f(a), y = f(b); return (x > y ? 1 : x < y ? -1 : 0) * M.dir; });
   }
   function zoneHtml(rows) { const z = { AMAN: 0, WASPADA: 0, TINGGI: 0, HABIS: 0 }; rows.filter(r => !r.bad).forEach(r => { const c = r.cond; z[c === 'TANPA SO' ? 'TINGGI' : c]++; }); return `<div class="kkZone">${Object.entries(z).map(([k, n]) => `<span class="bg ${CC[k]}">${k} ${n}</span>`).join('')}</div>`; }
-  const basisTxt = () => V.dealers.some(r => r.basis === 'R30') && V.dealers.some(r => r.basis !== 'R30') ? 'SO (Campuran)' : V.dealers[0]?.basis === 'R30' ? 'SO 30 Hari' : `SO 1–${V.days} ${monthName(V.period)}`;
+  const basisTxt = () => V.dealers.some(r => r.basis === 'R30') && V.dealers.some(r => r.basis !== 'R30') ? 'SO (Campuran)' : V.dealers[0]?.basis === 'R30' ? `SO ${V.dealers[0].days || 30} Hari` : `SO 1–${V.days} ${monthName(V.period)}`;
   function mine() {
     const me = V.subjects.filter(s => s.nik === (typeof BOOT !== 'undefined' ? BOOT?.user?.nik : null)); if (!me.length) return '';
     const base = i => `<div class="k"><small>${E(i.label)} · bobot ${i.weight}%</small><br><b>${N(i.actual)} / ${i.target ? N(i.target) : '—'}</b> ${i.ach != null ? '· ' + D(i.ach) + '%' : '<span class="kkDual">' + E(i.state) + '</span>'}</div>`;
@@ -398,7 +399,7 @@
   function flatHtml() {
     const rs = flat(), rgms = [...new Set(V.dealers.map(r => r.rgm).filter(Boolean))].sort(), brands = [...new Set(V.dealers.map(r => r.brand))].sort(), th = (l, k) => `<th data-kksort="${k}" style="cursor:pointer">${l}${M.sort === k ? (M.dir < 0 ? ' ▼' : ' ▲') : ''}</th>`;
     return `<div class="kkFlt"><input class="fi" id="kkSearch" type="search" placeholder="Cari dealer atau sales" value="${E(M.q)}"><select class="fi" data-kkf="frg" ${rgms.length < 2 ? 'disabled' : ''}><option value="">Semua RGM</option>${rgms.map(x => `<option ${x === M.frg ? 'selected' : ''}>${E(x)}</option>`).join('')}</select><select class="fi" data-kkf="fbr"><option value="">Semua Brand</option>${brands.map(x => `<option ${x === M.fbr ? 'selected' : ''}>${E(x)}</option>`).join('')}</select><select class="fi" data-kkf="fbd"><option value="">Semua Kondisi</option>${['AMAN', 'WASPADA', 'TINGGI', 'HABIS', 'TANPA SO'].map(x => `<option ${x === M.fbd ? 'selected' : ''}>${x}</option>`).join('')}</select></div>
-      <div class="kkScroll"><table><thead><tr>${th('Dealer', 'nama')}${th('Brand', 'brand')}${th('Sales', 'sales')}${th('ASM', 'asm')}${V.role === 'SALES' ? '' : th('RGM', 'rgm')}${th('Stok', 'stok')}<th>${E(basisTxt())}</th>${th('DOS KPI', 'dos')}<th>DOS 30 Hr</th><th>Kondisi</th></tr></thead><tbody>${rs.map(r => `<tr><td>${E(r.nama)}${r.bad ? ' <span class="bg n" title="Data stok/SO perlu dicek, tidak dihitung">CEK DATA</span>' : ''}<div class="kkDual">${E(r.dealer)}${r.grade ? ' · Grade ' + E(r.grade) : ''}</div></td><td class="l">${E(r.brand)}</td><td class="l">${E(r.sales)}</td><td class="l">${E(r.asm)}</td>${V.role === 'SALES' ? '' : `<td class="l">${E(r.rgm)}</td>`}<td>${N(r.stock)}</td><td>${N(r.so)}</td><td><b>${D(r.dos)}</b></td><td class="kkDual">${D(r.dos30)}</td><td>${bd(r.c)}</td></tr>`).join('') || '<tr><td colspan="10">Tidak ada dealer untuk pilihan ini.</td></tr>'}</tbody></table></div><p class="kkDual">${rs.length} baris · DOS KPI = stok ÷ (SO ÷ hari) sesuai basis KPI · DOS 30 Hr hanya pembanding.</p>`;
+      <div class="kkScroll"><table><thead><tr>${th('Dealer', 'nama')}${th('Brand', 'brand')}${th('Sales', 'sales')}${th('ASM', 'asm')}${V.role === 'SALES' ? '' : th('RGM', 'rgm')}${th('Stok', 'stok')}<th>${E(basisTxt())}</th>${th('DOS KPI', 'dos')}<th>DOS N Hr</th><th>Kondisi</th></tr></thead><tbody>${rs.map(r => `<tr><td>${E(r.nama)}${r.bad ? ' <span class="bg n" title="Data stok/SO perlu dicek, tidak dihitung">CEK DATA</span>' : ''}<div class="kkDual">${E(r.dealer)}${r.grade ? ' · Grade ' + E(r.grade) : ''}</div></td><td class="l">${E(r.brand)}</td><td class="l">${E(r.sales)}</td><td class="l">${E(r.asm)}</td>${V.role === 'SALES' ? '' : `<td class="l">${E(r.rgm)}</td>`}<td>${N(r.stock)}</td><td>${N(r.so)}</td><td><b>${D(r.dos)}</b></td><td class="kkDual">${D(r.dos30)}</td><td>${bd(r.c)}</td></tr>`).join('') || '<tr><td colspan="10">Tidak ada dealer untuk pilihan ini.</td></tr>'}</tbody></table></div><p class="kkDual">${rs.length} baris · DOS KPI = stok ÷ (SO ÷ hari) sesuai basis KPI · DOS 30 Hr hanya pembanding.</p>`;
   }
   function tierHtml() {
     const L = startLevel() + M.path.length, rs = curRows(), base = V.role === 'ASM' ? 'TIM SAYA' : V.role === 'RGM' ? 'REGION SAYA' : 'NASIONAL';
@@ -410,7 +411,7 @@
   }
   function flatTierTable(rs) {
     const rows = rs.map(r => ({ ...r, c: r.cond })).sort((a, b) => (b.dos ?? 1e9) - (a.dos ?? 1e9));
-    return `<div class="kkScroll"><table><thead><tr><th>Dealer</th><th>Brand</th><th>Stok</th><th>${E(basisTxt())}</th><th>DOS KPI</th><th>DOS 30 Hr</th><th>Kondisi</th></tr></thead><tbody>${rows.map(r => `<tr><td>${E(r.nama)}${r.bad ? ' <span class="bg n">CEK DATA</span>' : ''}<div class="kkDual">${E(r.dealer)}${r.grade ? ' · Grade ' + E(r.grade) : ''}</div></td><td class="l">${E(r.brand)}</td><td>${N(r.stock)}</td><td>${N(r.so)}</td><td><b>${D(r.dos)}</b></td><td class="kkDual">${D(r.dos30)}</td><td>${bd(r.c)}</td></tr>`).join('')}</tbody></table></div>`;
+    return `<div class="kkScroll"><table><thead><tr><th>Dealer</th><th>Brand</th><th>Stok</th><th>${E(basisTxt())}</th><th>DOS KPI</th><th>DOS N Hr</th><th>Kondisi</th></tr></thead><tbody>${rows.map(r => `<tr><td>${E(r.nama)}${r.bad ? ' <span class="bg n">CEK DATA</span>' : ''}<div class="kkDual">${E(r.dealer)}${r.grade ? ' · Grade ' + E(r.grade) : ''}</div></td><td class="l">${E(r.brand)}</td><td>${N(r.stock)}</td><td>${N(r.so)}</td><td><b>${D(r.dos)}</b></td><td class="kkDual">${D(r.dos30)}</td><td>${bd(r.c)}</td></tr>`).join('')}</tbody></table></div>`;
   }
   function paint() {
     const h = $('kkHost'); if (!h || !V) return;

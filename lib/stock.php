@@ -117,7 +117,12 @@ final class StockCore {
         if (!isset($db['coverage'][$period])) fail_('Periode tidak tersedia.');
         $st = $db['stock'] ?? null; $soCut = $st['coverage'][$period]['cutoff'] ?? null; $stCut = $db['coverage'][$period]['cutoff'];
         if (!$soCut) return ['ready' => false, 'message' => 'Sell Out bulan ini belum dipublikasikan.', 'rows' => [], 'regions' => [], 'total' => null, 'stCut' => $stCut, 'soCut' => null];
-        $asof = strcmp($soCut, $stCut) < 0 ? $soCut : $stCut; $from = self::shift($asof, -29);
+        $asof = strcmp($soCut, $stCut) < 0 ? $soCut : $stCut;
+        // Basis kecepatan SO: default 30 hari terakhir; 'mtd' = bulan berjalan; 'soDays' = N hari (3–90).
+        $fb = is_array($filter) ? ($filter['basis'] ?? null) : null; $soDays = 30; $mtd = false;
+        if ($fb === 'mtd') { $mtd = true; $soDays = (int) substr($asof, 8, 2); }
+        elseif (is_array($filter) && isset($filter['soDays']) && (int) $filter['soDays'] >= 3 && (int) $filter['soDays'] <= 90) $soDays = (int) $filter['soDays'];
+        $from = $mtd ? substr($asof, 0, 8) . '01' : self::shift($asof, -($soDays - 1));
         // Keputusan: bulan/region tanpa data dianggap 0 (tidak ada jualan), tidak lagi memblokir DOS. $zeroAssumed hanya info.
         $zeroAssumed = !(($db['historyComplete'] ?? null) !== false && self::complete($db['coverage'], self::BASE, $asof) && self::complete($st['coverage'], self::BASE, $asof)) || !self::complete($st['coverage'], $from, $asof);
         $covered = true;
@@ -147,10 +152,10 @@ final class StockCore {
         }
         $rows = [];
         foreach ($groups as $r) {
-            $limits = self::rule($db, $r['big']); $avg = $windowReady ? $r['sellout'] / 30 : null;
+            $limits = self::rule($db, $r['big']); $avg = $windowReady ? $r['sellout'] / $soDays : null;
             $dos = $covered && !$r['bad'] && $avg > 0 ? $r['stock'] / $avg : null;
             $status = !$covered || !$windowReady || $r['bad'] ? 'PERLU CEK DATA' : ($r['stock'] == 0 ? ($r['sellout'] > 0 ? 'HABIS' : 'TIDAK AKTIF') : ($r['sellout'] == 0 ? 'BELUM BERGERAK' : ($dos < $limits['min'] ? 'MENIPIS' : ($dos > $limits['max'] ? 'STOK TINGGI' : 'CUKUP'))));
-            $reasons = array_merge($r['reasons'], !$covered ? ['Histori ST/SO belum lengkap'] : [], !$windowReady ? ['Data 30 hari belum lengkap'] : []);
+            $reasons = array_merge($r['reasons'], !$covered ? ['Histori ST/SO belum lengkap'] : [], !$windowReady ? ['Data ' . $soDays . ' hari belum lengkap'] : []);
             $soKecil = $dos !== null && $dos >= 1000;
             if ($soKecil) $reasons[] = 'SO terlalu kecil (DOS ribuan hari)';
             $rows[] = array_merge($r, ['reason' => implode('; ', uniq($reasons)), 'avg' => $avg, 'dos' => $dos, 'status' => $status, 'soKecil' => $soKecil]);
@@ -159,12 +164,12 @@ final class StockCore {
         $q = isset($filter['query']) && truthy($filter['query']) ? js_lower(js_str($filter['query'])) : null;
         $rows = js_filter($rows, fn($r) => (!truthy($filter['region'] ?? null) || $filter['region'] === 'ALL' || $r['big'] === $filter['region']) && (!truthy($filter['subRegion'] ?? null) || $filter['subRegion'] === 'ALL' || $r['region'] === $filter['subRegion']) && (!truthy($filter['brand'] ?? null) || $filter['brand'] === 'ALL' || $r['brand'] === $filter['brand']) && (!truthy($filter['type'] ?? null) || $filter['type'] === 'ALL' || $r['type'] === $filter['type']) && (!truthy($filter['status'] ?? null) || $filter['status'] === 'ALL' || $r['status'] === $filter['status']) && ($q === null || str_contains(js_lower($r['nama'] . ' ' . $r['customer'] . ' ' . $r['type'] . ' ' . $r['sales']), $q)));
         $rows = js_sort($rows, fn($a, $b) => lc($a['nama'], $b['nama']) ?: lc($a['brand'], $b['brand']) ?: lc($a['type'], $b['type']));
-        $total = function (array $items) use ($windowReady, $covered) {
+        $total = function (array $items) use ($windowReady, $covered, $soDays) {
             $stock = 0; $sellout = 0; $bad = false; $cust = []; $low = 0; $badN = 0; $okStock = 0; $okSell = 0;
             foreach ($items as $r) { $stock += $r['stock']; $sellout += $r['sellout']; if ($r['status'] === 'PERLU CEK DATA') { $bad = true; $badN++; } else { $okStock += $r['stock']; $okSell += $r['sellout']; } $cust[(string) $r['customer']] = true; if (in_array($r['status'], ['MENIPIS', 'HABIS'], true)) $low++; }
-            $avg = $windowReady ? $sellout / 30 : null;
+            $avg = $windowReady ? $sellout / $soDays : null;
             // DSM v5: DOS total dihitung dari baris yang datanya bersih; baris "perlu cek data" (jumlahnya di kolom bad) tidak lagi membuat DOS total kosong.
-            $okAvg = $windowReady ? $okSell / 30 : null;
+            $okAvg = $windowReady ? $okSell / $soDays : null;
             return ['stock' => $stock, 'sellout' => $sellout, 'avg' => $avg, 'dos' => $covered && $okAvg > 0 ? $okStock / $okAvg : null, 'dealerCount' => count($cust), 'typeCount' => count($items), 'low' => $low, 'bad' => $badN];
         };
         $regions = []; $brands = [];
@@ -172,7 +177,7 @@ final class StockCore {
             $rk = jkey([$r['big'], $r['region']]); if (!isset($regions[$rk])) $regions[$rk] = ['big' => $r['big'], 'region' => $r['region'], 'items' => []]; $regions[$rk]['items'][] = $r;
             $bk = jkey([$r['customer'], $r['brand']]); if (!isset($brands[$bk])) $brands[$bk] = ['customer' => $r['customer'], 'nama' => $r['nama'], 'brand' => $r['brand'], 'items' => []]; $brands[$bk]['items'][] = $r;
         }
-        return ['ready' => true, 'asof' => $asof, 'from' => $from, 'stCut' => $stCut, 'soCut' => $soCut, 'covered' => $covered, 'windowReady' => $windowReady, 'zeroAssumed' => $zeroAssumed, 'total' => $total($rows),
+        return ['ready' => true, 'asof' => $asof, 'from' => $from, 'stCut' => $stCut, 'soCut' => $soCut, 'covered' => $covered, 'windowReady' => $windowReady, 'zeroAssumed' => $zeroAssumed, 'soDays' => $soDays, 'basis' => $mtd ? 'mtd' : 'n', 'total' => $total($rows),
             'regions' => array_map(fn($r) => array_merge(['big' => $r['big'], 'region' => $r['region']], $total($r['items'])), array_values($regions)),
             'brands' => array_map(fn($r) => array_merge(['customer' => $r['customer'], 'nama' => $r['nama'], 'brand' => $r['brand']], $total($r['items'])), array_values($brands)), 'rows' => $rows];
     }

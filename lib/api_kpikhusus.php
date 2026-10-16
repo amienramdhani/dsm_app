@@ -30,7 +30,7 @@ function kkNormalize_(array $c): array {
     $cats = array_values((array) ($c['cats'] ?? [])); $items = [];
     foreach ((array) ($c['items'] ?? []) as $it) {
         $x = ['m' => $it['m'], 'b' => $it['b'], 'w' => $it['w']];
-        if (in_array($it['m'], ['SO', 'DOS'], true)) { $x['basis'] = $it['basis'] ?? 'MTD'; $x['cats'] = $cats; }
+        if (in_array($it['m'], ['SO', 'DOS'], true)) { $x['basis'] = $it['basis'] ?? 'MTD'; if (($it['basis'] ?? '') === 'R30') $x['n'] = (int) ($it['n'] ?? 30); $x['cats'] = $cats; }
         $items[] = $x;
     }
     $c['v'] = KK_VER; $c['replace'] = true; $c['items'] = $items; unset($c['cats']);
@@ -170,6 +170,7 @@ function kkClean_(array $db, string $period, array $p, $in): array {
         $it = ['m' => $m, 'b' => $b, 'w' => (float) $wt];
         if ($m === 'SO' || $m === 'DOS') {
             $basis = js_upper(text_($x['basis'] ?? 'MTD')); $it['basis'] = in_array($basis, ['MTD', 'R30'], true) ? $basis : 'MTD';
+            if ($it['basis'] === 'R30') { $n = (int) ($x['n'] ?? 30); if ($n < 3 || $n > 90) fail_($line . 'jumlah hari harus 3–90.'); $it['n'] = $n; }
             $cats = [];
             foreach ((array) ($x['cats'] ?? []) as $c) { $c = text_($c); if ($c !== '') { if (!in_array($c, $grades, true)) fail_($line . 'kategori dealer "' . $c . '" tidak ada di Master Grade.'); $cats[$c] = $c; } }
             $it['cats'] = array_values($cats);
@@ -192,7 +193,7 @@ function kkClean_(array $db, string $period, array $p, $in): array {
             $it['id'] = kkDaId_($it);
         }
         if ($m === 'DOS' && isset($x['rule']) && is_array($x['rule'])) $it['rule'] = kkCleanRule_($x['rule']);
-        $sig = $m . '|' . $b . '|' . ($m === 'DA' ? ($it['mode'] . '|' . $it['minDA'] . '|' . implode(',', $it['must']) . '|' . $it['perProm']) : (($it['basis'] ?? '') . '|' . implode(',', $it['cats'] ?? [])));
+        $sig = $m . '|' . $b . '|' . ($m === 'DA' ? ($it['mode'] . '|' . $it['minDA'] . '|' . implode(',', $it['must']) . '|' . $it['perProm']) : (($it['basis'] ?? '') . (($it['basis'] ?? '') === 'R30' ? ':' . ($it['n'] ?? 30) : '') . '|' . implode(',', $it['cats'] ?? [])));
         if (isset($seen[$sig])) fail_($line . kkItemLabel_($it) . ' sudah ada dengan aturan yang sama.'); $seen[$sig] = true;
         if ($m !== 'DOS') $hasBase = true;
         $w += (float) $wt; $items[] = $it;
@@ -271,10 +272,13 @@ function kkSoTarget_(array $db, string $period, array $ids, string $brand): arra
 // ------------------------------------------------------------------
 // Perhitungan
 // ------------------------------------------------------------------
+/** Jumlah hari untuk basis "N hari terakhir" (R30 = N hari; default 30). */
+function kkN_(array $it): int { $n = (int) ($it['n'] ?? 30); return $n >= 3 && $n <= 90 ? $n : 30; }
+
 /** Hitung seluruh indikator konfigurasi untuk subjek dengan anggota $ids. */
 function kkCompute_(array $db, string $period, array $ids, array $cfg): array {
     $ctx = kkAsof_($db, $period); $idSet = array_flip(array_map('strval', $ids)); $rows = null;
-    $pMtd = $pR30 = null;
+    $pMtd = null; $pN = [];
     $indicators = [];
     foreach ($cfg['items'] as $it) {
         $b = $it['b']; $m = $it['m']; $ind = kkItemLabel_($it);
@@ -291,10 +295,10 @@ function kkCompute_(array $db, string $period, array $ids, array $cfg): array {
         }
         if (!$ctx) { $indicators[] = ['state' => 'SELL OUT BELUM DIPUBLIKASIKAN'] + $base; continue; }
         $basis = $it['basis'] ?? 'MTD';
-        if ($basis === 'R30') $pR30 = $pR30 ?? kkPairsAll_($db, $ctx['asof'], StockCore::shift($ctx['asof'], -29));
+        if ($basis === 'R30') { $nn = kkN_($it); $pN[$nn] = $pN[$nn] ?? kkPairsAll_($db, $ctx['asof'], StockCore::shift($ctx['asof'], -($nn - 1))); }
         else $pMtd = $pMtd ?? kkPairsAll_($db, $ctx['asof'], $ctx['start']);
-        $src = kkRowPairs_($basis === 'R30' ? $pR30 : $pMtd, $idSet, $b, $it['cats'] ?? []);
-        $days = $basis === 'R30' ? 30 : $ctx['days']; $stock = 0; $so = 0; $cust = []; $excluded = 0;
+        $src = kkRowPairs_($basis === 'R30' ? $pN[$nn] : $pMtd, $idSet, $b, $it['cats'] ?? []);
+        $days = $basis === 'R30' ? $nn : $ctx['days']; $stock = 0; $so = 0; $cust = []; $excluded = 0;
         foreach ($src as $pr) { if ($pr['bad']) { $excluded++; continue; } $stock += $pr['stock']; $so += $pr['so']; $cust[$pr['customer']] = true; }
         $base['dealers'] = count($cust);
         if ($m === 'SO') {
@@ -385,7 +389,7 @@ function kkDealerCount_(array $db, array $p, array $cfg, ?array $ctx): ?int {
     if (!$ctx) return null; $idSet = array_flip(kkIds_($db, $p)); $set = []; $has = false;
     foreach ($cfg['items'] as $it) {
         if (!in_array($it['m'], ['SO', 'DOS'], true)) continue; $has = true;
-        $pairs = kkPairsAll_($db, $ctx['asof'], ($it['basis'] ?? 'MTD') === 'R30' ? StockCore::shift($ctx['asof'], -29) : $ctx['start']);
+        $pairs = kkPairsAll_($db, $ctx['asof'], ($it['basis'] ?? 'MTD') === 'R30' ? StockCore::shift($ctx['asof'], -(kkN_($it) - 1)) : $ctx['start']);
         foreach (kkRowPairs_($pairs, $idSet, $it['b'], $it['cats'] ?? []) as $pr) $set[$pr['customer']] = true;
     }
     return $has ? count($set) : null;
@@ -577,12 +581,12 @@ function apiKpiKhususTargetCopy($token, $from, $to, $reason = null) {
 /** Baris dealer×brand untuk satu subjek. $dosOnly: hanya dealer yang masuk indikator DOS. */
 function kkDealerRows_(array $db, string $period, array $p, array $cfg, array $ctx, bool $dosOnly = true): array {
     $idSet = array_flip(kkIds_($db, $p)); $people = $db['meta']['people'];
-    $mtd = kkPairsAll_($db, $ctx['asof'], $ctx['start']); $r30 = kkPairsAll_($db, $ctx['asof'], StockCore::shift($ctx['asof'], -29));
+    $mtd = kkPairsAll_($db, $ctx['asof'], $ctx['start']); $pn = fn(int $n) => kkPairsAll_($db, $ctx['asof'], StockCore::shift($ctx['asof'], -($n - 1)));
     $map = [];
     foreach ($cfg['items'] as $it) {
         if (!in_array($it['m'], ['SO', 'DOS'], true)) continue; if ($dosOnly && $it['m'] !== 'DOS') continue;
         $basis = $it['basis'] ?? 'MTD';
-        foreach (kkRowPairs_($basis === 'R30' ? $r30 : $mtd, $idSet, $it['b'], $it['cats'] ?? []) as $k => $pr) {
+        foreach (kkRowPairs_($basis === 'R30' ? $pn(kkN_($it)) : $mtd, $idSet, $it['b'], $it['cats'] ?? []) as $k => $pr) {
             if (!isset($map[$k])) $map[$k] = ['pr' => $pr, 'dos' => null, 'so' => false];
             if ($it['m'] === 'DOS' && !$map[$k]['dos']) $map[$k]['dos'] = $it; if ($it['m'] === 'SO') $map[$k]['so'] = true;
         }
@@ -591,10 +595,10 @@ function kkDealerRows_(array $db, string $period, array $p, array $cfg, array $c
     foreach ($map as $k => $e) {
         $pr = $mtd[$k] ?? $e['pr']; $it = $e['dos']; $basis = $it['basis'] ?? 'MTD'; $rule = $it ? kkRuleFor_($period, $it) : kkPeriodRule_($period);
         $c = $db['meta']['customers'][$pr['customer']] ?? null; $sales = PortalCore::person($people, $pr['owner']); $asm = $sales ? targetAsm_($people, $sales) : null;
-        $so30 = $r30[$k]['so'] ?? 0; $a = kkDosPoints_($pr['stock'], $pr['so'], $ctx['days'], $rule); $b = kkDosPoints_($pr['stock'], $so30, 30, $rule);
+        $nn = $it ? kkN_($it) : 30; $so30 = ($pn($nn)[$k]['so'] ?? 0); $a = kkDosPoints_($pr['stock'], $pr['so'], $ctx['days'], $rule); $b = kkDosPoints_($pr['stock'], $so30, $nn, $rule);
         $use = $basis === 'R30' ? $b : $a;
         $out[] = ['dealer' => $pr['customer'], 'nama' => js_or($c['nama'] ?? null, $pr['customer']), 'brand' => $pr['brand'], 'grade' => $pr['grade'], 'nik' => $pr['owner'], 'sales' => $sales['nama'] ?? '', 'asmNik' => $asm['nik'] ?? '', 'asm' => $asm['nama'] ?? '', 'rgm' => kkRgmOf_($people, $asm), 'region' => js_or($sales['portfolio'] ?? null, $sales['region'] ?? ''), 'big' => $sales['wilayah'] ?? '',
-            'stock' => $pr['stock'], 'so' => $basis === 'R30' ? $so30 : $pr['so'], 'days' => $basis === 'R30' ? 30 : $ctx['days'], 'basis' => $basis, 'dos' => $use['dos'], 'cond' => $use['cond'], 'points' => $it ? $use['points'] : null, 'dos30' => $b['dos'], 'dosMtd' => $a['dos'], 'bad' => $pr['bad'], 'inDos' => (bool) $it, 'inSo' => $e['so']];
+            'stock' => $pr['stock'], 'so' => $basis === 'R30' ? $so30 : $pr['so'], 'days' => $basis === 'R30' ? $nn : $ctx['days'], 'basis' => $basis, 'dos' => $use['dos'], 'cond' => $use['cond'], 'points' => $it ? $use['points'] : null, 'dos30' => $b['dos'], 'dosMtd' => $a['dos'], 'bad' => $pr['bad'], 'inDos' => (bool) $it, 'inSo' => $e['so']];
     }
     usort($out, fn($x, $y) => ($y['dos'] ?? INF) <=> ($x['dos'] ?? INF));
     return $out;

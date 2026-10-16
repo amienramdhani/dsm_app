@@ -39,18 +39,18 @@ function apiPushSave($token, $prefs = null, $sub = null) {
     return apiPushState($token);
 }
 /** Kirim ke satu NIK. Butuh library minishlink/web-push (composer require minishlink/web-push). */
-function pushSendTo_(string $nik, string $title, string $body, string $type = 'sistem'): string {
+function pushSendTo_(string $nik, string $title, string $body, string $type = 'sistem', array $opt = []): string {
     if (!pushOn_()) return 'Saklar push masih mati.';
     $auto = __DIR__ . '/../vendor/autoload.php';
     if (!is_file($auto)) return 'Library web-push belum terpasang (jalankan: composer require minishlink/web-push).';
     require_once $auto;
     $p = array_merge(pushDefaults_(), json_decode(prop_get_('PUSH_PREF_' . $nik) ?? '', true) ?: []);
-    if (!$p['on'] || empty($p[$type])) return 'Pengguna mematikan jenis notifikasi ini.';
-    if ($p['quiet']) { $h = date('H:i'); $f = $p['qFrom']; $t = $p['qTo']; if ($f > $t ? ($h >= $f || $h < $t) : ($h >= $f && $h < $t)) return 'Jam tenang.'; }
+    if (!$p['on'] || ($type !== 'pengumuman' && empty($p[$type]))) return 'Pengguna mematikan jenis notifikasi ini.';
+    if ($p['quiet'] && empty($opt['important'])) { $h = date('H:i'); $f = $p['qFrom']; $t = $p['qTo']; if ($f > $t ? ($h >= $f || $h < $t) : ($h >= $f && $h < $t)) return 'Jam tenang.'; }
     $subs = json_decode(prop_get_('PUSH_SUB_' . $nik) ?? '[]', true) ?: [];
     if (!$subs) return 'Belum ada perangkat terdaftar.';
     $k = pushKeys_(); $ws = new \Minishlink\WebPush\WebPush(['VAPID' => ['subject' => 'mailto:admin@localhost', 'publicKey' => $k['pub'], 'privateKey' => $k['pem']]]);
-    foreach ($subs as $s) $ws->queueNotification(\Minishlink\WebPush\Subscription::create($s), json_encode(['title' => $title, 'body' => $body]));
+    foreach ($subs as $s) $ws->queueNotification(\Minishlink\WebPush\Subscription::create($s), json_encode(array_filter(['title' => $title, 'body' => $body, 'url' => $opt['url'] ?? '', 'image' => $opt['image'] ?? '', 'tag' => $opt['tag'] ?? ''], fn($v) => $v !== '')));
     $ok = 0; foreach ($ws->flush() as $r) if ($r->isSuccess()) $ok++;
     return "Terkirim $ok dari " . count($subs) . ' perangkat.';
 }

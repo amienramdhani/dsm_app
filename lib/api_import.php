@@ -190,6 +190,7 @@ function publishRegionImport_($token, $id): array {
         }
         $result = publish_($meta, $old['raw'], $old['coverage'], $u['nik'], $s['kind'] . ' ' . $s['period'] . ' ' . implode(', ', $s['regions']) . $scope, null, $parts);
         prop_delete_('REGION_STAGE_' . $id);
+        if (function_exists('ntEvent_')) ntEvent_('DATA_BARU');
         return $result;
     });
 }
