@@ -151,7 +151,9 @@ final class StockCore {
             $dos = $covered && !$r['bad'] && $avg > 0 ? $r['stock'] / $avg : null;
             $status = !$covered || !$windowReady || $r['bad'] ? 'PERLU CEK DATA' : ($r['stock'] == 0 ? ($r['sellout'] > 0 ? 'HABIS' : 'TIDAK AKTIF') : ($r['sellout'] == 0 ? 'BELUM BERGERAK' : ($dos < $limits['min'] ? 'MENIPIS' : ($dos > $limits['max'] ? 'STOK TINGGI' : 'CUKUP'))));
             $reasons = array_merge($r['reasons'], !$covered ? ['Histori ST/SO belum lengkap'] : [], !$windowReady ? ['Data 30 hari belum lengkap'] : []);
-            $rows[] = array_merge($r, ['reason' => implode('; ', uniq($reasons)), 'avg' => $avg, 'dos' => $dos, 'status' => $status]);
+            $soKecil = $dos !== null && $dos >= 1000;
+            if ($soKecil) $reasons[] = 'SO terlalu kecil (DOS ribuan hari)';
+            $rows[] = array_merge($r, ['reason' => implode('; ', uniq($reasons)), 'avg' => $avg, 'dos' => $dos, 'status' => $status, 'soKecil' => $soKecil]);
         }
         $filter = $filter ?? [];
         $q = isset($filter['query']) && truthy($filter['query']) ? js_lower(js_str($filter['query'])) : null;

@@ -335,6 +335,7 @@ final class PortalCore {
             }
             $groups[] = ['name' => $group, 'score' => !$weights ? null : $weighted / $weights, 'pending' => $pending && !$weights, 'partial' => $pending && (bool) $weights, 'na' => !$pending && !$weights, 'indicators' => $indicators];
         }
+        if (function_exists('kkApply_')) $groups = kkApply_($db, $period, $ids, $owner, $groups, $tentative);
         $scored = js_filter($groups, fn($g) => !$g['na'] && $g['score'] !== null);
         $pending = !$groups || js_some($groups, fn($g) => $g['pending'] || $g['partial']) || $tentative;
         $sum = 0; foreach ($scored as $g) $sum += $g['score'];
@@ -497,7 +498,7 @@ final class PortalCore {
             $p = self::month($r['PERIODE'] ?? null); $nik = text_($r['NIK'] ?? null); $b = text_($r['BRAND'] ?? null); $metric = js_upper(text_($r['METRIK'] ?? null));
             $value = self::number($r['TARGET'] ?? null); $indicator = text_($r['INDIKATOR_ID'] ?? null); $k = jkey([$p, $nik, $b, $metric, $indicator]);
             if (!isset($pids[$nik]) || !$pids[$nik]['sales']) fail_('Target hanya untuk portofolio Sales: ' . $nik);
-            if ($b === '' || !in_array($metric, ['QTY', 'DA', 'NOO', 'IDDLE', 'OMZET'], true) || $value < 0) fail_('Target tidak valid.');
+            if ($b === '' || !in_array($metric, ['QTY', 'DA', 'NOO', 'IDDLE', 'OMZET', 'SO'], true) || $value < 0) fail_('Target tidak valid.');
             if (isset($tk[$k])) fail_('Target duplikat: ' . $k);
             $tk[$k] = true;
             $targets[] = ['period' => $p, 'nik' => $nik, 'brand' => $b, 'metric' => $metric, 'target' => $value, 'indicator' => $indicator];

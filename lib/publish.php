@@ -375,7 +375,7 @@ function rgmPolicies_(array $meta): array {
 
 const TARGET_INPUT = 'Target_Input';
 const TARGET_INPUT_FIXED = ['PERIODE TARGET', 'NIK SALES', 'NAMA SALES'];
-const TARGET_INPUT_METRIC = ['ST' => 'QTY', 'DA' => 'DA', 'NOO' => 'NOO', 'IDDLE' => 'IDDLE', 'OMZET' => 'OMZET'];
+const TARGET_INPUT_METRIC = ['ST' => 'QTY', 'DA' => 'DA', 'NOO' => 'NOO', 'IDDLE' => 'IDDLE', 'OMZET' => 'OMZET', 'SO' => 'SO'];
 
 function targetInputCols_(array $heads): array {
     $seen = []; $cols = [];
@@ -385,7 +385,7 @@ function targetInputCols_(array $heads): array {
         if (isset($seen[$h])) fail_('Target_Input: kolom "' . $h . '" dobel (kolom ' . $seen[$h] . ' dan ' . ($i + 1) . ').');
         $seen[$h] = $i + 1;
         if (in_array($h, TARGET_INPUT_FIXED, true)) continue;
-        if (!preg_match('/^(ST|DA|NOO|IDDLE|OMZET) (.+)$/u', $h, $m)) fail_('Target_Input: header "' . $h . '" tidak dikenali. Pakai format ST <BRAND>, DA <BRAND>, NOO <BRAND>, IDDLE <BRAND>, atau OMZET <BRAND>.');
+        if (!preg_match('/^(ST|DA|NOO|IDDLE|OMZET|SO) (.+)$/u', $h, $m)) fail_('Target_Input: header "' . $h . '" tidak dikenali. Pakai format ST <BRAND>, DA <BRAND>, NOO <BRAND>, IDDLE <BRAND>, OMZET <BRAND>, atau SO <BRAND>.');
         $cols[] = ['i' => $i, 'metric' => TARGET_INPUT_METRIC[$m[1]], 'brand' => js_trim($m[2])];
     }
     foreach (['PERIODE TARGET', 'NIK SALES'] as $k) if (!isset($seen[$k])) fail_('Target_Input: kolom wajib ' . $k . ' tidak ada.');

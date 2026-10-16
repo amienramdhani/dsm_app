@@ -236,6 +236,12 @@ function apiTargetGet($token, $period = null, $big = null, $sub = null) {
             if (!isset($cols[$k])) $cols[$k] = ['key' => $k, 'metric' => $c['metric'], 'brand' => $c['brand'], 'indicator' => js_or($c['indicator'] ?? '', ''), 'label' => truthy($c['indicator'] ?? '') ? js_or($c['label'] ?? '', $c['indicator']) : (KPI_METRIC_COL[$c['metric']] . ' ' . $c['brand']), 'types' => js_or($c['types'] ?? null, [])];
             $need[] = $k;
         }
+        // KPI Khusus: ST dan DA (termasuk DA aturan khusus → kolom KHUSUS otomatis) memakai target reguler di grid ini.
+        if (function_exists('kkTargetNeeds_')) foreach (kkTargetNeeds_($period, (string) $p['nik']) as $n) {
+            $k = targetKey_($n['metric'], $n['brand'], $n['indicator']);
+            if (!isset($cols[$k])) $cols[$k] = ['key' => $k, 'metric' => $n['metric'], 'brand' => $n['brand'], 'indicator' => $n['indicator'], 'label' => $n['label'], 'types' => []];
+            $need[] = $k;
+        }
         foreach (array_keys($tv[(string) $p['nik']] ?? []) as $k) {
             if (!isset($cols[$k])) { $s = explode('|', $k); $cols[$k] = ['key' => $k, 'metric' => $s[0], 'brand' => $s[1], 'indicator' => $s[2] ?? null, 'label' => js_or($s[2] ?? '', KPI_METRIC_COL[$s[0]] . ' ' . $s[1]), 'extra' => true]; }
         }
