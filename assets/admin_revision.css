@@ -1,0 +1,45 @@
+/* DSM approved Admin focus + polished Edit User */
+.admTabs.dsmAdminTabs{align-self:start}
+.admTabs.dsmAdminTabs button{transition:.16s ease}
+.admTabs.dsmAdminTabs button.on{transform:translateY(-1px)}
+.admList.dsmFocusMode .adminFeature{transition:opacity .16s ease,filter .16s ease,transform .16s ease}
+.admList.dsmFocusMode.hasFocus .adminFeature:not(.dsmPanelFocus){opacity:.34;filter:saturate(.55);transform:scale(.997)}
+.admList.dsmFocusMode.hasFocus .adminFeature:not(.dsmPanelFocus):hover{opacity:.72;filter:saturate(.82)}
+.adminFeature.dsmPanelFocus{opacity:1!important;filter:none!important}
+.adminFeature.dsmPanelFocus>summary{background:var(--dsm-soft,#f8fafc)!important;border-color:var(--dsm-line,#d9e0e8)!important;box-shadow:0 8px 20px var(--dsm-shadow,rgba(15,23,42,.07))!important}
+.adminFeature.dsmPanelFocus>summary .admIc{background:var(--dsm-mid,#eef2f7)!important;color:var(--dsm-strong,#475569)!important}
+.adminFeature.dsmPanelFocus>summary>span{color:var(--dsm-strong,#334155)!important}
+.adminFeature.dsmPanelFocus>summary small{color:color-mix(in srgb,var(--dsm-strong,#334155) 65%,#667085)!important}
+#userEditor.dsmUserPolished{max-width:860px}
+#userEditor.dsmUserPolished .userForm{display:block}
+#userEditor .dsmUserSection{border:1px solid #e6e9ee;border-radius:14px;background:#fff;padding:12px 13px;margin:0 0 10px;box-shadow:0 5px 16px rgba(20,40,70,.045)}
+#userEditor .dsmUserSectionHead{display:flex;align-items:center;gap:8px;margin:0 0 9px}
+#userEditor .dsmUserSectionHead i{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:#f1f4f8;font-style:normal;font-size:13px}
+#userEditor .dsmUserSectionHead b{font-size:12.5px}
+#userEditor .dsmUserSectionHead small{display:block;color:#7a8798;font-size:9.5px;font-weight:500;margin-top:1px}
+#userEditor .dsmUserSectionGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px 10px}
+#userEditor .dsmUserSectionGrid>label{margin:0}
+#userEditor .dsmUserSectionGrid.struct{grid-template-columns:1fr 1fr 1.25fr}
+#userEditor .dsmPortfolioSection{background:#fbf9ff;border-color:#e8e2f8}
+#userEditor .dsmPortfolioLine{display:grid;grid-template-columns:minmax(220px,1fr) auto;gap:10px;align-items:end}
+#userEditor .dsmPortfolioLine .confirm{min-height:40px;display:flex;align-items:center;margin:0;padding:8px 10px;border:1px solid #e4e7ec;border-radius:10px;background:#fff}
+#userEditor .dsmPortfolioDisabled{opacity:.46}
+#userEditor .dsmPortfolioDisabled *{pointer-events:none!important}
+#userEditor .dsmPortfolioTools{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-top:8px}
+#userEditor .dsmPortfolioHelp{font-size:10px;color:#7b8798}
+#userEditor .dsmPortfolioWarn{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;padding:8px 9px;border-radius:9px;font-size:10px;margin-top:8px}
+#userEditor .dsmSaveBar{position:sticky;bottom:-1px;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-top:1px solid #edf0f3;padding-top:10px;margin-top:10px;z-index:2}
+@media(max-width:700px){#userEditor .dsmUserSectionGrid,#userEditor .dsmUserSectionGrid.struct,#userEditor .dsmPortfolioLine{grid-template-columns:1fr}}
+#kkApp .kkInd.dsmCompact{padding:0;overflow:hidden}
+#kkApp .kkInd.dsmCompact>.kkLn:first-child{padding:9px 10px;margin:0;min-height:44px;cursor:pointer}
+#kkApp .kkInd.dsmCompact.dsmOpen>.kkLn:first-child{border-bottom:1px solid #e8ecf2}
+#kkApp .kkCompactBody{display:none;padding:10px 11px}
+#kkApp .kkInd.dsmOpen>.kkCompactBody{display:block}
+#kkApp .kkCompactToggle{margin-left:auto;border:0;background:#f2f4f7;color:#667085;width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-weight:900;cursor:pointer;flex:0 0 28px}
+#kkApp .kkInd.dsmOpen .kkCompactToggle{background:#fff3e6;color:#c45a0a}
+#kkApp .kkTot.dsmWeightTotal{position:relative;overflow:hidden;padding-bottom:13px}
+#kkApp .kkTot.dsmWeightTotal:after{content:"";position:absolute;left:10px;right:10px;bottom:5px;height:4px;border-radius:99px;background:#dce4e9}
+#kkApp .kkTot.dsmWeightTotal:before{content:"";position:absolute;left:10px;bottom:5px;height:4px;border-radius:99px;background:#16a36d;width:calc((100% - 20px) * var(--kk-progress,1))}
+#kkApp .kkTot.dsmWeightTotal.bad:before{background:#d94d65}
+#kkApp .kkStickyFooter{position:sticky;bottom:0;z-index:4;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border:1px solid #e8ecf2;border-radius:13px;padding:9px 10px;margin-top:10px;box-shadow:0 -7px 20px rgba(30,45,70,.055)}
+#kkApp .kkStickyFooter .kkLbl{margin-top:0}

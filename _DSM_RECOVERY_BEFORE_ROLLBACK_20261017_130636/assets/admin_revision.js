@@ -1,0 +1,195 @@
+/* DSM approved Admin focus / menu structure / Edit User polish / KPI compact */
+(function(){
+'use strict';
+
+const GROUPS=[
+ ['u','Pengguna & Akses','#2B7BE0',/akun pengguna|tambah user|hak export|keamanan akun/i],
+ ['d','Dealer','#0E9F6E',/cari & edit dealer|tambah dealer|upload dealer|bulk edit customer|update kontak|approval data dealer|pic dealer|big region per dealer|dealer tutup|transfer dealer|ganti kode induk/i],
+ ['h','Upload Harian','#F07A0C',/upload regional|peta kelengkapan|kelengkapan data|status sync/i],
+ ['md','Master Data','#6D3FD8',/master product|brand & klasifikasi|region map|hari libur|download data master/i],
+ ['kt','KPI & Target','#7C4DCE',/kpi khusus|edit target|atur kpi|region per brand/i],
+ ['ka','Kebijakan & Aturan','#B7791F',/master & kebijakan|brand · ambang|bulk master/i],
+ ['tm','Telemarketing','#A04BC7',/penugasan telemarketing|kpi telemarketing/i],
+ ['fo','Form Order','#0F8F96',/badan usaha.*form order|badan usaha/i],
+ ['s','Sistem','#6F7B8E',/.*/i],
+];
+
+const hexRgb=h=>{
+ const x=String(h).replace('#',''); const v=parseInt(x.length===3?x.split('').map(c=>c+c).join(''):x,16);
+ return [(v>>16)&255,(v>>8)&255,v&255];
+};
+const rgba=(h,a)=>{const [r,g,b]=hexRgb(h);return `rgba(${r},${g},${b},${a})`};
+const groupFor=name=>GROUPS.find(g=>g[3].test(name||''))||GROUPS[GROUPS.length-1];
+
+function enhanceAdminGroups(wrap){
+ if(!wrap||wrap.dataset.dsmRev==='1')return;
+ const nav=wrap.querySelector('.admTabs'),list=wrap.querySelector('.admList'),finder=wrap.querySelector('#adminFeatureSearch');
+ if(!nav||!list||!finder)return;
+ wrap.dataset.dsmRev='1'; nav.classList.add('dsmAdminTabs');list.classList.add('dsmFocusMode');
+ const items=[...list.querySelectorAll(':scope>.adminFeature')];
+ items.forEach(d=>{
+   const g=groupFor(d.dataset.feature||d.querySelector('summary')?.innerText||'');
+   d.dataset.dsmGroup=g[0]; d.dataset.tab=g[0]; d.dataset.dsmColor=g[2];
+   d.style.setProperty('--dsm-soft',rgba(g[2],.085));
+   d.style.setProperty('--dsm-mid',rgba(g[2],.14));
+   d.style.setProperty('--dsm-line',rgba(g[2],.28));
+   d.style.setProperty('--dsm-shadow',rgba(g[2],.11));
+   d.style.setProperty('--dsm-strong',g[2]);
+ });
+
+ // Lepas handler lama supaya struktur 9 grup tidak ditimpa closure lama.
+ const newNav=nav.cloneNode(false);nav.replaceWith(newNav);
+ const newFinder=finder.cloneNode(true);finder.replaceWith(newFinder);
+ const countEl=wrap.querySelector('#adminFeatureCount');
+ let cur=(items[0]?.dataset.dsmGroup)||'u',q='';
+
+ function hit(d){return !q||(d.dataset.hay||d.textContent||'').toLowerCase().includes(q)}
+ function total(k){return items.filter(d=>d.dataset.dsmGroup===k).length}
+ function count(k){return items.filter(d=>d.dataset.dsmGroup===k&&hit(d)).length}
+ function paint(){
+   const avail=GROUPS.filter(g=>total(g[0])>0);
+   if(!avail.some(g=>g[0]===cur))cur=avail[0]?.[0]||'s';
+   if(q&&count(cur)===0){const f=avail.find(g=>count(g[0])>0);if(f)cur=f[0]}
+   newNav.innerHTML=avail.map(g=>`<button type="button" data-k="${g[0]}" class="${g[0]===cur?'on':''}${q?(count(g[0])?' hit':' dim'):''}" style="--c:${g[2]}"><span>${g[1]}</span><em>${q?count(g[0]):total(g[0])}</em></button>`).join('');
+   items.forEach(d=>{const show=d.dataset.dsmGroup===cur&&hit(d);d.hidden=!show;if(q&&show&&q.length>1)d.open=true});
+   if(countEl)countEl.textContent=q?`${items.filter(hit).length} panel cocok dari ${items.length}`:`${items.length} panel · ketuk untuk membuka`;
+   clearFocus(list);
+ }
+ newNav.onclick=e=>{const b=e.target.closest('[data-k]');if(!b)return;cur=b.dataset.k;paint()};
+ newFinder.oninput=e=>{q=e.target.value.trim().toLowerCase();if(!q)items.forEach(d=>d.open=false);paint()};
+
+ items.forEach(d=>d.addEventListener('toggle',()=>{
+   if(d.open)focusPanel(list,d);else if(!items.some(x=>x.open&&!x.hidden))clearFocus(list);
+ }));
+ paint();
+}
+
+function focusPanel(list,d){
+ [...list.querySelectorAll(':scope>.adminFeature')].forEach(x=>x.classList.toggle('dsmPanelFocus',x===d));
+ list.classList.add('hasFocus');
+}
+function clearFocus(list){
+ list.classList.remove('hasFocus');
+ [...list.querySelectorAll(':scope>.adminFeature')].forEach(x=>x.classList.remove('dsmPanelFocus'));
+}
+
+function section(head,sub,icon,cls=''){
+ const s=document.createElement('section');s.className='dsmUserSection '+cls;
+ s.innerHTML=`<div class="dsmUserSectionHead"><i>${icon}</i><div><b>${head}</b><small>${sub}</small></div></div><div class="dsmUserSectionGrid"></div>`;
+ return s;
+}
+
+function polishUserForm(form){
+ if(!form||form.dataset.dsmPolished==='1')return;
+ form.dataset.dsmPolished='1';form.classList.add('dsmUserPolished');
+ const uf=form.querySelector('.userForm'); if(!uf)return;
+ const labels=[...uf.children].filter(x=>x.tagName==='LABEL');
+ if(labels.length<6)return;
+
+ const ident=section('Identitas pengguna','NIK dan nama akun','👤');
+ const struct=section('Jabatan & struktur','Role, region operasional, dan atasan','🧭');
+ struct.querySelector('.dsmUserSectionGrid').classList.add('struct');
+ const port=section('Portofolio Sales','Aktif hanya untuk ASM / RGM yang ikut menangani portofolio Sales','🎯','dsmPortfolioSection');
+ const pi=port.querySelector('.dsmUserSectionGrid');pi.className='dsmPortfolioLine';
+
+ [labels[0],labels[1]].forEach(x=>ident.querySelector('.dsmUserSectionGrid').appendChild(x));
+ [labels[2],labels[3],labels[4]].forEach(x=>struct.querySelector('.dsmUserSectionGrid').appendChild(x));
+ pi.appendChild(labels[5]);
+
+ const acting=form.querySelector('input[name="acting"]');
+ const confirm=acting?.closest('label.confirm');
+ if(confirm)pi.appendChild(confirm);
+
+ uf.replaceChildren(ident,struct,port);
+
+ const role=form.elements.role,region=form.elements.region,portfolio=form.elements.portfolio;
+ const wasActing=!!acting?.checked;
+ if(portfolio)portfolio.dataset.lastPortfolio=portfolio.value||region?.value||'';
+
+ const tools=document.createElement('div');tools.className='dsmPortfolioTools';
+ if(wasActing&&form.elements.nik?.readOnly){
+   const btn=document.createElement('button');btn.type='button';btn.className='chip';btn.textContent='Alihkan Portofolio';
+   btn.onclick=()=>window.dsmPortfolioTransfer?.open({
+     sourceNik:form.elements.nik.value,
+     reason:(role?.value==='SALES'?'Resign':'Berhenti rangkap Sales'),
+     onDone:async()=>{ if(typeof start==='function')await start(); }
+   });
+   tools.appendChild(btn);
+ }
+ const help=document.createElement('span');help.className='dsmPortfolioHelp';help.textContent='Dealer, target, dan aktual MTD dipindahkan lewat satu proses supaya data tidak putus.';
+ tools.appendChild(help);port.appendChild(tools);
+ const warn=document.createElement('div');warn.className='dsmPortfolioWarn';warn.hidden=true;warn.textContent='Portofolio Sales akan dimatikan. Jika masih ada dealer/target aktif, gunakan “Alihkan Portofolio” terlebih dahulu.';port.appendChild(warn);
+
+ function syncPortfolio(){
+   const allow=['ASM','RGM'].includes(role?.value||'');
+   port.hidden=!allow;
+   if(!allow&&acting){acting.checked=false;acting.disabled=true}
+   else if(acting)acting.disabled=false;
+   if(!portfolio||!acting)return;
+   if(!acting.checked){
+     if(portfolio.value)portfolio.dataset.lastPortfolio=portfolio.value;
+     portfolio.value='';portfolio.disabled=true;
+     portfolio.closest('label')?.classList.add('dsmPortfolioDisabled');
+     portfolio.dispatchEvent(new Event('change',{bubbles:true}));
+     warn.hidden=!wasActing;
+   }else{
+     portfolio.disabled=false;
+     portfolio.closest('label')?.classList.remove('dsmPortfolioDisabled');
+     if(!portfolio.value)portfolio.value=portfolio.dataset.lastPortfolio||region?.value||'';
+     portfolio.dispatchEvent(new Event('change',{bubbles:true}));
+     warn.hidden=true;
+   }
+ }
+ role?.addEventListener('change',syncPortfolio);
+ acting?.addEventListener('change',syncPortfolio);
+ region?.addEventListener('change',()=>{if(acting?.checked&&portfolio&&!portfolio.value){portfolio.value=region.value;portfolio.dispatchEvent(new Event('change',{bubbles:true}))}});
+ syncPortfolio();
+
+ const save=form.querySelector('button[type="submit"],button:not([type])');
+ if(save&&save.parentElement===form){
+   const bar=document.createElement('div');bar.className='dsmSaveBar';save.replaceWith(bar);bar.appendChild(save);
+ }
+}
+
+function compactKpi(root){
+ if(!root)return;
+ root.querySelectorAll('.kkInd:not(.dsmCompact)').forEach((card,idx)=>{
+   const head=card.querySelector(':scope>.kkLn:first-child');if(!head)return;
+   card.classList.add('dsmCompact');card.dataset.dsmCompactKey=String(idx);
+   const body=document.createElement('div');body.className='kkCompactBody';
+   [...card.childNodes].filter(n=>n!==head).forEach(n=>body.appendChild(n));
+   card.appendChild(body);
+   const tog=document.createElement('button');tog.type='button';tog.className='kkCompactToggle';tog.textContent='⌄';tog.title='Buka/tutup rincian';
+   tog.onclick=e=>{e.stopPropagation();toggle(card)};
+   head.appendChild(tog);head.onclick=e=>{if(e.target.closest('input,select,button'))return;toggle(card)};
+   const wanted=root.dataset.dsmKkOpen;
+   if((wanted!=null&&wanted!==''&&wanted===card.dataset.dsmCompactKey)||((wanted==null||wanted==='')&&card.classList.contains('dos')&&!root.querySelector('.kkInd.dsmOpen'))){card.classList.add('dsmOpen');tog.textContent='⌃';root.dataset.dsmKkOpen=card.dataset.dsmCompactKey}
+ });
+ const total=root.querySelector('.kkTot:not(.dsmWeightTotal)');
+ if(total){total.classList.add('dsmWeightTotal');const m=total.textContent.match(/([\d.,]+)%/);const n=m?Math.max(0,Math.min(100,parseFloat(m[1].replace(',','.')))):0;total.style.setProperty('--kk-progress',String(n/100))}
+ const reason=root.querySelector('#kkReason');
+ if(reason&&!reason.closest('.kkStickyFooter')){
+   const label=reason.previousElementSibling,actions=reason.nextElementSibling;
+   if(label&&actions?.classList.contains('kkLn')){
+     const box=document.createElement('div');box.className='kkStickyFooter';
+     label.before(box);box.append(label,reason,actions);
+   }
+ }
+}
+function toggle(card){
+ const root=card.closest('#kkApp');const open=!card.classList.contains('dsmOpen');
+ if(open)root?.querySelectorAll('.kkInd.dsmOpen').forEach(x=>{x.classList.remove('dsmOpen');const b=x.querySelector('.kkCompactToggle');if(b)b.textContent='⌄'});
+ card.classList.toggle('dsmOpen',open);const b=card.querySelector('.kkCompactToggle');if(b)b.textContent=open?'⌃':'⌄';
+ if(root)root.dataset.dsmKkOpen=open?(card.dataset.dsmCompactKey||''):'';
+}
+
+const obs=new MutationObserver(()=>{
+ document.querySelectorAll('.admWrap').forEach(enhanceAdminGroups);
+ const f=document.getElementById('userEditor');if(f)polishUserForm(f);
+ compactKpi(document.getElementById('kkApp'));
+});
+obs.observe(document.documentElement,{childList:true,subtree:true});
+document.querySelectorAll('.admWrap').forEach(enhanceAdminGroups);
+const f=document.getElementById('userEditor');if(f)polishUserForm(f);
+compactKpi(document.getElementById('kkApp'));
+})();

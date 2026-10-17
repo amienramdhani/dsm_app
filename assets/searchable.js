@@ -4,7 +4,7 @@ function dsmSearchable(sel,placeholder){
  const wrap=document.createElement('div');wrap.className='ss';sel.parentNode.insertBefore(wrap,sel);wrap.appendChild(sel);sel.classList.add('ss-native');sel.tabIndex=-1;
  const inp=document.createElement('input');inp.type='text';inp.className='fi ss-in';inp.autocomplete='off';const ph=placeholder||'Ketik untuk mencari…';inp.placeholder=ph;
  const list=document.createElement('div');list.className='ss-list';list.hidden=true;wrap.append(inp,list);
- const E=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ const E=s=>String(s).replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]));
  const label=()=>sel.options[sel.selectedIndex]?.text||'';
  const sync=()=>{inp.value=label();};
  const draw=q=>{const k=(q||'').trim().toLowerCase(),opts=[...sel.options].filter(o=>!k||o.text.toLowerCase().includes(k));list.innerHTML=opts.length?opts.map(o=>`<button type="button" class="ss-opt${o.selected?' on':''}" data-i="${o.index}" ${o.disabled?'disabled':''}>${E(o.text)}</button>`).join(''):'<div class="ss-none">Tidak ditemukan</div>';};
@@ -18,3 +18,14 @@ function dsmSearchable(sel,placeholder){
  inp.addEventListener('blur',()=>setTimeout(close,120));
  sel.addEventListener('change',sync);sync();
 }
+
+/* Progressive enhancement approved 2026-10-17. Kept here so index.php tetap tidak perlu disentuh. */
+(function dsmApprovedRevisionLoader(){
+ if(document.getElementById('dsmAdminRevisionCss'))return;
+ const css=document.createElement('link');css.id='dsmAdminRevisionCss';css.rel='stylesheet';css.href='assets/admin_revision.css?v=20261017b';document.head.appendChild(css);
+ const load=(src,id)=>new Promise((ok,fail)=>{if(document.getElementById(id)){ok();return}const s=document.createElement('script');s.id=id;s.src=src;s.onload=ok;s.onerror=fail;document.head.appendChild(s);});
+ load('assets/portfolio_transfer.js?v=20261017b','dsmPortfolioTransferJs')
+   .then(()=>load('assets/admin_revision.js?v=20261017b','dsmAdminRevisionJs'))
+   .then(()=>load('assets/admin_portfolio_guard.js?v=20261017b','dsmAdminPortfolioGuardJs'))
+   .catch(e=>console.error('[DSM] gagal memuat revisi Admin',e));
+})();

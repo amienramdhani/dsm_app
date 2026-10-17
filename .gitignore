@@ -1,1 +1,16 @@
-config.php
+# Secret lokal
+config.local.php
+.env
+.env.*
+
+# Runtime / generated files
+storage/files/
+
+# Data internal
+tools/auth.csv
+tools/master_sales.csv
+
+# Logs / OS
+*.log
+Thumbs.db
+.DS_Store
