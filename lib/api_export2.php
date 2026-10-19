@@ -617,16 +617,17 @@ function apiTransactionExportRaw($token,$period=null,$selection=null,$kind='BOTH
     $months=txRawMonths_($from,$to);
     $brand=js_upper(js_or(text_($brand),'ALL'));$customer=text_($customer);$picBig=js_upper(js_or(text_($picBig),'ALL'));
     $ids=allowed_($db,$u,$selection);$idSet=js_set($ids);$prod=txRawProductMap_();$dba=dbaIndex_();
+    $lineageReason=in_array($u['role']??'',['ADMIN','SUPER ADMIN'],true);
     $stRows=[];$soRows=[];$stQty=0;$stAmt=0;$soQty=0;$stPeriods=[];$soPeriods=[];
     foreach($months as $m){
         $stCut=text_($db['coverage'][$m]['cutoff']??'');
         $soCut=text_($db['so']['coverage'][$m]['cutoff']??'');
         if($kind!=='SO' && isset($db['raw'][$m])){
             $stPeriods[]=$m;
-            foreach(dataRows_((string)$db['raw'][$m]) as $t){
+            foreach(txEffRaw_($db['meta'],dataRows_((string)$db['raw'][$m]),true) as $t){
                 $date=text_($t['date']??null);if($date<$from||$date>$to||($stCut!==''&&$date>$stCut))continue;$nik=text_($t['nik']??null);if(!in_set($idSet,$nik))continue;$sku=text_($t['sku']??null);$main=txRawMainBrand_($db,$sku);if($brand!=='ALL'&&js_upper($main)!==$brand)continue;$cust=text_($t['customer']??null);if(!txRawQueryMatch_($db,$cust,$customer))continue;
                 $pic=dealerBrandOwner_($db,$cust,$main,$date,$dba);if($picBig!=='ALL'&&js_upper($pic['big'])!==$picBig)continue;$p=txRawPerson_($db,$nik);$mp=$prod[$sku]??[];$q=(float)($t['qty']??0);$amt=(float)($t['amount']??0);$stQty+=$q;$stAmt+=$amt;
-                $stRows[]=[$date,text_($t['company']??null),text_($t['doc']??null),text_($t['sj']??null),$cust,txRawDealerName_($db,$cust),txRawDealerParentCode_($db,$cust),txRawDealerParentName_($db,$cust),txRawDealerRegion_($db,$cust),text_($t['region']??null),$nik,text_($p['nama']??null),text_($p['wilayah']??null),$main,txRawSourceBrand_($db,$sku),$sku,text_($mp['NAMA BARANG']??null),text_($mp['KATEGORI PRODUK']??null),text_($mp['TYPE']??null),$q,$amt,text_($t['line']??null),text_($t['ref']??null),$pic['nik'],text_($pic['nama']),text_($pic['big']),text_($pic['region']),text_($pic['source'])];
+                $stRows[]=[$date,text_($t['company']??null),text_($t['doc']??null),text_($t['sj']??null),$cust,txRawDealerName_($db,$cust),txRawDealerParentCode_($db,$cust),txRawDealerParentName_($db,$cust),txRawDealerRegion_($db,$cust),text_($t['region']??null),$nik,text_($p['nama']??null),text_($p['wilayah']??null),$main,txRawSourceBrand_($db,$sku),$sku,text_($mp['NAMA BARANG']??null),text_($mp['KATEGORI PRODUK']??null),text_($mp['TYPE']??null),$q,$amt,text_($t['line']??null),text_($t['ref']??null),$pic['nik'],text_($pic['nama']),text_($pic['big']),text_($pic['region']),text_($pic['source']),text_($t['rawNik']??$nik),text_(txRawPerson_($db,text_($t['rawNik']??$nik))['nama']??null),text_($t['txMarker']??null),$lineageReason?text_($t['txReason']??null):''];
                 if(count($stRows)>150000)fail_('Hasil ST lebih dari 150.000 baris. Persempit tanggal/brand/dealer sebelum download.');
             }
         }
@@ -643,7 +644,7 @@ function apiTransactionExportRaw($token,$period=null,$selection=null,$kind='BOTH
     $stCov=$stPeriods?'Mengikuti cutoff aktif tiap bulan ('.count($stPeriods).' periode)':'—';$soCov=$soPeriods?'Mengikuti cutoff aktif tiap bulan ('.count($soPeriods).' periode)':'—';
     $wb=SpreadsheetApp::create('Transaksi-RAW-'.str_replace('-','',$from).'-'.str_replace('-','',$to).'-'.jkt_date('Ymd-His'));$wb->setSpreadsheetTimeZone('Asia/Jakarta');
     txRawSummarySheet_($wb,['user'=>$u['nik'].' — '.text_($u['nama']??null),'period'=>$rangePeriod,'from'=>$from,'to'=>$to,'kind'=>$kind,'scope'=>js_or(text_($selection),'ALL'),'brand'=>$brand,'customer'=>$customer,'picBig'=>$picBig,'stCut'=>$stCov,'soCut'=>$soCov,'stRows'=>count($stRows),'stQty'=>$stQty,'stAmount'=>$stAmt,'soRows'=>count($soRows),'soQty'=>$soQty]);
-    if($kind!=='SO')txRawAddSheet_($wb,'SELL_THRU_RAW',['TANGGAL','BADAN USAHA','NO TRANSAKSI','NO SJ','KODE DEALER','NAMA DEALER','KODE INDUK DEALER','NAMA INDUK DEALER','LOKASI DEALER','REGION TRANSAKSI','NIK SALES TRANSAKSI','NAMA SALES TRANSAKSI','BIG REGION SALES','BRAND UTAMA','KLASIFIKASI','KODE PRODUK','NAMA PRODUK','KATEGORI','TYPE','QTY','OMZET','ID BARIS','REF TRANSAKSI','NIK PIC BRAND','NAMA PIC BRAND','BIG REGION PIC','REGION PIC','SUMBER PIC'],$stRows,['NO TRANSAKSI','NO SJ','KODE DEALER','KODE INDUK DEALER','NIK SALES TRANSAKSI','KODE PRODUK','ID BARIS','REF TRANSAKSI','NIK PIC BRAND']);
+    if($kind!=='SO')txRawAddSheet_($wb,'SELL_THRU_RAW',['TANGGAL','BADAN USAHA','NO TRANSAKSI','NO SJ','KODE DEALER','NAMA DEALER','KODE INDUK DEALER','NAMA INDUK DEALER','LOKASI DEALER','REGION TRANSAKSI','NIK SALES TRANSAKSI','NAMA SALES TRANSAKSI','BIG REGION SALES','BRAND UTAMA','KLASIFIKASI','KODE PRODUK','NAMA PRODUK','KATEGORI','TYPE','QTY','OMZET','ID BARIS','REF TRANSAKSI','NIK PIC BRAND','NAMA PIC BRAND','BIG REGION PIC','REGION PIC','SUMBER PIC','NIK SALES FILE ST','NAMA SALES FILE ST','MARKER ATRIBUSI','ALASAN KOREKSI'],$stRows,['NO TRANSAKSI','NO SJ','KODE DEALER','KODE INDUK DEALER','NIK SALES TRANSAKSI','KODE PRODUK','ID BARIS','REF TRANSAKSI','NIK PIC BRAND']);
     if($kind!=='ST')txRawAddSheet_($wb,'SELL_OUT_RAW',['TANGGAL','KODE DEALER','NAMA DEALER','KODE INDUK DEALER','NAMA INDUK DEALER','LOKASI DEALER','REGION DATA','BRAND UTAMA','KLASIFIKASI','KODE PRODUK','NAMA PRODUK','KATEGORI','TYPE','QTY SO','NIK PIC BRAND','NAMA PIC BRAND','BIG REGION PIC','REGION PIC','SUMBER PIC'],$soRows,['KODE DEALER','KODE INDUK DEALER','KODE PRODUK','NIK PIC BRAND']);
     SpreadsheetApp::flush();$blob=exportGoogleSheetXlsx_($wb);return['name'=>$wb->name.'.xlsx','mime'=>XLSX_MIME,'base64'=>base64_encode($blob->getBytes())];
 }

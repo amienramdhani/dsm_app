@@ -35,7 +35,7 @@ function apiTransactions($token, $period = null, $selection = null, $customer = 
     if (substr($from, 0, 7) !== $period || substr($to, 0, 7) !== $period || $from > $to || $to > $cut) fail_('Rentang tanggal harus dalam bulan pilihan, urut, dan tidak melewati cutoff.');
     if (!isset($db['raw'][$period]) || !truthy($db['raw'][$period])) return ['rows' => [], 'total' => 0, 'page' => 0, 'pageSize' => $size, 'sourceRows' => 0, 'totals' => ['qty' => 0, 'amount' => 0], 'from' => $from, 'to' => $to];
     $set = js_set($ids); $sel = isset($db['selectedRegions']) && $db['selectedRegions'] !== null && $db['selectedRegions'] !== false ? $db['selectedRegions'] : null;
-    $raw = js_filter(dataRows_((string) $db['raw'][$period]), fn($t) => in_set($set, $t['nik'] ?? null) && (!truthy($t['region'] ?? null) || $sel === null || in_array($t['region'], $sel, true)) && (!truthy($customer) || ($t['customer'] ?? null) === $customer || custInduk_($db['meta'], $t['customer'] ?? '') === custInduk_($db['meta'], $customer)) && $t['date'] >= $from && $t['date'] <= $to);
+    $raw = js_filter(txEffRaw_($db['meta'], dataRows_((string) $db['raw'][$period])), fn($t) => in_set($set, $t['nik'] ?? null) && (!truthy($t['region'] ?? null) || $sel === null || in_array($t['region'], $sel, true)) && (!truthy($customer) || ($t['customer'] ?? null) === $customer || custInduk_($db['meta'], $t['customer'] ?? '') === custInduk_($db['meta'], $customer)) && $t['date'] >= $from && $t['date'] <= $to);
     $all = PortalCore::groupedTransactions($raw, $db['meta']); $n = pageIdx_($page, count($all), $size);
     $all = sortRecords_($all, $sort, [fn($r) => $r['date'], fn($r) => $r['sj'], fn($r) => $r['nama'], fn($r) => $r['brand'], fn($r) => $r['type'], fn($r) => $r['qty'], fn($r) => $r['amount']]);
     $q = 0; $a = 0; foreach ($raw as $t) { $q += $t['qty']; $a += $t['amount']; } $dq = 0; foreach ($all as $g) $dq += (float) ($g['deviceQty'] ?? 0);
@@ -48,7 +48,7 @@ function apiTransactionGroups($token, $period = null, $selection = null, $page =
     $from = PortalCore::iso(js_or($from, $period . '-01')); $to = PortalCore::iso(js_or($to, $cut));
     if (substr($from, 0, 7) !== $period || substr($to, 0, 7) !== $period || $from > $to || $to > $cut) fail_('Rentang tanggal tidak valid.');
     $set = js_set($ids); $sel = isset($db['selectedRegions']) && $db['selectedRegions'] ? $db['selectedRegions'] : null;
-    $raw = (isset($db['raw'][$period]) && truthy($db['raw'][$period])) ? js_filter(dataRows_((string) $db['raw'][$period]), fn($t) => in_set($set, $t['nik'] ?? null) && (!truthy($t['region'] ?? null) || $sel === null || in_array($t['region'], $sel, true)) && $t['date'] >= $from && $t['date'] <= $to) : [];
+    $raw = (isset($db['raw'][$period]) && truthy($db['raw'][$period])) ? js_filter(txEffRaw_($db['meta'], dataRows_((string) $db['raw'][$period])), fn($t) => in_set($set, $t['nik'] ?? null) && (!truthy($t['region'] ?? null) || $sel === null || in_array($t['region'], $sel, true)) && $t['date'] >= $from && $t['date'] <= $to) : [];
     $groups = [];
     foreach (PortalCore::groupedTransactions($raw, $db['meta']) as $t) {
         $key = js_stringify([$t['date'], $t['customer']]);

@@ -222,3 +222,27 @@ Use these files together:
 6. `CLAUDE_SYNC.md` — concise sync note for Claude.
 
 Never assume an older external handoff is newer than these files.
+
+---
+
+## Update 2026-10-19
+
+`dev` sekarang berisi perubahan Fase 1 bagian 1 di atas baseline kode 76cb12b: Transfer Dealer menu native (grup LAINNYA), kategori Admin mobile berupa tombol + popup, dan isi panel Admin tampil di area di bawah daftar. Panel Transfer Dealer lama di Admin masih ada (Request #10 belum dikerjakan). Detail: `doc/ai/CHANGELOG_AI.md`.
+
+
+## Update 2026-10-19 (dev)
+- Phase 1 kode selesai (Bug #1-#5, Request #1-#5, #10-#12). Menu Transfer Dealer native (LAINNYA); Admin punya panel "Approval" gabungan.
+- Phase 2: Alihkan Portofolio punya pilihan periode mundur (<=6 bulan) & tanggal tertentu, split target dengan sisa di sumber (mode tanggal), Bagi Dealer via checkbox + kartu penerima, VACANT otomatis, kategori alasan menentukan status sumber.
+- Edit User: tampilan baru; uncheck rangkap Sales boleh satu proses bila portofolio kosong (guard backend).
+- Belum: Phase 3 (#13-#19), #20 QA, alokasi per dealer-brand di Alihkan Portofolio, aktual terpotong per tanggal.
+
+## Update 2026-10-19 (Phase 3, dev)
+- Effective Sales: `effectiveRows_` (lib/tx_effective.php) dipakai publish; pembaca ST mentah memakai `txEffRaw_`; transfer tidak lagi menulis ulang partisi ST (partisi lama yang sudah ditulis ulang dibiarkan). Kill-switch prop `TXEFF_OFF=1` → fallback `portfolioResolveRows_`.
+- Menu Koreksi (Admin/Super Admin): koreksi Sales efektif per transaksi (`dsm_txcorr`), exceptions `dsm_attr`, guard total company + rollback.
+- Export RAW ST: kolom NIK/NAMA SALES FILE ST, MARKER ATRIBUSI, ALASAN KOREKSI (alasan hanya Admin/Super Admin).
+- Menu Target SO: target per dealer-brand-periode (`dsm_dealer_target` + log). Skor KPI khusus SO memakai Σ min(SO, 120%×target)/Σ target per segmen kepemilikan (pro-rata hari) bila subjek punya dealer bertarget (basis MTD); selain itu skor lama (target manual `_kk_target`/unggah).
+- Belum: `sliceCmp` override pemilik master masih ada (perlu keputusan); #20 QA; semua fitur Phase 3 BELUM TERUJI di app nyata kecuali yang sudah dites user.
+
+
+## Update UI 2026-10-19
+- Aset progressive-enhancement baru dimuat dari `assets/searchable.js`: `table_dense.css` (tabel desktop padat), `mobile_hero.css/js` + `assets/hero/*` (hero Beranda HP, kartu Cakupan di Lainnya), `holiday_popup.js` (popup libur; `apiV6Boot` kini juga mengirim `holn`). Detail di HANDOFF.md.

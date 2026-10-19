@@ -58,3 +58,23 @@ Do not restore an older implementation merely because it exists in your previous
 - Final production transfer to Amin's `amienramdhani/dsm_app` repository is a separate step.
 - Do not push directly to Amin's final repository unless explicitly instructed.
 - Tracked `config.php` loads ignored `config.local.php`; secrets belong only in local/server configuration and must never be committed.
+
+## Current DSM revision handoff — read before coding
+
+For the current revision package based on `dev` baseline `76cb12b6b5e334ccf0e6ace68fb29df4a4538bb2`, also read these four documents in order:
+
+1. `docs/claude-handoff/peta-sistem.md`
+2. `docs/claude-handoff/matriks-role.md`
+3. `docs/claude-handoff/revisi-bug.md`
+4. `docs/claude-handoff/request-revisi.md`
+
+Rules for these documents:
+
+- `peta-sistem.md` maps the current system from code. `DUGAAN` and `TIDAK DITEMUKAN` must remain treated as uncertain.
+- `matriks-role.md` maps observed role behavior from code; do not convert uncertain cells into assumptions.
+- `revisi-bug.md` contains baseline bugs only.
+- `request-revisi.md` contains requested changes only. Do not merge bug and request definitions.
+- Existing DSM on the baseline is the visual/structural source of truth unless a request explicitly changes it.
+- Before coding, audit the actual runtime/load path and map the files/functions that will be touched.
+- Do not claim a request is complete based only on static checks; verify the relevant role, desktop/mobile behavior, backend authorization, data effects, and regression risk.
+- Do not merge `backup-dev-20261018` wholesale. It may be used only as an audit/reference source.

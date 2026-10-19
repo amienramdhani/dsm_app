@@ -137,3 +137,13 @@ toggle near Full Screen.
 
 ### HEATMAP-002
 Mobile fullscreen is not required to force landscape orientation.
+## Transfer Dealer
+
+### TRANSFER-BRAND-001
+Approved by user 2026-10-19.
+
+In Transfer Dealer, the per-brand checklist shows only brands that have had ST (qty > 0) since data was published. A dealer with no ST history shows "Belum ada ST" and all its brands move together.
+
+- If all ST brands held by the source Sales are moved and the dealer ends up fully with the destination Sales, brands without ST history move too and the Master Customer owner follows. A brand that appears later goes to the destination Sales.
+- If the transfer is a split (some brand stays with the source Sales or is held by another Sales), only the selected brands move. A brand that appears later goes to the original owner (Master Customer owner).
+- Preview shows which Sales will receive future new brands for each dealer.

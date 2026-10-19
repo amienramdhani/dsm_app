@@ -20,11 +20,14 @@ async function bind(form){
      }
    }catch(e){console.warn('[DSM] status portofolio tidak terbaca',e);}
  }
- form.addEventListener('submit',e=>{
-   if(initiallyActing&&!acting.checked&&!exited){
-     e.preventDefault();e.stopImmediatePropagation();
-     alert('Gunakan tombol “Alihkan Portofolio” agar dealer, target, dan aktual ikut dipindahkan dalam satu proses.');
-   }
+ form.addEventListener('submit',async e=>{
+   if(!(initiallyActing&&!acting.checked&&!exited)||form.dataset.ptOk==='1')return;
+   e.preventDefault();e.stopImmediatePropagation();
+   try{
+     const a=await rpc('apiPortfolioAssets',TOKEN,nik.value);
+     if(a?.empty){form.dataset.ptOk='1';(form.requestSubmit?form.requestSubmit():form.querySelector('[type=submit]')?.click());return}
+     alert('Portofolio Sales masih punya '+a.dealers+' dealer, '+a.targets+' target'+(a.qty>0?', dan aktual MTD':'')+'. Gunakan tombol “Alihkan Portofolio” agar semuanya ikut dipindahkan dalam satu proses.');
+   }catch(err){alert(err.message||err)}
  },true);
 }
 const scan=()=>{const f=document.getElementById('userEditor');if(f)bind(f)};

@@ -279,6 +279,7 @@ function apiSaveUser($token, $input) {
         if (!preg_match('/^[A-Za-z0-9._-]{2,60}$/', $nik) || $name === '' || mb_strlen($name) > 120 || !in_array($role, $allowedRoles, true)) fail_('NIK, nama, atau jabatan tidak valid.');
         if ($original !== '' && $original !== $nik) fail_('NIK akun tidak dapat diganti.');
         if (($original !== '' && !$old) || ($original === '' && $old)) fail_('User tidak ditemukan atau NIK sudah terdaftar.');
+        if (!$old && preg_match('/^VAC/i', $nik)) fail_('Akun VACANT dibuat otomatis lewat Alihkan Portofolio, tidak dapat ditambah manual.');
         if ($old && !canManageUser_($u, $old)) fail_('User di luar kewenangan.');
         if (($old['role']??'')==='TELEMARKETING' && $role!=='TELEMARKETING' && tmAccountReferences_($nik)) fail_('Akun Telemarketing memiliki histori. Nonaktifkan akun dan gunakan NIK baru untuk jabatan lain agar histori tetap utuh.');
         if ($nik === $u['nik'] && ($role !== $old['role'] || $region !== ($old['region'] ?? '') || $boss !== ($old['atasan'] ?? ''))) fail_('Perubahan hak akun sendiri harus dilakukan Super Admin lain.');
@@ -296,6 +297,11 @@ function apiSaveUser($token, $input) {
         if ($role === 'ADMIN') { $known = RegionCore::regions($db['meta']); if (!$access || array_diff($access, $known)) fail_('Pilih wilayah tugas Admin.'); }
         $acting = truthy($input['acting'] ?? null) && in_array($role, ['ASM', 'RGM'], true);
         $portfolio = text_($input['portfolio'] ?? null) ?: $region;
+        // Berhenti rangkap Sales: boleh satu proses bila portofolio kosong; selain itu wajib lewat Alihkan Portofolio.
+        if ($old && !$acting && truthy($old['sales'] ?? null) && in_array($old['role'] ?? '', ['ASM', 'RGM'], true) && !portfolioExitDue_($nik)) {
+            $as = ptAssets_($db, $nik);
+            if (!$as['empty']) fail_('Portofolio Sales masih punya ' . $as['dealers'] . ' dealer / ' . $as['targets'] . ' target / aktual MTD. Gunakan "Alihkan Portofolio" terlebih dahulu.');
+        }
         if ($acting) { $pw = null; foreach ($rm as $r) if (js_str($r['REGION'] ?? null) === $portfolio) { $pw = $r['WILAYAH_KPI'] ?? null; break; } if ($pw !== $willRegion) fail_('Portofolio rangkap harus satu big region.'); }
         $grids = ['Master_Sales' => readGrid_('Master_Sales'), 'Admin_Access' => readGrid_('Admin_Access'), '_Auth' => readGrid_('_Auth')];
         $heads = $grids['Master_Sales'][0]; $objects = table_('Master_Sales'); $source = [];

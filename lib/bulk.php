@@ -531,7 +531,7 @@ function apiCommitDealerTransfer($token, $id, $reason = null) {
                 }
             }
             if($allChanged){$meta=meta_();validateConfigChange_($db,$meta);publish_($meta,$db['raw'],$db['coverage'],$u['nik'],'DEALER_TRANSFER_ALL '.count($rows).' '.$reason);}
-            audit_($u['nik'],'DEALER_BRAND_TRANSFER',implode(' | ',array_slice($logs,0,80)).(count($logs)>80?' …':'').' · '.$reason);prop_delete_('TRANSFER_STAGE_'.$id);return['updated'=>count($rows),'assignments'=>count($logs),'allBrand'=>$allChanged];
+            audit_($u['nik'],'DEALER_BRAND_TRANSFER',implode(' | ',array_slice($logs,0,80)).(count($logs)>80?' …':'').' · '.$reason);if(function_exists('undoRegister_'))undoRegister_('TRANSFER','Transfer Dealer · '.count($rows).' dealer · '.count($logs).' assignment brand',$u,['Master_Customer'=>$beforeCustomer,'Dealer_Assignment_History'=>$beforeLegacy,DBA_SHEET=>$beforeBrand],['published'=>$allChanged,'date'=>$rows[0]['date']??'','reason'=>$reason]);prop_delete_('TRANSFER_STAGE_'.$id);return['updated'=>count($rows),'assignments'=>count($logs),'allBrand'=>$allChanged];
         }catch(Throwable $e){if($beforeCustomer)restoreGrid_('Master_Customer',$beforeCustomer);if($beforeLegacy)restoreGrid_('Dealer_Assignment_History',$beforeLegacy);elseif(sheet_exists_('Dealer_Assignment_History'))deleteSheet_('Dealer_Assignment_History');if($beforeBrand)restoreGrid_(DBA_SHEET,$beforeBrand);elseif(sheet_exists_(DBA_SHEET))deleteSheet_(DBA_SHEET);throw $e;}
     });
 }
