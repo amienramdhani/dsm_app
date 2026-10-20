@@ -7,7 +7,8 @@ const STYLE_ID='dsmTransferUiHotfixStyle';
 
 function addStyle(){
   let s=document.getElementById(STYLE_ID);
-  if(!s){ s=document.createElement('style'); s.id=STYLE_ID; document.head.appendChild(s); }
+  if(s)return; /* sudah terpasang: jangan tulis ulang, karena menulis textContent memicu MutationObserver lagi (loop tak berujung) */
+  s=document.createElement('style'); s.id=STYLE_ID; document.head.appendChild(s);
   s.textContent=`
   details[data-dtd-sales-panel],
   details[data-dtd-sales-panel][open],
