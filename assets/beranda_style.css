@@ -25,3 +25,30 @@ html body .v6tban.plain>.hint{display:block}
 /* Detail dealer: tombol + Catat order selebar kartu (desktop dan HP) */
 html body .tm-dealer-actions{display:flex}
 html body .tm-dealer-actions #tmDealerOrder{flex:1 1 100%;width:100%;padding:11px 14px;border-radius:12px;font-size:13px;font-weight:800;text-align:center}
+
+/* Navbar/sidebar biru lembut (disetujui 2026-10-20): ganti putih polos, condong biru bukan ungu. */
+@media(min-width:761px){
+ html body #app .topbar{background:linear-gradient(180deg,#E3EDFD 0%,#D0DFF9 55%,#C5D6F4 100%)!important;border-right:1px solid #B8CBEF!important;box-shadow:6px 0 24px -14px rgba(52,86,170,.35)!important}
+}
+@media(max-width:760px){
+ html body:not(.dsmHeroPage) #app .topbar{background:linear-gradient(135deg,#E3EDFD,#CADAF7)!important;border-bottom:1px solid #B8CBEF!important}
+}
+
+/* Garis tree sidebar lebih tegas di atas latar biru; HP: bar bawah + drawer ikut biru lembut. */
+@media(min-width:761px){
+ html body #app #navigation .v7tree{border-left-color:#8FA9DB!important;border-left-color:color-mix(in srgb,var(--v7tl,#D7E6F5) 45%,#3F5FA8)!important}
+ html body #app #navigation .v7tree>button[data-page]:not(.on)::before{background:#8FA9DB!important;background:color-mix(in srgb,var(--v7tl,#D7E6F5) 45%,#3F5FA8)!important}
+}
+@media(max-width:760px){
+ html body #app #mBottom,html body #mBottom{background:linear-gradient(180deg,#E3EDFD,#CADAF7)!important;border-top:1px solid #B8CBEF!important;box-shadow:0 -6px 18px -8px rgba(52,86,170,.3)!important}
+ html body.dsmHeroPage #app .topbar{background:transparent!important}
+}
+
+/* Mode Eksekutif HP: chip Brand = grid 4 kolom (opsi B), chip Indikator = segmen satu baris (opsi A), semua huruf kapital (disetujui 2026-10-20). */
+@media(max-width:760px){
+ html body #app #view .v6xchips:has(>button[data-v6xbrand]){display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;overflow:visible!important;margin-bottom:10px}
+ html body #app #view .v6xchips>button[data-v6xbrand]{padding:9px 2px!important;border-radius:11px!important;font-size:10.5px!important;font-weight:800;text-transform:uppercase;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+ html body #app #view .v6xchips:has(>button[data-v6xind]){display:flex!important;gap:2px;overflow-x:auto!important;background:#F4F7FC;border:1px solid #DCE4F2;border-radius:12px;padding:3px!important;margin-bottom:10px}
+ html body #app #view .v6xchips>button[data-v6xind]{flex:1 1 auto;border:0!important;background:transparent!important;color:#5E6E8A!important;border-radius:9px!important;padding:8px 6px!important;font-size:10px!important;font-weight:800;text-transform:uppercase;text-align:center;white-space:nowrap}
+ html body #app #view .v6xchips>button[data-v6xind].on{background:linear-gradient(135deg,#7C4DEB,#5B35C8)!important;color:#fff!important;box-shadow:0 4px 10px -3px rgba(91,53,200,.5)}
+}

@@ -1,6 +1,6 @@
 # DSM CURRENT HANDOFF
 
-Last updated: 2026-10-19
+Last updated: 2026-10-20
 
 ## Repository
 
@@ -312,3 +312,22 @@ Fakta kode yang perlu diingat:
 - 2026-10-19: tombol '+ Catat order' (#tmDealerOrder) full width (beranda_style v20261019e).
 - 2026-10-19: detail dealer: .v6tban.plain (tombol tandai/ajukan tutup) dipindah tepat di bawah .tm-dealer-actions (Catat order) via observer di tm_steps.js. Hanya reorder DOM; belum dites di app asli.
 - 2026-10-19: HP: font tabel dikecilkan (td 11px, th 9.5px, cellsub 9.5px, padding 6-7px) untuk semua .table-scroll table kecuali .tm-order-table (table_dense v20261019w). Belum dilihat di HP asli; tabel dengan font khusus mungkin perlu dikecualikan.
+
+## 2026-10-20 — Splash animasi logo
+- Splash lama (ombak, `v6Splash` inline) dihapus dari index.php; diganti `assets/dsm_splash.js` (CSS+SVG inline di dalam JS, dimuat setelah tm_steps.js).
+- Perilaku tetap: sekali per sesi (sessionStorage `v6splash`), "Lewati ›"/ketuk untuk skip. Animasi diperlambat x1,4 (~4,7 dtk) dan tetap diputar walau reduced-motion (permintaan Ary). Uji paksa: tambahkan `?splash=1` di URL.
+- Logo: `assets/dsm-logo.svg` + `assets/dsm-logo.png` (transparan, hasil trace dari JPG). `navBrand`, `dl-logo`, dan satu img lain di index.php kini pakai PNG. JPG lama dibiarkan (belum dihapus).
+- Belum diverifikasi di app nyata: CSS `.navBrand` ber-background putih di beberapa rule; cek header/login (Ctrl+F5). Rollback: kembalikan src ke dsm-logo.jpg / dsm-logo-crop.jpg.
+
+## 2026-10-20 — Navbar biru lembut
+- Sidebar desktop (.topbar ≥761px) dan topbar HP selain Beranda: gradien #E3EDFD→#C5D6F4 (blok di akhir assets/beranda_style.css). Beranda HP tetap transparan di atas hero. Belum dicek di app nyata (item aktif/hover/ikon di atas warna baru).
+- Update: #mBottom dan .mmPanel (HP) ikut gradien biru; garis tree desktop digelapkan dari --v7tl per grup. Belum dicek di app nyata.
+- Update: panel drawer HP kembali putih (hanya bar bawah + topbar biru). Ikon Brand di menuIcon() jadi ikon ponsel.
+
+## 2026-10-20 — Cakupan HP
+- scope_picker.js (dimuat setelah dsm_splash.js): ≤760px, #scopeSelect pointer-events:none, ketuk area select/label membuka sheet berkelompok; pilih → set value + dispatch 'change'. Diuji di fixture saja; cek di app nyata (periodSelect tidak diubah).
+- Fix: Cakupan HP yang dilihat user ada di kartu drawer 'Lainnya' (.hsSel[data-for=scopeSelect], klon dari mobile_hero.js); scope_picker kini menangkap itu juga dan menutup drawer setelah pilih.
+- Sheet Cakupan HP kini punya kolom cari (scope_picker.js): cocok di nama atau judul grup; grup tanpa hasil disembunyikan.
+
+## 2026-10-20 — Chip Mode Eksekutif HP
+- CSS-only di akhir beranda_style.css, selektor :has(>button[data-v6xbrand]) / [data-v6xind], ≤760px. Desktop tidak diubah. Belum dicek di app nyata.

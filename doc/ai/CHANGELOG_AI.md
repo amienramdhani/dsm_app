@@ -655,3 +655,12 @@ Validation:
 - 2026-10-19: Catat order full width.
 - 2026-10-19: tombol tutup dealer dipindah di bawah Catat order.
 - 2026-10-19: font tabel HP lebih kecil.
+- 2026-10-20: splash baru assets/dsm_splash.js (logo SVG menggambar garis 3 dtk, latar lembut, putih melebar dari tengah lalu konten); logo app/login diganti PNG transparan (assets/dsm-logo.png, .svg); ?splash=1 paksa tampil.
+- 2026-10-20: splash diperlambat x1,4 (~4,7 dtk) dan selalu memutar animasi walau reduced-motion.
+- 2026-10-20: sidebar desktop + topbar HP (non-Beranda) gradien biru lembut (beranda_style.css v20261020a).
+- 2026-10-20: tree sidebar desktop lebih tegas (color-mix); bar bawah + drawer HP biru lembut (beranda_style.css v20261020b).
+- 2026-10-20: drawer HP 'Semua menu' kembali putih; ikon menu Brand diganti ikon HP (menuIcon).
+- 2026-10-20: assets/scope_picker.js: pemilih Cakupan HP jadi bottom sheet berkelompok seperti desktop (select asli tetap sumber nilai).
+- 2026-10-20: scope_picker.js juga menangani select Cakupan di kartu drawer HP (.hsSel dari mobile_hero.js).
+- 2026-10-20: kolom cari di sheet Cakupan HP (filter nama/wilayah).
+- 2026-10-20: Mode Eksekutif HP: chip Brand grid 4 kolom, chip Indikator segmen satu baris, semua kapital (beranda_style.css v20261020d).
