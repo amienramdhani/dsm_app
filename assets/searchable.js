@@ -26,7 +26,7 @@ function dsmSearchable(sel,placeholder){
  const load=(src,id)=>new Promise((ok,fail)=>{if(document.getElementById(id)){ok();return}const s=document.createElement('script');s.id=id;s.src=src;s.onload=ok;s.onerror=fail;document.head.appendChild(s);});
  load('assets/portfolio_transfer.js?v=20261019i','dsmPortfolioTransferJs')
    .then(()=>load('assets/dealer_transfer_direct.js?v=20261019m','dsmDealerTransferDirectJs'))
-   .then(()=>load('assets/transfer_ui_hotfix.js?v=20261019a','dsmTransferUiHotfixJs'))
+   .then(()=>load('assets/transfer_ui_hotfix.js?v=20261020a','dsmTransferUiHotfixJs'))
    .then(()=>load('assets/tx_correction.js?v=20261019a','dsmTxCorrectionJs'))
    .then(()=>load('assets/dealer_target.js?v=20261019b','dsmDealerTargetJs'))
    .then(()=>load('assets/admin_revision.js?v=20261019i','dsmAdminRevisionJs'))

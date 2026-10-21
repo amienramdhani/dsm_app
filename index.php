@@ -3030,8 +3030,9 @@ html body #app #view .v6xfsPanel>.v6xsec .v6xfsBtn{position:absolute!important;r
 html body #app #view :is(.v6xmetricbar,.v6xmodebar,.v6xlevelbar,.v6xhmbar,.v6xheatmode,.v6xlvl){display:inline-flex!important;align-items:center;gap:2px!important;background:#EDF2F8!important;border-radius:10px!important;padding:3px!important;border:0!important;position:relative}
 html body #app #view :is(.v6xmetricbar,.v6xmodebar,.v6xlevelbar,.v6xhmbar,.v6xheatmode,.v6xlvl)>button{background:transparent!important;border:0!important;color:var(--v7-ink2)!important;border-radius:8px!important;padding:5px 11px!important;font:700 11px Inter,system-ui,sans-serif!important;box-shadow:none!important;min-height:0!important;white-space:nowrap}
 html body #app #view :is(.v6xmetricbar,.v6xmodebar,.v6xlevelbar,.v6xhmbar,.v6xheatmode,.v6xlvl)>button.on{background:#fff!important;color:var(--v7-blue)!important;box-shadow:0 1px 4px rgba(16,40,80,.16)!important}
-html body #app #view .v6xHeaderControls .v6xmetricbar::before{content:"INDIKATOR";font:700 9.5px Inter,sans-serif;letter-spacing:.07em;color:var(--v7-muted);padding:0 6px 0 4px}
-html body #app #view .v6xHeaderControls .v6xmodebar::before{content:"NILAI";font:700 9.5px Inter,sans-serif;letter-spacing:.07em;color:var(--v7-muted);padding:0 6px 0 4px}
+/* label INDIKATOR/NILAI dihapus: indikator di ujung kiri, nilai di ujung kanan */
+html body #app #view .v6xHeaderControls .v6xmetricbar{margin-right:auto!important}
+html body #app #view .v6xHeaderControls .v6xmodebar{margin-left:auto!important}
 html body #app #view .v6xHeaderControls>span:not(.v6xmetricbar):not(.v6xmodebar):not(.v6xCtrlSep)::before{font:700 9.5px Inter,sans-serif;letter-spacing:.07em;color:var(--v7-muted);padding:0 6px 0 4px}
 @media(max-width:760px){html body #app #view .v6xfsPanel>.v6xsec .v6xHeaderControls{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}}
 
@@ -3050,6 +3051,16 @@ html body #app #view .v6xheat .hd{white-space:nowrap!important;overflow:visible!
 html body #app #view .v6xheat .rn{word-break:normal!important;overflow-wrap:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .v7hleg{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;font:700 10px Inter,system-ui,sans-serif}
 .v7hleg span{padding:2px 7px;border-radius:5px}
+.v7hs-bd{position:fixed;inset:0;z-index:2147483000;background:rgba(15,30,60,.38);opacity:0;transition:opacity .18s}.v7hs-bd.on{opacity:1}
+.v7hs{position:fixed;left:0;right:0;bottom:0;z-index:2147483001;margin:0 auto;max-width:560px;max-height:92vh;overflow:auto;box-sizing:border-box;background:#fff;border-radius:26px 26px 0 0;box-shadow:0 -14px 40px rgba(20,40,80,.28);padding:10px 16px calc(16px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:12px;transform:translateY(100%);transition:transform .22s ease;font-family:inherit;color:#15213C}.v7hs.on{transform:none}
+.v7hs .gb{width:40px;height:5px;border-radius:3px;background:#D0DAEA;align-self:center;flex:none}
+.v7hs .hh{display:flex;align-items:center;justify-content:space-between;gap:8px}.v7hs .hh small{display:block;font-size:11px;font-weight:800;color:#47587A;text-transform:uppercase;letter-spacing:.3px}.v7hs .hh h2{margin:2px 0 0;font-size:18px;font-weight:800;text-transform:uppercase;color:#15213C;line-height:1.2}
+.v7hs .cl{flex:none;width:44px;height:44px;border-radius:14px;border:0;background:#EEF3FA;color:#1D3A78;font-size:20px;font-weight:800;cursor:pointer}
+.v7hs .pr{display:flex;align-items:center;gap:14px}.v7hs .pc{flex:none;border-radius:16px;padding:8px 14px;font-size:30px;font-weight:800;line-height:1.1}.v7hs .pb{flex:1}.v7hs .v7bar{height:10px;border-radius:5px;background:#E3EBF8;overflow:hidden}.v7hs .v7bar span{display:block;height:100%;border-radius:5px;margin:0;padding:0}.v7hs .pb p{margin:6px 0 0;font-size:11.5px;font-weight:600;color:#47587A}
+.v7hs .st{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.v7hs .st div{background:#F3F7FD;border-radius:14px;padding:10px 12px}.v7hs .st small{display:block;font-size:10.5px;font-weight:800;color:#47587A;text-transform:uppercase}.v7hs .st b{display:block;font-size:18px;font-weight:800;margin-top:2px}
+.v7hs .gr{border-radius:14px;padding:10px 12px;font-size:13px;font-weight:700}.v7hs .gr.up{background:#E9F7EE;color:#14532D}.v7hs .gr.dn{background:#FDECEA;color:#8E2517}.v7hs .gr.fl{background:#F3F7FD;color:#47587A}.v7hs .gr span{font-weight:600}
+.v7hs .go{height:48px;border:0;border-radius:14px;background:linear-gradient(135deg,#1259C7,#3B82F6);color:#fff;font:800 13px inherit;letter-spacing:.4px;text-transform:uppercase;box-shadow:0 8px 18px rgba(18,89,199,.32);cursor:pointer;flex:none}
+.v6xheat.v7hdim .hc:not(.v7hsel){opacity:.3}.v6xheat .hc.v7hsel{outline:3px solid #1259C7;outline-offset:2px;position:relative;z-index:3}
 .v7hleg .v7t1{background:#F4BDB9;color:#A3201B}.v7hleg .v7t2{background:#FBE0DD;color:#A3201B}.v7hleg .v7t3{background:#FFF0C9;color:#8A5A00}.v7hleg .v7t4{background:#DDF3E6;color:#0E6E48}.v7hleg .v7t5{background:#B9E7CD;color:#0E6E48}
 html body #app #view .v6xbox>.v6legend:has(+ .v7hleg),html body #app #view .v6xheat ~ .v6legend{display:none!important}
 @media(max-width:760px){
@@ -4815,7 +4826,7 @@ function v6XTren(d,key,B,node){ const dailyN=(d.daily||{})[key]||{},qOf=x=>B==='
 
 function v6XHeatMetric(){return ['st','da','noo'].includes(V6X.heatMetric)?V6X.heatMetric:'st';}
 function v6XHeatUnit(ind){return ['da','noo'].includes(ind)?'dealer':'unit';}
-function v6XHeatCellM(m,mode,d,ind){m=m||{a:0,lm:0,t:0};const a=+m.a||0,lm=+m.lm||0,t=+m.t||0,u=v6XHeatUnit(ind),empty=!a&&!lm&&!t;if(empty)return '<div class="hc na hempty"><span>–</span></div>';const c=v6XCalc({a,lm,td:+m.td||0,t},ind,d),q=mode==='actual'?a:c.proj,p=t?q/t*100:null,cl=p==null?'na':p>=100?'g':p>=80?'w':'r',diff=a-lm,g=lm?diff/lm*100:null,gc=diff>0?'up':diff<0?'dn':'flat',sg=diff>0?'+':diff<0?'−':'';let gt='–';if(g!=null)gt=`${g>=0?'▲ +':'▼ '}${decimal(Math.abs(g))}% · ${sg}${num(Math.abs(Math.round(diff)))} ${u}`;else if(a&&!lm)gt=`BARU · +${num(Math.round(a))} ${u}`;const ht=(ind==='noo'&&!t)?'–':'Target '+num(Math.round(t));return `<div class="hc ${cl}"><span class="hp">${p==null?'–':Math.round(p)+'%'}</span><span class="hu">${num(Math.round(q))} ${u}</span><span class="ht">${ht}</span><span class="hg ${gc}">${gt}</span></div>`;}
+function v6XHeatCellM(m,mode,d,ind){m=m||{a:0,lm:0,t:0};const a=+m.a||0,lm=+m.lm||0,t=+m.t||0,u=v6XHeatUnit(ind),empty=!a&&!lm&&!t;if(empty)return '<div class="hc na hempty"><span>–</span></div>';const c=v6XCalc({a,lm,td:+m.td||0,t},ind,d),q=mode==='actual'?a:c.proj,p=t?q/t*100:null,cl=p==null?'na':p>=100?'g':p>=80?'w':'r',diff=a-lm,g=lm?diff/lm*100:null,gc=diff>0?'up':diff<0?'dn':'flat',sg=diff>0?'+':diff<0?'−':'';let gt='–';if(g!=null)gt=`${g>=0?'▲ +':'▼ '}${decimal(Math.abs(g))}% · ${sg}${num(Math.abs(Math.round(diff)))} ${u}`;else if(a&&!lm)gt=`BARU · +${num(Math.round(a))} ${u}`;const ht=(ind==='noo'&&!t)?'–':'Target '+num(Math.round(t));return `<div class="hc ${cl}" data-hi="${ind}" data-hm="${mode==='actual'?'a':'p'}" data-hq="${q}" data-ha="${a}" data-hl="${lm}" data-ht="${t}" data-hj="${c.proj}"><span class="hp">${p==null?'–':Math.round(p)+'%'}</span><span class="hu">${num(Math.round(q))} ${u}</span><span class="ht">${ht}</span><span class="hg ${gc}">${gt}</span></div>`;}
 function v6XHeatCellNode(node,b,mode,d,ind){return v6XHeatCellM(v6XM(node,b,ind),mode,d,ind);}
 function v6XHeatOrgM(r,b,ind){const x=r&&r.m&&r.m[b]&&r.m[b][ind]?r.m[b][ind]:{};return {a:+x.a||0,lm:+x.lm||0,td:0,t:+x.t||0};}
 function v6XHeatMetricButtons(){const ind=v6XHeatMetric();return `<span class="v6xhmbar v6xmetricbar"><button type="button" class="${ind==='st'?'on':''}" data-v6xhmet="st">SELL THRU</button><button type="button" class="${ind==='da'?'on':''}" data-v6xhmet="da">DEALER AKTIF</button><button type="button" class="${ind==='noo'?'on':''}" data-v6xhmet="noo">NOO</button></span><span class="v6xCtrlSep" aria-hidden="true"></span>`;}
@@ -4986,6 +4997,48 @@ document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest
  if(t.dataset.v6xfull){try{sessionStorage.setItem('v6full','1');}catch(err){}V6X.drill=null;navigateTo('beranda');return;}
  if(t.dataset.v6xd){const own=V6X.data&&V6X.data.ownBig;if(own&&!own.includes(t.dataset.v6xd.split('|')[1])){t.classList.add('v6xlock');setTimeout(()=>t.classList.remove('v6xlock'),1500);return;}if(document.fullscreenElement===$('view'))V6X.fsFocus='v6xsubpanel';V6X.drill=t.dataset.v6xd;v6ExecDrill(V6X.drill);}});
 
+/* v7 · ketuk kotak heatmap (HP) -> rincian (bottom sheet). Tampilan heatmap tidak berubah. */
+let v7HeatPass=false;
+function v7HeatClose(){document.querySelectorAll('.v7hs,.v7hs-bd').forEach(x=>x.remove());document.querySelectorAll('.v6xheat.v7hdim').forEach(g=>g.classList.remove('v7hdim'));document.querySelectorAll('.v6xheat .hc.v7hsel').forEach(c=>c.classList.remove('v7hsel'));}
+function v7HeatOpen(cell){
+ const g=cell.closest('.v6xheat');if(!g)return;
+ const kids=[...g.children];let i=kids.indexOf(cell),bi=0,rn=null;
+ for(let k=i-1;k>=0;k--){const e=kids[k];if(e.classList.contains('rn')){rn=e;break;}if(e.classList.contains('hc'))bi++;}
+ const hds=kids.filter(e=>e.classList.contains('hd'));
+ const brand=(cell.dataset.v6xb||(hds[bi]&&(hds[bi].getAttribute('title')||hds[bi].textContent))||'').trim();
+ const region=rn?rn.textContent.trim():'';
+ const D=cell.dataset,ind=D.hi||'st',act=D.hm==='a',q=+D.hq||0,a=+D.ha||0,lm=+D.hl||0,t=+D.ht||0,pj=+D.hj||0;
+ const unit=['da','noo'].includes(ind)?'dealer':'unit',f=n=>num(Math.round(n));
+ const p=t?q/t*100:null,tc=p==null?'#EEF2F8;color:#4A5B78':p<50?'#F4BDB9;color:#A3201B':p<80?'#FBE0DD;color:#A3201B':p<100?'#FFF0C9;color:#8A5A00':p<110?'#DDF3E6;color:#0E6E48':'#B9E7CD;color:#0E6E48';
+ const fill=p==null?'#B7C4D8':p<50?'#E4806F':p<80?'#EE9C8F':p<100?'#E9C65A':p<110?'#5DBB85':'#2E9E62';
+ const IN={st:'Sell Thru',da:'Dealer Aktif',noo:'NOO'}[ind]||'';
+ const diff=a-lm,gp=lm?diff/lm*100:null,sg=diff>0?'+':diff<0?'−':'';
+ const gcls=diff>0?'up':diff<0?'dn':'fl',garr=diff>0?'▲':diff<0?'▼':'•';
+ const gtx=lm?`${gp>=0?'+':'−'}${decimal(Math.abs(gp))}% · ${sg}${f(Math.abs(diff))} ${unit}`:(a?`BARU · +${f(a)} ${unit}`:'Belum ada transaksi');
+ const miss=t?Math.max(0,t-q):0;
+ const root=document.fullscreenElement||document.body;
+ v7HeatClose();
+ g.classList.add('v7hdim');cell.classList.add('v7hsel');
+ const bd=document.createElement('div');bd.className='v7hs-bd';
+ const sh=document.createElement('div');sh.className='v7hs';sh.setAttribute('role','dialog');sh.setAttribute('aria-label','Rincian heatmap');
+ sh.innerHTML=`<div class="gb"></div><div class="hh"><div><small>Rincian ${esc(IN)} · ${act?'Aktual':'Proyeksi'}</small><h2>${esc(region)}${region&&brand?' · ':''}${esc(brand)}</h2></div><button type="button" class="cl" aria-label="Tutup rincian">✕</button></div>
+ <div class="pr"><div class="pc" style="background:${tc}">${p==null?'–':Math.round(p)+'%'}</div><div class="pb"><div class="v7bar"><span style="width:${p==null?0:Math.min(100,p)}%;background:${fill}"></span></div><p>${p==null?'Tanpa target':(act?'Capaian aktual':'Proyeksi capaian')+' terhadap target bulan ini'}</p></div></div>
+ <div class="st"><div><small>Proyeksi</small><b>${f(pj)} ${unit}</b></div><div><small>Target</small><b>${t?f(t)+' '+unit:'–'}</b></div>${t?`<div><small>Kurang ke target</small><b style="color:${miss?'#B42318':'#14532D'}">${miss?f(miss)+' '+unit:'Tercapai'}</b></div>`:''}<div><small>Aktual MTD</small><b>${f(a)} ${unit}</b></div></div>
+ <div class="gr ${gcls}">${garr} ${esc(gtx)} <span>dibanding LMTD</span></div>
+ ${(brand&&region)?`<button type="button" class="go">Lihat dealer ${esc(brand)} di ${esc(region)}</button>`:(brand?`<button type="button" class="go">Pilih brand ${esc(brand)}</button>`:'')}`;
+ root.appendChild(bd);root.appendChild(sh);
+ requestAnimationFrame(()=>{bd.classList.add('on');sh.classList.add('on');});
+ bd.onclick=v7HeatClose;sh.querySelector('.cl').onclick=v7HeatClose;
+ const go=sh.querySelector('.go');
+ if(go)go.onclick=()=>{v7HeatClose();v7HeatPass=true;try{if(rn&&rn.dataset.v6xd){V6X.brand=brand;rn.click();}else cell.click();}finally{v7HeatPass=false;}};
+}
+document.addEventListener('click',e=>{
+ if(v7HeatPass||!isMobile())return;
+ const c=e.target.closest&&e.target.closest('.v6xheat .hc[data-hq]');if(!c||c.classList.contains('hempty'))return;
+ e.stopPropagation();e.preventDefault();v7HeatOpen(c);
+},true);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')v7HeatClose();});
+document.addEventListener('fullscreenchange',()=>v7HeatClose());
 document.addEventListener('fullscreenchange',()=>{const view=$('view');if(document.fullscreenElement!==view){V6X.fsFocus=null;V6X.fsLandscape=false;v6XFsOrientation(false);if(view)view.classList.remove('v6xPresent');}else if(V6X.fsLandscape)v6XFsOrientation(true);v6XApplyFsFocus();});
 
 function v6ProjFsSync(){document.querySelectorAll('[data-v6projfs]').forEach(b=>{const el=document.getElementById(b.dataset.v6projfs);{const on=document.fullscreenElement===el;b.textContent=on?'↙':'⛶';b.title=on?'Keluar layar penuh':'Layar penuh';b.setAttribute('aria-label',b.title);}});}

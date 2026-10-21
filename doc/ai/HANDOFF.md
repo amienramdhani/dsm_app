@@ -315,7 +315,7 @@ Fakta kode yang perlu diingat:
 
 ## 2026-10-20 — Splash animasi logo
 - Splash lama (ombak, `v6Splash` inline) dihapus dari index.php; diganti `assets/dsm_splash.js` (CSS+SVG inline di dalam JS, dimuat setelah tm_steps.js).
-- Perilaku tetap: sekali per sesi (sessionStorage `v6splash`), "Lewati ›"/ketuk untuk skip. Animasi diperlambat x1,4 (~4,7 dtk) dan tetap diputar walau reduced-motion (permintaan Ary). Uji paksa: tambahkan `?splash=1` di URL.
+- Perilaku tetap: sekali per sesi (sessionStorage `v6splash`), "Lewati ›"/ketuk untuk skip. Reduced-motion: logo statis 1,2 dtk. Uji paksa: tambahkan `?splash=1` di URL.
 - Logo: `assets/dsm-logo.svg` + `assets/dsm-logo.png` (transparan, hasil trace dari JPG). `navBrand`, `dl-logo`, dan satu img lain di index.php kini pakai PNG. JPG lama dibiarkan (belum dihapus).
 - Belum diverifikasi di app nyata: CSS `.navBrand` ber-background putih di beberapa rule; cek header/login (Ctrl+F5). Rollback: kembalikan src ke dsm-logo.jpg / dsm-logo-crop.jpg.
 
@@ -331,3 +331,31 @@ Fakta kode yang perlu diingat:
 
 ## 2026-10-20 — Chip Mode Eksekutif HP
 - CSS-only di akhir beranda_style.css, selektor :has(>button[data-v6xbrand]) / [data-v6xind], ≤760px. Desktop tidak diubah. Belum dicek di app nyata.
+
+## Catatan 2026-10-20 (halaman beku)
+
+- Penyebab freeze: loop MutationObserver di `assets/transfer_ui_hotfix.js` (`addStyle()` menulis `textContent` tiap panggilan). Sudah diperbaiki (tulis sekali). Aturan: jangan ubah DOM/`textContent` di dalam callback MutationObserver tanpa guard.
+- Cara uji freeze: muat `index.php` di Chromium headless, halaman harus `load` < 1 dtk; hitung callback MutationObserver (harus puluhan, bukan ratusan).
+- Splash baru (`assets/dsm_splash.js`) bukan penyebab; di branch `rollback-splash` splash dikembalikan ke versi lama. Keputusan pakai splash baru atau lama menunggu user.
+
+## Catatan 2026-10-20 (performa Dealer HP)
+
+- Pola berat yang dihindari: jangan bangun tabel/DOM untuk seluruh hasil filter di HP; render lazy + bertahap. Daftar Dealer HP = 20 kartu; tabel lengkap hanya saat panel dibuka (200 baris per langkah).
+- Jangan memakai `localeCompare` dengan opsi di dalam comparator sort; pakai `compareValues` (Intl.Collator tunggal).
+- Uji performa: mock `api.php` di Playwright memakai data `storage/cache/*.json` (hasil `apiDashboard`) digandakan jadi 7.000 dealer; ukur render dan freeze terpanjang (heartbeat 50 ms).
+- Belum dikerjakan (butuh persetujuan karena menyentuh visibilitas data): kirim `alamat`/`hp` dealer hanya saat detail dibuka untuk memangkas payload (~1,4 KB/dealer).
+- `storage/cache/*.json` (313 file, 256 MB) ikut ter-commit lewat commit "update" 14:21; pertimbangkan masuk `.gitignore`.
+
+
+## Heatmap HP: ketuk kotak -> rincian (2026-10-20)
+- Mockup #2 dipilih user; layout/tampilan heatmap tetap seperti sebelumnya (kompak/Per Brand/landscape TIDAK dikerjakan).
+- `.hc` non-kosong membawa `data-hi/hm/hq/ha/hl/ht/hj` (indikator, mode, nilai tampil, aktual, LMTD, target, proyeksi). Region diambil dari `.rn` sebelumnya, brand dari `.hd` (urutan kolom) / `data-v6xb`.
+- Listener klik fase-capture hanya saat `isMobile()`; `v7HeatPass` melewatkan klik programatik dari tombol "Lihat dealer" (set `V6X.brand` lalu klik `.rn` -> drill lama + cek `ownBig`). Sheet ditempel ke `document.fullscreenElement||body` supaya tampil di layar penuh; ditutup saat fullscreenchange/Esc/backdrop.
+- Hati-hati: class `.bar` sudah dipakai CSS global lain (bar jadi bergeser); sheet memakai `.v7bar`.
+- Catatan uji: heatmap HP hanya terlihat di layar penuh dan pada tab `data-v7tab` yang sesuai; uji Playwright: /tmp/heat_test.py (tidak di repo).
+
+## Toolbar heatmap tanpa label (2026-10-21)
+
+- Permintaan user: hapus tulisan INDIKATOR dan NILAI; indikator di ujung kiri, nilai di ujung kanan. Perubahan hanya CSS di index.php (sekitar baris 3033): hapus dua aturan ::before, tambah margin-right:auto pada .v6xmetricbar dan margin-left:auto pada .v6xmodebar (perlu !important karena aturan lama .v6xhmbar margin-left:0!important).
+
+- Uji mockup Playwright dengan CSS asli: lebar 900 -> indikator mulai x=0, nilai berakhir di sisi kanan. Lebar 390 -> toolbar mode nowrap + overflow-x, nilai masih terpotong ~57px dan perlu digeser (belum diubah, butuh persetujuan jika mau dipadatkan).
