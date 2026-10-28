@@ -1,0 +1,33 @@
+# Batas upload & memori untuk DSM (Apache + mod_php, mis. Laragon)
+<IfModule mod_php.c>
+  php_value upload_max_filesize 64M
+  php_value post_max_size 70M
+  php_value memory_limit 2048M
+  php_value max_execution_time 600
+</IfModule>
+<IfModule mod_php7.c>
+  php_value upload_max_filesize 64M
+  php_value post_max_size 70M
+  php_value memory_limit 2048M
+  php_value max_execution_time 600
+</IfModule>
+
+# --- Keamanan dasar ---
+Options -Indexes
+<Files "config.php">
+  Require all denied
+</Files>
+<Files "backup_cli.php">
+  Require all denied
+</Files>
+<FilesMatch "\.(md|zip|log|bak|sql|sh|env|json|csv|bin|tmp)$">
+  Require all denied
+</FilesMatch>
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "same-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+  # HSTS hanya dikirim bila diakses lewat HTTPS
+  Header always set Strict-Transport-Security "max-age=31536000" "expr=%{HTTPS} == 'on'"
+</IfModule>

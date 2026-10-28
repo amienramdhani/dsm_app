@@ -1,0 +1,21 @@
+# Secret lokal
+config.local.php
+config.local.example.php
+config.php
+.env
+.env.*
+
+# Runtime / generated files
+storage/files/
+
+# Data internal
+tools/auth.csv
+tools/master_sales.csv
+database_dsm.sql
+config.php
+README_REVISION.md
+
+# Logs / OS
+*.log
+Thumbs.db
+.DS_Store

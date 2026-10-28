@@ -1,0 +1,76 @@
+<title>DSM Demo Presentasi</title>
+<style>
+/* Layout: toolbar mode → stage (device asli di-scale) + panel panduan detail berbasis tab */
+:root{--bg:#0d2236;--panel:#13304a;--line:#ffffff1f;--fg:#eaf3fa;--mut:#9fb9cc;--acc:#4fb3ff;--st:#1E5FB8;--so:#C25A12;--da:#0E7C6B;--noo:#6D3FD8;--om:#9A6400;color-scheme:dark;font-family:"Segoe UI",system-ui,sans-serif}
+body{background:var(--bg);color:var(--fg);padding-inline:16px;padding-block:14px}
+.tb{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:14px}
+.tb h1{font-size:16px;margin:0}.tb small{display:block;font-size:10px;letter-spacing:.14em;color:var(--acc);font-weight:800}
+.seg{display:flex;gap:4px;background:#ffffff10;padding:4px;border-radius:10px}
+.seg button{border:0;background:none;color:var(--fg);padding:7px 12px;border-radius:7px;font-weight:700;font-size:12px;cursor:pointer}
+.seg button.on{background:#fff;color:#14577f}
+.lay{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:16px}
+@media(max-width:900px){.lay{grid-template-columns:1fr}}
+.stage{background:#ffffff08;border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;gap:16px;align-items:flex-start;justify-content:center;min-width:0;flex-wrap:wrap}
+.cap{font-size:11px;color:var(--mut);margin-bottom:6px;display:flex;justify-content:space-between}
+.dev{min-width:0;flex:1 1 520px;max-width:900px}
+.mon{border:8px solid #081624;border-radius:12px;overflow:hidden;background:#fff;aspect-ratio:1440/900;max-width:100%}
+.bb{height:22px;background:#e6edf2;display:flex;align-items:center;gap:5px;padding:0 8px}.bb i{width:7px;height:7px;border-radius:50%;background:#a7b8c6}
+.app{display:grid;grid-template-columns:15% 1fr;height:calc(100% - 22px);color:#1f3346;font-size:9px}
+.sb{background:#0f3d5e;color:#cfe6f5;padding:8px 6px;display:flex;flex-direction:column;gap:4px}.sb b{color:#fff;font-size:10px;margin-bottom:6px}
+.sb span{padding:4px 6px;border-radius:4px}.sb span.on{background:#ffffff26;color:#fff;font-weight:700}
+.mn{padding:10px;display:flex;flex-direction:column;gap:8px;background:#f3f7fa}
+.kp{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.kp div{background:#fff;border-radius:5px;padding:6px;border-top:3px solid var(--c)}
+.kp em{display:block;font-style:normal;font-weight:800;font-size:12px}
+.ch{flex:1;background:#fff;border-radius:5px;padding:6px;display:flex;align-items:flex-end;gap:3%;outline:2px dashed #ffb020;outline-offset:-2px}
+.ch i{flex:1;background:var(--st);border-radius:2px 2px 0 0}
+.ph{flex:0 0 220px;max-width:100%}.pf{border:7px solid #081624;border-radius:28px;overflow:hidden;background:#f3f7fa;aspect-ratio:390/800;font-size:9px;color:#1f3346;display:flex;flex-direction:column}
+.pf .hd{background:#0f3d5e;color:#fff;padding:14px 8px 6px;font-weight:800}.pf .bd{padding:6px;display:flex;flex-direction:column;gap:5px;flex:1}
+.pf .bd div{background:#fff;border-radius:5px;padding:6px}.pf nav{display:flex;justify-content:space-around;background:#fff;padding:6px;border-top:1px solid #dde6ec}
+.gd{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.k{font-size:10px;letter-spacing:.14em;color:var(--acc);font-weight:800}
+.gd h2{margin:0;font-size:18px}.gd p{margin:0;color:#cfe0ec;font-size:13px;line-height:1.55}
+.crumb{display:flex;gap:6px;flex-wrap:wrap}.crumb span{font-size:11px;padding:3px 8px;border-radius:20px;background:#ffffff14}.crumb span.on{background:var(--acc);color:#04263f;font-weight:800}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);overflow-x:auto}
+.tabs button{border:0;background:none;color:var(--mut);padding:7px 9px;font-size:12px;font-weight:700;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
+.tabs button.on{color:#fff;border-color:var(--acc)}
+dl{margin:0;display:grid;gap:7px}dt{font-weight:800;font-size:12.5px}dd{margin:0;color:#c3d6e4;font-size:12.5px;line-height:1.5}
+.leg{display:flex;flex-wrap:wrap;gap:6px}.leg span{font-size:11px;padding:3px 8px;border-radius:5px;color:#fff;background:var(--c)}
+.tip{background:#ffb02018;border-left:3px solid #ffb020;padding:8px 10px;font-size:12.5px;border-radius:4px;color:#ffe2a6}
+.nv{display:flex;justify-content:space-between;gap:8px;margin-top:auto}.nv button{flex:1;padding:9px;border-radius:8px;border:1px solid var(--line);background:#ffffff12;color:#fff;font-weight:700;cursor:pointer}
+.note{font-size:11px;color:var(--mut);text-align:center;margin-top:12px}
+</style>
+
+<div class="tb"><div><small>MOCKUP · DEMO PRESENTASI</small><h1>DSM · Presentasi Desktop &amp; Mobile</h1></div>
+<div class="seg" id="mode"><button class="on" data-m="both">Berdampingan</button><button data-m="d">Desktop Saja</button><button data-m="m">Mobile Saja</button></div></div>
+
+<div class="lay">
+<section class="stage" id="stage">
+ <div class="dev" id="dDev"><div class="cap"><b>Desktop</b><span>Dirender 1440 × 900 lalu di-scale · sidebar utuh</span></div>
+  <div class="mon"><div class="bb"><i></i><i></i><i></i></div><div class="app">
+   <div class="sb"><b>DSM</b><span class="on">Beranda</span><span>Dealer</span><span>Brand</span><span>Tim</span><span>DOS</span><span>Analisa</span><span>KPI</span><span>Peringkat</span><span>Transaksi</span><span>Informasi</span></div>
+   <div class="mn"><div class="kp"><div style="--c:var(--st)">Sell Thru<em>87,4%</em></div><div style="--c:var(--so)">Sell Out<em>91,2%</em></div><div style="--c:var(--da)">Dealer Aktif<em>412</em></div><div style="--c:var(--noo)">NOO<em>18</em></div></div>
+   <div class="ch"><i style="height:40%"></i><i style="height:55%"></i><i style="height:48%"></i><i style="height:70%"></i><i style="height:62%"></i><i style="height:80%"></i><i style="height:58%;opacity:.45"></i></div></div></div></div></div>
+ <div class="ph" id="mDev"><div class="cap"><b>Mobile</b><span>390 × 800</span></div>
+  <div class="pf"><div class="hd">Beranda</div><div class="bd"><div><b>Sell Thru</b> 87,4%</div><div><b>Sell Out</b> 91,2%</div><div style="flex:1;outline:2px dashed #ffb020;outline-offset:-2px">Tren Harian</div></div><nav><span>Beranda</span><span>Dealer</span><span>Brand</span><span>Lainnya</span></nav></div></div>
+</section>
+
+<aside class="gd">
+ <div class="k">PANDUAN PRESENTASI · BERANDA</div>
+ <div class="crumb"><span>Ringkasan</span><span class="on">Tren Harian</span><span>Kartu Region</span><span>Heatmap</span><span>Proyeksi</span></div>
+ <h2>Tren Harian</h2>
+ <p>Grafik batang Sell Thru per hari dalam periode berjalan, dibandingkan dengan bulan lalu (LMTD) dan target harian.</p>
+ <div class="tabs" id="tabs"><button class="on" data-t="baca">Cara Baca</button><button data-t="warna">Warna &amp; Tanda</button><button data-t="aksi">Interaksi</button><button data-t="bicara">Poin Bicara</button><button data-t="faq">FAQ</button></div>
+ <div id="t-baca"><dl><dt>Target</dt><dd>Target bulanan dibagi hari kerja; garis putus-putus = target harian kumulatif.</dd><dt>Aktual / MTD</dt><dd>Total Sell Thru dari tanggal 1 sampai data terakhir publish.</dd><dt>LMTD &amp; Growth</dt><dd>Periode yang sama bulan lalu; Growth = MTD ÷ LMTD − 1.</dd><dt>% Capai &amp; Estimasi</dt><dd>Aktual ÷ Target; estimasi = laju harian × sisa hari kerja.</dd></dl></div>
+ <div id="t-warna" hidden><div class="leg"><span style="--c:var(--st)">Sell Thru</span><span style="--c:var(--so)">Sell Out</span><span style="--c:var(--da)">Dealer Aktif</span><span style="--c:var(--noo)">NOO</span><span style="--c:var(--om)">Omzet</span></div><p style="margin-top:8px">Batang pudar = hari berjalan (belum final). Hijau ≥ 100%, kuning 80–99%, merah &lt; 80%.</p></div>
+ <div id="t-aksi" hidden><dl><dt>Desktop</dt><dd>Hover batang → tooltip angka harian. Klik judul → layar penuh.</dd><dt>Mobile</dt><dd>Tap batang → detail di bawah grafik. Putar ke landscape untuk layar penuh.</dd></dl></div>
+ <div id="t-bicara" hidden><p>"Di sini kita lihat ritme order harian. Kalau batang minggu ini di bawah garis target, kita tahu area mana yang perlu didorong sebelum akhir bulan."</p></div>
+ <div id="t-faq" hidden><dl><dt>Kenapa angka hari ini kecil?</dt><dd>Data mengikuti jadwal publish terakhir, bukan real-time.</dd></dl></div>
+ <div class="tip">Area yang sedang dijelaskan ditandai garis kuning di kedua layar.</div>
+ <div class="nv"><button>← Sebelumnya</button><button>Berikutnya →</button></div>
+</aside>
+</div>
+<p class="note">Isi panduan lengkap ±11 menu × 4–6 fitur, tiap fitur punya 5 tab di atas. Ini contoh 1 fitur.</p>
+<script>
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x===b));['baca','warna','aksi','bicara','faq'].forEach(t=>document.getElementById('t-'+t).hidden=t!==b.dataset.t)});
+document.querySelectorAll('#mode button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#mode button').forEach(x=>x.classList.toggle('on',x===b));const m=b.dataset.m;document.getElementById('dDev').hidden=m==='m';document.getElementById('mDev').hidden=m==='d'});
+</script>

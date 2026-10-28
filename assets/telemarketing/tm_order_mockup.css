@@ -1,0 +1,113 @@
+/* The approved order mockup, scoped to the order editor. */
+#tmOrderEditor{min-width:0}
+#tmOrderForm.tmx-order-form{--tmx-blue:#0b5cad;--tmx-ink:#24394e;--tmx-muted:#75869a;--tmx-line:#d8e3ef;box-sizing:border-box;width:100%;padding:18px;background:#fff;border:1px solid #d8e3ef;border-radius:10px;box-shadow:0 5px 22px #203f6810;color:var(--tmx-ink);font:13px/1.5 "Segoe UI",Arial,sans-serif}
+#tmOrderForm *,#tmOrderForm *::before,#tmOrderForm *::after{box-sizing:border-box}
+#tmOrderForm .tmx-layout{display:grid;grid-template-columns:310px minmax(0,1fr);align-items:start;gap:22px}
+#tmOrderForm .tmx-sidebar{display:flex;flex-direction:column;gap:15px;min-width:0}
+#tmOrderForm .tmx-card{border:1px solid #cdddea!important;border-radius:7px!important;overflow:visible!important;background:#fff!important;box-shadow:none!important;margin:0!important}
+#tmOrderForm .tmx-card-head{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(120deg,#1562a1,#247bb6)!important;padding:11px 14px;color:#fff!important;border-radius:6px 6px 0 0;font-size:13px;font-weight:650;min-height:42px;margin:0}
+#tmOrderForm .tmx-card-head small{font-size:10px;background:#ffffff25;border-radius:4px;padding:2px 6px;color:#fff}
+#tmOrderForm .tmx-card-body{padding:13px 14px;display:grid;gap:11px}
+#tmOrderForm .tmx-field{display:flex;flex-direction:column;gap:5px;font-size:11px;font-weight:650;color:#60768d;margin:0;min-width:0}
+#tmOrderForm input.fi,#tmOrderForm select.fi,#tmOrderForm textarea.fi{display:block;box-sizing:border-box;width:100%;min-width:0;max-width:100%;padding:8px 10px;min-height:36px;height:auto;border:1px solid #cfdce9!important;border-radius:5px!important;background:#fff!important;color:#233e59;font:12px/1.4 "Segoe UI",Arial,sans-serif!important;box-shadow:none!important;letter-spacing:0;text-transform:none}
+#tmOrderForm input.fi:read-only{background:#f2f5f9!important;color:#6d7e91}
+#tmOrderForm input.fi:focus,#tmOrderForm select.fi:focus,#tmOrderForm textarea.fi:focus{outline:2px solid #3e94e799;outline-offset:1px;border-color:#3e94e7!important}
+#tmOrderForm .tmx-field-row{display:grid;grid-template-columns:1fr 1fr;gap:9px;min-width:0}
+#tmOrderForm .tmx-field small{font-size:10px;font-weight:400;color:#8794a4}
+#tmOrderForm .tmx-company{display:flex;align-items:center;gap:9px}
+#tmOrderForm .tmx-company-mark{display:grid;place-items:center;width:34px;height:34px;flex:0 0 34px;background:#145c9e;color:#fff;border-radius:5px;font-size:14px;font-weight:750}
+#tmOrderForm .tmx-company strong{font-size:12px;color:#233e59;display:block;line-height:1.25}
+#tmOrderForm .tmx-company small{display:block;font-size:10px;color:#7a8ca2}
+#tmOrderForm .tmx-segment{display:grid;grid-template-columns:1fr 1fr;border:1px solid #cfdce9;border-radius:5px;overflow:hidden}
+#tmOrderForm .tmx-segment label{display:flex;align-items:center;justify-content:center;gap:5px;min-height:34px;padding:6px 7px;background:#f6f8fb;color:#788ba0;font-size:11px;font-weight:650;cursor:pointer;text-align:center;margin:0}
+#tmOrderForm .tmx-segment label.active{background:#e5f1ff;color:#0b5cad;box-shadow:inset 0 -2px 0 #0b5cad}
+#tmOrderForm .tmx-segment input{width:14px;min-width:14px;margin:0;accent-color:#0b5cad}
+#tmOrderForm .tmx-dealer-hit{padding:10px;border-left:3px solid #2b80bc;background:#f4f9ff;border-radius:4px}
+#tmOrderForm .tmx-dealer-hit strong{display:block;color:#1c547e;font-size:13px}
+#tmOrderForm .tmx-dealer-hit small{display:block;color:#6d8298;font-size:10px}
+#tmOrderForm .tmx-noo{padding:9px 10px;background:#fff7e5;color:#8b631e;border-left:3px solid #e9a431;font-size:11px;margin:0}
+#tmOrderForm .tmx-seller-inline{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px}
+#tmOrderForm button.chip{min-height:36px;padding:8px 12px;border:1px solid #cfdce9;border-radius:5px;background:#fff;color:#294b6a;font:600 12px/1.35 "Segoe UI",Arial,sans-serif;white-space:nowrap;box-shadow:none;text-transform:none;letter-spacing:0}
+#tmOrderForm button.chip:hover{background:#eff6fd;border-color:#9fbede}
+#tmOrderForm button.chip.primary{background:#0b5cad;color:white;border-color:#0b5cad;box-shadow:0 2px 7px #0b5cad20}
+#tmOrderForm #tmSellerSelf{font-size:10px;color:#0b5cad;background:#eff6fe;padding:6px 9px}
+#tmOrderForm .tmx-caption{font-size:10px;line-height:1.5;color:#8594a5;margin:0}
+#tmOrderForm .tmx-workarea{min-width:0}
+#tmOrderForm .tmx-item-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+#tmOrderForm .tmx-item-head h2{font-size:14px;color:#294966;font-weight:700;margin:0}
+#tmOrderForm .tmx-item-head p{font-size:11px;color:#8091a5;margin:3px 0 0}
+#tmOrderForm .tmx-check{display:flex;align-items:center;gap:6px;white-space:nowrap;color:#6d8095;font-size:11px;margin:0}
+#tmOrderForm .tmx-check input{width:14px;min-width:14px;margin:0;accent-color:#0b5cad}
+#tmOrderForm .tmx-item-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 11px;background:#f7fafd;border:1px solid #d7e5f2;border-radius:6px 6px 0 0}
+#tmOrderForm .tmx-item-toolbar span{font-size:11px;color:#8094a7}
+#tmOrderForm .tmx-item-toolbar button{color:#0b5cad;border-color:#bed7eb}
+#tmOrderForm .tmx-item-toolbar kbd{font:10px Consolas,monospace;color:#7890a5;border:1px solid #d7e3ee;background:#fff;border-radius:3px;padding:1px 4px;margin-left:3px}
+#tmOrderForm .tmx-table-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;border:1px solid #ccdbe9;border-radius:0 0 6px 6px}
+#tmOrderForm .tmx-items-table{width:100%;min-width:960px;table-layout:fixed;border-collapse:collapse;border-spacing:0;font-variant-numeric:tabular-nums}
+#tmOrderForm .tmx-items-table th{position:static!important;text-align:left;padding:10px 8px;background:#edf4fb!important;color:#37668d!important;font-size:11px;font-weight:700;white-space:nowrap;border-right:1px solid #d8e3ef;border-bottom:2px solid #6ea3cd}
+#tmOrderForm .tmx-items-table td{height:57px;padding:9px 7px;border-right:1px solid #e3ebf3;border-bottom:1px solid #dde6ef;vertical-align:middle;font-size:12px;min-width:0!important;max-width:none!important;white-space:normal}
+#tmOrderForm .tmx-items-table th:last-child,#tmOrderForm .tmx-items-table td:last-child{border-right:0;text-align:center}
+#tmOrderForm .tmx-items-table tbody tr:last-child td{border-bottom:0}
+#tmOrderForm .tmx-items-table tbody tr:nth-child(even){background:#fbfdff}
+#tmOrderForm .tmx-items-table input.fi{height:36px;min-height:36px;padding:6px 7px}
+#tmOrderForm .tmx-items-table input[data-tm-item-field=price],#tmOrderForm .tmx-items-table input[data-tm-item-field=qty]{text-align:right}
+#tmOrderForm .tmx-index{color:#96a3b0;text-align:center}
+#tmOrderForm .tmx-subtotal{text-align:right;white-space:nowrap!important;color:#274966;font-weight:650}
+#tmOrderForm .tmx-remove{min-width:28px!important;width:28px!important;height:30px!important;min-height:30px!important;padding:0!important;color:#d14343!important;background:#fff3f3!important;border-color:#f0d7d7!important;font-size:18px!important}
+#tmOrderForm .tmx-item-hint{margin:6px 0 0;padding:0 2px;color:#8a98a8;font-size:10px}
+#tmOrderForm .tmx-totalbar{display:grid;grid-template-columns:minmax(230px,1fr) minmax(295px,360px);align-items:start;gap:20px;padding:17px 20px;margin:14px 0 17px;border:1px solid #b5d5ee;border-radius:6px;background:linear-gradient(105deg,#f2f8fe,#e0f0fc)}
+#tmOrderForm .tmx-credit{min-width:0}.tmx-credit-fields{display:grid;grid-template-columns:105px minmax(110px,1fr);gap:6px;max-width:285px;margin-top:5px}
+#tmOrderForm .tmx-credit-fields input{text-align:right;font-variant-numeric:tabular-nums}
+#tmOrderForm .tmx-money{text-align:right;min-width:0}
+#tmOrderForm .tmx-total-units,#tmOrderForm .tmx-amount{display:flex;align-items:baseline;justify-content:space-between;gap:18px}
+#tmOrderForm .tmx-total-units{border-bottom:1px solid #c7dfef;padding-bottom:7px;margin-bottom:5px;color:#6a829a;font-size:11px}
+#tmOrderForm .tmx-total-units strong{font-size:13px;color:#2b6996}
+#tmOrderForm .tmx-amount{font-size:12px;color:#587992}
+#tmOrderForm .tmx-amount b{font-weight:650;color:#2b627e;white-space:nowrap}
+#tmOrderForm .tmx-discount,#tmOrderForm .tmx-discount b{color:#ad7049}
+#tmOrderForm .tmx-rule{border-top:1px solid #b8d8ee;margin:6px 0}
+#tmOrderForm #tmOrderTotal small{display:block;color:#7190a9;font-size:10px}
+#tmOrderForm #tmOrderTotal>strong{display:block;font-size:24px;line-height:1.3;font-weight:650;color:#1f6394;font-variant-numeric:tabular-nums}
+#tmOrderForm .tmx-below{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(250px,1fr);align-items:start;gap:17px}
+#tmOrderForm .tmx-below h3{font-size:12px;color:#57728d;margin:0 0 9px}
+#tmOrderForm .tmx-notes textarea.fi{min-height:110px;line-height:1.7;resize:vertical}
+#tmOrderForm .tmx-notes p{font-size:10px;color:#8496a9;margin:8px 0 0;line-height:1.6}
+#tmOrderForm .tmx-summary{padding:15px;background:#f9fbfd;border:1px solid #dce6f0;border-radius:6px}
+#tmOrderForm .tmx-summary dl{display:grid;grid-template-columns:90px minmax(0,1fr);gap:8px 10px;margin:0;font-size:11px}
+#tmOrderForm .tmx-summary dt{color:#8191a2}
+#tmOrderForm .tmx-summary dd{margin:0;color:#294b6a;font-weight:600;overflow-wrap:anywhere}
+#tmOrderForm .tmx-notice{padding:11px 13px;margin:18px 0 0;background:#fff9ec;color:#8a7145;border:1px solid #f1e7cf;border-radius:5px;font-size:10px;line-height:1.7}
+#tmOrderForm .tmx-actionbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0 2px;margin-top:18px;border-top:1px solid #e0e8f0;background:#fff}
+#tmOrderForm .tmx-status{max-width:270px;font-size:10px;color:#7c8fa3}
+#tmOrderForm .tmx-status strong{display:block;color:#50738c;font-size:11px}
+#tmOrderForm #tmOrderError{color:#b23636;margin:2px 0 0}#tmOrderForm #tmOrderMsg{color:#168067;margin:2px 0 0}
+#tmOrderForm .tmx-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+#tmOrderForm .tmx-actions button{min-width:110px}
+#tmOrderForm .tmx-actions .tmx-download{background:#ffefc6;color:#744b00;border-color:#eed28a}
+@media(max-width:1100px){#tmOrderForm .tmx-layout{grid-template-columns:285px minmax(0,1fr);gap:16px}#tmOrderForm .tmx-below{grid-template-columns:1fr}#tmOrderForm .tmx-actionbar{align-items:flex-start;flex-direction:column}#tmOrderForm .tmx-actions{margin-left:auto}}
+@media(max-width:760px){#tmOrderForm.tmx-order-form{padding:12px}#tmOrderForm .tmx-layout{grid-template-columns:minmax(0,1fr);gap:20px}#tmOrderForm .tmx-sidebar{gap:13px}#tmOrderForm .tmx-card-body{padding:12px}#tmOrderForm input.fi,#tmOrderForm select.fi,#tmOrderForm textarea.fi{font-size:16px!important;min-height:44px}#tmOrderForm .tmx-segment label{min-height:44px}#tmOrderForm .tmx-item-head{align-items:flex-start;flex-wrap:wrap}#tmOrderForm .tmx-item-head h2{font-size:15px}#tmOrderForm .tmx-item-toolbar button{min-height:43px}#tmOrderForm .tmx-items-table{min-width:1050px}#tmOrderForm .tmx-items-table input.fi{font-size:16px!important;min-height:44px;height:44px}#tmOrderForm .tmx-items-table td{height:62px}#tmOrderForm .tmx-totalbar{grid-template-columns:1fr;gap:15px;padding:15px}#tmOrderForm .tmx-credit-fields{max-width:none;grid-template-columns:118px minmax(0,1fr)}#tmOrderForm #tmOrderTotal>strong{font-size:22px}#tmOrderForm .tmx-below{grid-template-columns:1fr;gap:15px}#tmOrderForm .tmx-notes textarea.fi{min-height:100px}#tmOrderForm .tmx-actionbar{align-items:stretch}#tmOrderForm .tmx-status{max-width:100%}#tmOrderForm .tmx-actions{display:grid;grid-template-columns:1fr 1fr;margin-left:0;gap:8px}#tmOrderForm .tmx-actions button{min-width:0;white-space:normal;min-height:44px}#tmOrderForm .tmx-actions .primary{grid-column:1/-1}}
+
+/* Barang pesanan jadi kartu bertumpuk saat layar sempit (HP, laptop kecil): tanpa scroll samping */
+@media(max-width:1180px){
+ html body #tmOrderForm .tmx-table-scroll{overflow:visible!important;border:0!important;background:transparent!important}
+ html body #tmOrderForm .tmx-items-table,html body #tmOrderForm .tmx-items-table tbody{display:block!important;min-width:0!important;width:100%!important}
+ html body #tmOrderForm .tmx-items-table colgroup,html body #tmOrderForm .tmx-items-table thead{display:none!important}
+ html body #tmOrderForm .tmx-items-table tbody tr{display:grid!important;grid-template-columns:1fr 1fr;gap:10px;border:1px solid #E3EBF5;border-left:5px solid #1E5FB8;border-radius:12px;padding:12px;margin-bottom:12px;background:#fff!important;box-shadow:0 3px 12px rgba(30,95,184,.08)}
+ html body #tmOrderForm .tmx-items-table td{display:block!important;height:auto!important;padding:0!important;border:0!important;min-width:0!important;text-align:left!important;white-space:normal!important}
+ html body #tmOrderForm .tmx-items-table td[data-l]:not(.tmx-index):not(:last-child)::before{content:attr(data-l);display:block;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#6B7C8D;margin-bottom:4px}
+ html body #tmOrderForm .tmx-items-table td.tmx-index{grid-column:1/-1;color:#1E5FB8;font-weight:800;font-size:13px!important}
+ html body #tmOrderForm .tmx-items-table td.tmx-index::before{content:'Barang '}
+ html body #tmOrderForm .tmx-items-table td:nth-child(3),html body #tmOrderForm .tmx-items-table td:nth-child(7),html body #tmOrderForm .tmx-items-table td:nth-child(8){grid-column:1/-1}
+ html body #tmOrderForm .tmx-items-table td:nth-child(7){text-align:right!important;font-weight:800;font-size:14px}
+ html body #tmOrderForm .tmx-items-table td:nth-child(8){text-align:right!important}
+ html body #tmOrderForm .tmx-items-table td:nth-child(5),html body #tmOrderForm .tmx-items-table td:nth-child(6){order:0}
+ html body #tmOrderForm .tmx-items-table input.fi,html body #tmOrderForm .tmx-items-table select.fi{height:40px;min-height:40px}
+}
+
+@media(max-width:1180px){
+ html body #tmOrderForm .tmx-items-table td{background:transparent!important;box-shadow:none!important}
+ html body #tmOrderForm .tmx-items-table td::before{background:transparent!important}
+ html body #tmOrderForm .tmx-items-table td:nth-child(1){order:0}html body #tmOrderForm .tmx-items-table td:nth-child(2){order:1}html body #tmOrderForm .tmx-items-table td:nth-child(4){order:2}html body #tmOrderForm .tmx-items-table td:nth-child(3){order:3}html body #tmOrderForm .tmx-items-table td:nth-child(5){order:4}html body #tmOrderForm .tmx-items-table td:nth-child(6){order:5}html body #tmOrderForm .tmx-items-table td:nth-child(7){order:6}html body #tmOrderForm .tmx-items-table td:nth-child(8){order:7}
+ html body #tmOrderForm .tmx-items-table input.fi,html body #tmOrderForm .tmx-items-table select.fi{width:100%!important;max-width:none!important}
+}
+@media(max-width:1180px){html body #tmOrderForm#tmOrderForm#tmOrderForm .tmx-items-table tbody tr td{background:transparent!important;box-shadow:none!important;border-left:0!important}}

@@ -1,0 +1,93 @@
+<title>DSM Menu Panduan</title>
+<style>
+/* Layout: pratinjau menu Panduan di dalam app — toggle Desktop/HP + role */
+:root{--bg:#eef3f7;--card:#fff;--line:#dbe5ec;--fg:#1d3244;--mut:#62798b;--nav:#0f3d5e;--acc:#1E5FB8;--hl:#ffb020;--st:#1E5FB8;--so:#C25A12;--da:#0E7C6B;--noo:#6D3FD8;--om:#9A6400;font-family:"Segoe UI",system-ui,sans-serif}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0f1c27;--card:#172a3a;--line:#2a4256;--fg:#e6eff6;--mut:#9cb3c4;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1c27;--card:#172a3a;--line:#2a4256;--fg:#e6eff6;--mut:#9cb3c4;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);padding-inline:16px;padding-block:14px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:14px}
+.bar h1{margin:0;font-size:16px}.bar small{display:block;font-size:10px;letter-spacing:.14em;color:var(--acc);font-weight:800}
+.seg{display:flex;gap:3px;background:var(--card);border:1px solid var(--line);padding:3px;border-radius:9px}
+.seg button{border:0;background:none;color:var(--fg);padding:6px 11px;border-radius:6px;font-weight:700;font-size:12px;cursor:pointer}.seg button.on{background:var(--acc);color:#fff}
+.ctl{display:flex;gap:8px;flex-wrap:wrap}
+/* desktop */
+.desk{border:8px solid #0b1c2a;border-radius:12px;overflow:hidden;display:grid;grid-template-columns:170px 1fr;min-height:560px;background:var(--bg);max-width:1180px;margin:auto}
+.sb{background:var(--nav);color:#cfe6f5;padding:12px 8px;display:flex;flex-direction:column;gap:3px;font-size:12.5px}.sb b{color:#fff;margin-bottom:8px;padding-left:8px}
+.sb span{padding:6px 8px;border-radius:6px}.sb span.on{background:#ffffff26;color:#fff;font-weight:700}
+.pg{display:grid;grid-template-columns:230px minmax(0,1fr);min-width:0}
+.toc{border-right:1px solid var(--line);padding:12px;display:flex;flex-direction:column;gap:4px;background:var(--card);font-size:12.5px;overflow:auto}
+.srch{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);margin-bottom:6px;font:inherit}
+.toc h4{margin:8px 0 2px;font-size:10px;letter-spacing:.12em;color:var(--mut)}
+.toc a{padding:5px 8px;border-radius:6px;color:var(--fg);text-decoration:none;cursor:pointer}.toc a.on{background:#1E5FB81a;color:var(--acc);font-weight:700}
+.toc a.lock{display:none}
+.ct{padding:16px 20px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.crumb{font-size:11px;color:var(--mut)}.ct h2{margin:0;font-size:20px}.ct>p{margin:0;color:var(--mut);line-height:1.55;max-width:70ch}
+.ill{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;position:relative}
+.ill div{border-top:3px solid var(--c);background:var(--bg);border-radius:6px;padding:7px;font-size:11px}.ill em{display:block;font-style:normal;font-weight:800;font-size:15px}
+.ill .chart{grid-column:1/-1;height:70px;display:flex;align-items:flex-end;gap:4%;outline:2px dashed var(--hl);outline-offset:2px;border-top:0}
+.ill .chart i{flex:1;background:var(--st);border-radius:2px 2px 0 0}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);overflow-x:auto}
+.tabs button{border:0;background:none;color:var(--mut);padding:7px 10px;font-size:12.5px;font-weight:700;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}.tabs button.on{color:var(--acc);border-color:var(--acc)}
+dl{margin:0;display:grid;grid-template-columns:150px 1fr;gap:6px 14px;font-size:13px}dt{font-weight:800}dd{margin:0;color:var(--mut);line-height:1.5}
+.leg{display:flex;flex-wrap:wrap;gap:6px}.leg span{font-size:11.5px;padding:3px 9px;border-radius:5px;color:#fff;background:var(--c)}
+.act{display:flex;gap:8px;flex-wrap:wrap}.btn{border:0;border-radius:8px;padding:9px 14px;font-weight:700;cursor:pointer;font-size:12.5px}.pri{background:var(--acc);color:#fff}.sec{background:var(--card);border:1px solid var(--line);color:var(--fg)}
+.role{font-size:11px;padding:3px 8px;border-radius:20px;background:#0E7C6B1f;color:var(--da);font-weight:700;align-self:flex-start}
+/* phone */
+.phone{width:340px;max-width:100%;margin:auto;border:9px solid #0b1c2a;border-radius:34px;overflow:hidden;background:var(--bg);height:690px;display:flex;flex-direction:column;position:relative}
+.phd{background:var(--nav);color:#fff;padding:18px 12px 10px;font-weight:800;display:flex;justify-content:space-between}
+.pbd{padding:10px;display:flex;flex-direction:column;gap:8px;flex:1;overflow:auto;font-size:12.5px}
+.chips{display:flex;gap:6px;overflow-x:auto}.chips span{white-space:nowrap;padding:5px 10px;border-radius:20px;background:var(--card);border:1px solid var(--line);font-size:11.5px}.chips span.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.pc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;display:flex;justify-content:space-between;align-items:center}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--card);border-radius:18px 18px 0 0;box-shadow:0 -8px 24px #0003;padding:8px 14px 14px;display:flex;flex-direction:column;gap:8px;font-size:12.5px}
+.sheet:before{content:"";width:40px;height:4px;border-radius:2px;background:var(--line);align-self:center}
+.sheet dl{grid-template-columns:1fr}
+.note{font-size:12px;color:var(--mut);max-width:1180px;margin:14px auto 0;line-height:1.6}
+@media(max-width:820px){.desk{grid-template-columns:1fr}.sb{display:none}.pg{grid-template-columns:1fr}.toc{border-right:0;border-bottom:1px solid var(--line)}dl{grid-template-columns:1fr}}
+</style>
+
+<div class="bar"><div><small>MOCKUP · MENU PANDUAN</small><h1>Panduan DSM Untuk Semua Role</h1></div>
+<div class="ctl"><div class="seg" id="dev"><button class="on" data-v="d">Desktop</button><button data-v="m">HP</button></div>
+<div class="seg" id="role"><button data-r="sales">Sales</button><button class="on" data-r="asm">ASM / RGM</button><button data-r="admin">Admin</button></div></div></div>
+
+<div id="vd" class="desk">
+ <div class="sb"><b>DSM</b><span>Beranda</span><span>Dealer</span><span>Brand</span><span class="r-asm">Tim</span><span>DOS</span><span class="r-asm">Analisa</span><span>KPI</span><span class="r-asm">Peringkat</span><span>Transaksi</span><span>Informasi</span><span class="r-admin">Admin</span><span class="on">Panduan</span></div>
+ <div class="pg">
+  <nav class="toc"><input class="srch" id="q" placeholder="Cari: LMTD, clone, DOS…">
+   <h4>MULAI</h4><a>Login &amp; Navigasi</a><a>Kamus Istilah</a>
+   <h4>MENU</h4><a class="on">Beranda · Tren Harian</a><a>Beranda · Kartu Region</a><a>Dealer</a><a>Brand</a><a class="r-asm">Tim</a><a>DOS</a><a class="r-asm">Analisa</a><a>KPI</a><a class="r-asm">Peringkat</a><a>Transaksi</a><a>Informasi</a>
+   <h4 class="r-admin">ADMIN</h4><a class="r-admin">Bulk Upload Master</a><a class="r-admin">Target Bulanan</a><a class="r-admin">Edit KPI &amp; Clone</a><a class="r-admin">Publish Data</a>
+  </nav>
+  <section class="ct">
+   <div class="crumb">Panduan › Beranda › Tren Harian</div>
+   <h2>Tren Harian</h2><span class="role" id="rl">Terlihat oleh: Semua Role</span>
+   <p>Grafik Sell Thru per hari pada periode berjalan, dibandingkan dengan bulan lalu (LMTD) dan target harian. Dipakai buat melihat ritme order dan memutuskan kapan perlu dorongan.</p>
+   <div class="ill"><div style="--c:var(--st)">Sell Thru<em>87,4%</em></div><div style="--c:var(--so)">Sell Out<em>91,2%</em></div><div style="--c:var(--da)">Dealer Aktif<em>412</em></div><div style="--c:var(--noo)">NOO<em>18</em></div>
+    <div class="chart"><i style="height:40%"></i><i style="height:55%"></i><i style="height:48%"></i><i style="height:70%"></i><i style="height:62%"></i><i style="height:80%"></i><i style="height:58%;opacity:.45"></i></div></div>
+   <div class="tabs" id="tabs"><button class="on" data-t="baca">Cara Baca</button><button data-t="warna">Warna &amp; Tanda</button><button data-t="aksi">Interaksi</button><button data-t="kasus">Contoh Pakai</button><button data-t="faq">FAQ</button></div>
+   <div id="t-baca"><dl><dt>Target</dt><dd>Target bulanan ÷ hari kerja; garis putus-putus = target kumulatif.</dd><dt>MTD</dt><dd>Total dari tanggal 1 sampai data terakhir publish.</dd><dt>LMTD · Growth</dt><dd>Periode sama bulan lalu; Growth = MTD ÷ LMTD − 1.</dd><dt>% Capai · Estimasi</dt><dd>Aktual ÷ Target; Estimasi = laju harian × sisa hari kerja.</dd></dl></div>
+   <div id="t-warna" hidden><div class="leg"><span style="--c:var(--st)">Sell Thru</span><span style="--c:var(--so)">Sell Out</span><span style="--c:var(--da)">Dealer Aktif</span><span style="--c:var(--noo)">NOO</span><span style="--c:var(--om)">Omzet</span></div><p>Batang pudar = hari berjalan. Hijau ≥ 100%, kuning 80–99%, merah &lt; 80%.</p></div>
+   <div id="t-aksi" hidden><dl><dt>Desktop</dt><dd>Hover batang → tooltip. Klik judul → layar penuh.</dd><dt>HP</dt><dd>Tap batang → detail di bawah grafik. Putar landscape → layar penuh.</dd></dl></div>
+   <div id="t-kasus" hidden><p>Pertengahan bulan, Estimasi 88% → cek Kartu Region mana yang paling jauh dari target → buka Analisa › Peringatan Dini.</p></div>
+   <div id="t-faq" hidden><dl><dt>Angka hari ini kecil?</dt><dd>Data mengikuti jadwal publish terakhir, bukan real-time.</dd></dl></div>
+   <div class="act"><button class="btn pri">Coba Sekarang → buka Beranda</button><button class="btn sec">← Sebelumnya</button><button class="btn sec">Berikutnya →</button></div>
+  </section>
+ </div>
+</div>
+
+<div id="vm" hidden><div class="phone">
+ <div class="phd"><span>Panduan</span><span>🔍</span></div>
+ <div class="pbd"><div class="chips"><span>Mulai</span><span class="on">Beranda</span><span>Dealer</span><span>Brand</span><span class="r-asm">Tim</span><span>KPI</span><span class="r-admin">Admin</span></div>
+  <div class="pc"><b>Tren Harian</b><span>›</span></div><div class="pc"><b>Kartu Region</b><span>›</span></div><div class="pc"><b>Heatmap</b><span>›</span></div><div class="pc"><b>Proyeksi Sell Thru</b><span>›</span></div><div class="pc"><b>Kamus Istilah</b><span>›</span></div></div>
+ <div class="sheet"><b>Tren Harian</b><div class="chips"><span class="on">Cara Baca</span><span>Warna</span><span>Interaksi</span><span>Contoh</span><span>FAQ</span></div>
+  <dl><dt>MTD</dt><dd>Total dari tanggal 1 sampai publish terakhir.</dd><dt>Growth</dt><dd>MTD ÷ LMTD − 1.</dd></dl>
+  <button class="btn pri">Coba Sekarang</button></div>
+</div></div>
+
+<p class="note"><b>Catatan:</b> Ganti role di kanan atas untuk melihat menu yang muncul/hilang. <b>Coba Sekarang</b> membuka menu asli dan menyorot panelnya dengan garis kuning. Tiap panel di aplikasi juga dapat tombol <b>?</b> kecil yang langsung membuka halaman panduan ini. Halaman Demo Presentasi (live, berdampingan) tetap terpisah untuk admin.</p>
+<script>
+const $=s=>document.querySelectorAll(s);
+$('#tabs button').forEach(b=>b.onclick=()=>{$('#tabs button').forEach(x=>x.classList.toggle('on',x===b));['baca','warna','aksi','kasus','faq'].forEach(t=>document.getElementById('t-'+t).hidden=t!==b.dataset.t)});
+$('#dev button').forEach(b=>b.onclick=()=>{$('#dev button').forEach(x=>x.classList.toggle('on',x===b));document.getElementById('vd').hidden=b.dataset.v!=='d';document.getElementById('vm').hidden=b.dataset.v!=='m'});
+function role(r){$('.r-asm').forEach(e=>e.style.display=r==='sales'?'none':'');$('.r-admin').forEach(e=>e.style.display=r==='admin'?'':'none')}
+$('#role button').forEach(b=>b.onclick=()=>{$('#role button').forEach(x=>x.classList.toggle('on',x===b));role(b.dataset.r)});role('asm');
+</script>
