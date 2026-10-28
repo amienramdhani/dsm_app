@@ -180,14 +180,7 @@ function publish_(array $meta, $rawMap, $coverage, $actor, $reason, $soOverride 
     }
     // DSM v5: batas histori ST 150.000 / SO 300.000 baris dihapus — data mentah tersimpan di MySQL.
     $tx = nikResolveRows_($meta, custResolveRows_($meta, $tx)); $soRows = custResolveRows_($meta, $soRows);
-    $effNotes = [];
-    if (function_exists('effectiveRows_')) {
-        $eff = effectiveRows_($meta, $tx); $tx = $eff['rows']; $effNotes = $eff['notes'];
-        try { if (function_exists('txAttrWrite_')) txAttrWrite_($eff['attr'] ?? [], $eff['orphans'] ?? []); } catch (Throwable $e) { error_log('[dsm] tulis pengecualian atribusi gagal: ' . $e->getMessage()); }
-        unset($eff);
-    }
     $db = PortalCore::build($meta, $tx, $cov);
-    if ($effNotes) $db['notes'] = array_merge($db['notes'], $effNotes);
     $db['raw'] = $raw; $db['so'] = ['raw' => $soRaw, 'coverage' => $soCov]; $db['parts'] = $parts;
     $db['routing'] = RegionCore::routing($meta, $tx, $prior['routing'] ?? null);
     $db['stock'] = StockCore::build($meta, $tx, ['rows' => $soRows, 'coverage' => $soCov]);

@@ -2,12 +2,10 @@
 let tmState={boot:null,tab:'sales',person:'',filters:{q:'',brand:'ALL',big:'ALL',region:'ALL',state:'ALL'},activity:null,order:null,admin:null,adminPerson:'',config:null};
 function tmMenuAllowed(page,role){
  if(page==='tmfu')return false;
- if(page==='transfer')return ['ASM','RGM','ADMIN','SUPER ADMIN'].includes(role);
- if(page==='koreksi')return ['ADMIN','SUPER ADMIN'].includes(role);
  if(page==='tmorder')return ['TELEMARKETING','SALES','ASM','RGM','ADMIN','SUPER ADMIN'].includes(role);
  if(page==='tmactivity'&&['ASM','RGM'].includes(role)&&BOOT?.user?.tmVisible===false)return false;
  if(page==='tmactivity')return ['TELEMARKETING','ASM','RGM','ADMIN','SUPER ADMIN','HEAD OF SALES','CHIEF OPERATING OFFICER','CHIEF COMMERCIAL OFFICER','BOARD OF DIRECTOR'].includes(role);
- if(role==='TELEMARKETING')return !['tim','admin','ai','tmactivity','targetso'].includes(page);
+ if(role==='TELEMARKETING')return !['tim','admin','ai','tmactivity'].includes(page);
  return true;
 }
 function tmResetIdentity(){tmState={boot:null,tab:'sales',person:'',filters:{q:'',brand:'ALL',big:'ALL',region:'ALL',state:'ALL'},activity:null,order:null,admin:null,adminPerson:'',config:null};}

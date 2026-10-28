@@ -107,11 +107,7 @@ function apiExec($token, $period, $selection = null) {
     $wk = anaWork_($period, $cut, $c['closed']); $brands = anaDeviceBrands_($meta); $devSet = [];
     foreach ($brands as $b) $devSet[$b] = 1;
     $P = $c['people'];
-    // Kredit tetap ke penjual + region kartu "TERTENTU": semua penjualan orang itu dihitung di region pilihan (juga targetnya).
-    $bigOf = function ($nik) use ($P, $meta, $period) {
-        if (function_exists('keepSellerRule_')) { $ru = keepSellerRule_($meta, (string) $nik, $period); if ($ru && $ru['region_mode'] === 'TERTENTU' && $ru['region_value'] !== '') return $ru['region_value']; }
-        return js_or($P[(string) $nik]['wilayah'] ?? null, '(tanpa Big Region)');
-    };
+    $bigOf = function ($nik) use ($P) { return js_or($P[(string) $nik]['wilayah'] ?? null, '(tanpa Big Region)'); };
     $subOf = function ($nik) use ($P) { $p = $P[(string) $nik] ?? []; return js_or($p['portfolio'] ?? null, js_or($p['region'] ?? null, '(tanpa Region)')); };
     $keysOf = function ($nik) use ($bigOf, $subOf, $low, $own, $isAsm, $isSales, $team) {
         $b = js_str($bigOf($nik)); $s = js_str($subOf($nik)); $k = ['N', 'B|' . $b, 'S|' . $b . '|' . $s]; $ns = (string) $nik;
@@ -120,62 +116,29 @@ function apiExec($token, $period, $selection = null) {
         if ($isSales && isset($team[$ns])) { $k[] = 'T'; $k[] = 'P|' . $ns; }
         return $k;
     };
-    // Region kartu "PEMILIK" untuk penjual kredit-tetap: baris masuk region pemilik dealer-brand, kredit tetap ke penjual.
-    $dbaIdx = function_exists('dbaIndex_') ? dbaIndex_() : [];
-    $pemOwner = function ($r) use ($meta, $P, $db, $dbaIdx) {
-        if (!function_exists('keepSellerRule_')) return '';
-        $ru = keepSellerRule_($meta, (string) $r['nik'], substr((string) ($r['date'] ?? ''), 0, 7));
-        if (!$ru || $ru['region_mode'] !== 'PEMILIK') return '';
-        try { $o = dealerBrandOwner_($db, (string) $r['customer'], (string) $r['brand'], (string) $r['date'], $dbaIdx); } catch (Throwable $e) { return ''; }
-        $n = (string) ($o['nik'] ?? ''); return ($n !== '' && isset($P[$n])) ? $n : '';
-    };
-    $rowKeys = function ($r) use ($keysOf, $pemOwner) {
-        $ow = $pemOwner($r); if ($ow === '') return $keysOf($r['nik']);
-        $isArea = fn($k) => $k === 'N' || strpos($k, 'B|') === 0 || strpos($k, 'S|') === 0;
-        return array_values(array_unique(array_merge(array_values(array_filter($keysOf($ow), $isArea)), array_values(array_filter($keysOf($r['nik']), fn($k) => !$isArea($k))))));
-    };
-    // Penjualan oleh sales dari luar area (untuk chip di kartu region): [region][brand][penjual] = ['q','d'=>[dealer=>q]]
-    $extAcc = [];
-    $addExt = function (string $big, string $brand, string $seller, string $dealer, int $q) use (&$extAcc) {
-        if ($q <= 0) return; $x = &$extAcc[$big][$brand][$seller]; $x['q'] = ($x['q'] ?? 0) + $q; $x['d'][$dealer] = ($x['d'][$dealer] ?? 0) + $q;
-    };
     // Pembanding apple-to-apple
     $covKeys = js_sort_default(js_keys($db['coverage'] ?? [])); $latestP = js_last($covKeys); $cmpOn = $period === $latestP;
-    $ownerNow = function ($r) use ($cmpOn, $meta, $P) { if (!$cmpOn) return $r['nik']; if (function_exists('keepSellerCheck_') && keepSellerCheck_($meta, (string) $r['nik'], substr((string) ($r['date'] ?? ''), 0, 7))) return $r['nik']; $cu = $meta['customers'][$r['customer']] ?? null; $n = $cu ? ($cu['nik'] ?? null) : null; return truthy($n) && isset($P[(string) $n]) ? $n : $r['nik']; };
+    $ownerNow = function ($r) use ($cmpOn, $meta, $P) { if (!$cmpOn) return $r['nik']; $cu = $meta['customers'][$r['customer']] ?? null; $n = $cu ? ($cu['nik'] ?? null) : null; return truthy($n) && isset($P[(string) $n]) ? $n : $r['nik']; };
     $remap = function (array $rows) use ($ownerNow) { $o = []; foreach ($rows as $r) { $n = $ownerNow($r); if ($n === $r['nik']) { $o[] = $r; continue; } $r['nik'] = $n; $o[] = $r; } return $o; };
     $N = []; $daily = [];
     $slot = function ($k, $brand) use (&$N) { if (!isset($N[$k][$brand])) $N[$k][$brand] = ['st' => [0, 0, 0], 'om' => [0, 0, 0], 'noo' => [0, 0, 0], 'so' => [0, 0, 0], 'da' => [0, 0, 0], 'p' => [[], [], []]]; };
     $each = function ($nik, $brand, callable $fn) use (&$N, $slot, $keysOf) {
-        foreach (is_array($nik) ? $nik : $keysOf($nik) as $k) { $slot($k, $brand); $fn($N[$k][$brand]); $slot($k, 'ALL'); $fn($N[$k]['ALL']); }
+        foreach ($keysOf($nik) as $k) { $slot($k, $brand); $fn($N[$k][$brand]); $slot($k, 'ALL'); $fn($N[$k]['ALL']); }
     };
-    $addRows = function (array $rows, int $side) use ($devSet, $cut, $each, $onl, $keysOf, $fullOK, &$daily, $rowKeys, $pemOwner, $bigOf, $addExt) {
+    $addRows = function (array $rows, int $side) use ($devSet, $cut, $each, $onl, $keysOf, $fullOK, &$daily) {
         foreach ($rows as $r) {
             $dev = isset($devSet[$r['brand']]); $sides = $side === 0 && $r['date'] === $cut ? [0, 2] : [$side];
             foreach ($sides as $sd) {
-                $each($rowKeys($r), $r['brand'], function (&$x) use ($dev, $sd, $r, $onl) {
+                $each($r['nik'], $r['brand'], function (&$x) use ($dev, $sd, $r, $onl) {
                     if ($dev) $x['st'][$sd] += $r['q']; $x['om'][$sd] += js_or($r['a'] ?? null, 0);
                     if ($dev && $r['q'] > 0 && !isset($onl[(string) $r['nik']])) { $pk = $r['customer'] . '|' . $r['brand']; $x['p'][$sd][$pk] = ($x['p'][$sd][$pk] ?? 0) + $r['q']; }
                 });
             }
-            if ($side === 0 && $dev && $r['q'] > 0 && ($ow = $pemOwner($r)) !== '') { $ob = $bigOf($ow); if ($ob !== $bigOf($r['nik'])) $addExt($ob, (string) $r['brand'], (string) $r['nik'], (string) $r['customer'], (int) $r['q']); }
-            if ($side === 0 && $dev && truthy($r['q'])) foreach (js_filter($rowKeys($r), $fullOK) as $k) { $daily[$k][$r['date']][$r['brand']] = ($daily[$k][$r['date']][$r['brand']] ?? 0) + $r['q']; }
+            if ($side === 0 && $dev && truthy($r['q'])) foreach (js_filter($keysOf($r['nik']), $fullOK) as $k) { $daily[$k][$r['date']][$r['brand']] = ($daily[$k][$r['date']][$r['brand']] ?? 0) + $r['q']; }
         }
     };
     $addRows(PortalCore::slice($db, $period, $c['ids'], $cut), 0);
     if (isset($db['cubes'][$prev])) $addRows(js_filter($remap(PortalCore::slice($db, $prev, allNiks_($db), $prevCut)), fn($r) => isset($idSet0[(string) $r['nik']])), 1);
-    // Penjualan lintas area oleh penjual non-kredit-tetap (dialihkan ke pemilik dealer): dari tabel atribusi.
-    try {
-        if (function_exists('txAttrSchema_')) {
-            txAttrSchema_();
-            $qa = db_()->prepare("SELECT raw_nik, eff_nik, induk, brand, SUM(qty) AS q FROM dsm_attr WHERE period = ? AND tx_date <= ? AND raw_nik <> eff_nik AND marker IN ('TRANSFER','ST_BERBEDA','KOREKSI') AND qty > 0 GROUP BY raw_nik, eff_nik, induk, brand");
-            $qa->execute([$period, $cut]);
-            foreach ($qa->fetchAll(PDO::FETCH_ASSOC) as $a) {
-                if (!isset($devSet[$a['brand']]) || !isset($P[(string) $a['eff_nik']])) continue;
-                $eb = $bigOf($a['eff_nik']); $rb = $bigOf($a['raw_nik']);
-                if ($eb !== $rb) $addExt($eb, (string) $a['brand'], (string) $a['raw_nik'], (string) $a['induk'], (int) $a['q']);
-            }
-        }
-    } catch (Throwable $e) {}
     foreach ($N as $k => &$nb) foreach ($nb as $b => &$x) { foreach ([0, 1, 2] as $sd) { $cnt = 0; foreach ($x['p'][$sd] as $v) if ($v >= 2) $cnt++; $x['da'][$sd] = $cnt; } unset($x['p']); }
     unset($nb, $x);
     $idSet = js_set($c['ids']);
@@ -224,27 +187,6 @@ function apiExec($token, $period, $selection = null) {
         }
         if ($touched) { $sT = 0; $dT = 0; foreach ($brands as $b) { $sT += $N[$k][$b]['t']['st'] ?? 0; $dT += $N[$k][$b]['t']['da'] ?? 0; } $N[$k]['ALL']['t']['st'] = $sT; $N[$k]['ALL']['t']['da'] = $dT; }
     }
-    // chip "dijual sales luar area": ringkasan penjual selalu; rincian dealer hanya untuk yang berhak melihat detail region itu
-    $extOut = function (string $big, bool $withDealers) use (&$extAcc, $P, $meta, $bigOf) {
-        if (empty($extAcc[$big])) return null; $out = []; $all = [];
-        foreach ($extAcc[$big] as $brand => $sellers) foreach ($sellers as $nik => $v) {
-            foreach ([$brand, 'ALL'] as $bk) {
-                if ($bk === 'ALL') { $all[$nik]['q'] = ($all[$nik]['q'] ?? 0) + $v['q']; foreach ($v['d'] as $d => $q) $all[$nik]['d'][$d] = ($all[$nik]['d'][$d] ?? 0) + $q; }
-                else { $out[$brand][$nik] = $v; }
-            }
-        }
-        $out['ALL'] = $all; $res = [];
-        foreach ($out as $bk => $sellers) {
-            $list = [];
-            foreach ($sellers as $nik => $v) {
-                $pp = $P[(string) $nik] ?? null; $dl = [];
-                if ($withDealers) { arsort($v['d']); foreach ($v['d'] as $dc => $q) $dl[] = ['c' => (string) $dc, 'n' => text_($meta['customers'][$dc]['nama'] ?? ''), 'q' => $q]; }
-                $list[] = ['nik' => (string) $nik, 'nama' => $pp ? text_($pp['nama'] ?? '') : (string) $nik, 'role' => $pp ? text_($pp['role'] ?? '') : '', 'area' => $bigOf($nik), 'q' => (int) $v['q'], 'dealers' => $dl];
-            }
-            usort($list, fn($a, $b) => $b['q'] <=> $a['q']); $res[$bk] = $list;
-        }
-        return $res;
-    };
     // nama & penanggung jawab
     $nodes = []; $rgmM = null;
     foreach ($N as $k => $_) {
@@ -266,7 +208,7 @@ function apiExec($token, $period, $selection = null) {
         if ($k === 'O') $nm = $isSales ? js_or($me['nama'] ?? null, 'Saya') : implode(', ', js_keys($ownSub));
         if ($k === 'T') { $boss = js_find($meta['people'], fn($p) => $me && $p['nik'] === ($me['atasan'] ?? null)); $nm = 'Tim ' . js_str(js_or($boss['nama'] ?? null, '')); }
         $nodes[$k] = ['online' => ($parts[0] === 'B' && isset($ON['bigs'][$parts[1]])) || ($parts[0] === 'S' && (isset($ON['bigs'][$parts[1]]) || isset($ON['regions'][$parts[2]]))), 'name' => $nm,
-            'big' => $parts[0] === 'P' ? $bigOf($parts[1]) : js_or($parts[1] ?? null, ''), 'sub' => $parts[0] === 'P' ? $subOf($parts[1]) : js_or($parts[2] ?? null, ''), 'lead' => $lead, 'm' => js_obj($N[$k]), 'ext' => $parts[0] === 'B' ? $extOut($parts[1], $level === 'TOP' || ($level === 'RGM' && isset($ownBig[$parts[1]]))) : null];
+            'big' => $parts[0] === 'P' ? $bigOf($parts[1]) : js_or($parts[1] ?? null, ''), 'sub' => $parts[0] === 'P' ? $subOf($parts[1]) : js_or($parts[2] ?? null, ''), 'lead' => $lead, 'm' => js_obj($N[$k])];
     }
     // ASM: proyeksi SELL THRU
     $asm = [];
@@ -419,7 +361,7 @@ function apiExec($token, $period, $selection = null) {
         $rows = $mo === $period ? PortalCore::slice($db, $mo, $c['ids'], $endC) : js_filter($remap(PortalCore::slice($db, $mo, allNiks_($db), $endC)), fn($r) => isset($idSet0[(string) $r['nik']]));
         foreach ($rows as $r) {
             if (!isset($devSet[$r['brand']]) || !truthy($r['q'])) continue;
-            foreach (js_filter($rowKeys($r), $fullOK) as $k) $hist['v'][$k][$mo][$r['brand']] = ($hist['v'][$k][$mo][$r['brand']] ?? 0) + $r['q'];
+            foreach (js_filter($keysOf($r['nik']), $fullOK) as $k) $hist['v'][$k][$mo][$r['brand']] = ($hist['v'][$k][$mo][$r['brand']] ?? 0) + $r['q'];
         }
         foreach ($teams as $k => $tm) {
             $k = (string) $k; if (!$fullOK($k)) continue;
