@@ -66,7 +66,9 @@ function rbActivity_(array $view, string $period): array {
     foreach (rbMonths_($period) as $mo) foreach ($view['cubes'][$mo] ?? [] as $r) {
         $q = $r['q'] ?? 0; if (!truthy($q)) continue;
         $B = js_upper(text_($r['brand'] ?? '')); if (!isset($dev[$B])) continue;
-        $p = $P[(string) ($r['nik'] ?? '')] ?? null; $big = $p ? text_($p['wilayah'] ?? '') : ''; if ($big === '') continue;
+        $p = $P[(string) ($r['nik'] ?? '')] ?? null; $big = $p ? text_($p['wilayah'] ?? '') : '';
+        if ($p && function_exists('keepSellerRule_')) { $ru = keepSellerRule_($meta, (string) $r['nik'], $mo); if ($ru && $ru['region_mode'] === 'TERTENTU' && $ru['region_value'] !== '') $big = $ru['region_value']; }
+        if ($big === '') continue;
         $out[$big][$B][$mo] = ($out[$big][$B][$mo] ?? 0) + $q;
     }
     return $out;

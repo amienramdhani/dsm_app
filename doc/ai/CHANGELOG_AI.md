@@ -673,3 +673,59 @@ Validation:
 - 2026-10-27: P2 kartu Wilayah. lib/api_exec.php: region kartu penjual kredit-tetap mengikuti aturan (WILAYAH = wilayah penjual seperti biasa; TERTENTU = `bigOf` dioverride ke region pilihan, termasuk target; PEMILIK = baris dihitung di region pemilik dealer-brand lewat `$rowKeys`/`$pemOwner`, kredit tetap NIK penjual); pembanding LMTD (`$ownerNow`) tidak lagi memindahkan baris penjual kredit-tetap ke pemilik master; data `ext` per node Big Region (penjual luar area + dealer, dari dsm_attr untuk non-exempt dan dari baris PEMILIK) hanya rincian dealer untuk TOP atau RGM di area sendiri. lib/regionbrand.php: aktivitas region menghormati TERTENTU. index.php `v6XHierCard`: chip oranye "termasuk X unit dijual sales luar area" (hanya SELL THRU) + popup rincian (assets/keep_seller.js). Region tanpa penjualan/target tetap disembunyikan oleh aturan Region_Brand yang sudah ada. Belum diuji di app nyata.
 - 2026-10-27: P3 Koreksi: tab baru "Kredit Tetap ke Penjual" (status KEEP di apiTxCorrList, marker KREDIT_TETAP). Hanya pantauan; baris itu tidak masuk antrean Perlu Ditinjau dan tetap bisa dikoreksi per transaksi. assets/tx_correction.js, lib/api_txcorr.php. Belum diuji di app nyata.
 - 2026-10-27: P4 Riwayat Pemilik. lib/owner_snapshot.php (baru): tabel dsm_owner_snap (+ _meta) berisi foto pemilik tiap dealer induk x brand perangkat (NIK, nama, jabatan, Big Region, region, atasan) saat periode DIKUNCI; dipanggil dari apiPeriodLock (lib/api_import.php) setelah kunci tersimpan, kegagalan foto tidak membatalkan kunci (tercatat di audit OWNER_SNAPSHOT / OWNER_SNAPSHOT_FAIL). API baca-saja apiOwnerHistoryBoot/apiOwnerHistory/apiOwnerHistoryExport (Admin dan Super Admin; Admin dibatasi txcScope_). Panel Admin "Riwayat pemilik dealer" (assets/owner_history.js, grup Dealer): cari dealer + periode + brand, label FOTO PERIODE DIKUNCI atau DATA TERKINI, unduh CSV per periode. Dashboard dan KPI TIDAK memakai foto ini. Belum diuji di app nyata.
+
+## 2026-10-28 — % SO/ST (Paket 1: Brand + Dealer)
+- index.php: helper `stsoPct/stsoPill/stsoTopHtml`; panel "Rincian Mingguan per Type" kini punya kartu MTD, grafik tren W1–W5 (batang ST/SO + garis %), grafik % per type, dan pita "% SO/ST" W1–W5 + total di tabel. Menu Dealer: kolom baru "% SO/ST" (opsional-sistem kolom tidak diubah). Batas warna usulan 50/80/100 (konstanta `STSO_T`). Frontend-only, tanpa perubahan backend/data. Belum diuji di app nyata.
+
+## 2026-10-28 — Paket 2: Analisa → Perbandingan, indikator "ST vs SO"
+- lib/api_analisa.php `apiCompare`: metric baru `STSO` (+ cmp `PREV` = bulan lalu penuh). Satu periode (MTD / W1–W5 / bulan lalu), sisi 0 = ST, sisi 1 = SO; SO via pemilik dealer (stockMoves_ seperti metric SO). Jika SO belum lengkap: `soMissing=true`, ST tetap dikirim (tidak fail). Metric lain tidak berubah.
+- index.php `v6CmpDraw`: cabang STSO (3 kolom ST/SO/% per type, maks 7 type + Lainnya, TOTAL, grafik % per type & per sales, tanpa growth). Pilihan indikator "ST vs SO" hanya di Pertumbuhan per TYPE per Sales. Kartu KPI Brand dibuat strip kecil.
+- Belum diuji dengan data nyata.
+
+## 2026-10-28 — Tab AKSI di Beranda (A1: KPI + ST per brand)
+- assets/aksi.js (baru, dimuat via searchable.js): tab "AKSI" (paling kanan di BTABS Beranda) berisi "Ringkasan Hari Ini": kartu KPI (ST, Dealer Aktif, NOO + skor KPI untuk Sales/ASM) dan pencapaian ST per brand yang bisa dibuka (Sales: dealer, ASM: sales, RGM: sub region, TOP: big region). Hanya membaca `V6X.data` (apiExec); tanpa perhitungan server baru.
+- index.php: `BTABS` + aturan CSS tab 'a', `v7Beranda` memanggil `dsmAksiMount`, container `.v6xaksi` dikecualikan dari klasifikasi section.
+- Belum diuji di app nyata (tes render dengan data contoh lolos). Berikutnya: A2 (outlet: NOO, repeat order), A3 (poin + saran langkah), A4 (kesehatan data Admin).
+
+## 2026-10-28 — Ringkasan SELLTHRU pindah ke assets/aksi.js
+- Panel lama "RINGKASAN SELLTHRU" (`v6XNatSummary`, hanya TOP) disembunyikan lewat class `aksiOldHide` (kode lama TIDAK dihapus; kalau render baru gagal, panel lama otomatis tampil lagi). Diganti blok baru `.v6xaksiMain` di tab RINGKASAN untuk semua role: kartu ST (target, proyeksi, gap, run rate, butuh/hari kerja, LMTD+growth, hari ini), Dealer Aktif (+Dealer unik untuk TOP), NOO (tanpa target, vs LMTD), SELL OUT (+% SO/ST), dan pencapaian ST per brand yang bisa dibuka. Angka dibulatkan; rata-rata unit/dealer di beberapa tooltip lama juga dibulatkan (`unitNum`).
+- Tab AKSI sementara berisi placeholder; akan diisi A2 (outlet/NOO/repeat order), A3 (prioritas + saran langkah), A4 (kesehatan data Admin).
+
+## Kartu OMZET + omzet per badan usaha (tab Ringkasan)
+- `lib/api_exec.php`: output baru `co[node][badan_usaha]=[MTD,LMTD,hari ini]` dari `dsm_attr` (cube tidak menyimpan badan usaha); hanya node yang lolos `detailOK`, hanya NIK dalam cakupan.
+- `assets/aksi.js`: kartu OMZET full width (total semua brand, LMTD+growth, selisih, run rate, hari ini; tanpa target) + daftar per badan usaha (total saja, % kontribusi, growth vs LMTD). Sisa yang tak terpetakan ditampilkan "Lainnya".
+- Revisi: sumber per badan usaha diganti ke kolom BADAN USAHA transaksi ST langsung (`$db['raw']` via `txEffRaw_`), bukan `dsm_attr`; baris sisa dilabeli "Selisih (koreksi/atribusi)" dan hanya muncul bila > 0,5%.
+- Layout: desktop ≥1000px kartu KPI 5 sejajar (ST, DA, NOO, SO, OMZET); omzet turun full width di <1000px/HP; daftar badan usaha menumpuk di dalam kartu.
+- Omzet per badan usaha: hanya yang ada transaksi MTD bulan ini; tampil sebagai list (tanpa bar).
+
+## A2–A4 tab AKSI
+- `lib/api_exec.php`: output baru `rep[node]=[dealer order bulan lalu, sudah repeat]` (device qty>0, per node yang boleh dilihat) dan `admin` (hanya ADMIN/SUPER ADMIN: cutoff ST/SO, antrean review & terkoreksi di dsm_attr, status Period_Locks).
+- `assets/aksi.js` tab AKSI: (A3) Prioritas tindakan berbasis aturan (proyeksi <85% merah/<100% kuning, brand <85%, %SO/ST <70%, belum repeat >30%, hari stok >45, bawahan <80% time gone) dengan "kenapa" + langkah; (A2) blok Dealer: NOO + growth, Repeat Order, daftar belum repeat & NOO baru (Sales/ASM), tabel repeat per Big Region/region (TOP/RGM); (A4) blok Kesehatan data & operasional untuk Admin.
+- Ambang disetujui user 2026-10-28. Hari stok = stok / (ST MTD / hari kerja berjalan) — perkiraan.
+- Revisi: prioritas per brand dihapus; satu poin total, brand tertinggal hanya disebut sebagai rincian di poin itu.
+
+## Tahap 2 (1+2): komitmen mingguan + review minggu lalu
+- Baru `lib/api_commit.php` (tabel `dsm_commit` dibuat otomatis): `apiCommitBoot/Save/Status/Delete`; terdaftar di `api.php` (ALLOWED + WRITE_FNS, jadi Demo read-only). Minggu = Senin–Minggu WIB.
+- Aturan: tanpa persetujuan. Komitmen ditulis sendiri atau ditetapkan atasan (owner harus ada dalam `PortalCore::scope` penulis). Status (Selesai/Sebagian/Belum) boleh diubah owner atau atasannya. Hapus hanya oleh pembuat & hanya yang masih Berjalan. Maks 15/orang/minggu. TELEMARKETING tidak dilayani.
+- `assets/aksi.js`: blok "Komitmen minggu ini" (tambah, status, hapus), "Review minggu lalu" (nilai + catatan + "Bawa ke minggu ini"), ringkasan tim untuk atasan. Sebagian dihitung 0,5.
+- Komitmen: kolom "Untuk" jadi input ketik + saran (datalist), bukan dropdown; cocok nama persis/sebagian, ambigu ditolak.
+- Demo: apiCommitBoot boleh dibaca saat mode Demo (melihat komitmen akun yang ditiru); tulis tetap diblokir.
+- Komitmen: kolom Untuk = combobox (default 'Saya sendiri', klik tampil daftar, bisa diketik).
+- Komitmen: komentar per komitmen (tabel `dsm_commit_cm`, `apiCommitComment`; oleh owner/atasan dalam cakupan, ikut terhapus bila komitmen dihapus). Komitmen tim tidak lagi tampil semua: blok "Komitmen tim" dengan combobox pilih anggota dulu, baru tampil komitmen minggu ini + review minggu lalu orang itu; tabel ringkasan tim dihapus.
+- Komitmen: kolom Untuk & pilih anggota tim jadi combobox sungguhan (klik buka daftar, ketik menyaring, hanya menerima pilihan dari daftar; tanpa datalist). Diuji di Chromium.
+
+## Tab AKSI versi HP (≤700px)
+- Sub-menu satu bagian per layar: Prioritas · Komitmen · Dealer · (Data khusus Admin); badge jumlah poin Prioritas. Di desktop semua bagian tetap tampil berurutan (sub-menu disembunyikan).
+- Mobile: poin Prioritas & kartu komitmen bisa dibuka-tutup (poin pertama terbuka); tombol status 44px; form komitmen baru lewat bottom sheet dengan tombol mengambang "+ Komitmen"; pilihan anggota tim sebagai daftar dari bawah; kartu Dealer 2 kolom; daftar belum repeat tampil 5 + "Lihat dealer lainnya"; ikon 📞 (tel:) bila dealer punya nomor HP; input 16px agar iOS tidak zoom.
+- Diuji di Chromium (390px & 1300px) dengan data contoh, belum di aplikasi asli.
+- HP: tombol melayang kedua "👥 Komitmen tim" (di atas + Komitmen) membuka daftar anggota dari bawah; kolom pilih inline disembunyikan di HP; chip nama di judul blok juga bisa diketuk untuk ganti anggota.
+- Desktop: poin Prioritas (yang pertama terbuka) dan kartu komitmen/review kini juga bisa dibuka-tutup (aturan CSS collapse dipindah dari mobile-only ke global).
+- Komitmen tim: tombol melayang ikon 🔍 membuka sheet "Cari komitmen tim" (dropdown ketik nama + tombol Cari); tombol melayang tambah komitmen jadi ikon ＋ saja. Pilih nama tidak langsung menampilkan, harus tekan Cari (desktop & HP sama).
+- Komitmen untuk level atas: daftar orang kini mencakup HOS, COO, CCO, BOD (label singkat). HOS ke atas boleh memberi/menilai/berkomentar komitmen ke semua orang dengan level sama atau di bawahnya (BOD → COO/CCO/HOS dan seterusnya; COO & CCO saling bisa karena level sama; HOS tidak bisa ke COO/CCO/BOD). Super Admin ke semua. Batas daftar 1000 orang.
+- Sub-menu AKSI (PRIORITAS/KOMITMEN/DEALER/DATA) ditulis kapital.
+
+## Dibanding kemarin + notifikasi & pengingat komitmen
+- Dibanding kemarin: TANPA tabel snapshot. `apiExec` menambah indeks ke-4 `[3]` pada st/om/noo/so per node = nilai pada hari data sebelumnya (`pd` = tanggal terbesar < cutoff yang punya transaksi). Blok "Dibanding kemarin" (ST, Omzet, NOO, SO) di sub-menu PRIORITAS tab AKSI: hari ini, kemarin, selisih, %. Catatan: DA belum (butuh hitung ulang MTD per hari).
+- Notifikasi komitmen (aturan `KOMITMEN_NOTIF`, event): komitmen baru → penerima; komentar → pemilik, pemberi, & pengomentar lain (kecuali penulis); penilaian → pemilik (atau pemberi bila pemilik menilai sendiri). Dikirim lewat `ntAutoSend_` hanya bila push aktif (`DSM_PUSH_ON`) dan aturan menyala.
+- Pengingat Senin (aturan `KOMITMEN_MINGGUAN`, WEEKLY 08:00 via notif_cli.php/cron): belum ada komitmen minggu ini (Sales/ASM/RGM); komitmen minggu lalu belum dinilai (pemilik & pemberi).
+- Kedua aturan di-seed AKTIF bawaan (`INSERT IGNORE` di `ntSchema_`), bisa dimatikan Admin di menu Notifikasi. `api_notif.php` meng-require `api_commit.php`.

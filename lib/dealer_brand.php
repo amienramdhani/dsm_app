@@ -75,26 +75,22 @@ function dbaWrite_(array $rows): void {
     putTable_(DBA_SHEET, DBA_HEADS, $out);
 }
 /** Set one effective-dated assignment. Returns before/after owner. */
-function dbaSet_(array $db, array $u, string $dealer, string $brand, string $nik, string $from, string $note, string $source = 'MANUAL'): array {
+function dbaSet_(array $db, array $u, string $dealer, string $brand, string $nik, string $from, string $note, string $source = 'MANUAL', bool $allowFuture = false): array {
     $dealer = function_exists('custInduk_') ? custInduk_($db['meta'], text_($dealer)) : text_($dealer); $brand = js_upper(text_($brand)); $nik = text_($nik); $from = PortalCore::iso($from);
     if ($dealer === '' || !isset($db['meta']['customers'][$dealer])) fail_('Dealer tidak ditemukan: ' . $dealer);
     if (!in_array($brand, dbaPrimaryBrands_(), true)) fail_('Brand tidak valid: ' . $brand);
     $p = PortalCore::person($db['meta']['people'], $nik); if (!$p || !truthy($p['sales'] ?? null)) fail_('NIK tujuan bukan Sales/portofolio Sales aktif: ' . $nik);
-    if (!$from) fail_('Tanggal efektif wajib YYYY-MM-DD.'); if (strcmp($from, jkt_date('Y-m-d')) > 0) fail_('Tanggal efektif masa depan belum didukung.');
+    if (!$from) fail_('Tanggal efektif wajib YYYY-MM-DD.'); if (!$allowFuture && strcmp($from, jkt_date('Y-m-d')) > 0) fail_('Tanggal efektif masa depan belum didukung.');
     $rows = dbaRows_(); $idx = dbaIndex_($rows); $before = dealerBrandOwner_($db,$dealer,$brand,$from,$idx);
     if (!dbaCanManageNik_($u,$db,$before['nik']) || !dbaCanManageNik_($u,$db,$nik)) fail_('PIC sumber/tujuan di luar kewenangan Admin.');
     if ($u['role'] !== 'SUPER ADMIN' && $before['big'] !== '' && $p && js_upper($before['big']) !== js_upper(text_($p['wilayah'] ?? null))) fail_('Perpindahan lintas Big Region khusus Super Admin.');
-    // Remove a row starting on the same date, then close any row overlapping the new start.
     $next = [];
     foreach ($rows as $r) {
         if ($r['dealer'] === $dealer && $r['brand'] === $brand && $r['from'] === $from) continue;
         if ($r['dealer'] === $dealer && $r['brand'] === $brand && $r['status'] === 'ACTIVE' && $r['from'] < $from && ($r['to'] === '' || $r['to'] >= $from)) $r['to'] = dbaDayBefore_($from);
         $next[] = $r;
     }
-    // Disallow overlap with a future interval.
     foreach ($next as $r) if ($r['dealer']===$dealer && $r['brand']===$brand && $r['status']==='ACTIVE' && $r['from'] > $from && ($r['to']==='' || $r['to'] >= $from)) fail_('Sudah ada assignment masa depan untuk ' . $dealer . ' · ' . $brand . ' mulai ' . $r['from'] . '. Hapus/perbaiki assignment itu dulu.');
-    // Master Customer is an implicit baseline. Materialize only the gap before a first explicit change,
-    // so a later all-brand transfer can update Master_Customer without rewriting historical ownership.
     if ($before['source'] === 'MASTER_CUSTOMER' && $before['nik'] !== '') {
         $periods = js_sort_default(array_map('strval', js_keys($db['coverage'] ?? [])));
         $baselineFrom = $periods ? ((string)$periods[0] . '-01') : dbaCutover_();
@@ -130,14 +126,13 @@ function apiDealerBrandList($token,$q=null,$brand=null) {
     return ['rows'=>$rows,'brands'=>dbaPrimaryBrands_(),'cutover'=>dbaCutover_()];
 }
 
-/** Informational review only: dominant actual seller in recent ST history vs current PIC. Pre-cutover rows never become Health warnings. */
 function apiDealerBrandSuggestions($token,$months=3) {
     [$db,$u]=dbaSuperOrAdmin_($token); $months=max(1,min(6,(int)$months)); $periods=js_sort_default(array_map('strval',js_keys($db['raw']??[]))); $periods=array_slice($periods,-$months); $agg=[];$tot=[];$today=jkt_date('Y-m-d'); $primaryBrands=dbaPrimaryBrands_();
-    foreach($periods as $period){$ref=(string)($db['raw'][$period]??'');if($ref==='')continue;try{foreach(dataRows_($ref) as $t){$date=PortalCore::iso($t['date']??null);$q=(float)($t['qty']??0);if(!$date||$date>$today||$q<=0)continue;$sku=text_($t['sku']??null);$cust=text_($t['customer']??null);$nik=text_($t['nik']??null);if($cust===''||$nik===''||!isset($db['meta']['products'][$sku]))continue;$brand=js_upper(text_($db['meta']['products'][$sku]['brand']??null));if(!in_array($brand,$primaryBrands,true))continue;$dealer=custInduk_($db['meta'],$cust);$k=$dealer."\x1f".$brand;$nk=$k."\x1f".$nik;if(!isset($agg[$nk]))$agg[$nk]=['dealer'=>$dealer,'brand'=>$brand,'nik'=>$nik,'qty'=>0,'rows'=>0,'first'=>'','last'=>''];$agg[$nk]['qty']+=$q;$agg[$nk]['rows']++;if($agg[$nk]['first']===''||$date<$agg[$nk]['first'])$agg[$nk]['first']=$date;if($date>$agg[$nk]['last'])$agg[$nk]['last']=$date;$tot[$k]=($tot[$k]??0)+$q;}}catch(Throwable $e){}}
+    foreach($periods as $period){$ref=(string)($db['raw'][$period]??'');if($ref==='')continue;try{foreach(txEffRaw_($db['meta'],dataRows_($ref)) as $t){$date=PortalCore::iso($t['date']??null);$q=(float)($t['qty']??0);if(!$date||$date>$today||$q<=0)continue;$sku=text_($t['sku']??null);$cust=text_($t['customer']??null);$nik=text_($t['nik']??null);if($cust===''||$nik===''||!isset($db['meta']['products'][$sku]))continue;$brand=js_upper(text_($db['meta']['products'][$sku]['brand']??null));if(!in_array($brand,$primaryBrands,true))continue;$dealer=custInduk_($db['meta'],$cust);$k=$dealer."\x1f".$brand;$nk=$k."\x1f".$nik;if(!isset($agg[$nk]))$agg[$nk]=['dealer'=>$dealer,'brand'=>$brand,'nik'=>$nik,'qty'=>0,'rows'=>0,'first'=>'','last'=>''];$agg[$nk]['qty']+=$q;$agg[$nk]['rows']++;if($agg[$nk]['first']===''||$date<$agg[$nk]['first'])$agg[$nk]['first']=$date;if($date>$agg[$nk]['last'])$agg[$nk]['last']=$date;$tot[$k]=($tot[$k]??0)+$q;}}catch(Throwable $e){}}
     $best=[];foreach($agg as $x){$k=$x['dealer']."\x1f".$x['brand'];if(!isset($best[$k])||$x['qty']>$best[$k]['qty']||($x['qty']===$best[$k]['qty']&&$x['rows']>$best[$k]['rows']))$best[$k]=$x;}
     $idx=dbaIndex_();$out=[];
-    foreach($best as $k=>$x){$o=dealerBrandOwner_($db,$x['dealer'],$x['brand'],$today,$idx);if($o['nik']===''||$o['nik']===$x['nik'])continue;if($u['role']!=='SUPER ADMIN'&&(!dbaCanManageNik_($u,$db,$o['nik'])||!dbaCanManageNik_($u,$db,$x['nik'])))continue;$sp=PortalCore::person($db['meta']['people'],$x['nik']);$c=$db['meta']['customers'][$x['dealer']]??null;$out[]=['dealer'=>$x['dealer'],'nama'=>text_($c['nama']??null),'lokasi'=>text_($c['region']??null),'brand'=>$x['brand'],'currentNik'=>$o['nik'],'currentName'=>$o['nama'],'suggestNik'=>$x['nik'],'suggestName'=>$sp?text_($sp['nama']??null):'','qty'=>$x['qty'],'rows'=>$x['rows'],'share'=>($tot[$k]??0)>0?$x['qty']/($tot[$k]??1)*100:0,'first'=>$x['first'],'last'=>$x['last'],'currentBig'=>$o['big'],'suggestBig'=>$sp?text_($sp['wilayah']??null):''];}
-    usort($out,fn($a,$b)=>$b['share']<=>$a['share'] ?: $b['qty']<=>$a['qty']);return['months'=>$periods,'rows'=>array_slice($out,0,300),'total'=>count($out),'cutover'=>dbaCutover_()];
+    foreach($best as $k=>$x){$o=dealerBrandOwner_($db,$x['dealer'],$x['brand'],$today,$idx);if($o['nik']===''||$o['nik']===$x['nik'])continue;if($u['role']!=='SUPER ADMIN'&&!dbaCanManageNik_($u,$db,$o['nik']))continue;$p=PortalCore::person($db['meta']['people'],$x['nik']);$out[]=['dealer'=>$x['dealer'],'brand'=>$x['brand'],'current'=>$o,'candidate'=>['nik'=>$x['nik'],'nama'=>$p?($p['nama']??''):'','qty'=>$x['qty'],'rows'=>$x['rows'],'first'=>$x['first'],'last'=>$x['last']],'share'=>($tot[$k]??0)>0?$x['qty']/($tot[$k]??1):0];}
+    usort($out,fn($a,$b)=>($b['candidate']['qty']<=>$a['candidate']['qty']));return ['rows'=>array_slice($out,0,300),'periods'=>$periods,'cutover'=>dbaCutover_()];
 }
 function apiDealerBrandSet($token,$dealer,$brand,$nik,$from,$reason) {
     $reason=text_($reason); if(mb_strlen($reason)<5) fail_('Isi alasan minimal 5 karakter.');

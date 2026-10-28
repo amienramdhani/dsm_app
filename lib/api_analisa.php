@@ -292,11 +292,17 @@ function cmpRanges_(string $period, string $cutoff, $closed, $cmp, $weekA = null
 function apiCompare($token, $period, $selection = null, $opts = null) {
     $opts = is_array($opts) ? $opts : [];
     $o = fn($k) => $opts[$k] ?? null;
-    $view = $o('view') === 'TYPE' ? 'TYPE' : 'BRAND'; $cmp = in_array($o('cmp'), ['MTD', 'WTD', 'WK', 'MOM'], true) ? $o('cmp') : 'MTD';
-    $metric = in_array($o('metric'), ['ST', 'SO', 'OMZET', 'DA', 'NOO'], true) ? $o('metric') : 'ST'; $level = in_array($o('level'), ['SALES', 'ASM', 'RGM'], true) ? $o('level') : 'SALES';
+    $view = $o('view') === 'TYPE' ? 'TYPE' : 'BRAND'; $cmp = in_array($o('cmp'), ['MTD', 'WTD', 'WK', 'MOM', 'PREV'], true) ? $o('cmp') : 'MTD';
+    $metric = in_array($o('metric'), ['ST', 'SO', 'OMZET', 'DA', 'NOO', 'STSO'], true) ? $o('metric') : 'ST'; $level = in_array($o('level'), ['SALES', 'ASM', 'RGM'], true) ? $o('level') : 'SALES';
     $brand = text_(js_or($o('brand'), 'ALL')); $c = anaCtx_($token, $period, $selection); $period = js_str($period); $meta = $c['db']['meta'];
     if ($c['u']['role'] === 'SALES') $level = 'SALES';
-    $R = cmpRanges_($period, $c['cutoff'], $c['closed'], $cmp, $o('weekA'), $o('weekB'));
+    $soMissing = false; $stsoPeriod = $period;
+    if ($metric === 'STSO') {
+        /* ST vs SO: satu periode saja (MTD / W1-W5 / bulan lalu), tanpa pembanding. Sisi 0 = ST, sisi 1 = SO. */
+        if ($cmp === 'PREV') { $pp = anaPrev_($period, 1); $R = ['A' => ['from' => $pp . '-01', 'to' => PortalCore::end($pp), 'label' => 'Bulan lalu']]; $stsoPeriod = $pp; }
+        else { $R = cmpRanges_($period, $c['cutoff'], $c['closed'], $cmp === 'WK' ? 'WK' : 'MTD', $o('weekA'), $o('weekA')); }
+        $R['B'] = $R['A'];
+    } else $R = cmpRanges_($period, $c['cutoff'], $c['closed'], $cmp, $o('weekA'), $o('weekB'));
     $side = fn($d) => (strcmp($d, $R['A']['from']) >= 0 && strcmp($d, $R['A']['to']) <= 0) ? 0 : ((strcmp($d, $R['B']['from']) >= 0 && strcmp($d, $R['B']['to']) <= 0) ? 1 : -1);
     $anc = function ($nik, $role) use ($c) { $p = anaPerson_($c['people'], $nik); $g = 0; while ($p && $g++ < 10) { if ($p['role'] === $role) return $p; $p = anaPerson_($c['people'], $p['atasan'] ?? null); } return null; };
     $rowKey = function ($nik) use ($level, $anc) { if ($level === 'SALES') return $nik; $a = $anc($nik, $level); return $a ? $a['nik'] : '~' . $level; };
@@ -305,16 +311,18 @@ function apiCompare($token, $period, $selection = null, $opts = null) {
     $noteBig = function ($rk, $b) use (&$bigCnt) { if (!truthy($b)) return; $bigCnt[(string) $rk][(string) $b] = ($bigCnt[(string) $rk][(string) $b] ?? 0) + 1; };
     $put = function ($rk, $ck, $sd, $v) use (&$acc, &$cols) { $rk = (string) $rk; $ck = (string) $ck; if (!isset($acc[$rk][$ck])) $acc[$rk][$ck] = [0, 0]; $acc[$rk][$ck][$sd] += $v; $cols[$ck] = 1; };
     $idSet = js_set($c['ids']);
-    if ($metric === 'SO') {
-        $pv = coverageView_($c['source'], $period, $c['ids'], 'PAIR', $c['u']);
-        if (empty($pv['stock']) || !empty($pv['missingSO'])) fail_('Data SELL OUT belum lengkap untuk cakupan ini.');
+    foreach ($metric === 'STSO' ? ['ST', 'SO'] : [$metric] as $mm) {
+    $stso = $metric === 'STSO'; $fx = fn($sd) => $stso ? ($mm === 'SO' ? 1 : 0) : $sd;
+    if ($mm === 'SO') {
+        $pv = coverageView_($c['source'], $stsoPeriod, $c['ids'], 'PAIR', $c['u']);
+        if (empty($pv['stock']) || !empty($pv['missingSO'])) { if ($stso) { $soMissing = true; continue; } fail_('Data SELL OUT belum lengkap untuk cakupan ini.'); }
         foreach (stockMoves_($pv, strcmp($R['A']['from'], $R['B']['from']) < 0 ? $R['A']['from'] : $R['B']['from'], strcmp($R['A']['to'], $R['B']['to']) > 0 ? $R['A']['to'] : $R['B']['to'], ['out' => true]) as $t) {
             if (!truthy($t['outQty'])) continue; $sd = $side($t['date']); if ($sd < 0) continue;
             $p = $meta['products'][$t['sku']] ?? null; if (!$p || !truthy($p['device'] ?? false)) continue; $ck = $colKey($p['brand'], js_or($p['type'] ?? null, $p['nama'] ?? null)); if (!truthy($ck)) continue;
             $own = isset($pv['stock']['owners']) ? ($pv['stock']['owners'][$t['customer']] ?? null) : ''; if (!truthy($own) || !in_set($idSet, $own)) continue;
-            $put($rowKey($own), $ck, $sd, $t['outQty']);
+            $put($rowKey($own), $ck, $fx($sd), $t['outQty']);
         }
-    } elseif ($metric === 'NOO') {
+    } elseif ($mm === 'NOO') {
         $first = $c['db']['first'] ?? [];
         foreach (js_keys($first) as $k) {
             $f = $first[$k]; $sd = $side($f['date']); if ($sd < 0 || !in_set($idSet, $f['nik'])) continue; $pr = json_decode($k, true); $ck = $colKey($pr[1], ''); if (!truthy($ck)) continue;
@@ -327,15 +335,16 @@ function apiCompare($token, $period, $selection = null, $opts = null) {
             foreach ($p === $period ? PortalCore::slice($c['db'], $p, $c['ids'], null) : PortalCore::sliceCmp($c['db'], $p, $c['ids'], null, $period) as $r) {
                 $sd = $side($r['date']); if ($sd < 0) continue; $ck = $colKey($r['brand'], $r['type'] ?? null); if (!truthy($ck)) continue;
                 $rk = $rowKey($r['nik']); $noteBig($rk, $r['region'] ?? null);
-                if ($metric === 'ST') { if (truthy($r['q'])) $put($rk, $ck, $sd, $r['q']); }
-                elseif ($metric === 'OMZET') { if (truthy($r['a'])) $put($rk, $ck, $sd, $r['a']); }
-                elseif ($metric === 'DA' && $r['q'] > 0) { $pk = $rk . '|' . $ck . '|' . $sd; $mk = $r['customer'] . '|' . $r['brand']; $pairs[$pk][$mk] = ($pairs[$pk][$mk] ?? 0) + $r['q']; $cols[(string) $ck] = 1; }
+                if ($mm === 'ST') { if (truthy($r['q'])) $put($rk, $ck, $fx($sd), $r['q']); }
+                elseif ($mm === 'OMZET') { if (truthy($r['a'])) $put($rk, $ck, $sd, $r['a']); }
+                elseif ($mm === 'DA' && $r['q'] > 0) { $pk = $rk . '|' . $ck . '|' . $sd; $mk = $r['customer'] . '|' . $r['brand']; $pairs[$pk][$mk] = ($pairs[$pk][$mk] ?? 0) + $r['q']; $cols[(string) $ck] = 1; }
             }
         }
-        if ($metric === 'DA') foreach (js_keys($pairs) as $pk) {
+        if ($mm === 'DA') foreach (js_keys($pairs) as $pk) {
             $a = explode('|', $pk); $m = $pairs[$pk]; $n = 0; foreach ($m as $x) if ($x >= 2) $n++;
             if ($n) $put($a[0], $a[1], (int) $a[2], $n); elseif (!isset($acc[$a[0]][$a[1]])) $acc[$a[0]][$a[1]] = [0, 0];
         }
+    }
     }
     $map = $view === 'TYPE' ? gtModelMap_() : [];
     $accKeys = js_keys($acc);
@@ -348,9 +357,15 @@ function apiCompare($token, $period, $selection = null, $opts = null) {
         $cells = []; foreach (js_keys($acc[$rk]) as $k) $cells[$k] = $acc[$rk][$k];
         return ['nik' => $rk, 'nama' => $p['nama'] ?? null, 'role' => js_or($p['role'] ?? null, $level), 'region' => $level === 'RGM' ? js_or($p['wilayah'] ?? null, js_or($bigTx, '')) : js_or($p['portfolio'] ?? null, js_or($p['region'] ?? null, '')), 'big' => js_or($p['wilayah'] ?? null, js_or($bigTx, '(tanpa Big Region)')), 'rgm' => $rgm ? $rgm['nama'] : '', 'asm' => $asm ? $asm['nama'] : '', 'group' => $group, 'self' => $level === 'SALES' && (bool) $asm && $asm['nik'] === $rk, 'cells' => js_obj($cells)];
     }, $accKeys);
-    return ['view' => $view, 'cmp' => $cmp, 'metric' => $metric, 'level' => $level, 'brand' => $brand, 'period' => $period, 'cutoff' => $c['cutoff'], 'A' => $R['A'], 'B' => $R['B'], 'cols' => $colList, 'rows' => $rows, 'maxWeek' => min(5, (int) ceil(((int) substr($c['cutoff'], 8)) / 7))];
+    return ['view' => $view, 'cmp' => $cmp, 'metric' => $metric, 'level' => $level, 'brand' => $brand, 'period' => $period, 'cutoff' => $c['cutoff'], 'A' => $R['A'], 'B' => $R['B'], 'cols' => $colList, 'rows' => $rows, 'soMissing' => $soMissing, 'maxWeek' => min(5, (int) ceil(((int) substr($c['cutoff'], 8)) / 7))];
 }
 function apiGrowthType($token, $period, $selection = null, $brand = null, $opts = null) { $opts = is_array($opts) ? $opts : []; $opts['view'] = 'TYPE'; $opts['brand'] = $brand; $opts['level'] = 'SALES'; return apiCompare($token, $period, $selection, $opts); }
 
 /* v6.23: data tambahan saat login digabung jadi 1 panggilan (hari libur + dealer tutup). */
-function apiV6Boot($token) { $t = null; try { $t = apiDealerTutupList($token); } catch (Throwable $e) {} return ['hol' => anaHol_(), 'tutup' => $t]; }
+/* Nama hari libur (kolom KETERANGAN) untuk popup selamat berlibur. Hanya tambahan baca; tidak mengubah anaHol_(). */
+function anaHolNames_(): array {
+    $out = [];
+    try { foreach (optionalTable_('Hari_Libur') as $r) { $d = PortalCore::iso($r['TANGGAL'] ?? null); if (truthy($d) && js_upper(array_key_exists('AKTIF', $r) ? js_str($r['AKTIF']) : 'undefined') !== 'FALSE') { $n = trim(js_str($r['KETERANGAN'] ?? '')); if ($n !== '') $out[$d] = $n; } } } catch (Throwable $e) {}
+    return $out;
+}
+function apiV6Boot($token) { $t = null; try { $t = apiDealerTutupList($token); } catch (Throwable $e) {} return ['hol' => anaHol_(), 'holn' => (object) anaHolNames_(), 'tutup' => $t]; }

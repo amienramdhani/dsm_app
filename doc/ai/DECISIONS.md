@@ -159,3 +159,14 @@ KPI, achievement, Validasi KPI, dan KPI Khusus mengikuti pemilik dealer-brand. P
 - Penjualan orang/role di daftar tetap atas NIK penjual (bukan sebagian transaksi). Per transaksi tetap lewat Koreksi.
 - Region kartu per aturan: ikut wilayah penjual, ikut pemilik dealer, atau region tertentu (dipakai di P2).
 - DOS, stok, dan Daftar Dealer tetap ikut pemilik/lokasi dealer.
+
+## Ringkasan Harian & Komitmen (desain, belum dikoding)
+
+### DAILYSUM-001
+Approved by user 2026-10-28 (mockup `dsm-ringkasan-harian.html` v4, di luar repo).
+
+- Ringkasan harian untuk semua role: Sales (diri sendiri), ASM (diri + tim), RGM (nasional umum + area mendalam), Admin/HOS/BOD (nasional; blok kesehatan data hanya Admin).
+- Isi Tahap 1: KPI sendiri + tim, ST per brand (bisa dibuka), outlet baru (NOO), repeat order (dealer order bulan lalu DAN bulan ini), prioritas + saran langkah. Berbasis aturan, bukan teks AI. Promo TIDAK dimasukkan.
+- Tahap 2: komitmen mingguan tersimpan + review minggu lalu + "vs kemarin" (butuh foto harian).
+- Komitmen: dibuat sendiri atau diberikan atasan; TIDAK perlu persetujuan penerima (langsung aktif, penerima boleh beri catatan). Terlihat oleh pemilik dan atasan di hierarki; Admin lihat semua.
+- Kecepatan tindak lanjut peluang: ditunda (belum ada sumber data).

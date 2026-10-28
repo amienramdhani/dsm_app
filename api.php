@@ -19,10 +19,19 @@ require_once __DIR__ . '/lib/api_exec.php';
 require_once __DIR__ . '/lib/api_import.php';
 require_once __DIR__ . '/lib/dealer.php';
 require_once __DIR__ . '/lib/bulk.php';
+require_once __DIR__ . '/lib/api_dealer_transfer_direct.php';
 require_once __DIR__ . '/lib/users_bulk.php';
 require_once __DIR__ . '/lib/activity.php';
 require_once __DIR__ . '/lib/api_kpi.php';
 require_once __DIR__ . '/lib/api_kpikhusus.php';
+require_once __DIR__ . '/lib/api_portfolio.php';
+require_once __DIR__ . '/lib/tx_effective.php';
+require_once __DIR__ . '/lib/api_txcorr.php';
+require_once __DIR__ . '/lib/api_commit.php';
+require_once __DIR__ . '/lib/keep_seller.php';
+require_once __DIR__ . '/lib/owner_snapshot.php';
+require_once __DIR__ . '/lib/api_dealertarget.php';
+require_once __DIR__ . '/lib/transfer_undo.php';
 require_once __DIR__ . '/lib/api_admin2.php';
 require_once __DIR__ . '/lib/api_acct.php';
 require_once __DIR__ . '/lib/api_health.php';
@@ -39,7 +48,7 @@ require_once __DIR__ . '/lib/api_notif.php';
 require_once __DIR__ . '/lib/api_ai.php';
 
 /** Fungsi yang boleh dipanggil dari browser (daftar putih). */
-const DSM_ALLOWED = ['apiNotifState','apiNotifPreview','apiNotifSend','apiNotifTest','apiNotifHistory','apiNotifCancel','apiNotifOpened','apiNotifRuleSave','apiKpiKhususGet','apiKpiKhususSave','apiKpiKhususDelete','apiKpiKhususCopy','apiKpiKhususCopyTo','apiKpiKhususPreview','apiKpiKhususDealers','apiKpiKhususDealerList','apiKpiKhususRuleSave','apiKpiKhususRuleCopy','apiKpiKhususTargets','apiKpiKhususTargetSave','apiKpiKhususTargetCopy','apiPushState','apiPushSave','apiPushTest','apiTMTeam','apiTMDailyReport','apiKpiValidation','apiKpiSearch','apiKpiExport','apiOrderBoot','apiOrderList','apiTMAdmin','apiTMProfileSave','apiTMAssignmentSave','apiTMKpiSettings','apiTMKpiSave','apiTMKpiCopy','apiTMKpi','apiTMRank','apiTMBusinessSave','apiTMBoot','apiTMActivity','apiTMFollowUpSave','apiTMOrderSave','apiBrandAdmin','apiBrandSave','apiBrandSetActive','apiBrandClassificationSave','apiBrandThresholdSave','apiTransactionExportRaw','apiCompare','apiGrowthType','apiHariLibur','apiExportSummary','apiDOS','apiKPIExportOptions','apiKPIExportData','apiDOSExportOptions','apiDOSExportData','apiBrandExportOptions','apiBrandExportData','apiExportDealerCsv','apiExportDealerExcel','apiExportDealerHistory','apiDealerHistory','apiDealerHistorySummary','apiTransactions','apiTransactionGroups','apiDealerStock','apiDealerDetail','apiTeam','apiAdminBanner','apiInfo','apiUploadInfo','apiSetInfoActive','apiDownloadInfo','apiDealerContact','apiSubmitDealerContact','apiContactRequests','apiReviewDealerContacts','apiSaveDealerContact','apiExportDealerContacts','apiStageContactBulk','apiCommitContactBulk','apiDealerTutupAjukan','apiDealerTutupProses','apiDealerTutupUpload','apiStartBackup','apiBackupSettings','apiHealthCheck',
+const DSM_ALLOWED = ['apiCommitComment','apiCommitBoot','apiCommitSave','apiCommitStatus','apiCommitDelete','apiDealerTargetTemplate','apiDealerTargetStage','apiDealerTargetRejected','apiDealerTargetCommit','apiDealerTargetList','apiDealerTargetLog','apiDealerTransferDirectBoot','apiDealerTransferDirectList','apiDealerTransferDirectStage','apiPortfolioTransferPreview','apiPortfolioExitState','apiPortfolioAssets','apiPortfolioEnsureVacant','apiTransferUndoList','apiTransferUndo','apiOwnerHistoryBoot','apiOwnerHistory','apiOwnerHistoryExport','apiKeepSellerBoot','apiKeepSellerSave','apiKeepSellerRevoke','apiTxCorrBoot','apiTxCorrList','apiTxCorrSearch','apiTxCorrHistory','apiTxCorrSave','apiTxCorrRevoke','apiPortfolioTransferCommit','apiNotifState','apiNotifPreview','apiNotifSend','apiNotifTest','apiNotifHistory','apiNotifCancel','apiNotifOpened','apiNotifRuleSave','apiKpiKhususGet','apiKpiKhususSave','apiKpiKhususDelete','apiKpiKhususCopy','apiKpiKhususCopyTo','apiKpiKhususPreview','apiKpiKhususDealers','apiKpiKhususDealerList','apiKpiKhususRuleSave','apiKpiKhususRuleCopy','apiKpiKhususTargets','apiKpiKhususTargetSave','apiKpiKhususTargetCopy','apiPushState','apiPushSave','apiPushTest','apiTMTeam','apiTMDailyReport','apiKpiValidation','apiKpiSearch','apiKpiExport','apiOrderBoot','apiOrderList','apiTMAdmin','apiTMProfileSave','apiTMAssignmentSave','apiTMKpiSettings','apiTMKpiSave','apiTMKpiCopy','apiTMKpi','apiTMRank','apiTMBusinessSave','apiTMBoot','apiTMActivity','apiTMFollowUpSave','apiTMOrderSave','apiBrandAdmin','apiBrandSave','apiBrandSetActive','apiBrandClassificationSave','apiBrandThresholdSave','apiTransactionExportRaw','apiCompare','apiGrowthType','apiHariLibur','apiExportSummary','apiDOS','apiKPIExportOptions','apiKPIExportData','apiDOSExportOptions','apiDOSExportData','apiBrandExportOptions','apiBrandExportData','apiExportDealerCsv','apiExportDealerExcel','apiExportDealerHistory','apiDealerHistory','apiDealerHistorySummary','apiTransactions','apiTransactionGroups','apiDealerStock','apiDealerDetail','apiTeam','apiAdminBanner','apiInfo','apiUploadInfo','apiSetInfoActive','apiDownloadInfo','apiDealerContact','apiSubmitDealerContact','apiContactRequests','apiReviewDealerContacts','apiSaveDealerContact','apiExportDealerContacts','apiStageContactBulk','apiCommitContactBulk','apiDealerTutupAjukan','apiDealerTutupProses','apiDealerTutupUpload','apiStartBackup','apiBackupSettings','apiHealthCheck',
     'apiAccountMergePreview', 'apiAccountMergeCommit', 'apiAccountDeleteCheck', 'apiAccountDelete',
     'apiHariLiburAdmin', 'apiHariLiburSave', 'apiHariLiburHapus', 'apiRegionMapGet', 'apiRegionMapSave',
     'apiRegionBrandGet', 'apiKpiRgmPanel', 'apiRegionBrandSave', 'apiKpiGet', 'apiKpiSaveRegion', 'apiKpiSaveRgm', 'apiKpiCopy', 'apiTargetGet', 'apiTargetSave', 'apiCoverageMatrix',
@@ -65,7 +74,7 @@ const DSM_ALLOWED = ['apiNotifState','apiNotifPreview','apiNotifSend','apiNotifT
 ];
 
 /** Fungsi yang mengubah data (diblok saat Mode Demo). */
-const DSM_WRITE_FNS = ['apiNotifSend','apiNotifTest','apiNotifCancel','apiNotifRuleSave','apiKpiKhususSave','apiKpiKhususDelete','apiKpiKhususCopy','apiKpiKhususCopyTo','apiKpiKhususRuleSave','apiKpiKhususRuleCopy','apiKpiKhususTargetSave','apiKpiKhususTargetCopy','apiTMKpiCopy','apiBrandThresholdSave','apiTMProfileSave','apiTMAssignmentSave','apiTMKpiSave','apiTMBusinessSave','apiTMFollowUpSave','apiTMOrderSave','apiBrandSave','apiBrandSetActive','apiBrandClassificationSave','apiSubmitDealerContact','apiReviewDealerContacts','apiSaveDealerContact','apiStageContactBulk','apiCommitContactBulk','apiDealerTutupAjukan','apiDealerTutupProses','apiDealerTutupUpload','apiStartBackup','apiBackupSettings','apiUploadInfo','apiSetInfoActive',
+const DSM_WRITE_FNS = ['apiCommitComment','apiCommitSave','apiCommitStatus','apiCommitDelete','apiKeepSellerSave','apiKeepSellerRevoke','apiDealerTargetStage','apiDealerTargetCommit','apiDealerTransferDirectStage','apiPortfolioTransferCommit','apiPortfolioEnsureVacant','apiTransferUndo','apiTxCorrSave','apiTxCorrRevoke','apiNotifSend','apiNotifTest','apiNotifCancel','apiNotifRuleSave','apiKpiKhususSave','apiKpiKhususDelete','apiKpiKhususCopy','apiKpiKhususCopyTo','apiKpiKhususRuleSave','apiKpiKhususRuleCopy','apiKpiKhususTargetSave','apiKpiKhususTargetCopy','apiTMKpiCopy','apiBrandThresholdSave','apiTMProfileSave','apiTMAssignmentSave','apiTMKpiSave','apiTMBusinessSave','apiTMFollowUpSave','apiTMOrderSave','apiBrandSave','apiBrandSetActive','apiBrandClassificationSave','apiSubmitDealerContact','apiReviewDealerContacts','apiSaveDealerContact','apiStageContactBulk','apiCommitContactBulk','apiDealerTutupAjukan','apiDealerTutupProses','apiDealerTutupUpload','apiStartBackup','apiBackupSettings','apiUploadInfo','apiSetInfoActive',
     'apiAccountMergeCommit','apiAccountDelete','apiHariLiburSave','apiHariLiburHapus','apiRegionMapSave','apiRegionBrandSave','apiKpiSaveRegion','apiKpiSaveRgm','apiKpiCopy','apiTargetSave','apiCheckpointRestore',
     'apiProductMasterSave','apiDealerBrandSetCutover','apiDealerBrandSet','apiStageUsers','apiCommitUsers','apiStatusBulkStage','apiStatusBulkCommit','apiDealerSave','apiDealerDelete','apiIndukBulkStage','apiIndukBulkCommit','apiUserPinExport','apiDealerRegionSave','apiDealerUploadStage','apiDealerUploadCommit',
     'apiStageDealers','apiCommitDealers','apiAddDealer','apiStageCustomerBulk','apiCommitCustomerBulk','apiStageDealerTransfer','apiCommitDealerTransfer','apiStageMasterBulk','apiCommitMasterBulk',
@@ -110,7 +119,6 @@ try {
     $fn = (string) $body['fn'];
     $args = is_array($body['args'] ?? null) ? array_values($body['args']) : [];
     if (!in_array($fn, DSM_ALLOWED, true) || !function_exists($fn)) throw new AppError('Fitur ini belum tersedia di versi DSM sekarang (' . $fn . ').');
-    // DSM v5: Mode Demo benar-benar hanya-baca untuk semua fungsi yang mengubah data.
     if (in_array($fn, DSM_WRITE_FNS, true)) {
         $tk = $args[0] ?? null; if (is_array($tk)) $tk = $tk['token'] ?? null;
         if (is_string($tk) && strlen($tk) >= 30 && strlen($tk) <= 200) {
@@ -119,7 +127,7 @@ try {
         }
     }
     $rf = new ReflectionFunction($fn);
-    while (count($args) < $rf->getNumberOfParameters()) $args[] = null; // JS: argumen kosong = undefined
+    while (count($args) < $rf->getNumberOfParameters()) $args[] = null;
     tmBeginRequest_($fn, $args);
     $ckey = dsm_cache_key_($fn, $args);
     if ($ckey !== null && ($hit = dsm_cache_get_($ckey)) !== null) { echo $hit; exit; }

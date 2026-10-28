@@ -10,12 +10,15 @@
 require_once __DIR__ . '/api_push.php';
 require_once __DIR__ . '/api_kpi.php';
 require_once __DIR__ . '/api_kpikhusus.php';
+require_once __DIR__ . '/api_commit.php';
 
 const NT_PAGES = ['', 'beranda', 'customer', 'brand', 'tim', 'kpi', 'dos', 'peringkat', 'transaksi', 'analisa'];
 const NT_RULES = [
     'DOS_MENIPIS'  => ['label' => 'DOS menipis / habis', 'desc' => 'Ke Sales pemilik dealer dan ASM-nya · maks. 1x per hari per orang', 'type' => 'insight', 'time' => '08:00', 'freq' => 'DAILY'],
     'KPI_MINGGUAN' => ['label' => 'Pengingat KPI mingguan', 'desc' => 'Tiap Senin · ke semua Sales dan ASM', 'type' => 'insight', 'time' => '08:00', 'freq' => 'WEEKLY'],
     'TARGET_SO'    => ['label' => 'Target SO belum diisi', 'desc' => 'Tanggal 3 tiap bulan · ke ASM yang timnya punya indikator SO tanpa target', 'type' => 'sistem', 'time' => '09:00', 'freq' => 'MONTHLY'],
+    'KOMITMEN_NOTIF'    => ['label' => 'Notifikasi komitmen', 'desc' => 'Saat komitmen diberikan, dikomentari, atau dinilai · ke penerima/pemberi komitmen', 'type' => 'insight', 'time' => '', 'freq' => 'EVENT'],
+    'KOMITMEN_MINGGUAN' => ['label' => 'Pengingat komitmen mingguan', 'desc' => 'Tiap Senin · belum ada komitmen minggu ini / komitmen minggu lalu belum dinilai', 'type' => 'insight', 'time' => '08:00', 'freq' => 'WEEKLY'],
     'DATA_BARU'    => ['label' => 'Data baru masuk', 'desc' => 'Setelah publikasi data selesai · ke Admin', 'type' => 'data', 'time' => '', 'freq' => 'EVENT'],
 ];
 
@@ -24,6 +27,9 @@ function ntSchema_(): void {
     db_()->exec("CREATE TABLE IF NOT EXISTS _nt_msg (id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY, kind VARCHAR(12) NOT NULL, rule_key VARCHAR(30) NOT NULL DEFAULT '', sender VARCHAR(100) NOT NULL, title VARCHAR(120) NOT NULL, body VARCHAR(400) NOT NULL, image VARCHAR(80) NOT NULL DEFAULT '', base VARCHAR(255) NOT NULL DEFAULT '', link VARCHAR(30) NOT NULL DEFAULT '', important TINYINT NOT NULL DEFAULT 0, target LONGTEXT NULL, recipients INT NOT NULL DEFAULT 0, sent INT NOT NULL DEFAULT 0, status VARCHAR(12) NOT NULL, send_at VARCHAR(20) NOT NULL DEFAULT '', created_at VARCHAR(20) NOT NULL, KEY st (status, send_at)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     db_()->exec("CREATE TABLE IF NOT EXISTS _nt_log (msg_id BIGINT NOT NULL, nik VARCHAR(100) NOT NULL, status VARCHAR(8) NOT NULL, detail VARCHAR(200) NOT NULL DEFAULT '', opened_at VARCHAR(20) NOT NULL DEFAULT '', PRIMARY KEY(msg_id,nik)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     db_()->exec("CREATE TABLE IF NOT EXISTS _nt_rule (rule_key VARCHAR(30) NOT NULL PRIMARY KEY, on_ TINYINT NOT NULL DEFAULT 0, time_ VARCHAR(5) NOT NULL DEFAULT '', last_run VARCHAR(10) NOT NULL DEFAULT '', actor VARCHAR(100) NOT NULL DEFAULT '', updated_at VARCHAR(20) NOT NULL DEFAULT '') ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Aturan komitmen aktif secara bawaan (Admin bisa mematikan di menu Notifikasi).
+    $seed = db_()->prepare('INSERT IGNORE INTO _nt_rule (rule_key,on_,time_,last_run,actor,updated_at) VALUES (?,?,?,?,?,?)');
+    $seed->execute(['KOMITMEN_NOTIF', 1, '', '', 'SISTEM', date('Y-m-d H:i:s')]); $seed->execute(['KOMITMEN_MINGGUAN', 1, '08:00', '', 'SISTEM', date('Y-m-d H:i:s')]);
     $done = true;
 }
 function ntNow_(): string { return date('Y-m-d H:i:s'); }
@@ -210,6 +216,7 @@ function ntRunRule_(string $key): int {
     if ($key === 'KPI_MINGGUAN') {
         return ntAutoSend_($key, 'KPI minggu ini', 'Cek skor dan peringkat KPI kamu, lalu kejar indikator yang masih merah.', 'kpi', ntActiveByRole_($db, ['SALES', 'ASM'])) ? 1 : 0;
     }
+    if ($key === 'KOMITMEN_MINGGUAN') return function_exists('commitReminders_') ? commitReminders_() : 0;
     if ($key === 'DATA_BARU') {
         return ntAutoSend_($key, 'Data baru masuk', 'Publikasi data terbaru selesai. Angka sudah diperbarui.', 'beranda', ntActiveByRole_($db, ['ADMIN', 'SUPER ADMIN'])) ? 1 : 0;
     }

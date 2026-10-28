@@ -384,3 +384,17 @@ Fakta kode yang perlu diingat:
 - Koreksi Transaksi sudah menghormati kunci periode (apiTxCorrSave memanggil assertPeriodOpen_). Pencabutan koreksi (apiTxCorrRevoke) belum dicek.
 - Uji wajib: (1) kunci periode uji lalu cek audit OWNER_SNAPSHOT dan jumlah baris di dsm_owner_snap_meta; (2) Admin, panel Riwayat pemilik dealer di kategori Dealer; (3) periode terkunci menampilkan label FOTO; (4) ubah pemilik dealer setelah dikunci, foto tidak berubah; (5) unduh CSV; (6) waktu kunci periode dengan banyak dealer (cek tidak timeout).
 - Paket P1-P4 selesai kode. Sisa: uji di Laragon, cek data (antrean Oktober, NIK transaksi HOS, cakupan dealer-brand), keputusan merge ke main.
+
+- 2026-10-28: Paket 1 ST vs SO (% SO/ST) di Brand + Dealer selesai (frontend). Berikutnya: Paket 2 Analisa → Perbandingan mode "ST vs SO" (`v6CmpDraw` + `apiCompare`).
+
+- 2026-10-28: Paket 2 (ST vs SO di Analisa → Perbandingan) selesai kode; perlu uji di Laragon: cek SO lengkap/tidak lengkap, W1–W5, bulan lalu, sales pemilik dealer. Riwayat `dev` dibersihkan dari commit 6e390a1 (force-push atas izin user).
+
+- 2026-10-28: A1 tab AKSI selesai kode (assets/aksi.js). Uji: login Sales/ASM/RGM/Admin → Beranda → tab AKSI paling kanan; cek angka = tab RINGKASAN; klik brand membuka rincian. Next: A2–A4.
+
+- Omzet card + per badan usaha selesai (lihat CHANGELOG_AI). Perlu dicek user: total per badan usaha cocok dengan omzet total; baris "Lainnya" muncul bila dsm_attr belum lengkap.
+
+- A2–A4 selesai di tab AKSI (lihat CHANGELOG_AI). Perlu uji nyata per role: repeat order (RGM/TOP dari `rep`), daftar belum repeat (Sales/ASM), blok Admin. Tahap 2 (komitmen mingguan tersimpan, vs kemarin) belum dikerjakan.
+
+- Tahap 2 poin 1–2 (komitmen mingguan + review) selesai; tabel `dsm_commit` dibuat otomatis saat pertama dipakai. Belum diuji dengan MySQL asli. Belum: perbandingan vs kemarin (butuh snapshot harian).
+- Tab AKSI versi HP selesai (sub-menu per layar, sheet komitmen, telepon dealer). Perlu uji di HP asli.
+- Dibanding kemarin (tanpa snapshot), notifikasi komitmen, dan pengingat Senin selesai. Pengingat butuh cron notif_cli.php + push aktif; belum diuji nyata.
