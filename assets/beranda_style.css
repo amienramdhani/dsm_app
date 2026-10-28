@@ -1,0 +1,54 @@
+/* Tab dan latar Beranda (disetujui 2026-10-19). HP: tab gaya B di atas alas navy lembut yang menyambung ke hero.
+   Desktop: gaya B (garis bawah) di atas latar biru pucat halus. Hanya Beranda; halaman lain tidak berubah. */
+@media(max-width:760px){
+ html body.dsmHeroPage #dsmBand{display:none!important}
+ html body.dsmHeroPage #main.dsmHeroOn:has(.v7btabs) #dsmHero{border-radius:0;box-shadow:none}
+ html body.dsmHeroPage #main.dsmHeroOn .v7btabs{margin:0 calc(-1*var(--hsPx,0px)) 12px;padding:2px calc(var(--hsPx,0px) + 4px) 0;border:0;border-radius:0 0 22px 22px;background:linear-gradient(180deg,#1B2A5E,#23326C);box-shadow:0 14px 26px -8px rgba(27,42,94,.45);gap:0;top:calc(var(--hsTop,0px) + var(--hsHalf,130px))!important}
+ html body.dsmHeroPage #main.dsmHeroOn .v7btabs button{position:relative;flex:1 0 auto;background:transparent!important;box-shadow:none!important;border-radius:0;color:#9FB0DE;padding:10px 8px 12px}
+ html body.dsmHeroPage #main.dsmHeroOn .v7btabs button.on{color:#fff;background:linear-gradient(180deg,rgba(91,155,255,.34),rgba(161,132,255,.22))!important;border-radius:12px 12px 0 0}
+ html body.dsmHeroPage #main.dsmHeroOn .v7btabs button.on::after{content:"";position:absolute;left:18%;right:18%;bottom:0;height:3px;border-radius:3px;background:linear-gradient(90deg,#5B9BFF,#A184FF)}
+}
+@media(min-width:761px){
+ html body #main{background:linear-gradient(180deg,#D7E0F8 0,#E6ECFA 130px,rgba(243,246,251,0) 300px);box-shadow:inset 0 3px 0 #3F4FD6}
+ html body #main .v7btabs{background:linear-gradient(180deg,#1B2A5E,#23326C);border:0;border-radius:14px;box-shadow:0 12px 24px -10px rgba(27,42,94,.45);padding:2px 8px 0;gap:2px}
+ html body #main .v7btabs button{position:relative;background:transparent!important;box-shadow:none!important;border-radius:0;color:#9FB0DE;padding:11px 22px 13px}
+ html body #main .v7btabs button:hover{color:#fff}
+ html body #main .v7btabs button.on{color:#fff;background:linear-gradient(180deg,rgba(91,155,255,.34),rgba(161,132,255,.22))!important;border-radius:12px 12px 0 0}
+ html body #main .v7btabs button.on::after{content:"";position:absolute;left:16%;right:16%;bottom:0;height:3px;border-radius:3px;background:linear-gradient(90deg,#5B9BFF,#A184FF)}
+}
+
+/* Detail dealer: tombol Tandai / Ajukan dealer tutup merah, selebar kartu (desktop dan HP) */
+html body .v6tban.plain>.chip[data-v6t="form"]{display:block;width:100%;margin:8px 0 0!important;padding:11px 14px;border:0!important;border-radius:12px;background:linear-gradient(135deg,#E5484D,#C62832)!important;color:#fff!important;font-weight:800;font-size:13px;text-align:center;box-shadow:0 8px 16px -8px rgba(198,40,50,.65)}
+html body .v6tban.plain>.chip[data-v6t="form"]:hover{filter:brightness(1.06)}
+html body .v6tban.plain>.hint{display:block}
+
+/* Detail dealer: tombol + Catat order selebar kartu (desktop dan HP) */
+html body .tm-dealer-actions{display:flex}
+html body .tm-dealer-actions #tmDealerOrder{flex:1 1 100%;width:100%;padding:11px 14px;border-radius:12px;font-size:13px;font-weight:800;text-align:center}
+
+/* Navbar/sidebar biru lembut (disetujui 2026-10-20): ganti putih polos, condong biru bukan ungu. */
+@media(min-width:761px){
+ html body #app .topbar{background:linear-gradient(180deg,#E3EDFD 0%,#D0DFF9 55%,#C5D6F4 100%)!important;border-right:1px solid #B8CBEF!important;box-shadow:6px 0 24px -14px rgba(52,86,170,.35)!important}
+}
+@media(max-width:760px){
+ html body:not(.dsmHeroPage) #app .topbar{background:linear-gradient(135deg,#E3EDFD,#CADAF7)!important;border-bottom:1px solid #B8CBEF!important}
+}
+
+/* Garis tree sidebar lebih tegas di atas latar biru; HP: bar bawah + drawer ikut biru lembut. */
+@media(min-width:761px){
+ html body #app #navigation .v7tree{border-left-color:#8FA9DB!important;border-left-color:color-mix(in srgb,var(--v7tl,#D7E6F5) 45%,#3F5FA8)!important}
+ html body #app #navigation .v7tree>button[data-page]:not(.on)::before{background:#8FA9DB!important;background:color-mix(in srgb,var(--v7tl,#D7E6F5) 45%,#3F5FA8)!important}
+}
+@media(max-width:760px){
+ html body #app #mBottom,html body #mBottom{background:linear-gradient(180deg,#E3EDFD,#CADAF7)!important;border-top:1px solid #B8CBEF!important;box-shadow:0 -6px 18px -8px rgba(52,86,170,.3)!important}
+ html body.dsmHeroPage #app .topbar{background:transparent!important}
+}
+
+/* Mode Eksekutif HP: chip Brand = grid 4 kolom (opsi B), chip Indikator = segmen satu baris (opsi A), semua huruf kapital (disetujui 2026-10-20). */
+@media(max-width:760px){
+ html body #app #view .v6xchips:has(>button[data-v6xbrand]){display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;overflow:visible!important;margin-bottom:10px}
+ html body #app #view .v6xchips>button[data-v6xbrand]{padding:9px 2px!important;border-radius:11px!important;font-size:10.5px!important;font-weight:800;text-transform:uppercase;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+ html body #app #view .v6xchips:has(>button[data-v6xind]){display:flex!important;gap:2px;overflow-x:auto!important;background:#F4F7FC;border:1px solid #DCE4F2;border-radius:12px;padding:3px!important;margin-bottom:10px}
+ html body #app #view .v6xchips>button[data-v6xind]{flex:1 1 auto;border:0!important;background:transparent!important;color:#5E6E8A!important;border-radius:9px!important;padding:8px 6px!important;font-size:10px!important;font-weight:800;text-transform:uppercase;text-align:center;white-space:nowrap}
+ html body #app #view .v6xchips>button[data-v6xind].on{background:linear-gradient(135deg,#7C4DEB,#5B35C8)!important;color:#fff!important;box-shadow:0 4px 10px -3px rgba(91,53,200,.5)}
+}

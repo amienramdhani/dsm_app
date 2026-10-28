@@ -266,7 +266,8 @@ function kkSoTarget_(array $db, string $period, array $ids, string $brand): arra
         if (isset($man[(string) $id][$brand])) { $tv += $man[(string) $id][$brand]; $exists = true; $nManual++; continue; }
         $t = PortalCore::target($db['meta'], $period, [$id], $brand, 'SO', ''); if ($t['exists']) { $tv += $t['value']; $exists = true; $nUpload++; }
     }
-    return ['value' => $tv, 'exists' => $exists, 'manual' => $nManual, 'upload' => $nUpload];
+    $nDealer = function_exists('dtgSubjectPlan_') ? count(dtgSubjectPlan_($db, $period, $ids, $brand)) : 0; if ($nDealer) $exists = true;
+    return ['value' => $tv, 'exists' => $exists, 'manual' => $nManual, 'upload' => $nUpload, 'dealerSegments' => $nDealer];
 }
 
 // ------------------------------------------------------------------
@@ -302,6 +303,14 @@ function kkCompute_(array $db, string $period, array $ids, array $cfg): array {
         foreach ($src as $pr) { if ($pr['bad']) { $excluded++; continue; } $stock += $pr['stock']; $so += $pr['so']; $cust[$pr['customer']] = true; }
         $base['dealers'] = count($cust);
         if ($m === 'SO') {
+            $dtPlan = ($basis === 'MTD' && function_exists('dtgSubjectPlan_')) ? dtgSubjectPlan_($db, $period, $ids, $b, $it['cats'] ?? []) : [];
+            if ($dtPlan) {
+                $dv = dtgScoreCompute_($db, $dtPlan, $b, $ctx['asof'], (float) KK_CAP);
+                $base['actual'] = $dv['actual']; $base['target'] = $dv['target']; $base['targetSource'] = 'DEALER'; $base['dealerTargets'] = $dv['dealers']; $base['excluded'] = $dv['excluded'];
+                if (!($dv['target'] > 0)) $base['state'] = 'TARGET SO BELUM DIISI';
+                else { $base['ach'] = $dv['contrib'] / $dv['target'] * 100; $base['score'] = min(KK_CAP, max(0, $base['ach'])); }
+                $indicators[] = $base; continue;
+            }
             $t = kkSoTarget_($db, $period, $ids, $b);
             $base['actual'] = $so; $base['target'] = $t['value']; $base['targetSource'] = $t['manual'] ? ($t['upload'] ? 'CAMPUR' : 'MANUAL') : ($t['upload'] ? 'UPLOAD' : null);
             if (!($t['value'] > 0)) $base['state'] = 'TARGET SO BELUM DIISI';

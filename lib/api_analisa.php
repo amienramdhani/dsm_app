@@ -353,4 +353,10 @@ function apiCompare($token, $period, $selection = null, $opts = null) {
 function apiGrowthType($token, $period, $selection = null, $brand = null, $opts = null) { $opts = is_array($opts) ? $opts : []; $opts['view'] = 'TYPE'; $opts['brand'] = $brand; $opts['level'] = 'SALES'; return apiCompare($token, $period, $selection, $opts); }
 
 /* v6.23: data tambahan saat login digabung jadi 1 panggilan (hari libur + dealer tutup). */
-function apiV6Boot($token) { $t = null; try { $t = apiDealerTutupList($token); } catch (Throwable $e) {} return ['hol' => anaHol_(), 'tutup' => $t]; }
+/* Nama hari libur (kolom KETERANGAN) untuk popup selamat berlibur. Hanya tambahan baca; tidak mengubah anaHol_(). */
+function anaHolNames_(): array {
+    $out = [];
+    try { foreach (optionalTable_('Hari_Libur') as $r) { $d = PortalCore::iso($r['TANGGAL'] ?? null); if (truthy($d) && js_upper(array_key_exists('AKTIF', $r) ? js_str($r['AKTIF']) : 'undefined') !== 'FALSE') { $n = trim(js_str($r['KETERANGAN'] ?? '')); if ($n !== '') $out[$d] = $n; } } } catch (Throwable $e) {}
+    return $out;
+}
+function apiV6Boot($token) { $t = null; try { $t = apiDealerTutupList($token); } catch (Throwable $e) {} return ['hol' => anaHol_(), 'holn' => (object) anaHolNames_(), 'tutup' => $t]; }
