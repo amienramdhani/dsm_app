@@ -35,7 +35,7 @@ function txcCandidates_(array $db, array $u): array {
     foreach ($db['meta']['people'] as $p) {
         if (!truthy($p['sales'] ?? null) || (function_exists('ptIsVac_') && ptIsVac_($p))) continue;
         if (function_exists('dbaCanManageNik_') && !dbaCanManageNik_($u, $db, (string) $p['nik'])) continue;
-        $out[] = ['nik' => (string) $p['nik'], 'nama' => text_($p['nama'] ?? ''), 'wilayah' => text_($p['wilayah'] ?? ''), 'region' => js_or(text_($p['portfolio'] ?? ''), text_($p['region'] ?? ''))];
+        $out[] = ['nik' => (string) $p['nik'], 'nama' => text_($p['nama'] ?? ''), 'role' => text_($p['role'] ?? ''), 'wilayah' => text_($p['wilayah'] ?? ''), 'region' => js_or(text_($p['portfolio'] ?? ''), text_($p['region'] ?? ''))];
     }
     usort($out, fn($a, $b) => strcmp($a['nama'], $b['nama'])); return $out;
 }

@@ -49,7 +49,7 @@
     const sel = `<div class="ntChips" id="ntSas"><button type="button" data-tt="all" class="${S.ttype === 'all' ? 'on' : ''}">Semua tim saya (${NT.total})</button><button type="button" data-tt="role" class="${S.ttype === 'role' ? 'on' : ''}">Per role</button>${regs.length ? `<button type="button" data-tt="region" class="${S.ttype === 'region' ? 'on' : ''}">Per region</button>` : ''}<button type="button" data-tt="nik" class="${S.ttype === 'nik' ? 'on' : ''}">Orang tertentu</button></div>`;
     const sub = S.ttype === 'role' ? `<div class="ntChips">${roles.map(([r, n]) => `<button type="button" data-role="${E(r)}" class="${S.role === r ? 'on' : ''}">${E(r)} (${n})</button>`).join('')}</div>`
       : S.ttype === 'region' ? `<div class="ntChips">${regs.map(([r, n]) => `<button type="button" data-region="${E(r)}" class="${S.region === r ? 'on' : ''}">${E(r)} (${n})</button>`).join('')}</div>`
-      : S.ttype === 'nik' ? `<input class="fi" id="ntQ" placeholder="Cari nama, NIK, atau jabatan" value="${E(S.q)}"><div class="ntPeople" id="ntPeople">${people.map(p => `<label><input type="checkbox" data-nik="${E(p.nik)}" ${S.niks.has(p.nik) ? 'checked' : ''}> ${E(p.nama)} <small>· ${E(p.role)}${p.region ? ' · ' + E(p.region) : ''}</small></label>`).join('') || '<small>Tidak ada hasil.</small>'}</div>` : '';
+      : S.ttype === 'nik' ? `<button type="button" class="ppField" data-act="pickppl">${S.niks.size ? `<span class="ppAv">${S.niks.size}</span><span class="ppTx"><b>${S.niks.size} orang dipilih</b><small>${E(NT.people.filter(p => S.niks.has(p.nik)).slice(0, 3).map(p => p.nama).join(', '))}${S.niks.size > 3 ? ' +' + (S.niks.size - 3) : ''}</small></span>` : '<span class="ppPh">Pilih orang…</span>'}<span class="ppCh">▾</span></button>` : '';
     const warns = (!NT.pushOn ? '<div class="ntWarn">Notifikasi belum diaktifkan di server (DSM_PUSH_ON). Pesan akan tercatat di riwayat tetapi belum bisa terkirim.</div>' : '') + (S.when && !NT.cronOk ? '<div class="ntWarn">Pengatur jadwal (cron notif_cli.php) belum terdeteksi aktif. Pesan terjadwal baru terkirim setelah cron berjalan.</div>' : '');
     return `<div class="ntGrid"><div class="ntW">
       <div class="ntLbl">Sasaran (sesuai cakupan Anda)</div>${sel}${sub}
@@ -110,6 +110,7 @@
     const b = t.closest('[data-act]'); if (!b) return; const a = b.dataset.act;
     try {
       if (a === 'rmimg') { S.image = ''; S.imageName = ''; draw(); }
+      else if (a === 'pickppl') { try { window.dsmPersonCss && window.dsmPersonCss(); } catch (er) {} if (window.dsmPersonSheet) window.dsmPersonSheet({ title: 'Pilih penerima', multi: true, items: NT.people.map(p => ({ value: p.nik, nik: p.nik, nama: p.nama, role: p.role, region: p.region || '' })), selected: [...S.niks], done: v => { S.niks = new Set(v); S.cnt = null; draw(); preview(); } }); }
       else if (a === 'send') {
         const p = payload(); if (!p.title) return flash('Judul wajib diisi.', true); if (!p.body) return flash('Isi pesan wajib diisi.', true);
         if (S.ttype === 'role' && !S.role) return flash('Pilih role sasaran.', true); if (S.ttype === 'region' && !S.region) return flash('Pilih region sasaran.', true); if (S.ttype === 'nik' && !S.niks.size) return flash('Pilih minimal satu orang.', true);

@@ -729,3 +729,20 @@ Validation:
 - Notifikasi komitmen (aturan `KOMITMEN_NOTIF`, event): komitmen baru → penerima; komentar → pemilik, pemberi, & pengomentar lain (kecuali penulis); penilaian → pemilik (atau pemberi bila pemilik menilai sendiri). Dikirim lewat `ntAutoSend_` hanya bila push aktif (`DSM_PUSH_ON`) dan aturan menyala.
 - Pengingat Senin (aturan `KOMITMEN_MINGGUAN`, WEEKLY 08:00 via notif_cli.php/cron): belum ada komitmen minggu ini (Sales/ASM/RGM); komitmen minggu lalu belum dinilai (pemilik & pemberi).
 - Kedua aturan di-seed AKTIF bawaan (`INSERT IGNORE` di `ntSchema_`), bisa dimatikan Admin di menu Notifikasi. `api_notif.php` meng-require `api_commit.php`.
+
+## Pemilih orang seragam (gaya "Pilih Sales") + Demo disederhanakan + fix chip brand di sheet FILTER
+- Komponen baru `assets/person_picker.js` (dimuat paling awal di rantai `searchable.js`): `dsmPersonSheet` (sheet dari bawah di HP / kartu di desktop; avatar inisial, NAMA, ROLE · AREA · NIK, centang, kotak cari, mode multi, baris "Pakai NIK" opsional), `dsmPersonSelect` (ubah `<select>` orang; nilai & event `change` tetap), `dsmPersonInput` (ubah `<input>` teks orang; nilai diisi lewat format lama).
+- Dipasang di: komitmen (Untuk siapa + Cari komitmen tim, `people` kini membawa `region`), Koreksi Transaksi (`#txcTo`, kandidat kini membawa `role`), Kredit Tetap Penjual (kolom Orang), Admin: Atasan di Edit user, Hak export, Transfer Sales (sumber), Gabung/Hapus akun (NIK bebas tetap boleh), Notifikasi sasaran "Orang tertentu" (pilih banyak). Region/portofolio tetap `dsmSearchable` (bukan orang).
+- Mode Demo: modal kini hanya satu kolom cari (nama/NIK/role/region) + tombol Mulai Demo; filter Big Region/Region/Role dihapus.
+- Bug HP: di sheet FILTER Dealer, chip brand (`.v6bpick`) putih di atas putih dan satu baris menyamping; kini chip dibungkus & berwarna biru.
+- Tidak diubah: kolom cari yang menyaring tabel (Kelola akun, Aktivitas, Tim, Target, KPI Khusus, peringkat).
+- Diuji di Chromium 390px & 1280px dengan harness (belum di aplikasi asli dengan data/role nyata).
+
+## Kartu KPI Ringkasan: 2 kolom di HP
+- `aksi.js`: di layar ≤700px grid `.aksiK3` jadi 2 kolom (sebelumnya `auto-fit minmax(210px)` jatuh ke 1 kolom di HP). Label di atas, nilai di bawah; kartu ganjil terakhir (NOO) melebar penuh. Desktop tidak berubah. Diuji di Chromium 390px dengan data contoh.
+
+## Cache runtime tidak lagi di-track git
+- Commit 7f03a74 ikut membawa ±183 file `storage/cache/*.json` (cache runtime, bikin `git pull` gagal "untracked files would be overwritten"). `storage/cache/` dan `*.zip` masuk `.gitignore`, file cache dilepas dari index (`git rm --cached`, file di disk tidak dihapus).
+
+## Kartu KPI ≤700px: baris label kiri / nilai kanan
+- Rule 2 kolom sebelumnya menumpuk label di atas nilai; dikembalikan ke baris label kiri, nilai kanan (font 10.5px, boleh turun baris bila panjang). Tetap 2 kolom.

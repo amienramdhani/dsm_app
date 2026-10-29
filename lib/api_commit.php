@@ -44,7 +44,7 @@ function apiCommitBoot($token) {
     $q->execute(array_merge([$wk, $last], array_map('strval', $ids)));
     $rows = array_map(fn($r) => commitRow_($r, $PBY, $me), $q->fetchAll(PDO::FETCH_ASSOC));
     $people = [];
-    foreach ($ids as $n) { $p = $PBY[(string) $n] ?? null; if ($p && in_array($p['role'], ['SALES', 'ASM', 'RGM', 'HEAD OF SALES', 'CHIEF OPERATING OFFICER', 'CHIEF COMMERCIAL OFFICER', 'BOARD OF DIRECTOR'], true) && count($people) < 1000) $people[] = ['nik' => (string) $p['nik'], 'nama' => text_($p['nama'] ?? ''), 'role' => $p['role']]; }
+    foreach ($ids as $n) { $p = $PBY[(string) $n] ?? null; if ($p && in_array($p['role'], ['SALES', 'ASM', 'RGM', 'HEAD OF SALES', 'CHIEF OPERATING OFFICER', 'CHIEF COMMERCIAL OFFICER', 'BOARD OF DIRECTOR'], true) && count($people) < 1000) $people[] = ['nik' => (string) $p['nik'], 'nama' => text_($p['nama'] ?? ''), 'role' => $p['role'], 'region' => js_or(text_($p['portfolio'] ?? ''), text_($p['region'] ?? ''))]; }
     usort($people, fn($a, $b) => strcmp($a['nama'], $b['nama']));
     $cms = [];
     if ($rows) {

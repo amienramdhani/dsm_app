@@ -35,6 +35,7 @@ html body #app #view .aksiOldHide{display:none!important}
 .aksiBUh{font-size:10px;font-weight:900;color:#6b7a99;letter-spacing:.5px;margin:8px 0 4px;border-top:1px solid #e3eaf7;padding-top:6px}
 @media(min-width:1000px){.aksiK3:has(.aksiOm){grid-template-columns:repeat(5,minmax(0,1fr))}}
 @media(max-width:999px){.aksiOm{grid-column:1/-1}}
+@media(max-width:700px){.aksiK3{grid-template-columns:repeat(2,minmax(0,1fr))}.aksiK3>.aksiK:last-child:nth-child(odd){grid-column:1/-1}.aksiK3>.aksiK:not(.aksiOm) dl>div{flex-wrap:wrap;align-items:baseline;font-size:10.5px}.aksiK3>.aksiK:not(.aksiOm) dd{margin-left:auto}.aksiK3>.aksiK:not(.aksiOm) b{font-size:19px}.aksiK{padding:9px 10px}}
 .aksiK.r{border-left-color:#e5484d}.aksiK.a{border-left-color:#f59e0b}.aksiK.g{border-left-color:#12a05c}
 .aksiBg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-items:start}@media(min-width:1000px){.aksiBg{grid-template-columns:repeat(4,minmax(0,1fr))}}.aksiBg>*{min-width:0}
 details.aksiBr{border:1px solid #e3eaf7;border-radius:14px;background:#fbfdff}
@@ -385,7 +386,7 @@ html body #app #view .aksiSub th{color:#6b7a99;font-size:9.5px!important;font-we
     const reviewItem = r => `<div class="aksiCm ${stCls[r.status]}" data-id="${r.id}">${cmHead(r)}<div class="aksiCmD">${stBtns}${r.status !== 'DONE' && r.mine ? '<div class="aksiCmB"><button data-a="carry">Bawa ke minggu ini</button></div>' : ''}<input class="aksiNoteIn" placeholder="Catatan penilaian (opsional)" value="${E(r.note || '')}">${cmts(r)}</div></div>`;
     const RS = { 'HEAD OF SALES': 'HOS', 'CHIEF OPERATING OFFICER': 'COO', 'CHIEF COMMERCIAL OFFICER': 'CCO', 'BOARD OF DIRECTOR': 'BOD' };
     const lbl = p => p.nama + ' (' + (RS[p.role] || p.role) + ')';
-    const cb = (cls, items, selNik, selLbl, ph) => `<div class="aksiCb ${cls}"><input class="aksiCbIn" autocomplete="off" placeholder="${E(ph)}" value="${E(selLbl)}" data-nik="${E(selNik)}" data-lbl="${E(selLbl)}"><span class="aksiCbArr">▾</span><div class="aksiCbList" hidden>${items.map(i => `<div class="aksiCbO" data-nik="${E(i.nik)}" data-lbl="${E(i.label)}"><span>${E(i.label)}</span>${i.sub ? `<small>${E(i.sub)}</small>` : ''}</div>`).join('')}<div class="aksiCbNone" hidden>Tidak ada yang cocok</div></div></div>`;
+    const cb = (cls, items, selNik, selLbl, ph) => { try { window.dsmPersonCss && window.dsmPersonCss(); } catch (e) {} const subs = {}; items.forEach(i => { if (i.sub) subs[i.nik] = i.sub; }); return `<div class="aksiCb ${cls}" data-subs="${E(JSON.stringify(subs))}" data-ph="${E(ph)}"><input class="aksiCbIn" type="hidden" value="${E(selLbl)}" data-nik="${E(selNik)}" data-lbl="${E(selLbl)}"><button type="button" class="ppField aksiPick" aria-label="${E(ph)}">${pFld(selNik, selLbl, ph)}</button></div>`; };
     const others = CM.people.filter(p => p.nik !== CM.me);
     const opt = others.length ? cb('aksiOwn', [{ nik: CM.me, label: 'Saya sendiri' }].concat(others.map(p => ({ nik: p.nik, label: lbl(p) }))), CM.me, 'Saya sendiri', 'Untuk siapa…') : '';
     const rateOf = a => a.length ? `${dn(done(a))} dari ${a.length} terselesaikan (${P(done(a) / a.length * 100)})` : '';
@@ -407,6 +408,9 @@ html body #app #view .aksiSub th{color:#6b7a99;font-size:9.5px!important;font-we
       <div class="aksiBox aksiCmBox"><h3>Review minggu lalu<em>${wkTxt(CM.lastWeek)}${rate ? ' · ' + rate : ''}</em></h3>
       ${mineP.length ? mineP.map(reviewItem).join('') : '<div class="aksiEmpty">Tidak ada komitmen minggu lalu.</div>'}</div>${teamBox}`;
   }
+
+  const ini = n => String(n || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
+  const pFld = (nik, selLbl, ph) => { const p = CM.people.find(x => x.nik === nik); if (nik === CM.me) return `<span class="ppAv">${E(ini(selLbl))}</span><span class="ppTx"><b>${E(selLbl)}</b></span><span class="ppCh">▾</span>`; return p ? `<span class="ppAv">${E(ini(p.nama))}</span><span class="ppTx"><b>${E(p.nama)}</b><small>${E([p.role, p.region, p.nik].filter(Boolean).join(' · '))}</small></span><span class="ppCh">▾</span>` : `<span class="ppPh">${E(ph)}</span><span class="ppCh">▾</span>`; };
 
   function commitLoad(root) {
     if (typeof rpc !== 'function' || typeof TOKEN === 'undefined') return;
@@ -436,6 +440,15 @@ html body #app #view .aksiSub th{color:#6b7a99;font-size:9.5px!important;font-we
       const sg = ev.target.closest('[data-seg]'); if (sg && root.contains(sg)) { root.dataset.sec = sg.dataset.seg; try { root.scrollIntoView({ block: 'start' }); } catch (e) {} return; }
       const tg = ev.target.closest('[data-tg]'); if (tg && root.contains(tg)) { tg.parentElement.classList.toggle('open'); return; }
       const ma = ev.target.closest('button[data-a="more"]'); if (ma) { ma.closest('.aksiFold').classList.toggle('showAll'); ma.textContent = ma.closest('.aksiFold').classList.contains('showAll') ? 'Ringkas' : 'Lihat dealer lainnya'; return; }
+      const pk = ev.target.closest('.aksiPick'); if (pk && root.contains(pk) && window.dsmPersonSheet) {
+        const cbx = pk.closest('.aksiCb'), hi = cbx.querySelector('.aksiCbIn'), own = cbx.classList.contains('aksiOwn'); let subs = {}; try { subs = JSON.parse(cbx.dataset.subs || '{}'); } catch (e) {}
+        const items = CM.people.filter(p => p.nik !== CM.me).map(p => ({ value: p.nik, nik: p.nik, nama: p.nama, role: p.role, region: p.region || '', note: subs[p.nik] || '' }));
+        window.dsmPersonSheet({ title: own ? 'Komitmen untuk siapa?' : 'Lihat komitmen siapa?', items, selected: own && hi.dataset.nik === CM.me ? '' : hi.dataset.nik, empty: own ? 'Saya sendiri' : '', ph: 'Cari nama / NIK / role / region', done: v => {
+          const nik = v || CM.me, p = CM.people.find(x => x.nik === nik), lb = nik === CM.me ? 'Saya sendiri' : (p ? p.nama : nik);
+          hi.dataset.nik = nik; hi.dataset.lbl = lb; hi.value = lb; pk.innerHTML = pFld(nik, lb, cbx.dataset.ph || '');
+        } });
+        return;
+      }
       const ot = ev.target.closest('[data-a="openteam"],[data-a="closeteam"]'); if (ot && root.contains(ot)) {
         const w = root.querySelector('.aksiTeamWrap'), dm = root.querySelector('.aksiDimT'), on = ot.dataset.a === 'openteam';
         if (w) w.classList.toggle('open', on); if (dm) dm.classList.toggle('open', on); if (!on) closeAll(null);

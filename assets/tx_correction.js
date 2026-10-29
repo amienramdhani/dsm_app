@@ -123,12 +123,12 @@ async function detail(it){
   <div class="txcInfo"><div><small>Dealer</small><b>${E(it.dealer||it.induk)}</b></div><div><small>Kode / Region</small><b>${E(it.customer)} · ${E(it.region)}</b></div><div><small>Brand / SKU</small><b>${E(it.brand)} · ${E(it.sku)}</b></div><div><small>Qty</small><b>${N(it.qty)}</b></div><div><small>Omzet</small><b>${money(it.amount)}</b></div><div><small>Marker</small><b>${tag(it)}</b></div></div>
   <div class="txcChain"><div class="c"><small>Sales di file ST</small><b>${whoLine(it.raw)}</b></div><span class="ar">›</span><div class="c"><small>Pemilik dealer-brand</small><b>${whoLine(it.owner)}</b></div><span class="ar">›</span><div class="c eff"><small>Sales efektif sekarang</small><b>${whoLine(it.eff)}</b></div></div>
   ${it.review&&it.why?`<div class="txcMsg warn">${E(it.why)}</div>`:''}
-  <div class="txcForm"><label for="txcTo">Sales efektif yang benar</label><select id="txcTo"><option value="">Pilih Sales…</option>${cands.map(c=>`<option value="${E(c.nik)}">${E(c.nama)} · ${E(c.nik)}${c.region?' · '+E(c.region):''}</option>`).join('')}</select>
+  <div class="txcForm"><label for="txcTo">Sales efektif yang benar</label><select id="txcTo"><option value="">Pilih Sales…</option>${cands.map(c=>`<option value="${E(c.nik)}" data-nama="${E(c.nama)}" data-role="${E(c.role||'')}" data-region="${E(c.region||'')}" data-nik="${E(c.nik)}">${E(c.nama)} · ${E(c.nik)}${c.region?' · '+E(c.region):''}</option>`).join('')}</select>
   <label for="txcWhyIn">Alasan koreksi (min. 5 karakter)</label><textarea id="txcWhyIn" placeholder="Contoh: transaksi dikerjakan Sales B, tercatat di Sales A pada ST"></textarea>
   <div id="txcErr"></div></div>
   <div class="txcAct">${it.corrId?'<button type="button" class="txcBtn warn" id="txcRev">Cabut koreksi</button>':''}<button type="button" class="txcBtn ghost" id="txcCancel">Tutup</button><button type="button" class="txcBtn" id="txcSave">Simpan koreksi</button></div>
   <div class="txcHist" id="txcHist"><i>Memuat riwayat…</i></div>`);
- try{if(typeof window.dsmSearchable==='function')window.dsmSearchable(o.querySelector('#txcTo'),'Ketik nama / NIK Sales…')}catch(e){}
+ try{if(typeof window.dsmPersonSelect==='function')window.dsmPersonSelect(o.querySelector('#txcTo'),{title:'Pilih Sales efektif',ph:'Pilih Sales…'});else if(typeof window.dsmSearchable==='function')window.dsmSearchable(o.querySelector('#txcTo'),'Ketik nama / NIK Sales…')}catch(e){}
  o.querySelector('#txcCancel').onclick=closeModal;
  const rv=o.querySelector('#txcRev');if(rv)rv.onclick=()=>{closeModal();revokeDialog(it.corrId)};
  o.querySelector('#txcSave').onclick=()=>save(it,o);
