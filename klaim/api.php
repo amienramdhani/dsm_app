@@ -172,7 +172,7 @@ try {
       }
       usort($rows, fn($a, $b) => strcasecmp($a['nama'], $b['nama'])); out(['rows' => array_values($rows)]);
     case 'sa_user_save':
-      need_role($u, 'SA'); $id = (int) ($in['id'] ?? 0); $roles = implode(',', array_values(array_intersect(['ADMIN', 'AUDIT', 'HOS', 'FM', 'FT', 'RGM', 'SA'], $in['roles'] ?? [])));
+      need_role($u, 'SA'); $id = (int) ($in['id'] ?? 0); $roles = implode(',', array_values(array_intersect(['ADMIN', 'AUDIT', 'HOS', 'FM', 'FT', 'RGM', 'ASM', 'SALES', 'SA'], $in['roles'] ?? [])));
       $f = ['name' => trim($in['name'] ?? ''), 'nik' => trim($in['nik'] ?? '') ?: null, 'job' => trim($in['job'] ?? ''), 'region' => ($in['region'] ?? '') ?: null, 'entity' => ($in['entity'] ?? '') ?: null, 'roles' => $roles, 'can_submit' => !empty($in['can_submit']) ? 1 : 0, 'active' => isset($in['active']) ? ($in['active'] ? 1 : 0) : 1];
       if (array_key_exists('wa', $in)) $f['wa'] = norm_wa($in['wa']);
       if (dsm_present() && !$id) { $nk = trim($in['nik'] ?? ''); $per = $nk !== '' ? dsm_person($nk) : null; if (!$per) fail('NIK tidak ditemukan di DSM. Tambahkan dulu akunnya di DSM.');
