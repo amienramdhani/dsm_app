@@ -25,7 +25,7 @@ try {
   if ($a === 'demo_users') { if (dsm_present()) out(['users' => []]); out(['users' => array_map(fn($r) => ['username' => $r['username'], 'name' => $r['name'], 'job' => $r['job']], q("SELECT username,name,job FROM claim_users WHERE active=1 ORDER BY id"))]); }
   $u = need_me();
   // Mode lihat: Super Admin yang "masuk sebagai" orang lain (Mode tes mati = produksi) hanya boleh melihat, tidak boleh mengubah apa pun.
-  if (!empty($u['impersonating']) && !test_mode() && in_array($a, ['upload', 'claim_save', 'claim_submit', 'claim_act', 'claim_resubmit', 'claim_cancel', 'followup_log', 'wa_save', 'sign_save', 'ba_sign', 'pc_submit', 'pc_act', 'pc_note', 'pc_report', 'pc_setoran', 'pc_close', 'notif_read', 'entitlement_save', 'type_save', 'rules_save', 'aging_save', 'entity_add', 'entity_del', 'fuel_save', 'sa_user_save', 'sa_seed_uji', 'sa_uji_off', 'sa_testmode', 'sa_reset', 'backup_issue', 'backup_use', 'backup_revoke'], true))
+  if (!empty($u['impersonating']) && !test_mode() && in_array($a, ['upload', 'claim_save', 'claim_submit', 'claim_act', 'claim_resubmit', 'claim_cancel', 'followup_log', 'wa_save', 'sign_save', 'ba_sign', 'pc_submit', 'pc_act', 'pc_note', 'pc_report', 'pc_setoran', 'pc_close', 'notif_read', 'entitlement_save', 'entitlement_copy', 'type_save', 'rules_save', 'aging_save', 'entity_add', 'entity_del', 'fuel_save', 'sa_user_save', 'sa_seed_uji', 'sa_uji_off', 'sa_testmode', 'sa_reset', 'backup_issue', 'backup_use', 'backup_revoke'], true))
     fail('Mode lihat: Super Admin tidak bisa mengubah data atas nama orang lain. Klik "kembali" dulu.', 403);
 
   switch ($a) {
@@ -128,6 +128,44 @@ try {
       }
       hist('user', (int) $t['id'], 'Hak klaim diubah', $u, jenc(['tarif_makan' => $f['meal_rate'], 'plafon' => $f['petty_ceiling']]));
       out([]);
+    case 'entitlement_copy': // salin hak klaim (yang tersimpan) dari satu orang ke banyak orang. Rekening tidak ikut.
+      need_role($u, 'ADMIN'); $src = user_row((int) ($in['from_user_id'] ?? 0)); if (!$src) fail('Sumber tidak ada.'); if (!can_manage_user($u, $src)) fail('Di luar region Anda.', 403);
+      $parts = $in['parts'] ?? []; $do = fn($k) => !empty($parts[$k]); if (!($do('submit') || $do('cats') || $do('meal') || $do('petty'))) fail('Pilih apa yang disalin.');
+      $ids = array_values(array_unique(array_filter(array_map('intval', $in['to_ids'] ?? [])))); if (!$ids) fail('Pilih penerima.'); if (count($ids) > 300) fail('Maksimal 300 orang sekali salin.');
+      $skipEx = !empty($in['skip_existing']); $dry = !empty($in['dry']);
+      $sent = []; foreach (q("SELECT category, enabled, budget FROM claim_entitlement WHERE user_id=?", [$src['id']]) as $e) $sent[$e['category']] = $e;
+      $new = 0; $over = 0; $skip = []; $samples = []; $done = 0;
+      try { if (!$dry) db()->beginTransaction();
+      foreach ($ids as $tid) {
+        if ($tid === (int) $src['id']) continue;
+        $t = user_row($tid); if (!$t || !$t['active']) { $skip[] = ['name' => $t['name'] ?? ('#' . $tid), 'why' => 'tidak aktif']; continue; }
+        if (!can_manage_user($u, $t)) { $skip[] = ['name' => $t['name'], 'why' => 'di luar region Anda']; continue; }
+        if (same_person($u, ['claimant_id' => $t['id'], 'created_by' => $t['id']]) && !sa_free($u)) { $skip[] = ['name' => $t['name'], 'why' => 'hak sendiri']; continue; }
+        $cur = []; foreach (q("SELECT category, enabled, budget FROM claim_entitlement WHERE user_id=?", [$tid]) as $e) $cur[$e['category']] = $e;
+        $has = (bool) $cur; if ($has && $skipEx) { $skip[] = ['name' => $t['name'], 'why' => 'sudah punya hak']; continue; }
+        $has ? $over++ : $new++;
+        if ($dry) {
+          if ($has && count($samples) < 3) { $ch = [];
+            if ($do('cats')) foreach (CATS as $c) { $a = (int) ($cur[$c]['budget'] ?? 0); $b = (int) ($sent[$c]['budget'] ?? 0); if ($a !== $b) $ch[] = $c . ' ' . number_format($a, 0, ',', '.') . ' → ' . number_format($b, 0, ',', '.'); }
+            if ($do('meal') && (int) $t['meal_rate'] !== (int) $src['meal_rate']) $ch[] = 'Tarif makan ' . number_format((int) $t['meal_rate'], 0, ',', '.') . ' → ' . number_format((int) $src['meal_rate'], 0, ',', '.');
+            if ($do('submit') && (int) $t['can_submit'] !== (int) $src['can_submit']) $ch[] = 'Boleh klaim ' . ($t['can_submit'] ? 'ya' : 'tidak') . ' → ' . ($src['can_submit'] ? 'ya' : 'tidak');
+            if ($ch) $samples[] = ['name' => $t['name'], 'changes' => array_slice($ch, 0, 3)]; }
+          continue;
+        }
+        $f = [];
+        if ($do('submit')) $f['can_submit'] = (int) $src['can_submit'];
+        if ($do('meal')) $f['meal_rate'] = $src['meal_rate'] === null ? null : (int) $src['meal_rate'];
+        if ($do('petty')) { $f['can_petty'] = (int) $src['can_petty']; $f['petty_ceiling'] = (int) $src['petty_ceiling']; }
+        if ($f) upd('claim_users', $tid, $f);
+        if ($do('cats')) foreach (CATS as $c) {
+          $en = (int) ($sent[$c]['enabled'] ?? 0); $bu = (int) ($sent[$c]['budget'] ?? 0);
+          if (isset($cur[$c])) ex("UPDATE claim_entitlement SET enabled=?, budget=? WHERE user_id=? AND category=?", [$en, $bu, $tid, $c]); else ins('claim_entitlement', ['user_id' => $tid, 'category' => $c, 'enabled' => $en, 'budget' => $bu]);
+        }
+        hist('user', $tid, 'Hak klaim disalin dari ' . $src['name'], $u, implode(', ', array_keys(array_filter(['akses' => $do('submit'), 'budget' => $do('cats'), 'tarif makan' => $do('meal'), 'petty cash' => $do('petty')]))));
+        $done++;
+      }
+      if (!$dry) db()->commit(); } catch (Throwable $e) { if (!$dry && db()->inTransaction()) db()->rollBack(); throw $e; }
+      out(['dry' => $dry, 'new' => $new, 'over' => $over, 'skipped' => $skip, 'samples' => $samples, 'done' => $done]);
     case 'type_save':
       need_role($u, 'ADMIN'); $id = (int) ($in['id'] ?? 0); $cat = $in['category'] ?? '';
       if ($id) { $t = type_row($id); if ($t['locked']) fail('Jenis ini terkunci.'); $f = ['name' => trim($in['name'] ?? $t['name']), 'active' => isset($in['active']) ? ($in['active'] ? 1 : 0) : $t['active']]; if (!$f['name']) fail('Nama wajib.'); upd('claim_types', $id, $f); }

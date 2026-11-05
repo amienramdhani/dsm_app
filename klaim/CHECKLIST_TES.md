@@ -202,3 +202,10 @@ Jalankan ulang `install.php` (ada tabel baru `claim_fuel_price`; harga tes Perta
 - Orang lain yang memakai kode → ditolak. Durasi habis / jatah 5 kali habis / dicabut → akses hilang.
 - Daftar kode: status AKTIF / BELUM DIPAKAI / SELESAI / DICABUT; tombol Cabut hanya Super Admin dan pemberi kode.
 - Wajib jalankan `php klaim/migrate.php` (kolom baru claim_backup).
+
+## Salin hak klaim ke banyak orang
+- Admin → Hak klaim → pilih orang → **Salin hak ini ke orang lain**.
+- Centang yang disalin (akses klaim, budget kategori, tarif uang makan, petty cash). Rekening tidak ikut.
+- Pilih penerima (cari, filter jabatan/region/badan usaha, Pilih semua) → Lanjut → ringkasan (berapa diisi, berapa ditimpa, contoh perubahan) → Ya, salin.
+- "Lewati yang sudah punya hak": hanya isi yang belum diatur.
+- Admin hanya bisa menyalin ke orang di regionnya, tidak ke dirinya sendiri. Tiap penerima tercatat di riwayat ("Hak klaim disalin dari …").

@@ -21,13 +21,58 @@ async function hakEdit(id) {
    <div class="sec" style="padding-top:12px"><h3>Perdin</h3><div class="card" style="border:1.5px solid #F07A0C"><div class="fld" style="margin:0"><label>Tarif uang makan per hari (Rp)</label><input id="meal" inputmode="numeric" value="${fmtN(u.meal_rate)}" placeholder="Belum diisi"></div><div class="mut" style="margin-top:4px">Diatur per orang. Terkunci untuk pemohon; dipakai: tarif × durasi.</div></div></div>
    <div class="sec" style="padding-top:12px"><h3>Rekening default</h3><div class="card">${fld('Bank', typed('hbank', S.L.bank, u.bank, 'Pilih bank'))}${fld('Nomor rekening', `<input id="hno" value="${esc(u.bank_no || '')}" inputmode="numeric">`)}${fld('Atas nama', `<input id="hnm" value="${esc(u.bank_name || '')}">`)}</div></div>
    <div class="sec" style="padding-top:12px"><h3>Petty cash</h3><div class="card"><div class="row"><b>Boleh mengajukan petty cash</b>${sw(+u.can_petty, 'pcn')}</div>${fld('Plafon (Rp)', `<input id="hplaf" inputmode="numeric" value="${fmtN(u.petty_ceiling)}">`)}</div></div>
-   <div class="sec" style="padding:12px 14px"><button class="cta" id="hsv">SIMPAN</button></div>`, { hero: false });
+   <div class="sec" style="padding:12px 14px"><button class="cta" id="hsv">SIMPAN</button><button class="btn g" id="hcp" style="margin-top:10px;width:100%">⧉ SALIN HAK INI KE ORANG LAIN</button><div class="mut" style="margin-top:6px;text-align:center">Yang disalin adalah pengaturan yang <b>sudah tersimpan</b>. Simpan dulu kalau ada perubahan. Rekening tidak ikut disalin.</div></div>`, { hero: false });
+  $('#hcp').onclick = () => copyHak(u, j.rows);
   $('#app').addEventListener('click', e => { const s = e.target.closest('[data-sw]'); if (s) s.classList.toggle('on'); });
   $('#app').addEventListener('input', e => { if (e.target.matches('[data-bud],#meal,#hplaf')) e.target.value = fmtN(num(e.target.value)); });
   $('#hsv').onclick = () => guard(async () => {
     const on = k => $(`[data-sw="${k}"]`).classList.contains('on'); const cats = {}; CATS_LIST.forEach(c => cats[c] = { enabled: on('en.' + c) ? 1 : 0, budget: num($(`[data-bud="${c}"]`).value) });
     await api('entitlement_save', { user_id: id, can_submit: on('cs') ? 1 : 0, cats, meal_rate: $('#meal').value === '' ? '' : num($('#meal').value), bank: $('#hbank').value, bank_no: $('#hno').value, bank_name: $('#hnm').value, can_petty: on('pcn') ? 1 : 0, petty_ceiling: num($('#hplaf').value) });
     toast('Hak klaim tersimpan.'); location.hash = '#/a/hak'; });
+}
+function copyHak(src, rows) {
+  const st = { parts: { submit: 1, cats: 1, meal: 1, petty: 0 }, skip: 0, sel: new Set(), q: '', job: '', region: '', entity: '' };
+  const cands = rows.filter(r => r.id != src.id && r.id != S.me.id);
+  const uniq = k => [...new Set(cands.map(r => (k === 'entity' ? (r.entity || '') : (r[k] || ''))).filter(Boolean))].sort();
+  const PT = [['submit', 'Boleh mengajukan klaim', ''], ['cats', 'Kategori dan budget per bulan', 'Transportasi, Entertain, Perdin, Operasional'], ['meal', 'Tarif uang makan Perdin', ''], ['petty', 'Petty cash dan plafon', '']];
+  const cb = on => `<span class="cbx${on ? ' on' : ''}">${on ? '✓' : ''}</span>`;
+  const vis = () => cands.filter(r => (!st.q || (r.name + ' ' + (r.job || '')).toLowerCase().includes(st.q)) && (!st.job || r.job === st.job) && (!st.region || r.region === st.region) && (!st.entity || (r.entity || '').split(',').map(x => x.trim()).includes(st.entity)));
+  sheet(`<div id="cpx"></div>`, (el, close) => {
+    const body = el.querySelector('#cpx');
+    const step1 = () => {
+      const v = vis(); const allOn = v.length && v.every(r => st.sel.has(r.id));
+      body.innerHTML = `<h3>Salin dari ${esc(src.name)}</h3><div class="mut"><b>1. APA YANG DISALIN</b></div>
+      ${PT.map(p => `<div class="ckr" data-pt="${p[0]}">${cb(st.parts[p[0]])}<div>${p[1]}${p[2] ? `<div class="mut">${p[2]}</div>` : ''}</div></div>`).join('')}
+      <div class="note blue">Rekening bank <b>tidak ikut disalin</b>, karena itu data pribadi tiap orang.</div>
+      <div class="mut" style="margin-top:12px"><b>2. SALIN KE SIAPA</b></div>
+      <input id="cq" placeholder="Cari nama" value="${esc(st.q)}" style="margin-top:6px">
+      <div class="two" style="margin-top:6px"><select id="cj"><option value="">Semua jabatan</option>${uniq('job').map(x => `<option ${st.job === x ? 'selected' : ''}>${esc(x)}</option>`).join('')}</select><select id="cr2"><option value="">Semua region</option>${uniq('region').map(x => `<option ${st.region === x ? 'selected' : ''}>${esc(x)}</option>`).join('')}</select></div>
+      <select id="ce" style="margin-top:6px"><option value="">Semua badan usaha</option>${[...new Set(cands.flatMap(r => (r.entity || '').split(',').map(x => x.trim()).filter(Boolean)))].sort().map(x => `<option ${st.entity === x ? 'selected' : ''}>${esc(x)}</option>`).join('')}</select>
+      <div class="row" style="margin-top:10px"><span class="mut">${v.length} orang cocok · ${st.sel.size} dipilih</span><b id="call" style="color:#1E5FB8;font-size:13px;cursor:pointer">${allOn ? 'Batal pilih semua' : 'Pilih semua ' + v.length}</b></div>
+      <div id="clst" style="max-height:34vh;overflow:auto;margin-top:4px">${v.map(r => `<div class="ckr" data-id="${r.id}">${cb(st.sel.has(r.id))}<div style="flex:1"><b>${esc(r.name)}</b><div class="mut">${esc(r.job || '-')} · ${esc(r.region || '-')} · ${esc(r.entity || '-')}</div></div><span class="chip ${r.ent.length ? '' : 'on'}" style="font-size:10px">${r.ent.length ? 'SUDAH ADA HAK' : 'BELUM DIATUR'}</span></div>`).join('') || '<div class="mut" style="padding:10px">Tidak ada yang cocok.</div>'}</div>
+      <div class="ckr" id="cskip" style="margin-top:6px">${cb(st.skip)}<div>Lewati yang sudah punya hak<div class="mut">Hanya isi yang belum diatur, yang sudah ada tidak ditimpa.</div></div></div>
+      <button class="cta" id="cnext" style="margin-top:10px" ${st.sel.size ? '' : 'disabled'}>LANJUT · ${st.sel.size} ORANG DIPILIH</button>`;
+      body.querySelectorAll('[data-pt]').forEach(e => e.onclick = () => { st.parts[e.dataset.pt] = st.parts[e.dataset.pt] ? 0 : 1; step1(); });
+      body.querySelectorAll('[data-id]').forEach(e => e.onclick = () => { const id = +e.dataset.id; st.sel.has(id) ? st.sel.delete(id) : st.sel.add(id); const sc = body.querySelector('#clst').scrollTop; step1(); body.querySelector('#clst').scrollTop = sc; });
+      body.querySelector('#cskip').onclick = () => { st.skip = st.skip ? 0 : 1; step1(); };
+      body.querySelector('#call').onclick = () => { allOn ? v.forEach(r => st.sel.delete(r.id)) : v.forEach(r => st.sel.add(r.id)); step1(); };
+      body.querySelector('#cq').oninput = e => { st.q = e.target.value.toLowerCase(); const pos = e.target.selectionStart; step1(); const i = body.querySelector('#cq'); i.focus(); i.setSelectionRange(pos, pos); };
+      body.querySelector('#cj').onchange = e => { st.job = e.target.value; step1(); }; body.querySelector('#cr2').onchange = e => { st.region = e.target.value; step1(); }; body.querySelector('#ce').onchange = e => { st.entity = e.target.value; step1(); };
+      body.querySelector('#cnext').onclick = () => guard(async () => { if (!Object.values(st.parts).some(Boolean)) throw new Error('Pilih apa yang disalin.'); const r = await api('entitlement_copy', req(1)); step2(r); });
+    };
+    const req = dry => ({ from_user_id: src.id, to_ids: [...st.sel], parts: st.parts, skip_existing: st.skip ? 1 : 0, dry });
+    const step2 = r => {
+      const n = r.new + r.over;
+      body.innerHTML = `<h3>Salin ke ${n} orang?</h3><div class="card"><div class="mut"><b>Yang disalin dari ${esc(src.name)}</b></div><div class="chips">${PT.filter(p => st.parts[p[0]]).map(p => `<span class="chip">${p[1].split(' per ')[0]}</span>`).join('')}</div></div>
+      <div class="note ${r.over ? 'warn' : ''}"><b>${r.new} orang belum punya hak</b> akan diisi.${r.over ? `<br><b>${r.over} orang sudah punya hak</b> akan <b>ditimpa</b> dengan hak ${esc(src.name)}. Hak lama mereka hilang.` : ''}</div>
+      ${r.samples.length ? `<div class="card"><div class="mut"><b>Contoh perubahan yang ditimpa</b></div>${r.samples.map(x => `<div style="font-size:12.5px;margin-top:6px"><b>${esc(x.name)}</b><br>${x.changes.map(esc).join('<br>')}</div>`).join('')}</div>` : ''}
+      ${r.skipped.length ? `<div class="note">${r.skipped.length} dilewati: ${r.skipped.slice(0, 5).map(x => esc(x.name) + ' (' + esc(x.why) + ')').join(', ')}${r.skipped.length > 5 ? ', …' : ''}</div>` : ''}
+      <button class="cta" id="cgo2" ${n ? '' : 'disabled'}>YA, SALIN KE ${n} ORANG</button><button class="btn g" id="cbk" style="margin-top:8px;width:100%">KEMBALI</button>`;
+      body.querySelector('#cbk').onclick = step1;
+      body.querySelector('#cgo2').onclick = () => guard(async () => { const d = await api('entitlement_copy', req(0)); close(); toast(`Selesai. ${d.done} orang diperbarui.`); });
+    };
+    step1();
+  });
 }
 async function jenisScreen() {
   const j = await api('types_all');
