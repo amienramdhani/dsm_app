@@ -18,6 +18,7 @@ function apiBootstrap($token) {
         try { foreach ($db['meta']['people'] as $p) if ($p['role'] === 'TELEMARKETING' && ($p['atasan'] ?? '') === $u['nik'] || ($p['role'] === 'TELEMARKETING' && tmVisiblePairs_($db, $u, $p['nik'], tmLivePairs_($p['nik'])))) { $tmSeen = true; break; } } catch (Throwable $e) { $tmSeen = true; }
     }
     $u['tmVisible'] = $tmSeen;
+    $u['klaim'] = klaimAccess_((string) $u['nik'], (string) $u['role']);
     return ['user' => $u, 'people' => js_filter($db['meta']['people'], fn($p) => isset($set[(string) $p['nik']])), 'periods' => $periods, 'processed' => $db['processed'] ?? null, 'version' => $db['id'], 'exportAccess' => $exportAccess, 'demo' => $demo];
 }
 

@@ -2,6 +2,7 @@
 let tmState={boot:null,tab:'sales',person:'',filters:{q:'',brand:'ALL',big:'ALL',region:'ALL',state:'ALL'},activity:null,order:null,admin:null,adminPerson:'',config:null};
 function tmMenuAllowed(page,role){
  if(page==='tmfu')return false;
+ if(page==='presentasi')return window.DSM_PRESENTASI_AKTIF===true&&['ASM','RGM','HEAD OF SALES','CHIEF OPERATING OFFICER','CHIEF COMMERCIAL OFFICER','BOARD OF DIRECTOR','ADMIN','SUPER ADMIN'].includes(role);
  if(page==='transfer')return ['ASM','RGM','ADMIN','SUPER ADMIN'].includes(role);
  if(page==='koreksi')return ['ADMIN','SUPER ADMIN'].includes(role);
  if(page==='tmorder')return ['TELEMARKETING','SALES','ASM','RGM','ADMIN','SUPER ADMIN'].includes(role);

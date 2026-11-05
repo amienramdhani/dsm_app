@@ -174,7 +174,7 @@ function tfa_needed_($nik): bool {
     $x = authx_get_($nik); if ((int) $x['tfa_on']) return true;
     try {
         $p = PortalCore::person(snapshot_()['meta']['people'], $nik);
-        return $p && PortalCore::lv($p['role'] ?? '') >= 2;
+        return $p && (PortalCore::lv($p['role'] ?? '') >= 2 || ($p['role'] ?? '') === 'OPERASIONAL');
     } catch (AppError $e) { return false; } // belum ada data dipublikasikan (setup awal)
 }
 function tfa_ticket_issue_(string $nik, string $mode, string $deviceId = '', ?string $deviceName = null): string {
@@ -267,7 +267,7 @@ function securityRows_(array $u, array $db): array {
         $nik = text_($p['nik']); if ($nik === '-' || isset($seen[$nik]) || !isset($accts[$nik]) || !canManageUser_($u, $p)) continue; $seen[$nik] = 1;
         $v = $accts[$nik]; if (!PortalCore::active($v[3] ?? null) || !truthy($v[2] ?? '')) continue;
         $x = $xs[$nik] ?? authx_blank_($nik); $times = authx_fail_times_($x);
-        $need = PortalCore::lv($p['role'] ?? '') >= 2;
+        $need = PortalCore::lv($p['role'] ?? '') >= 2 || ($p['role'] ?? '') === 'OPERASIONAL';
         $lockUntil = (int) num_($v[7] ?? 0);
         $rows[] = ['nik' => $nik, 'nama' => $p['nama'], 'role' => $p['role'], 'wilayah' => $p['wilayah'] ?? '',
             'tfa' => (int) $x['tfa_on'] ? 'on' : ($need ? 'off' : 'na'),

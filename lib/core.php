@@ -6,7 +6,7 @@
 require_once __DIR__ . '/js.php';
 
 final class PortalCore {
-    const LEVEL = ['TELEMARKETING' => 1, 'SALES' => 1, 'ASM' => 2, 'RGM' => 3, 'ADMIN' => 3.5, 'HEAD OF SALES' => 4, 'CHIEF OPERATING OFFICER' => 5, 'CHIEF COMMERCIAL OFFICER' => 5, 'BOARD OF DIRECTOR' => 6, 'SUPER ADMIN' => 7];
+    const LEVEL = ['OPERASIONAL' => 0.5, 'TELEMARKETING' => 1, 'SALES' => 1, 'ASM' => 2, 'RGM' => 3, 'ADMIN' => 3.5, 'HEAD OF SALES' => 4, 'CHIEF OPERATING OFFICER' => 5, 'CHIEF COMMERCIAL OFFICER' => 5, 'BOARD OF DIRECTOR' => 6, 'SUPER ADMIN' => 7];
 
     /** Versi data orang; menghapus cache saat snapshot berganti. */
     public static string $ver = '';
@@ -461,7 +461,7 @@ final class PortalCore {
             $seen = [$p['nik'] => true]; $n = $p['atasan'];
             while (truthy($n)) { if (isset($seen[$n])) fail_('Siklus hierarki: ' . $p['nik']); $seen[$n] = true; $n = isset($map[$n]) ? $map[$n]['atasan'] : null; }
             $p['wilayah'] = js_or($rm[$p['region']] ?? null, js_or($rm[$p['portfolio']] ?? null, ''));
-            if (!truthy($p['wilayah']) && self::LEVEL[$p['role']] < 4 && $p['role'] !== 'ADMIN') fail_('Region belum dipetakan di Region_Map: ' . $p['region']);
+            if (!truthy($p['wilayah']) && self::LEVEL[$p['role']] < 4 && $p['role'] !== 'ADMIN' && $p['role'] !== 'OPERASIONAL') fail_('Region belum dipetakan di Region_Map: ' . $p['region']);
             $map[$k] = $p; $out[] = $p;
         }
         return $out;

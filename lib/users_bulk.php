@@ -6,7 +6,7 @@ function userBulkFix_(string $m, array $u): string {
     $super = $u['role'] === 'SUPER ADMIN';
     if (preg_match('/Region belum dipetakan/', $m)) return 'Tambah region di Admin › Master › Region Map, atau ganti REGION ke region yang ada (bukan Big Region).';
     if (preg_match('/NIK tidak valid/', $m)) return 'NIK hanya huruf/angka/titik/strip (2–60 karakter) dan tidak boleh dobel di file.';
-    if (preg_match('#Nama/jabatan#', $m)) return 'Isi NAMA, dan JABATAN/POSISI: SALES, ASM, RGM' . ($super ? ', ADMIN, HEAD OF SALES, dst.' : '.');
+    if (preg_match('#Nama/jabatan#', $m)) return 'Isi NAMA, dan JABATAN/POSISI: SALES, ASM, RGM' . ($super ? ', ADMIN, OPERASIONAL (tim operasional/Klaim), HEAD OF SALES, dst.' : '.');
     if (preg_match('/luar penugasan/', $m)) return 'Region ini di luar wilayah tugas Anda — minta Super Admin.';
     if (preg_match('/Wilayah Admin/', $m)) return 'Isi WILAYAH ADMIN dengan Big Region yang ada, pisahkan dengan |.';
     if (preg_match('/atasan wajib/', $m)) return 'Isi NIK ATASAN (ASM untuk Sales, RGM untuk ASM).';

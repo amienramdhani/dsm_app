@@ -113,6 +113,7 @@ function cleanupAuth_(): void { db_()->prepare('DELETE FROM _sessions WHERE unti
 const DEVICE_MAX = 5;
 const DEVICE_IDLE_MS_NORMAL = 30 * 86400000; // 30 hari tanpa aktivitas
 const DEVICE_IDLE_MS_ADMIN = 7 * 86400000;   // 7 hari untuk ADMIN / SUPER ADMIN
+const DEVICE_IDLE_MS_FINANCE = 86400000;     // 1 hari untuk Finance Klaim (FM/FT), khusus akun yang punya peran itu di modul Klaim
 const DEVICE_TOUCH_MS = 600000;              // perpanjang sesi & "terakhir aktif" paling sering tiap 10 menit
 
 function devices_schema_(): void {
@@ -130,7 +131,30 @@ function sessions_ensure_device_col_(): void {
         if ((int) $st->fetchColumn() === 0) $pdo->exec("ALTER TABLE _sessions ADD COLUMN device_id VARCHAR(64) NOT NULL DEFAULT ''");
     } catch (Throwable $e) {}
 }
-function deviceIdleMs_(string $role): int { return in_array($role, ['ADMIN', 'SUPER ADMIN'], true) ? DEVICE_IDLE_MS_ADMIN : DEVICE_IDLE_MS_NORMAL; }
+/** True bila NIK memegang peran FM atau FT di modul Klaim. Aman bila tabel Klaim belum ada. */
+function klaimFinance_(string $nik): bool {
+    static $memo = [];
+    if ($nik === '') return false;
+    if (isset($memo[$nik])) return $memo[$nik];
+    $ok = false;
+    try {
+        $st = db_()->prepare('SELECT roles FROM claim_users WHERE nik = ? AND active = 1'); $st->execute([$nik]);
+        foreach ($st->fetchAll(PDO::FETCH_COLUMN) as $r) if (array_intersect(['FM', 'FT'], array_map('trim', explode(',', (string) $r)))) { $ok = true; break; }
+    } catch (Throwable $e) { $ok = false; }
+    return $memo[$nik] = $ok;
+}
+/** Akses modul Klaim untuk NIK ini (null = tidak punya). Super Admin selalu punya. Aman bila tabel Klaim belum ada. */
+function klaimAccess_(string $nik, string $role = ''): ?array {
+    try {
+        $st = db_()->prepare('SELECT roles, can_submit FROM claim_users WHERE nik = ? AND active = 1'); $st->execute([$nik]); $r = $st->fetch();
+        if ($r) return ['roles' => array_values(array_filter(array_map('trim', explode(',', (string) $r['roles'])))), 'submit' => (int) $r['can_submit'] === 1];
+    } catch (Throwable $e) { return $role === 'SUPER ADMIN' ? ['roles' => ['SA'], 'submit' => false] : null; }
+    return $role === 'SUPER ADMIN' ? ['roles' => ['SA'], 'submit' => false] : null;
+}
+function deviceIdleMs_(string $role, string $nik = ''): int {
+    if ($nik !== '' && klaimFinance_($nik)) return DEVICE_IDLE_MS_FINANCE;
+    return in_array($role, ['ADMIN', 'SUPER ADMIN'], true) ? DEVICE_IDLE_MS_ADMIN : DEVICE_IDLE_MS_NORMAL;
+}
 function deviceUa_(): string { return substr((string) ($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 255); }
 function deviceAutoName_(string $ua): string {
     $os = 'Perangkat';
@@ -156,7 +180,7 @@ function deviceList_(string $nik): array {
 function deviceRegisterOrTouch_(string $nik, string $deviceId, ?string $name, string $role = ''): void {
     devices_schema_();
     // DSM v5: perangkat yang tidak aktif melewati batas idle (30 hari / 7 hari admin) otomatis gugur, jadi tidak memenuhi kuota 5 perangkat.
-    db_()->prepare('DELETE FROM _devices WHERE nik=? AND last_seen_ms < ?')->execute([$nik, now_ms() - deviceIdleMs_($role)]);
+    db_()->prepare('DELETE FROM _devices WHERE nik=? AND last_seen_ms < ?')->execute([$nik, now_ms() - deviceIdleMs_($role, $nik)]);
     $deviceId = substr(preg_replace('/[^a-zA-Z0-9_-]/', '', $deviceId), 0, 64);
     if ($deviceId === '') fail_('Perangkat tidak dikenali. Muat ulang halaman lalu coba lagi.');
     $pdo = db_(); $now = now_ms(); $ua = deviceUa_();
@@ -198,7 +222,7 @@ function issue_(array $a, string $deviceId = '', ?string $deviceName = null): st
     if ($deviceId !== '') deviceRegisterOrTouch_($nik, $deviceId, $deviceName, $role);
     db_()->prepare('DELETE FROM _sessions WHERE nik = ? AND device_id = ?')->execute([$nik, $deviceId]);
     $token = hash_(uuid_() . uuid_() . now_ms());
-    $until = now_ms() + deviceIdleMs_($role);
+    $until = now_ms() + deviceIdleMs_($role, $nik);
     session_put_('SESSION_' . hash_($token), ['nik' => $nik, 'version' => (int) num_($a['VERSI']), 'until' => $until, 'role' => $role, 'deviceId' => $deviceId, 'touched' => now_ms()]);
     return $token;
 }
@@ -211,7 +235,7 @@ function authSession_($token): array {
     // Sesi berjalan (sliding): selama masih aktif, batas waktu digeser maju. Ditahan maks tiap 10 menit biar hemat query.
     $now = now_ms();
     if (!isset($s['touched']) || $now - (int) $s['touched'] > DEVICE_TOUCH_MS) {
-        $s['until'] = $now + deviceIdleMs_((string) ($s['role'] ?? '')); $s['touched'] = $now;
+        $s['until'] = $now + deviceIdleMs_((string) ($s['role'] ?? ''), (string) ($s['nik'] ?? '')); $s['touched'] = $now;
         session_put_($key, $s);
         if (!empty($s['deviceId'])) deviceTouch_((string) $s['nik'], (string) $s['deviceId']);
     }

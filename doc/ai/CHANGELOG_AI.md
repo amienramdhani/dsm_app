@@ -35,6 +35,46 @@ Pending:
 
 # History
 
+## 2026-11-05 - Fitur Presentasi DSM tahap 1 (BELUM TERUJI di DSM asli)
+- Menu baru "Presentasi" (ASM, RGM, Head of Sales, COO/CCO/BOD, Admin, Super Admin; Admin ikut atas rekomendasi, perlu dikonfirmasi user). Grup ANALISA di drawer Lainnya.
+- File baru: `assets/presentasi.js`, `assets/presentasi.css`. Perubahan kecil: `index.php` (titles, route render, ikon, tag script/link, grup drawer), `assets/telemarketing/tm.js` (`tmMenuAllowed`).
+- Data slide dari `apiExec` (sumber yang sama dengan Beranda), jadi cakupan role mengikuti server. Tidak ada RPC atau tabel baru.
+- Slide tahap 1: Sampul, Kartu indikator, Heatmap region, Brand nasional, Kartu region, Tren akumulasi, ASM teratas/terendah, Penutup, plus Slide teks buatan user. Edit judul/analisa/teks tambahan/catatan presenter tersimpan di localStorage perangkat.
+- BELUM: Review Mingguan (tombol dinonaktifkan), modul Dealer, DOS, KPI, Analisa, Telemarketing, Klaim, ekspor PPTX. Mockup disetujui: dsm-presentasi-v3.html.
+- Dites hanya dengan data tiruan di Playwright (render slide, navigasi, slide teks, tampilan HP). Belum dicoba dengan data/role asli.
+
+## 2026-10-29 - Modul DSM Klaim masuk ke repo (folder klaim/, BELUM TERUJI di MySQL DSM)
+
+AI:
+Claude
+
+Scope:
+Integrasi modul Klaim (pengajuan, approval, BA, petty cash, BBM) ke DSM. Rancangan disetujui user 2026-10-29. Branch `feat/klaim`, belum ada push/merge ke `dev`.
+
+Files:
+- klaim/ (baru: api.php, index.php, migrate.php, lib/, assets/, sql/, tests/, README.md, CHECKLIST_TES.md)
+- lib/core.php, lib/users_bulk.php, lib/totp.php, lib/auth.php, lib/api_main.php
+- index.php
+
+Changes:
+- Posisi baru `OPERASIONAL` (level 0.5, di bawah SALES): tanpa bawahan sehingga `PortalCore::scope()` hanya mengembalikan dirinya sendiri (tidak melihat data sales). Dikecualikan dari wajib Region_Map. Template user massal menerimanya (hanya Super Admin).
+- 2FA wajib untuk OPERASIONAL (totp.php).
+- Sesi 1 hari tanpa aktivitas (sliding) KHUSUS akun yang memegang peran FM/FT di tabel `claim_users` (`klaimFinance_`, `deviceIdleMs_($role,$nik)`). Posisi lain tidak berubah.
+- `apiBootstrap` mengembalikan `user.klaim` (peran Klaim bila ada). Tombol menu `DSM Klaim` hanya muncul bila ada akses; OPERASIONAL langsung dialihkan ke `klaim/` setelah login.
+- Klaim memakai token DSM (header X-DSM-Token -> `authSession_`), tidak punya login sendiri. Peran Klaim disimpan di `claim_users` (kunci NIK) dan diatur Super Admin DSM di dalam Klaim. Super Admin DSM otomatis dapat akses SA Klaim.
+- Tabel `claim_*` dibuat additive lewat `klaim/migrate.php` (tidak menghapus apa pun, tanpa pengguna uji). `install.php` lama dan reset data dihapus/dinonaktifkan di mode DSM.
+
+Validation:
+- php -l semua file yang diubah lolos; tes backend Klaim 59 lolos (SQLite, mode mandiri).
+- Alur token/NIK/peran diuji di sandbox dengan DSM palsu (stub `authSession_`): tanpa token ditolak, Super Admin auto-provision, NIK tak dikenal ditolak, login & reset dimatikan.
+
+Pending:
+- Belum dijalankan di MySQL DSM sungguhan (lewat Laragon): jalankan `php klaim/migrate.php`, tes login OPERASIONAL + 2FA, menu DSM Klaim, dan CHECKLIST_TES.md.
+- Angka konfigurasi (ambang BA, N hari, tarif, tenggat petty cash, harga BBM) diisi ulang saat live.
+- `test_mode` Klaim default aktif (Super Admin bebas melompati tahap): WAJIB dimatikan sebelum live.
+
+---
+
 ## 2026-10-19 - Fase 3 langkah 2: resolver Effective Sales di publish (BELUM TERUJI)
 
 AI:
