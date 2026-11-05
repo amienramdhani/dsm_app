@@ -15,11 +15,18 @@ function user_row(int $id): ?array { $u = one("SELECT * FROM claim_users WHERE i
 function shape_user(array $u): array {
   $u['roles'] = array_values(array_filter(explode(',', $u['roles'] ?? '')));
   $u['entities'] = array_values(array_filter(array_map('trim', explode(',', $u['entity'] ?? ''))));
+  $u['area_list'] = array_values(array_filter(array_map('trim', explode(',', $u['areas'] ?? ''))));
   unset($u['pass_hash']);
   $u['has_sign'] = !empty($u['sign_img']); unset($u['sign_img']);
   return $u;
 }
 /** Pengguna efektif: termasuk penyamaran Super Admin dan akses cadangan. */
+/** Apakah wilayah tugas Admin/RGM ini mencakup region klaim? Daftar wilayah (areas) menang; kosong = pakai region tunggal; keduanya kosong = semua. */
+function covers_region(array $u, ?string $region): bool {
+  $a = $u['area_list'] ?? [];
+  if ($a) return !$region || in_array($region, $a, true);
+  return !$u['region'] || !$region || $u['region'] === $region;
+}
 function me(): ?array {
   sess();
   if (dsm_present() && !dsm_bind_session()) return null;
@@ -34,7 +41,7 @@ function me(): ?array {
     if ($b) {
       $u['roles'][] = $b['role'];
       $as = $b['for_user_id'] ? user_row((int) $b['for_user_id']) : null;
-      if ($as) { $u['region'] = $as['region']; $u['entities'] = $as['entities']; $u['entity'] = $as['entity']; $u['backup_for'] = $as['name']; }
+      if ($as) { $u['region'] = $as['region']; $u['area_list'] = $as['area_list']; $u['entities'] = $as['entities']; $u['entity'] = $as['entity']; $u['backup_for'] = $as['name']; }
       $u['backup_role'] = $b['role']; $u['backup_left'] = max(0, strtotime($b['active_until']) - time());
       $u['backup_uses'] = (int) $b['use_count']; $u['backup_max'] = (int) ($b['max_use'] ?: 5);
     } else unset($_SESSION['backup']);
@@ -93,8 +100,7 @@ function stage_users(string $stage, ?string $region, ?string $entity): array {
   foreach (q("SELECT * FROM claim_users WHERE active=1") as $r) {
     $u = shape_user($r);
     if (!has_role($u, $stage)) continue;
-    if ($stage === 'ADMIN' && $u['region'] && $region && $u['region'] !== $region) continue;
-    if ($stage === 'RGM' && $u['region'] && $region && $u['region'] !== $region) continue;
+    if (in_array($stage, ['ADMIN', 'RGM'], true) && !covers_region($u, $region)) continue;
     if (in_array($stage, ['AUDIT', 'FM', 'FT'], true) && $u['entities'] && $entity && !in_array($entity, $u['entities'], true) && !in_array($entity, uncovered_entities($stage), true)) continue;
     $out[] = $u;
   }
@@ -117,7 +123,7 @@ function next_number(string $prefix, ?string $entity): string {
 function in_scope(array $u, array $c, string $role): bool {
   if (sa_free($u) || has_role($u, 'SA')) return true;
   return match ($role) {
-    'ADMIN', 'RGM' => !$u['region'] || $u['region'] === ($c['region'] ?? null),
+    'ADMIN', 'RGM' => ($u['area_list'] || $u['region']) ? (($c['region'] ?? null) !== null && covers_region($u, $c['region'])) : true,
     'AUDIT', 'FM', 'FT' => !$u['entities'] || in_array($c['entity'] ?? '', $u['entities'], true) || in_array($c['entity'] ?? '', uncovered_entities($role), true),
     'HOS' => true,
     default => false,
@@ -132,10 +138,14 @@ function same_person(array $u, array $c): bool { return (int) $c['claimant_id'] 
 
 /* ---------- budget (dihitung langsung dari klaim; reservasi penuh sejak submit) ---------- */
 function budget_of(int $uid, string $cat): int { return (int) val("SELECT budget FROM claim_entitlement WHERE user_id=? AND category=? AND enabled=1", [$uid, $cat]); }
+/** Perdin dan Operasional tidak punya budget bulanan: tidak pernah over budget, tidak memicu BA budget. */
+function no_budget_cat(string $cat): bool { return in_array($cat, ['Perdin', 'Operasional'], true); }
+function claim_budget(array $c, string $period, ?int $excludeClaim = null): ?array { return ($c['outside_sales'] || no_budget_cat((string) $c['category'])) ? null : budget_info((int) $c['claimant_id'], $c['category'], $period, $excludeClaim); }
 function budget_info(int $uid, string $cat, string $period, ?int $excludeClaim = null): array {
-  $b = budget_of($uid, $cat); $ex = $excludeClaim ?: 0;
+  $b = no_budget_cat($cat) ? 0 : budget_of($uid, $cat); $ex = $excludeClaim ?: 0;
   $real = (int) val("SELECT COALESCE(SUM(total),0) FROM claims WHERE claimant_id=? AND category=? AND budget_period=? AND status='DONE' AND outside_sales=0 AND id<>?", [$uid, $cat, $period, $ex]);
   $res = (int) val("SELECT COALESCE(SUM(total),0) FROM claims WHERE claimant_id=? AND category=? AND budget_period=? AND status IN ('WAIT','REV') AND outside_sales=0 AND id<>?", [$uid, $cat, $period, $ex]);
+  if (no_budget_cat($cat)) return ['budget' => 0, 'realized' => $real, 'reserved' => $res, 'available' => 0, 'over' => 0, 'none' => true];
   $avail = $b - $real - $res;
   return ['budget' => $b, 'realized' => $real, 'reserved' => $res, 'available' => $avail, 'over' => max(0, -$avail)];
 }

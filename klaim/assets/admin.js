@@ -1,8 +1,10 @@
 /* DSM Klaim - Admin (A07-A10), pengaturan, monitoring budget (H05), realisasi (F05), Super Admin (X01/X02) */
 'use strict';
+const NOBUD = ['Perdin', 'Operasional']; // kategori tanpa budget bulanan
 R.a = async (sub, id) => {
   if (sub === 'hak' && id) return hakEdit(+id);
   if (sub === 'hak') return hakList();
+  if (sub === 'massal') return massalScreen();
   if (sub === 'jenis') return jenisScreen();
   if (sub === 'atur') return aturScreen();
   location.hash = '#/menu';
@@ -17,7 +19,7 @@ async function hakEdit(id) {
   const j = await api('people_admin'); const u = j.rows.find(r => r.id == id); if (!u) throw new Error('Pengguna tidak ditemukan atau di luar region Anda.');
   const ent = Object.fromEntries(u.ent.map(e => [e.category, e]));
   shell(hero(u.name, 'A09 · HAK KLAIM', { back: true, small: true }) + `<div class="sec"><div class="card"><div class="row"><div><b>${esc(u.job)} · ${esc(u.region || '-')}</b><div class="mut">${esc(u.entity || '-')}</div></div>${sw(+u.can_submit, 'cs')}</div><div class="mut" style="margin-top:6px">Boleh mengajukan klaim</div></div>
-   <div class="sec" style="padding-top:12px"><h3>Kategori dan budget per bulan</h3><div class="card">${CATS_LIST.map(c => `<div class="row" style="margin-bottom:8px"><div style="flex:1"><b>${CATIC[c]} ${c}</b></div>${sw(ent[c] ? +ent[c].enabled : 0, 'en.' + c)}<input data-bud="${c}" inputmode="numeric" style="width:130px" value="${fmtN(ent[c] ? ent[c].budget : 0)}"></div>`).join('')}</div></div>
+   <div class="sec" style="padding-top:12px"><h3>Kategori dan budget per bulan</h3><div class="card">${CATS_LIST.map(c => `<div class="row" style="margin-bottom:8px"><div style="flex:1"><b>${CATIC[c]} ${c}</b></div>${sw(ent[c] ? +ent[c].enabled : 0, 'en.' + c)}${NOBUD.includes(c) ? '<span class="mut" style="width:130px;text-align:center">Tanpa budget bulanan</span>' : `<input data-bud="${c}" inputmode="numeric" style="width:130px" value="${fmtN(ent[c] ? ent[c].budget : 0)}">`}</div>`).join('')}</div></div>
    <div class="sec" style="padding-top:12px"><h3>Perdin</h3><div class="card" style="border:1.5px solid #F07A0C"><div class="fld" style="margin:0"><label>Tarif uang makan per hari (Rp)</label><input id="meal" inputmode="numeric" value="${fmtN(u.meal_rate)}" placeholder="Belum diisi"></div><div class="mut" style="margin-top:4px">Diatur per orang. Terkunci untuk pemohon; dipakai: tarif × durasi.</div></div></div>
    <div class="sec" style="padding-top:12px"><h3>Rekening default</h3><div class="card">${fld('Bank', typed('hbank', S.L.bank, u.bank, 'Pilih bank'))}${fld('Nomor rekening', `<input id="hno" value="${esc(u.bank_no || '')}" inputmode="numeric">`)}${fld('Atas nama', `<input id="hnm" value="${esc(u.bank_name || '')}">`)}</div></div>
    <div class="sec" style="padding-top:12px"><h3>Petty cash</h3><div class="card"><div class="row"><b>Boleh mengajukan petty cash</b>${sw(+u.can_petty, 'pcn')}</div>${fld('Plafon (Rp)', `<input id="hplaf" inputmode="numeric" value="${fmtN(u.petty_ceiling)}">`)}</div></div>
@@ -26,7 +28,7 @@ async function hakEdit(id) {
   $('#app').addEventListener('click', e => { const s = e.target.closest('[data-sw]'); if (s) s.classList.toggle('on'); });
   $('#app').addEventListener('input', e => { if (e.target.matches('[data-bud],#meal,#hplaf')) e.target.value = fmtN(num(e.target.value)); });
   $('#hsv').onclick = () => guard(async () => {
-    const on = k => $(`[data-sw="${k}"]`).classList.contains('on'); const cats = {}; CATS_LIST.forEach(c => cats[c] = { enabled: on('en.' + c) ? 1 : 0, budget: num($(`[data-bud="${c}"]`).value) });
+    const on = k => $(`[data-sw="${k}"]`).classList.contains('on'); const cats = {}; CATS_LIST.forEach(c => cats[c] = { enabled: on('en.' + c) ? 1 : 0, budget: NOBUD.includes(c) ? 0 : num($(`[data-bud="${c}"]`).value) });
     await api('entitlement_save', { user_id: id, can_submit: on('cs') ? 1 : 0, cats, meal_rate: $('#meal').value === '' ? '' : num($('#meal').value), bank: $('#hbank').value, bank_no: $('#hno').value, bank_name: $('#hnm').value, can_petty: on('pcn') ? 1 : 0, petty_ceiling: num($('#hplaf').value) });
     toast('Hak klaim tersimpan.'); location.hash = '#/a/hak'; });
 }
@@ -74,6 +76,36 @@ function copyHak(src, rows) {
     step1();
   });
 }
+/* ---------- Update massal WA & rekening (tempel dari Excel / CSV) ---------- */
+function parseSheetText(text) {
+  const t = String(text || '').replace(/^﻿/, ''); const lines = t.split(/\r?\n/).filter(l => l.trim() !== ''); if (!lines.length) return [];
+  const delim = lines[0].includes('\t') ? '\t' : (lines[0].split(';').length > lines[0].split(',').length ? ';' : ',');
+  const split = l => { const o = []; let cur = '', q = false; for (let i = 0; i < l.length; i++) { const c = l[i]; if (q) { if (c === '"' && l[i + 1] === '"') { cur += '"'; i++; } else if (c === '"') q = false; else cur += c; } else if (c === '"') q = true; else if (c === delim) { o.push(cur); cur = ''; } else cur += c; } o.push(cur); return o.map(x => x.trim()); };
+  const cells = lines.map(split); const H = cells[0].map(h => h.toUpperCase().replace(/[^A-Z]/g, ''));
+  const hasHead = H.includes('NIK'); const idx = {};
+  if (hasHead) H.forEach((h, i) => { const k = { NIK: 'nik', WA: 'wa', WHATSAPP: 'wa', NOMORWA: 'wa', BANK: 'bank', NOREKENING: 'bank_no', NOMORREKENING: 'bank_no', NOREK: 'bank_no', REKENING: 'bank_no', ATASNAMA: 'bank_name' }[h]; if (k && idx[k] === undefined) idx[k] = i; });
+  else ['nik', 'wa', 'bank', 'bank_no', 'bank_name'].forEach((k, i) => idx[k] = i);
+  return (hasHead ? cells.slice(1) : cells).map(c => { const r = {}; for (const k in idx) r[k] = c[idx[k]] ?? ''; return r; }).filter(r => r.nik);
+}
+async function massalScreen() {
+  shell(hero('Update massal WA & rekening', 'A11', { back: true }) + `<div class="sec">
+   <div class="card"><b><span class="stp">1</span>Unduh template</b><div class="mut" style="margin:4px 0 0 29px">Berisi semua orang di region Anda beserta data sekarang. Isi atau ubah kolom WA dan rekening saja.</div><a class="btn g" style="display:block;text-align:center;text-decoration:none;margin-top:8px" href="api.php?a=contact_template">⬇ UNDUH TEMPLATE (.xlsx)</a></div>
+   <div class="card"><b><span class="stp">2</span>Tempel dari Excel</b><div class="mut" style="margin:4px 0 8px 29px">Salin sel dari Excel (dengan baris judul NIK, WA, BANK, NO REKENING, ATAS NAMA), lalu tempel di sini.</div><textarea id="mpaste" rows="7" placeholder="NIK&#9;WA&#9;BANK&#9;NO REKENING&#9;ATAS NAMA" style="width:100%;font:12px ui-monospace,Menlo,monospace"></textarea><div class="mut" style="margin-top:6px;text-align:center">atau <label style="color:#1E5FB8;font-weight:700;cursor:pointer">upload file .csv<input type="file" id="mfile" accept=".csv,text/csv,.txt" hidden></label></div>
+   <div class="note blue" style="margin-top:8px"><b>Aturan:</b> NIK wajib (kunci). Sel yang <b>dikosongkan tidak mengubah apa pun</b>, jadi tidak ada data terhapus karena sel kosong. Nomor rekening dengan angka 0 di depan: format kolom sebagai Teks di Excel.</div><button class="cta" id="mchk" style="margin-top:8px">PERIKSA DATA</button></div><div id="mres"></div></div>`, { hero: false });
+  $('#mfile').onchange = e => { const f = e.target.files[0]; if (!f) return; const fr = new FileReader(); fr.onload = () => { $('#mpaste').value = fr.result; }; fr.readAsText(f); };
+  const csvEsc = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+  $('#mchk').onclick = () => guard(async () => {
+    const rows = parseSheetText($('#mpaste').value); if (!rows.length) throw new Error('Tidak ada baris data. Pastikan ada kolom NIK.');
+    const r = await api('contact_bulk', { rows, dry: 1 }); const c = r.count; const ok = r.rows.filter(x => x.status !== 'ERROR' && x.status !== 'SAMA').length;
+    const tg = { BERUBAH: 'on', PERIKSA: 'on', SAMA: '', ERROR: '' }; const stc = { ERROR: '#9A2620', BERUBAH: '#0B5E50', PERIKSA: '#7A5200', SAMA: '#5b7482' };
+    $('#mres').innerHTML = `<div class="card" style="margin-top:10px"><b>${r.rows.length} baris diperiksa</b><div class="sum" style="margin-top:8px;grid-template-columns:repeat(3,1fr)"><div><b style="color:#0B5E50">${c.berubah}</b><span class="mut">Berubah</span></div><div><b>${c.sama}</b><span class="mut">Sama</span></div><div><b style="color:#9A2620">${c.error}</b><span class="mut">Error</span></div></div></div>
+     <div class="card" style="padding:4px 12px;max-height:46vh;overflow:auto">${r.rows.map(x => `<div style="padding:9px 0;border-bottom:1px solid #eef3f6"><div class="row"><b>${esc(x.name || x.nik)}</b><span class="chip" style="color:${stc[x.status]}">${x.status}</span></div>${x.changes.map(h => `<div class="mut">${esc(h.f)} <s style="color:#9A2620">${esc(h.old)}</s> → <b style="color:#0B5E50">${esc(h.new)}</b></div>`).join('')}${x.error ? `<div class="mut" style="color:#9A2620">${esc(x.error)}</div>` : ''}${x.note ? `<div class="mut">${esc(x.note)}</div>` : ''}${x.status === 'SAMA' ? '<div class="mut">Tidak ada perubahan</div>' : ''}</div>`).join('')}</div>
+     ${c.error ? `<div class="note warn"><b>${c.error} baris error tidak akan disimpan.</b> Sisanya tetap bisa disimpan.</div><button class="btn g" id="merr" style="width:100%;margin-top:8px">⬇ UNDUH DAFTAR ERROR</button>` : ''}
+     <button class="cta" id="msave" style="margin-top:10px" ${ok ? '' : 'disabled'}>SIMPAN ${ok} PERUBAHAN</button>`;
+    if ($('#merr')) $('#merr').onclick = () => { const body = ['NIK,NAMA,ERROR', ...r.rows.filter(x => x.status === 'ERROR').map(x => [x.nik, x.name, x.error].map(csvEsc).join(','))].join('\r\n'); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + body], { type: 'text/csv' })); a.download = 'error_update_massal.csv'; a.click(); };
+    $('#msave').onclick = () => guard(async () => { const d = await api('contact_bulk', { rows, dry: 0 }); $('#mres').innerHTML = `<div class="note ok" style="margin-top:10px"><b>✓ Tersimpan.</b> ${d.count.berubah} orang diperbarui (${d.count.wa} nomor WA, ${d.count.rek} rekening). ${d.count.error} baris error dilewati. Tercatat di riwayat.</div><button class="cta" id="mdone" style="margin-top:8px">SELESAI</button>`; $('#mdone').onclick = () => { location.hash = '#/menu'; }; $('#mpaste').value = ''; });
+  });
+}
 async function jenisScreen() {
   const j = await api('types_all');
   shell(hero('Jenis klaim', 'A10', { back: true }) + `<div class="sec">${['Transportasi', 'Entertain', 'Perdin', 'Operasional'].map(c => `<div class="card"><div class="row"><b>${CATIC[c]} ${c}</b>${c !== 'Perdin' ? `<span class="chip" data-addt="${c}">+ Jenis</span>` : ''}</div>${j.rows.filter(t => t.category === c).map(t => `<div class="row" style="margin-top:8px"><span style="${+t.active ? '' : 'text-decoration:line-through;color:#5B7285'}">${esc(t.name)} ${+t.locked ? '<span class="pill p-gr">terkunci</span>' : ''}</span>${+t.locked ? '' : `<span class="chip" data-tt="${t.id}:${+t.active ? 0 : 1}">${+t.active ? 'Nonaktifkan' : 'Aktifkan'}</span>`}</div>`).join('')}</div>`).join('')}<div class="note">Tidak ada jenis “Lainnya”. Jenis baru ditambah di sini.</div></div>`, { hero: false });
@@ -117,13 +149,13 @@ const CATG = { Transportasi: ['#F0643C', '#D2453F'], Entertain: ['#9A5BE8', '#6D
 function budgetCats(p) {
   const ents = Object.entries(p.cats), tb = ents.reduce((a, [, b]) => a + b.budget, 0), tu = ents.reduce((a, [, b]) => a + b.realized + b.reserved, 0);
   const cards = ents.map(([c, b]) => {
-    const used = b.realized + b.reserved, over = Math.max(0, used - b.budget), den = Math.max(b.budget, used) || 1, pct = b.budget ? Math.round(used / b.budget * 100) : 0;
+    const used = b.realized + b.reserved, over = b.none ? 0 : Math.max(0, used - b.budget), den = Math.max(b.budget, used) || 1, pct = b.budget ? Math.round(used / b.budget * 100) : 0;
     const pAmt = Math.max(0, b.reserved - over), tAmt = used - over - pAmt, g = CATG[c] || ['#3C8DE0', '#1E5FB8'];
     const w = x => (x / den * 100).toFixed(1) + '%', warn = !over && b.budget && pct >= 80;
     const tag = over ? '<span class="btag t-over">OVER BUDGET</span>' : warn ? `<span class="btag t-warn">HAMPIR HABIS ${pct}%</span>` : '';
-    return `<div class="bcat ${over ? 'over' : warn ? 'warn' : ''}"><div class="top"><div class="ic" style="background:linear-gradient(135deg,${g[0]},${g[1]})">${CATIC[c] || ''}</div><b>${esc(c)} ${tag}<small>${b.count} klaim · ${b.ba} BA</small></b><div class="bd">${rp(b.budget)}</div></div>
+    return `<div class="bcat ${over ? 'over' : warn ? 'warn' : ''}"><div class="top"><div class="ic" style="background:linear-gradient(135deg,${g[0]},${g[1]})">${CATIC[c] || ''}</div><b>${esc(c)} ${tag}<small>${b.count} klaim · ${b.ba} BA</small></b><div class="bd">${b.none ? 'Tanpa budget' : rp(b.budget)}</div></div>
 <div class="bbar"><i style="width:${w(tAmt)};background:#12A67F"></i><i style="width:${w(pAmt)};background:#F0A400"></i>${over ? `<i class="ov" style="width:${w(over)}"></i>` : ''}</div>
-<div class="bmini"><span><i style="--c:${b.available < 0 ? '#D2453F' : '#1E5FB8'}"></i>Tersedia <b class="${b.available < 0 ? 'neg' : ''}">${b.available < 0 ? '- ' : ''}${rp(Math.abs(b.available))}</b></span><span><i style="--c:#12A67F"></i>Terpakai <b>${rp(b.realized)}</b></span><span><i style="--c:#F0A400"></i>Diproses <b>${rp(b.reserved)}</b></span></div>
+<div class="bmini">${b.none ? '' : `<span><i style="--c:${b.available < 0 ? '#D2453F' : '#1E5FB8'}"></i>Tersedia <b class="${b.available < 0 ? 'neg' : ''}">${b.available < 0 ? '- ' : ''}${rp(Math.abs(b.available))}</b></span>`}<span><i style="--c:#12A67F"></i>Terpakai <b>${rp(b.realized)}</b></span><span><i style="--c:#F0A400"></i>Diproses <b>${rp(b.reserved)}</b></span></div>
 ${over ? `<div class="ovnote">⚠ Melebihi budget <b>${rp(over)}</b>. Klaim yang melewati budget wajib BA (Berita Acara).</div>` : ''}</div>`;
   }).join('');
   return `<div class="bhero"><small>${esc((p.region || '-').toUpperCase())} · ${MF.period}</small><div class="bsum"><div><b>${rp(tb)}</b><span>Total budget</span></div><div><b>${rp(tu)}</b><span>Terpakai + diproses</span></div><div><b class="${tb - tu < 0 ? 'neg' : ''}">${rp(tb - tu)}</b><span>Masih tersedia</span></div></div></div>
@@ -168,8 +200,8 @@ function rfDonut(o) {
   return `<div class="rf-donut"><div class="dn" style="background:conic-gradient(${seg})"></div><div class="lg">${e.map(([k, v]) => `<div><span><i style="--c:${CATCLR[k] || '#999'}"></i>${esc(k)}</span><b>${Math.round(v * 100 / tot)}%</b></div>`).join('')}</div></div>`;
 }
 function rfBud(b) {
-  return b.cats.map(c => { const pct = c.budget ? c.real * 100 / c.budget : (c.real ? 999 : 0); const tg = pct > 100 ? '<span class="rf-tag to">OVER BUDGET</span>' : pct >= 85 ? `<span class="rf-tag tw">HAMPIR HABIS ${Math.round(pct)}%</span>` : '';
-    return `<div class="rf-hb rf-bv ${pct > 100 ? 'ov' : ''}"><div class="t"><span>${esc(c.cat)}${tg}</span><b>${jt(c.real)} / ${jt(c.budget)}</b></div><div class="tr"><i style="width:${Math.min(100, pct)}%"></i></div></div>`; }).join('');
+  return b.cats.map(c => { const nb = NOBUD.includes(c.cat); const pct = nb ? 0 : (c.budget ? c.real * 100 / c.budget : (c.real ? 999 : 0)); const tg = pct > 100 ? '<span class="rf-tag to">OVER BUDGET</span>' : pct >= 85 ? `<span class="rf-tag tw">HAMPIR HABIS ${Math.round(pct)}%</span>` : '';
+    return `<div class="rf-hb rf-bv ${pct > 100 ? 'ov' : ''}"><div class="t"><span>${esc(c.cat)}${tg}</span><b>${nb ? jt(c.real) + ' · tanpa budget' : jt(c.real) + ' / ' + jt(c.budget)}</b></div><div class="tr"><i style="width:${Math.min(100, pct)}%"></i></div></div>`; }).join('');
 }
 function realisasiFM(j, x) {
   const f = j.fm, k = f.kpi, tab = sessionStorage.getItem('rtab') || 'ringkasan'; const d = k.prev ? Math.round((k.total - k.prev) * 100 / k.prev) : null;
@@ -200,19 +232,29 @@ R.sa = async (sub, id) => {
   location.hash = '#/home';
 };
 async function saUsers() {
+  const ac = await api('area_check'); const arAll = ac.regions.slice();
+  const arTxt = u => { const a = u.areas ? String(u.areas).split(',').filter(Boolean) : []; const adm = (u.roles || '').split(',').some(r => r === 'ADMIN' || r === 'RGM'); if (!adm) return ''; return `<div class="mut">Wilayah tugas: ${a.length ? esc(a.join(', ')) : u.region ? esc(u.region) : '<b>Semua region</b>'}</div>`; };
+  const arWarn = ac.uncovered.length ? `<div class="card" style="background:#FFF0CC;color:#7A5200;margin-bottom:8px"><b>Region tanpa Admin</b><div class="mut" style="color:#7A5200">${ac.uncovered.map(r => esc(r.region) + ' (' + r.n + ' pemohon)').join(', ')}. Klaim dari region ini belum punya Admin penerima.</div></div>` : '';
   const j = await api('sa_users');
-  shell(hero('Peran klaim pengguna', 'X01', { back: true }) + `<div class="sec"><button class="btn g" id="unew">+ Pengguna baru</button><div style="margin-top:8px">${j.rows.map(u => `<div class="li" data-u="${u.id}"><div class="dot" style="background:#10394E">${esc(u.name[0])}</div><div class="t"><b>${esc(u.name)}${+u.active ? '' : ' (nonaktif)'}</b><span>${esc(u.username)} · ${esc(u.job)} · ${esc(u.region || '-')} · ${esc(u.entity || '-')}</span><div style="margin-top:3px">${(u.roles ? u.roles.split(',') : []).map(r => `<span class="pill p-adm">${r}</span> `).join('')}${+u.can_submit ? '<span class="pill p-ok">Pemohon</span>' : ''}</div></div>›</div>`).join('')}</div></div>`, { hero: false });
+  shell(hero('Peran klaim pengguna', 'X01', { back: true }) + `<div class="sec">${arWarn}<button class="btn g" id="unew">+ Pengguna baru</button><div style="margin-top:8px">${j.rows.map(u => `<div class="li" data-u="${u.id}"><div class="dot" style="background:#10394E">${esc(u.name[0])}</div><div class="t"><b>${esc(u.name)}${+u.active ? '' : ' (nonaktif)'}</b><span>${esc(u.username)} · ${esc(u.job)} · ${esc(u.region || '-')} · ${esc(u.entity || '-')}</span>${arTxt(u)}<div style="margin-top:3px">${(u.roles ? u.roles.split(',') : []).map(r => `<span class="pill p-adm">${r}</span> `).join('')}${+u.can_submit ? '<span class="pill p-ok">Pemohon</span>' : ''}</div></div>›</div>`).join('')}</div></div>`, { hero: false });
   const edit = u => sheet(`<h3>${u ? 'Ubah ' + esc(u.name) : 'Pengguna baru'}</h3>${u || window.CLAIM_DSM ? '' : fld('Username', '<input id="xu" autocapitalize="off">') + fld('Password (kosong = 123456)', '<input id="xp">')}${fld('Nama', `<input id="xn" value="${esc(u?.name || '')}">`)}${fld('Nomor WhatsApp', `<input id="xw" inputmode="tel" value="${esc(u?.wa || '')}" placeholder="0812 3456 7890">`, 'Untuk tombol Hubungi (follow-up klaim).')}${fld('NIK (nomor induk karyawan)' + (window.CLAIM_DSM && !u ? ' · pilih dari daftar DSM' : ''), `<input id="xk" value="${esc(u?.nik || '')}">`)}${fld('Jabatan (Sales/ASM/RGM/dst)', `<input id="xj" value="${esc(u?.job || '')}">`)}<div class="two">${fld('Region', `<input id="xr" value="${esc(u?.region || '')}">`)}${fld('Badan usaha (pisah koma)', `<input id="xe" value="${esc(u?.entity || '')}">`)}</div>
+    <div class="fld" id="xarf" style="display:none"><label>Wilayah tugas Admin/RGM (boleh lebih dari satu)</label><div class="chips">${arAll.map(r => `<span class="chip" data-ar="${esc(r)}">${esc(r)}</span>`).join('')}</div><div class="mut" id="xarn" style="margin-top:6px"></div>${window.CLAIM_DSM ? '<button class="btn g" id="xard" style="margin-top:8px">⬇ AMBIL DARI PENUGASAN ADMIN DSM</button>' : ''}</div>
     <div class="fld"><label>Peran (ASM dan SALES hanya penanda jabatan, tidak menyetujui)</label><div class="chips">${['ADMIN', 'AUDIT', 'HOS', 'FM', 'FT', 'RGM', 'ASM', 'SALES', 'SA'].map(r => `<span class="chip" data-rl="${r}" style="${(u?.roles || '').split(',').includes(r) ? 'background:#10394E;color:#fff' : ''}">${r}</span>`).join('')}</div></div>
     <div class="row"><div><b>Boleh mengajukan klaim</b><div class="mut">Kemampuan mengajukan terpisah dari menyetujui. RGM dapat keduanya.</div></div>${sw(u ? +u.can_submit : 0, 'xs')}</div>${u ? `<div class="row" style="margin-top:8px"><b>Aktif</b>${sw(+u.active, 'xa')}</div>` : ''}<button class="btn" id="xok" style="margin-top:10px">SIMPAN</button>`, (el, close) => {
     $$('[data-rl]', el).forEach(c => c.onclick = () => { const on = c.dataset.on !== '1'; c.dataset.on = on ? '1' : '0'; c.style.cssText = on ? 'background:#10394E;color:#fff' : ''; }); $$('[data-rl]', el).forEach(c => c.dataset.on = (u?.roles || '').split(',').includes(c.dataset.rl) ? '1' : '0');
+    const arOn = new Set(u?.areas ? String(u.areas).split(',').map(x => x.trim()).filter(Boolean) : []);
+    const arPaint = () => { $$('[data-ar]', el).forEach(c => c.style.cssText = arOn.has(c.dataset.ar) ? 'background:#10394E;color:#fff' : ''); const n = $('#xarn', el); if (n) n.textContent = arOn.size ? 'Klaim dari region ini masuk ke orang ini: ' + [...arOn].join(', ') : 'Kosong = ikut Region di atas; kalau Region juga kosong = semua region.'; };
+    const arShow = () => { const on = $$('[data-rl]', el).some(c => c.dataset.on === '1' && (c.dataset.rl === 'ADMIN' || c.dataset.rl === 'RGM')); $('#xarf', el).style.display = on ? '' : 'none'; };
+    $$('[data-ar]', el).forEach(c => c.onclick = () => { arOn.has(c.dataset.ar) ? arOn.delete(c.dataset.ar) : arOn.add(c.dataset.ar); arPaint(); });
+    $$('[data-rl]', el).forEach(c => c.addEventListener('click', () => setTimeout(arShow, 0))); arShow(); arPaint();
+    const ad = $('#xard', el); if (ad) ad.onclick = () => guard(async () => { const nk = $('#xk', el).value; const r = await api('area_dsm', { nik: nk }); if (!r.areas.length) return toast('Tidak ada penugasan Admin di DSM untuk NIK ini.'); r.areas.forEach(a => { const m = arAll.find(x => x.toUpperCase() === a.toUpperCase()); arOn.add(m || a); }); if (r.areas.some(a => !arAll.some(x => x.toUpperCase() === a.toUpperCase()))) toast('Sebagian wilayah belum punya pemohon, tetap ditambahkan.'); arPaint(); });
     $$('[data-sw]', el).forEach(s => s.onclick = () => s.classList.toggle('on'));
     if (window.CLAIM_DSM && !u && window.dsmPersonInput) guard(async () => { // pilih orang dari daftar DSM, nama/jabatan/region terisi otomatis
       const pl = (await api('dsm_people')).rows, k = $('#xk', el);
       window.dsmPersonInput(k, pl, { format: p => p.nik, title: 'Pilih pengguna DSM', ph: 'Pilih orang dari DSM…', search: 'Cari nama / NIK / role / region' });
       k.addEventListener('change', () => { const p = pl.find(x => x.nik === k.value); if (!p) return; $('#xn', el).value = p.nama || ''; $('#xj', el).value = p.role ? p.role.charAt(0) + p.role.slice(1).toLowerCase() : ''; $('#xr', el).value = p.region || ''; });
     });
-    $('#xok', el).onclick = () => guard(async () => { await api('sa_user_save', { id: u?.id, username: $('#xu', el)?.value, password: $('#xp', el)?.value, name: $('#xn', el).value, wa: $('#xw', el).value, nik: $('#xk', el).value, job: $('#xj', el).value, region: $('#xr', el).value, entity: $('#xe', el).value, roles: $$('[data-rl]', el).filter(c => c.dataset.on === '1').map(c => c.dataset.rl), can_submit: $('[data-sw="xs"]', el).classList.contains('on') ? 1 : 0, active: u ? ($('[data-sw="xa"]', el).classList.contains('on') ? 1 : 0) : 1 }); close(); S.L = await api('lookups'); toast('Tersimpan.'); saUsers(); }); });
+    $('#xok', el).onclick = () => guard(async () => { await api('sa_user_save', { id: u?.id, username: $('#xu', el)?.value, password: $('#xp', el)?.value, name: $('#xn', el).value, wa: $('#xw', el).value, nik: $('#xk', el).value, job: $('#xj', el).value, region: $('#xr', el).value, areas: [...arOn], entity: $('#xe', el).value, roles: $$('[data-rl]', el).filter(c => c.dataset.on === '1').map(c => c.dataset.rl), can_submit: $('[data-sw="xs"]', el).classList.contains('on') ? 1 : 0, active: u ? ($('[data-sw="xa"]', el).classList.contains('on') ? 1 : 0) : 1 }); close(); S.L = await api('lookups'); toast('Tersimpan.'); saUsers(); }); });
   $$('[data-u]').forEach(e => e.onclick = () => edit(j.rows.find(r => r.id == e.dataset.u))); $('#unew').onclick = () => edit(null);
 }
 async function saCodes() {

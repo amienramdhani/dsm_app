@@ -240,6 +240,12 @@ t('akses cadangan: izin hanya untuk penerima, selama durasi, tidak jika dicabut'
   eq((bool) backup_grant($id, $dw), true, 'penerima'); eq((bool) backup_grant($id, $ek), false, 'orang lain');
   ex("UPDATE claim_backup SET active_until=? WHERE id=?", [date('Y-m-d H:i:s', time() - 5), $id]); eq((bool) backup_grant($id, $dw), false, 'durasi habis');
   ex("UPDATE claim_backup SET active_until=?, revoked_at=? WHERE id=?", [date('Y-m-d H:i:s', time() + 3600), now(), $id]); eq((bool) backup_grant($id, $dw), false, 'dicabut'); });
+t('Perdin dan Operasional tanpa budget bulanan: tidak over, tanpa konteks budget', function () use ($dewi) {
+  $bo = budget_info((int) $dewi['id'], 'Operasional', date('Y-m')); eq(!empty($bo['none']), true, 'Operasional none'); eq($bo['over'], 0, 'Operasional over');
+  ex("UPDATE claim_entitlement SET budget=0 WHERE user_id=? AND category='Perdin'", [$dewi['id']]);
+  $bi = budget_info((int) $dewi['id'], 'Perdin', date('Y-m')); eq(!empty($bi['none']), true, 'flag none'); eq($bi['over'], 0, 'over'); eq($bi['budget'], 0, 'budget');
+  eq(claim_budget(['outside_sales' => 0, 'category' => 'Perdin', 'claimant_id' => $dewi['id']], date('Y-m')), null, 'tanpa konteks budget');
+  eq(is_array(claim_budget(['outside_sales' => 0, 'category' => 'Transportasi', 'claimant_id' => $dewi['id']], date('Y-m'))), true, 'kategori lain tetap berbudget'); });
 echo "== BBM: kendaraan, jenis, harga ==\n";
 t('Pertamax: nota 50rb -> 2,5 L -> diklaim 25rb (harga Pertalite)', function () use ($dewi) {
   $p = bbm($dewi, 50000); $p['notes'][0]['detail'] = ['bbm' => 'Pertamax']; $id = claim_save($dewi, $p); $n = q("SELECT * FROM claim_notes WHERE claim_id=?", [$id])[0];
@@ -458,4 +464,11 @@ t('Entertain tanpa foto dokumentasi memicu BA (tidak diblokir), dengan dokumenta
   $p = simple($dewi, 'Makan-makan', ['tempat' => 'Cafe Uji', 'keterangan' => 'Acara tim', 'peserta' => ['Dewi — Sales', 'Rina — Admin']], 54000); unset($p['files']);
   $id = submit($dewi, $p, ['ba_explanation' => 'Foto dokumentasi tidak sempat diambil saat acara']); $ba = ba_row($id); eq(in_array('TANPA_DOK', jdec($ba['triggers']), true), true, 'BA TANPA_DOK');
   $id2 = submit($dewi, simple($dewi, 'Makan-makan', ['tempat' => 'Cafe Uji', 'keterangan' => 'Acara tim', 'peserta' => ['Dewi — Sales', 'Rina — Admin']], 55000)); eq(ba_row($id2), null, 'dengan foto: tanpa BA'); });
+t('Admin multi-region: klaim hanya masuk ke Admin yang wilayahnya mencakup region pemohon', function () {
+  $mk = fn($n, $reg, $ar) => shape_user(['id' => 0, 'name' => $n, 'roles' => 'ADMIN', 'region' => $reg, 'areas' => $ar, 'entity' => '']);
+  $a = $mk('A', null, 'JAWA BARAT,JAWA TENGAH'); $b = $mk('B', 'BALI', null); $c = $mk('C', null, null);
+  eq(covers_region($a, 'JAWA TENGAH'), true, 'multi: ya'); eq(covers_region($a, 'BALI'), false, 'multi: tidak');
+  eq(covers_region($b, 'BALI'), true, 'region tunggal tetap jalan'); eq(covers_region($b, 'JAWA BARAT'), false, 'region tunggal luar');
+  eq(covers_region($c, 'BALI'), true, 'kosong = semua');
+  $a['roles'] = ['ADMIN']; $a['impersonating'] = false; eq(in_scope($a, ['region' => 'JAWA BARAT'], 'ADMIN'), true, 'in_scope multi'); eq(in_scope($a, ['region' => 'BALI'], 'ADMIN'), false, 'in_scope luar'); });
 echo "\nHasil: $pass lolos, $failc gagal\n"; exit($failc ? 1 : 0);

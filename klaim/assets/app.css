@@ -160,3 +160,4 @@ details.rf-sc summary{font-size:10.5px;font-weight:800;letter-spacing:.6px;color
 .nav.n6 div{font-size:9.8px;gap:3px}.nav.n6 em svg{padding:6px 9px}.nav.n7{padding-left:2px;padding-right:2px}.nav.n7 div{font-size:9px;gap:3px;letter-spacing:-.1px}.nav.n7 em svg{width:20px;height:20px;padding:6px 7px}.nav.n6,.nav.n7{padding-left:3px;padding-right:3px}
 
 .ckr{display:flex;gap:9px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #eef3f6;font-size:13.5px;cursor:pointer}.cbx{width:20px;height:20px;border-radius:6px;border:2px solid #b9cbd6;flex:none;margin-top:1px;text-align:center;line-height:16px;font-size:13px;color:#fff}.cbx.on{background:linear-gradient(135deg,#1E5FB8,#0E7C6B);border-color:transparent}
+.stp{display:inline-flex;width:22px;height:22px;border-radius:50%;background:#10394E;color:#fff;font-size:12px;font-weight:800;align-items:center;justify-content:center;margin-right:7px}

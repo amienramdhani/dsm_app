@@ -270,7 +270,7 @@ R.notif = async () => {
 /* ---------- menu ---------- */
 R.menu = async () => {
   const m = curMode(); const links = [];
-  if (m === 'admin') links.push(['✅', 'Selesai', '#/selesai'], ['👥', 'Hak klaim', '#/a/hak'], ['🏷️', 'Jenis klaim', '#/a/jenis'], ['⚙️', 'Pengaturan klaim', '#/a/atur'], ['⬇️', 'Rekap dan export', '#/rekap'], ['💵', 'Petty cash Admin', '#/pcq/ADMIN'], ['🏢', 'Ajukan untuk divisi', '#/new?div=1'], ['📊', 'Monitoring budget', '#/monitor']);
+  if (m === 'admin') links.push(['✅', 'Selesai', '#/selesai'], ['👥', 'Hak klaim', '#/a/hak'], ['📇', 'Update massal WA & rekening', '#/a/massal'], ['🏷️', 'Jenis klaim', '#/a/jenis'], ['⚙️', 'Pengaturan klaim', '#/a/atur'], ['⬇️', 'Rekap dan export', '#/rekap'], ['💵', 'Petty cash Admin', '#/pcq/ADMIN'], ['🏢', 'Ajukan untuk divisi', '#/new?div=1'], ['📊', 'Monitoring budget', '#/monitor']);
   if (['audit', 'hos', 'fm', 'ft'].includes(m)) links.push(['⬇️', 'Rekap dan export', '#/rekap']);
   if (m === 'ft') links.push(['💵', 'Petty cash (transfer & setoran)', '#/pcq/FT']);
   if (m === 'fm' || m === 'hos') links.push(['⚙️', 'Lihat aturan BA', '#/a/atur']);

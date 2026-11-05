@@ -9,7 +9,7 @@ function body(): array {
 }
 function out($d, int $code = 200): never { http_response_code($code); header('Content-Type: application/json; charset=utf-8'); echo json_encode(['ok' => true] + (is_array($d) ? $d : ['data' => $d]), JSON_UNESCAPED_UNICODE); exit; }
 function need_role(array $u, string ...$roles): void { if (sa_free($u) || has_role($u, 'SA')) return; foreach ($roles as $r) if (has_role($u, $r)) return; fail('Tidak diizinkan.', 403); }
-function can_manage_user(array $u, array $t): bool { return sa_free($u) || has_role($u, 'SA') || (has_role($u, 'ADMIN') && (!$u['region'] || $u['region'] === $t['region'])); }
+function can_manage_user(array $u, array $t): bool { return sa_free($u) || has_role($u, 'SA') || (has_role($u, 'ADMIN') && covers_region($u, $t['region'])); }
 
 try {
   sess();
@@ -25,7 +25,7 @@ try {
   if ($a === 'demo_users') { if (dsm_present()) out(['users' => []]); out(['users' => array_map(fn($r) => ['username' => $r['username'], 'name' => $r['name'], 'job' => $r['job']], q("SELECT username,name,job FROM claim_users WHERE active=1 ORDER BY id"))]); }
   $u = need_me();
   // Mode lihat: Super Admin yang "masuk sebagai" orang lain (Mode tes mati = produksi) hanya boleh melihat, tidak boleh mengubah apa pun.
-  if (!empty($u['impersonating']) && !test_mode() && in_array($a, ['upload', 'claim_save', 'claim_submit', 'claim_act', 'claim_resubmit', 'claim_cancel', 'followup_log', 'wa_save', 'sign_save', 'ba_sign', 'pc_submit', 'pc_act', 'pc_note', 'pc_report', 'pc_setoran', 'pc_close', 'notif_read', 'entitlement_save', 'entitlement_copy', 'type_save', 'rules_save', 'aging_save', 'entity_add', 'entity_del', 'fuel_save', 'sa_user_save', 'sa_seed_uji', 'sa_uji_off', 'sa_testmode', 'sa_reset', 'backup_issue', 'backup_use', 'backup_revoke'], true))
+  if (!empty($u['impersonating']) && !test_mode() && in_array($a, ['upload', 'claim_save', 'claim_submit', 'claim_act', 'claim_resubmit', 'claim_cancel', 'followup_log', 'wa_save', 'sign_save', 'ba_sign', 'pc_submit', 'pc_act', 'pc_note', 'pc_report', 'pc_setoran', 'pc_close', 'notif_read', 'entitlement_save', 'entitlement_copy', 'contact_bulk', 'type_save', 'rules_save', 'aging_save', 'entity_add', 'entity_del', 'fuel_save', 'sa_user_save', 'sa_seed_uji', 'sa_uji_off', 'sa_testmode', 'sa_reset', 'backup_issue', 'backup_use', 'backup_revoke'], true))
     fail('Mode lihat: Super Admin tidak bisa mengubah data atas nama orang lain. Klik "kembali" dulu.', 403);
 
   switch ($a) {
@@ -110,7 +110,7 @@ try {
     // ---- admin
     case 'people_admin':
       need_role($u, 'ADMIN');
-      $w = '1=1'; $p = []; if (!sa_free($u) && !has_role($u, 'SA') && $u['region']) { $w = 'region=?'; $p[] = $u['region']; }
+      $w = '1=1'; $p = []; if (!sa_free($u) && !has_role($u, 'SA') && ($u['area_list'] || $u['region'])) { $ar = $u['area_list'] ?: [$u['region']]; $w = 'region IN (' . implode(',', array_fill(0, count($ar), '?')) . ')'; $p = $ar; }
       $rows = q("SELECT * FROM claim_users WHERE $w AND active=1 ORDER BY name", $p);
       foreach ($rows as &$r) { unset($r['pass_hash']); $r['ent'] = q("SELECT category, enabled, budget FROM claim_entitlement WHERE user_id=?", [$r['id']]); }
       out(['rows' => $rows]);
@@ -123,8 +123,8 @@ try {
       upd('claim_users', $t['id'], $f);
       foreach (CATS as $cat) {
         $e = $in['cats'][$cat] ?? null; if (!$e) continue;
-        if (val("SELECT 1 FROM claim_entitlement WHERE user_id=? AND category=?", [$t['id'], $cat])) ex("UPDATE claim_entitlement SET enabled=?, budget=? WHERE user_id=? AND category=?", [!empty($e['enabled']) ? 1 : 0, max(0, (int) $e['budget']), $t['id'], $cat]);
-        else ins('claim_entitlement', ['user_id' => $t['id'], 'category' => $cat, 'enabled' => !empty($e['enabled']) ? 1 : 0, 'budget' => max(0, (int) $e['budget'])]);
+        if (val("SELECT 1 FROM claim_entitlement WHERE user_id=? AND category=?", [$t['id'], $cat])) ex("UPDATE claim_entitlement SET enabled=?, budget=? WHERE user_id=? AND category=?", [!empty($e['enabled']) ? 1 : 0, no_budget_cat($cat) ? 0 : max(0, (int) $e['budget']), $t['id'], $cat]);
+        else ins('claim_entitlement', ['user_id' => $t['id'], 'category' => $cat, 'enabled' => !empty($e['enabled']) ? 1 : 0, 'budget' => no_budget_cat($cat) ? 0 : max(0, (int) $e['budget'])]);
       }
       hist('user', (int) $t['id'], 'Hak klaim diubah', $u, jenc(['tarif_makan' => $f['meal_rate'], 'plafon' => $f['petty_ceiling']]));
       out([]);
@@ -146,7 +146,7 @@ try {
         $has ? $over++ : $new++;
         if ($dry) {
           if ($has && count($samples) < 3) { $ch = [];
-            if ($do('cats')) foreach (CATS as $c) { $a = (int) ($cur[$c]['budget'] ?? 0); $b = (int) ($sent[$c]['budget'] ?? 0); if ($a !== $b) $ch[] = $c . ' ' . number_format($a, 0, ',', '.') . ' → ' . number_format($b, 0, ',', '.'); }
+            if ($do('cats')) foreach (CATS as $c) { if (no_budget_cat($c)) continue; $a = (int) ($cur[$c]['budget'] ?? 0); $b = (int) ($sent[$c]['budget'] ?? 0); if ($a !== $b) $ch[] = $c . ' ' . number_format($a, 0, ',', '.') . ' → ' . number_format($b, 0, ',', '.'); }
             if ($do('meal') && (int) $t['meal_rate'] !== (int) $src['meal_rate']) $ch[] = 'Tarif makan ' . number_format((int) $t['meal_rate'], 0, ',', '.') . ' → ' . number_format((int) $src['meal_rate'], 0, ',', '.');
             if ($do('submit') && (int) $t['can_submit'] !== (int) $src['can_submit']) $ch[] = 'Boleh klaim ' . ($t['can_submit'] ? 'ya' : 'tidak') . ' → ' . ($src['can_submit'] ? 'ya' : 'tidak');
             if ($ch) $samples[] = ['name' => $t['name'], 'changes' => array_slice($ch, 0, 3)]; }
@@ -158,7 +158,7 @@ try {
         if ($do('petty')) { $f['can_petty'] = (int) $src['can_petty']; $f['petty_ceiling'] = (int) $src['petty_ceiling']; }
         if ($f) upd('claim_users', $tid, $f);
         if ($do('cats')) foreach (CATS as $c) {
-          $en = (int) ($sent[$c]['enabled'] ?? 0); $bu = (int) ($sent[$c]['budget'] ?? 0);
+          $en = (int) ($sent[$c]['enabled'] ?? 0); $bu = no_budget_cat($c) ? 0 : (int) ($sent[$c]['budget'] ?? 0);
           if (isset($cur[$c])) ex("UPDATE claim_entitlement SET enabled=?, budget=? WHERE user_id=? AND category=?", [$en, $bu, $tid, $c]); else ins('claim_entitlement', ['user_id' => $tid, 'category' => $c, 'enabled' => $en, 'budget' => $bu]);
         }
         hist('user', $tid, 'Hak klaim disalin dari ' . $src['name'], $u, implode(', ', array_keys(array_filter(['akses' => $do('submit'), 'budget' => $do('cats'), 'tarif makan' => $do('meal'), 'petty cash' => $do('petty')]))));
@@ -166,6 +166,52 @@ try {
       }
       if (!$dry) db()->commit(); } catch (Throwable $e) { if (!$dry && db()->inTransaction()) db()->rollBack(); throw $e; }
       out(['dry' => $dry, 'new' => $new, 'over' => $over, 'skipped' => $skip, 'samples' => $samples, 'done' => $done]);
+    case 'contact_template': // unduh template update massal WA & rekening (isi sekarang), sesuai wewenang Admin
+      need_role($u, 'ADMIN'); $w = '1=1'; $p = []; if (!sa_free($u) && !has_role($u, 'SA') && ($u['area_list'] || $u['region'])) { $ar = $u['area_list'] ?: [$u['region']]; $w = 'region IN (' . implode(',', array_fill(0, count($ar), '?')) . ')'; $p = $ar; }
+      $rows = array_map(fn($r) => [(string) $r['nik'], (string) $r['name'], (string) $r['job'], (string) $r['region'], (string) ($r['wa'] ? '0' . substr($r['wa'], 2) : ''), (string) $r['bank'], (string) $r['bank_no'], (string) $r['bank_name']], q("SELECT * FROM claim_users WHERE $w AND active=1 AND nik IS NOT NULL AND nik NOT LIKE 'UJI-%' ORDER BY name", $p));
+      $data = xlsx_build(['NIK', 'NAMA', 'JABATAN', 'REGION', 'WA', 'BANK', 'NO REKENING', 'ATAS NAMA'], $rows, 'Kontak');
+      header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'); header('Content-Disposition: attachment; filename="template_wa_rekening_' . date('Ymd') . '.xlsx"'); echo $data; exit;
+    case 'contact_bulk': // update massal WA & rekening berdasarkan NIK. Sel kosong = tidak diubah. dry=1: hanya pratinjau.
+      need_role($u, 'ADMIN'); $rows = $in['rows'] ?? []; $dry = !empty($in['dry']);
+      if (!is_array($rows) || !$rows) fail('Tidak ada data.'); if (count($rows) > 1000) fail('Maksimal 1.000 baris sekali proses.');
+      $banks = array_column(q("SELECT val FROM claim_lookup WHERE kind='bank'"), 'val'); $bmap = []; foreach ($banks as $b) $bmap[strtolower($b)] = $b;
+      $mask = fn($n) => $n === '' || $n === null ? '' : '••••' . substr((string) $n, -4);
+      $out = []; $seen = []; $cnt = ['berubah' => 0, 'sama' => 0, 'error' => 0, 'wa' => 0, 'rek' => 0];
+      try { if (!$dry) db()->beginTransaction();
+      foreach (array_values($rows) as $i => $r) {
+        $nik = trim((string) ($r['nik'] ?? '')); $o = ['row' => $i + 1, 'nik' => $nik, 'name' => '', 'status' => 'ERROR', 'changes' => [], 'error' => '', 'note' => ''];
+        $err = function (string $m) use (&$o, &$cnt, &$out) { $o['error'] = $m; $cnt['error']++; $out[] = $o; };
+        if ($nik === '') { $err('NIK kosong'); continue; }
+        if (isset($seen[$nik])) { $err('NIK dobel di file'); continue; } $seen[$nik] = 1;
+        $t = one("SELECT * FROM claim_users WHERE nik=? AND active=1", [$nik]); if (!$t) { $err('NIK tidak ditemukan di Klaim'); continue; }
+        $o['name'] = $t['name']; $tt = user_row((int) $t['id']);
+        if (!can_manage_user($u, $tt)) { $err('Di luar region Anda'); continue; }
+        $f = []; $ch = []; $note = [];
+        $wa = trim((string) ($r['wa'] ?? ''));
+        if ($wa !== '') { $d = preg_replace('/\D/', '', $wa); if (str_starts_with($d, '0')) $d = '62' . substr($d, 1); elseif (str_starts_with($d, '8')) $d = '62' . $d;
+          if (!preg_match('/^62\d{8,13}$/', $d)) { $err('Nomor WA tidak valid (' . $wa . ')'); continue; }
+          if ($d !== (string) $t['wa']) { $f['wa'] = $d; $ch[] = ['f' => 'WA', 'old' => $t['wa'] ? '0' . substr($t['wa'], 2) : '-', 'new' => '0' . substr($d, 2)]; $cnt['wa']++; } }
+        $bk = trim((string) ($r['bank'] ?? '')); $bn = preg_replace('/[\s.\-]/', '', (string) ($r['bank_no'] ?? '')); $bm = trim((string) ($r['bank_name'] ?? ''));
+        if ($bk !== '' || $bn !== '' || $bm !== '') {
+          if (same_person($u, ['claimant_id' => $t['id'], 'created_by' => $t['id']]) && !sa_free($u)) { $err('Rekening sendiri tidak diubah lewat sini'); continue; }
+          if ($bk !== '') { $k = $bmap[strtolower($bk)] ?? null;
+            if (!$k) { $best = null; $bd = 99; foreach ($banks as $b) { $dd = levenshtein(strtolower($bk), strtolower($b)); if ($dd < $bd) { $bd = $dd; $best = $b; } } $err('Bank "' . $bk . '" tidak dikenal' . ($best && $bd <= 2 ? '. Mungkin: ' . $best : '')); continue; } $bk = $k; }
+          if ($bn !== '' && !preg_match('/^\d{5,20}$/', $bn)) { $err('Nomor rekening harus 5-20 angka'); continue; }
+          $nb = $bk !== '' ? $bk : (string) $t['bank']; $nn = $bn !== '' ? $bn : (string) $t['bank_no']; $na = $bm !== '' ? $bm : (string) $t['bank_name'];
+          if ($nn !== '' && $nb === '') { $err('Bank belum diisi'); continue; } if ($nb !== '' && $nn === '') { $err('Nomor rekening belum diisi'); continue; }
+          if ($na === '' && $nn !== '') { $na = (string) $t['name']; $note[] = 'Atas nama kosong, dipakai nama akun'; }
+          if ($nb !== (string) $t['bank'] || $nn !== (string) $t['bank_no'] || $na !== (string) $t['bank_name']) {
+            $f += ['bank' => $nb, 'bank_no' => $nn, 'bank_name' => $na]; $cnt['rek']++;
+            $ch[] = ['f' => 'Rekening', 'old' => $t['bank_no'] ? $t['bank'] . ' ' . $mask($t['bank_no']) : '-', 'new' => $nb . ' ' . $nn . ' a.n. ' . $na]; }
+        }
+        $o['note'] = implode('; ', $note);
+        if (!$ch) { $o['status'] = 'SAMA'; $cnt['sama']++; $out[] = $o; continue; }
+        $o['status'] = $note ? 'PERIKSA' : 'BERUBAH'; $o['changes'] = $ch; $cnt['berubah']++; $out[] = $o;
+        if (!$dry) { upd('claim_users', (int) $t['id'], $f);
+          hist('user', (int) $t['id'], 'Kontak/rekening diperbarui lewat update massal', $u, implode(', ', array_map(fn($c) => $c['f'] === 'Rekening' ? 'Rekening ' . $mask($f['bank_no'] ?? $t['bank_no']) : $c['f'], $ch))); }
+      }
+      if (!$dry) db()->commit(); } catch (Throwable $e) { if (!$dry && db()->inTransaction()) db()->rollBack(); throw $e; }
+      out(['dry' => $dry, 'count' => $cnt, 'rows' => $out]);
     case 'type_save':
       need_role($u, 'ADMIN'); $id = (int) ($in['id'] ?? 0); $cat = $in['category'] ?? '';
       if ($id) { $t = type_row($id); if ($t['locked']) fail('Jenis ini terkunci.'); $f = ['name' => trim($in['name'] ?? $t['name']), 'active' => isset($in['active']) ? ($in['active'] ? 1 : 0) : $t['active']]; if (!$f['name']) fail('Nama wajib.'); upd('claim_types', $id, $f); }
@@ -201,7 +247,14 @@ try {
       if (val("SELECT 1 FROM claim_fuel_price WHERE effective_from=?", [$ef])) fail('Sudah ada harga untuk tanggal berlaku itu. Gunakan tanggal lain.');
       $id = ins('claim_fuel_price', ['effective_from' => $ef, 'pertalite' => $pl, 'pertamax' => $px, 'created_by' => $u['id'], 'created_at' => now()]);
       hist('user', (int) $u['id'], 'Harga BBM diperbarui', $u, null, null, "berlaku $ef · Pertalite " . rp($pl) . ' · Pertamax ' . rp($px)); out(['id' => $id]);
-    case 'sa_users': need_role($u, 'SA'); $r = q("SELECT id,username,name,nik,job,region,entity,roles,can_submit,active,wa FROM claim_users ORDER BY id"); out(['rows' => $r]);
+    case 'sa_users': need_role($u, 'SA'); $r = q("SELECT id,username,name,nik,job,region,areas,entity,roles,can_submit,active,wa FROM claim_users ORDER BY id"); out(['rows' => $r]);
+    case 'area_check': need_role($u, 'SA');
+      $adm = array_map('shape_user', q("SELECT * FROM claim_users WHERE active=1")); $adm = array_values(array_filter($adm, fn($x) => has_role($x, 'ADMIN')));
+      $regs = q("SELECT region, COUNT(*) n FROM claim_users WHERE active=1 AND can_submit=1 AND region IS NOT NULL AND nik NOT LIKE 'UJI-%' GROUP BY region ORDER BY region");
+      $open = array_values(array_filter($regs, function ($r) use ($adm) { foreach ($adm as $a) if (covers_region($a, $r['region'])) return false; return true; }));
+      out(['regions' => array_column($regs, 'region'), 'uncovered' => $open, 'admins_empty' => array_values(array_map(fn($a) => $a['id'], array_filter($adm, fn($a) => !$a['area_list'] && !$a['region']))), 'dsm' => dsm_present()]);
+    case 'area_dsm': need_role($u, 'SA'); $nk = trim($in['nik'] ?? ''); $per = dsm_present() && $nk !== '' ? dsm_person($nk) : null;
+      out(['areas' => array_values(array_filter(array_map('strval', $per['adminRegions'] ?? []))), 'dsm' => dsm_present()]);
     case 'dsm_people': need_role($u, 'SA'); if (!dsm_present()) out(['rows' => []]);
       try { require_once __DIR__ . '/../lib/auth.php'; $pp = snapshot_()['meta']['people'] ?? []; } catch (Throwable $e) { $pp = []; }
       $have = array_flip(array_map('strval', array_column(q("SELECT nik FROM claim_users WHERE nik IS NOT NULL"), 'nik'))); $rows = [];
@@ -211,7 +264,7 @@ try {
       usort($rows, fn($a, $b) => strcasecmp($a['nama'], $b['nama'])); out(['rows' => array_values($rows)]);
     case 'sa_user_save':
       need_role($u, 'SA'); $id = (int) ($in['id'] ?? 0); $roles = implode(',', array_values(array_intersect(['ADMIN', 'AUDIT', 'HOS', 'FM', 'FT', 'RGM', 'ASM', 'SALES', 'SA'], $in['roles'] ?? [])));
-      $f = ['name' => trim($in['name'] ?? ''), 'nik' => trim($in['nik'] ?? '') ?: null, 'job' => trim($in['job'] ?? ''), 'region' => ($in['region'] ?? '') ?: null, 'entity' => ($in['entity'] ?? '') ?: null, 'roles' => $roles, 'can_submit' => !empty($in['can_submit']) ? 1 : 0, 'active' => isset($in['active']) ? ($in['active'] ? 1 : 0) : 1];
+      $f = ['name' => trim($in['name'] ?? ''), 'nik' => trim($in['nik'] ?? '') ?: null, 'job' => trim($in['job'] ?? ''), 'region' => ($in['region'] ?? '') ?: null, 'areas' => implode(',', array_values(array_unique(array_filter(array_map('trim', (array) ($in['areas'] ?? [])))))) ?: null, 'entity' => ($in['entity'] ?? '') ?: null, 'roles' => $roles, 'can_submit' => !empty($in['can_submit']) ? 1 : 0, 'active' => isset($in['active']) ? ($in['active'] ? 1 : 0) : 1];
       if (array_key_exists('wa', $in)) $f['wa'] = norm_wa($in['wa']);
       if (dsm_present() && !$id) { $nk = trim($in['nik'] ?? ''); $per = $nk !== '' ? dsm_person($nk) : null; if (!$per) fail('NIK tidak ditemukan di DSM. Tambahkan dulu akunnya di DSM.');
         if (val("SELECT 1 FROM claim_users WHERE nik=?", [$nk])) fail('NIK itu sudah punya akses Klaim.'); $f['nik'] = $nk; $f['name'] = $f['name'] ?: ($per['nama'] ?? ''); $f['job'] = $f['job'] ?: ucfirst(strtolower((string) ($per['role'] ?? ''))); $f['region'] = $f['region'] ?: ($per['region'] ?? null);

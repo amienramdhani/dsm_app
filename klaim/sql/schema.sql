@@ -6,6 +6,7 @@ CREATE TABLE claim_users (
  job VARCHAR(30) NOT NULL,
  nik VARCHAR(30) NULL,
  region VARCHAR(60) NULL,
+ areas VARCHAR(500) NULL,
  entity VARCHAR(80) NULL,
  roles VARCHAR(80) NOT NULL DEFAULT '',
  can_submit INT NOT NULL DEFAULT 0,

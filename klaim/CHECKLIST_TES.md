@@ -209,3 +209,9 @@ Jalankan ulang `install.php` (ada tabel baru `claim_fuel_price`; harga tes Perta
 - Pilih penerima (cari, filter jabatan/region/badan usaha, Pilih semua) → Lanjut → ringkasan (berapa diisi, berapa ditimpa, contoh perubahan) → Ya, salin.
 - "Lewati yang sudah punya hak": hanya isi yang belum diatur.
 - Admin hanya bisa menyalin ke orang di regionnya, tidak ke dirinya sendiri. Tiap penerima tercatat di riwayat ("Hak klaim disalin dari …").
+
+## Update massal WA & rekening
+- Admin → Menu → **Update massal WA & rekening**. Unduh template (isi sekarang), isi di Excel, tempel (atau upload .csv) → **Periksa data** → pratinjau (BERUBAH / SAMA / ERROR) → **Simpan**.
+- Kunci = NIK. Sel kosong tidak mengubah apa pun. WA dinormalkan (0812… → 62812…). Bank harus ada di daftar bank, rekening 5–20 angka.
+- Admin hanya bisa mengubah orang di regionnya dan tidak mengubah rekening dirinya sendiri. Riwayat mencatat rekening hanya 4 digit terakhir.
+- Template xlsx diunduh lewat tautan GET (butuh `contact_template` di daftar unduhan `dsm_auth`).

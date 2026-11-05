@@ -4,7 +4,7 @@ function dsm_auth(): ?array {
   static $memo = [];
   $t = (string) ($_SERVER['HTTP_X_DSM_TOKEN'] ?? '');
   // Tautan unduh/gambar (GET, tanpa header) memakai token yang tersimpan di sesi, hanya untuk aksi baca-saja, dan tetap divalidasi ulang ke DSM.
-  if ($t === '' && ($_SERVER['REQUEST_METHOD'] ?? '') === 'GET' && in_array($_GET['a'] ?? '', ['file', 'pdf', 'ba_pdf', 'pc_pdf', 'export'], true)) { sess(); $t = (string) ($_SESSION['dsm_tok'] ?? ''); }
+  if ($t === '' && ($_SERVER['REQUEST_METHOD'] ?? '') === 'GET' && in_array($_GET['a'] ?? '', ['file', 'pdf', 'ba_pdf', 'pc_pdf', 'export', 'contact_template'], true)) { sess(); $t = (string) ($_SESSION['dsm_tok'] ?? ''); }
   if ($t === '') return null;
   if (array_key_exists($t, $memo)) return $memo[$t];
   try {
