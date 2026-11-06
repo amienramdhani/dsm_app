@@ -4741,7 +4741,7 @@ function v6ExecFab(){let b=document.getElementById('v6xfab');const show=false;if
 let V6X={key:'',data:null,brand:'ALL',ind:'st',drill:null,tab:'kpi',heatMetric:'st',heatMode:'proj',asmHeatMode:'proj',rgmHeatMode:'proj',rgmHeatLevel:'asm',bigHeatMode:'proj',bigHeatLevel:'sub',fsFocus:null,fsLandscape:false};
 const V6XI=[['st','SELL THRU','unit'],['da','DEALER AKTIF','dealer'],['noo','NOO','NOO'],['so','SELL OUT','unit'],['om','OMZET','']];
 async function v6ExecView(v,seq){const key=REPORT.period+'|'+$('scopeSelect').value+'|'+(BOOT?.user?.nik||'')+'|'+(BOOT?.demo?.active?BOOT.demo.nik||BOOT.user.nik:'')+'|'+(TOKEN||'').slice(-12);if(V6X.key!==key){V6X.drill=null;V6X.brand='ALL';V6X.calB='ALL';}
- if(V6X.key!==key||!V6X.data){v.innerHTML='<p class="v6load">Memuat Mode Eksekutif…</p>';try{const d=await rpc('apiExec',TOKEN,REPORT.period,$('scopeSelect').value);if(seq!==SEQUENCE)return;V6X.key=key;V6X.data=d;}catch(e){v.innerHTML='<div class="banner bad">'+esc(e.message)+'</div>';return;}}
+ if(V6X.key!==key||!V6X.data){v.innerHTML='<p class="v6load">Memuat Mode Eksekutif…</p>';try{const d=await rpc('apiExec',TOKEN,REPORT.period,$('scopeSelect').value);if(seq!==SEQUENCE)return;V6X.key=key;V6X.data=d;if(V6X.brand&&V6X.brand!=='ALL'&&!(d.brands||[]).includes(V6X.brand))V6X.brand='ALL';}catch(e){v.innerHTML='<div class="banner bad">'+esc(e.message)+'</div>';return;}}
  v6ExecDraw();}
 
 window.v12TK=window.v12TK||{mode:'o',sort:'v',all:false};

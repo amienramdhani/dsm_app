@@ -532,6 +532,15 @@ function apiExec($token, $period, $selection = null) {
     if ($level === 'TOP' || $level === 'RGM') {
         try { foreach (rbVisibility_($db, $period) as $bigV => $bsV) foreach ($bsV as $bV => $v) $visOut[$bigV][$bV] = [$v['show'] ? 1 : 0, $v['mode'] !== '' ? 1 : 0, $v['q']]; } catch (Throwable $e) { $visOut = []; }
     }
-    return ['onlineBigs' => $level === 'TOP' || $level === 'RGM' ? js_keys($ON['bigs']) : [], 'level' => $level, 'me' => $uNik, 'kpiMe' => $kpiMe, 'dealers' => $dealers, 'ownSub' => js_keys($ownSub), 'period' => $period, 'prev' => $prev, 'cutoff' => $cut, 'prevCutoff' => $prevCut, 'closed' => $c['closed'], 'days' => $wk['days'], 'run' => $wk['run'], 'brands' => $brands, 'soReady' => $soReady,
+    // Brand yang dinonaktifkan di menu Admin Brand disembunyikan dari chip/kolom Beranda, kecuali masih ada penjualan di periode ini (histori tetap terlihat). Total tetap menghitung semua brand.
+    $shownBrands = $brands;
+    if (function_exists('brandInactive_')) {
+        $off = array_change_key_case(brandInactive_(), CASE_UPPER);
+        if ($off) {
+            $sold = []; foreach ($db['cubes'][$period] ?? [] as $r0) if (truthy($r0['q'] ?? 0)) $sold[js_upper(text_($r0['brand'] ?? ''))] = 1;
+            $shownBrands = array_values(array_filter($brands, fn($b) => !isset($off[js_upper($b)]) || isset($sold[js_upper($b)])));
+        }
+    }
+    return ['onlineBigs' => $level === 'TOP' || $level === 'RGM' ? js_keys($ON['bigs']) : [], 'level' => $level, 'me' => $uNik, 'kpiMe' => $kpiMe, 'dealers' => $dealers, 'ownSub' => js_keys($ownSub), 'period' => $period, 'prev' => $prev, 'cutoff' => $cut, 'prevCutoff' => $prevCut, 'closed' => $c['closed'], 'days' => $wk['days'], 'run' => $wk['run'], 'brands' => $shownBrands, 'soReady' => $soReady,
         'vis' => js_obj($visOut), 'pd' => $pd, 'nodes' => js_obj($nodes), 'co' => js_obj($coAcc), 'rep' => js_obj($repOut), 'admin' => $adminOut, 'daily' => js_obj($daily), 'hist' => ['months' => $hist['months'], 'v' => js_obj($hist['v']), 't' => js_obj($hist['t'])], 'ownBig' => ($isRgm || $low) ? js_keys($ownBig) : null, 'asm' => $asm, 'orgHeat' => js_obj($orgHeat), 'kpi' => js_obj($kpi), 'dealer' => ['daLaluBelum' => $daLalu, 'tutupBulanIni' => $tutNow, 'pengajuan' => $pend, 'aktifUniq' => $dealerAktifUniq, 'aktifUniqLmtd' => $dealerAktifUniqLmtd]];
 }
