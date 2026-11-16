@@ -32,6 +32,7 @@ function dsmSearchable(sel,placeholder){
    .then(()=>load('assets/dealer_target.js?v=20261019b','dsmDealerTargetJs'))
    .then(()=>load('assets/keep_seller.js?v=20261029a','dsmKeepSellerJs'))
    .then(()=>load('assets/owner_history.js?v=20261027a','dsmOwnerHistoryJs'))
+   .then(()=>load('assets/telegram_agent.js?v=20261116a','dsmTelegramAgentJs'))
    .then(()=>load('assets/aksi.js?v=20261029s','dsmAksiJs'))
    .then(()=>load('assets/admin_revision.js?v=20261019i','dsmAdminRevisionJs'))
    .then(()=>load('assets/admin_portfolio_guard.js?v=20261019a','dsmAdminPortfolioGuardJs'))

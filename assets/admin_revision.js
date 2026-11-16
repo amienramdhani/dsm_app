@@ -2,7 +2,7 @@
 (function(){
 'use strict';
 const GROUPS=[
- ['u','Pengguna & Akses','#2B7BE0',/akun pengguna|tambah user|hak export|keamanan akun|kredit tetap ke penjual/i],
+ ['u','Pengguna & Akses','#2B7BE0',/akun pengguna|tambah user|hak export|keamanan akun|kredit tetap ke penjual|sambungan telegram/i],
  ['ap','Approval','#E5354E',/^approval/i],
  ['d','Dealer','#0E9F6E',/cari & edit dealer|riwayat pemilik dealer|tambah dealer|upload dealer|bulk edit customer|update kontak|pic dealer|big region per dealer|dealer tutup|transfer dealer|riwayat transfer|ganti kode induk/i],
  ['h','Upload Harian','#F07A0C',/upload regional/i],

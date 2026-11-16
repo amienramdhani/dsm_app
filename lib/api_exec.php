@@ -129,8 +129,27 @@ function apiExec($token, $period, $selection = null) {
         try { $o = dealerBrandOwner_($db, (string) $r['customer'], (string) $r['brand'], (string) $r['date'], $dbaIdx); } catch (Throwable $e) { return ''; }
         $n = (string) ($o['nik'] ?? ''); return ($n !== '' && isset($P[$n])) ? $n : '';
     };
-    $rowKeys = function ($r) use ($keysOf, $pemOwner) {
-        $ow = $pemOwner($r); if ($ow === '') return $keysOf($r['nik']);
+    // Region penjualan = lokasi dealer pada tanggal transaksi (RegionCore::route: Dealer_Region berlaku per tanggal, lalu routing dealer),
+    // kecuali penjual punya aturan Kredit Tetap ke Penjual. Penjual di luar area hanya memindahkan kunci Big Region (B|) dan melepas kunci Sub Region (S|).
+    // Kill-switch: define('DSM_REGION_LOKASI_OFF', true) di config.local.php.
+    $locMemo = [];
+    $locBig = function ($r) use ($db, $meta, $period, &$locMemo) {
+        if (defined('DSM_REGION_LOKASI_OFF') && DSM_REGION_LOKASI_OFF) return '';
+        $mk = (string) $r['customer'] . '|' . (string) ($r['date'] ?? '') . '|' . (string) $r['nik']; if (isset($locMemo[$mk])) return $locMemo[$mk];
+        $v = '';
+        if (!(function_exists('keepSellerRule_') && keepSellerRule_($meta, (string) $r['nik'], substr((string) ($r['date'] ?? ''), 0, 7)))) {
+            try { $v = js_str(RegionCore::route($db, ['customer' => (string) $r['customer'], 'date' => (string) ($r['date'] ?? ''), 'nik' => (string) $r['nik']], 'ST')); } catch (Throwable $e) { $v = ''; }
+            if ($v === 'null' || $v === 'undefined') $v = '';
+        }
+        return $locMemo[$mk] = $v;
+    };
+    $rowKeys = function ($r) use ($keysOf, $pemOwner, $locBig, $bigOf) {
+        $ow = $pemOwner($r);
+        if ($ow === '') {
+            $k = $keysOf($r['nik']); $lb = $locBig($r); $sb = js_str($bigOf($r['nik']));
+            if ($lb === '' || $lb === $sb) return $k;
+            return array_values(array_unique(array_merge(array_values(array_filter($k, fn($x) => $x !== 'B|' . $sb && strpos($x, 'S|') !== 0)), ['B|' . $lb])));
+        }
         $isArea = fn($k) => $k === 'N' || strpos($k, 'B|') === 0 || strpos($k, 'S|') === 0;
         return array_values(array_unique(array_merge(array_values(array_filter($keysOf($ow), $isArea)), array_values(array_filter($keysOf($r['nik']), fn($k) => !$isArea($k))))));
     };
@@ -150,7 +169,7 @@ function apiExec($token, $period, $selection = null) {
     };
     // Hari data sebelumnya (untuk "dibanding kemarin"): tanggal terbesar < cutoff yang punya transaksi.
     $pd = ''; foreach (PortalCore::slice($db, $period, $c['ids'], $cut) as $r0) if (strcmp((string) $r0['date'], (string) $cut) < 0 && strcmp((string) $r0['date'], $pd) > 0) $pd = (string) $r0['date'];
-    $addRows = function (array $rows, int $side) use ($pd, $devSet, $cut, $each, $onl, $keysOf, $fullOK, &$daily, $rowKeys, $pemOwner, $bigOf, $addExt) {
+    $addRows = function (array $rows, int $side) use ($pd, $devSet, $cut, $each, $onl, $keysOf, $fullOK, &$daily, $rowKeys, $pemOwner, $bigOf, $addExt, $locBig) {
         foreach ($rows as $r) {
             $dev = isset($devSet[$r['brand']]); $sides = $side === 0 && $r['date'] === $cut ? [0, 2] : ($side === 0 && $pd !== '' && $r['date'] === $pd ? [0, 3] : [$side]);
             foreach ($sides as $sd) {
@@ -160,6 +179,7 @@ function apiExec($token, $period, $selection = null) {
                 });
             }
             if ($side === 0 && $dev && $r['q'] > 0 && ($ow = $pemOwner($r)) !== '') { $ob = $bigOf($ow); if ($ob !== $bigOf($r['nik'])) $addExt($ob, (string) $r['brand'], (string) $r['nik'], (string) $r['customer'], (int) $r['q']); }
+            if ($side === 0 && $dev && $r['q'] > 0 && $pemOwner($r) === '' && ($lb = $locBig($r)) !== '' && $lb !== js_str($bigOf($r['nik']))) $addExt($lb, (string) $r['brand'], (string) $r['nik'], (string) $r['customer'], (int) $r['q']);
             if ($side === 0 && $dev && truthy($r['q'])) foreach (js_filter($rowKeys($r), $fullOK) as $k) { $daily[$k][$r['date']][$r['brand']] = ($daily[$k][$r['date']][$r['brand']] ?? 0) + $r['q']; }
         }
     };

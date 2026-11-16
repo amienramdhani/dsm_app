@@ -4,7 +4,7 @@
 const E=s=>(typeof esc==='function'?esc(s):String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])));
 const N=n=>Number(n||0).toLocaleString('id-ID',{maximumFractionDigits:0});
 const ID='txcPageApp';
-let S={tab:'REVIEW',period:'',region:'',q:'',page:1,size:25,boot:null,data:null,items:[],busy:false,msg:null};
+let S={sel:new Set(),tab:'REVIEW',period:'',region:'',q:'',page:1,size:25,boot:null,data:null,items:[],busy:false,msg:null};
 let timer=null,seq=0;
 
 const css=`
@@ -33,9 +33,14 @@ const css=`
 .txcForm label{display:block;font:800 10px system-ui;text-transform:uppercase;letter-spacing:.05em;color:#66778f;margin:10px 0 4px}
 .txcHist{margin-top:12px;border-top:1px solid #eef2f7;padding-top:8px;font-size:11.5px;color:#51647d}.txcHist div{padding:4px 0}
 .txcAct{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
+.txcCk{width:20px;height:20px;accent-color:#1E5FB8;cursor:pointer;vertical-align:middle}.txcTbl tr.sel td{background:#F2F7FE}
+.txcBulk{position:sticky;bottom:10px;z-index:5;margin-top:10px;background:linear-gradient(135deg,#10394E,#1E5FB8);color:#fff;border-radius:16px;padding:12px 14px;box-shadow:0 10px 26px rgba(16,57,78,.32)}
+.txcBulk .t{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px}.txcBulk .t a{color:#cfe3ff;font-weight:700;font-size:11.5px;cursor:pointer;text-decoration:underline}
+.txcBulk .b{display:flex;gap:8px;margin-top:10px}.txcBulk button{flex:1;border:0;border-radius:12px;padding:11px 8px;font:800 12px system-ui;cursor:pointer;background:#fff;color:#10394E}.txcBulk button.p{background:linear-gradient(135deg,#FFB020,#F07A0C);color:#fff}
 @media(max-width:760px){
  .txcBox{max-height:none;border:0;overflow:visible;background:transparent}
  .txcTbl thead{display:none}.txcTbl,.txcTbl tbody{display:block}.txcTbl tr[data-i]{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;background:#fff;border:1px solid #e0e7ef;border-radius:13px;padding:10px;margin-bottom:8px}
+ .txcTbl td.ckc::before{display:none}.txcTbl td.ckc{grid-column:1/-1}
  .txcTbl td{display:block;border:0;padding:0}.txcTbl td::before{content:attr(data-l);display:block;color:#7b889a;font:800 9px system-ui;text-transform:uppercase;letter-spacing:.05em}.txcTbl td.wide{grid-column:1/-1}.txcTbl .r{text-align:left}
  .txcInfo{grid-template-columns:1fr 1fr}.txcChain{grid-template-columns:1fr}.txcChain .ar{display:none}
 }`;
@@ -62,8 +67,8 @@ function shell(){
   </div>
   <div id="txcList"></div>
  </div>`;
- r.querySelectorAll('[data-tab]').forEach(x=>x.onclick=()=>{S.tab=x.dataset.tab;S.page=1;S.items=[];S.data=null;shell();renderOrph();if(S.tab!=='SEARCH')load();else renderList()});
- r.querySelector('#txcPeriod').onchange=e=>{S.period=e.target.value;S.page=1;S.tab==='SEARCH'?(S.items=[],renderList()):load()};
+ r.querySelectorAll('[data-tab]').forEach(x=>x.onclick=()=>{S.sel.clear();S.tab=x.dataset.tab;S.page=1;S.items=[];S.data=null;shell();renderOrph();if(S.tab!=='SEARCH')load();else renderList()});
+ r.querySelector('#txcPeriod').onchange=e=>{S.period=e.target.value;S.sel.clear();S.page=1;S.tab==='SEARCH'?(S.items=[],renderList()):load()};
  r.querySelector('#txcRegion').onchange=e=>{S.region=e.target.value;S.page=1;S.tab==='SEARCH'?(S.items=[],renderList()):load()};
  const q=r.querySelector('#txcQ');q.oninput=()=>{S.q=q.value;if(S.tab==='SEARCH')return;clearTimeout(timer);timer=setTimeout(()=>{S.page=1;load()},380)};
  q.onkeydown=e=>{if(e.key==='Enter'){clearTimeout(timer);S.q=q.value;S.page=1;S.tab==='SEARCH'?search():load()}};
@@ -79,7 +84,7 @@ function renderOrph(){
  box.querySelectorAll('[data-revoke]').forEach(b=>b.onclick=()=>revokeDialog(Number(b.dataset.revoke)));
 }
 function rowHtml(it,i){
- return `<tr data-i="${i}"><td data-l="Tanggal">${E(it.date)}</td>
+ return `<tr data-i="${i}" class="${S.sel.has(it.key)?'sel':''}"><td data-l="Pilih" class="ckc"><input type="checkbox" class="txcCk" data-ck="${E(it.key)}"${S.sel.has(it.key)?' checked':''} aria-label="Pilih transaksi"></td><td data-l="Tanggal">${E(it.date)}</td>
   <td data-l="Dealer" class="wide"><b>${E(it.dealer||it.induk)}</b><small>${E(it.customer)} · ${E(it.region)}</small></td>
   <td data-l="Dokumen">${E(it.doc)}${it.line?`<small>baris ${E(it.line)}</small>`:''}</td>
   <td data-l="Brand / SKU">${E(it.brand)}<small>${E(it.sku)}</small></td>
@@ -94,10 +99,40 @@ function renderList(){
  if(S.tab==='SEARCH'&&!S.items.length&&!S.searched){box.innerHTML='<div class="txcMsg warn">Cari transaksi mana pun pada periode terpilih untuk dikoreksi, misalnya dari nomor invoice atau kode dealer.</div>';return}
  if(!S.items.length){box.innerHTML=`<div class="txcMsg ok">${S.tab==='REVIEW'?'Tidak ada transaksi yang perlu ditinjau pada filter ini.':S.tab==='CORRECTED'?'Belum ada transaksi yang dikoreksi pada filter ini.':S.tab==='KEEP'?'Tidak ada transaksi penjual kredit-tetap yang pemilik dealernya berbeda pada filter ini.':'Tidak ada transaksi yang cocok.'}</div>`;return}
  const d=S.data||{};
- box.innerHTML=`<div class="txcBox"><table class="txcTbl"><thead><tr><th>TANGGAL</th><th>DEALER</th><th>DOKUMEN</th><th>BRAND / SKU</th><th class="r">QTY / OMZET</th><th>SALES DI FILE ST</th><th>SALES EFEKTIF</th><th>MARKER</th></tr></thead><tbody>${S.items.map(rowHtml).join('')}</tbody></table></div>
+ box.innerHTML=`<div class="txcBox"><table class="txcTbl"><thead><tr><th><input type="checkbox" class="txcCk" id="txcAll" aria-label="Pilih semua di halaman"></th><th>TANGGAL</th><th>DEALER</th><th>DOKUMEN</th><th>BRAND / SKU</th><th class="r">QTY / OMZET</th><th>SALES DI FILE ST</th><th>SALES EFEKTIF</th><th>MARKER</th></tr></thead><tbody>${S.items.map(rowHtml).join('')}</tbody></table></div>
   <div class="txcPager"><span>${S.tab==='SEARCH'?`Menampilkan ${S.items.length} dari ${N(d.total)} transaksi${d.capped?' — persempit pencarian untuk melihat sisanya':''}`:`${N(d.total)} transaksi · halaman ${d.page} dari ${d.pages}`}</span>${S.tab==='SEARCH'?'':`<span><button type="button" class="txcBtn ghost" id="txcPrev"${d.page<=1?' disabled':''}>‹ Sebelumnya</button> <button type="button" class="txcBtn ghost" id="txcNext"${d.page>=d.pages?' disabled':''}>Berikutnya ›</button></span>`}</div>`;
- box.querySelectorAll('tr[data-i]').forEach(tr=>tr.onclick=()=>detail(S.items[Number(tr.dataset.i)]));
+ box.querySelectorAll('tr[data-i]').forEach(tr=>tr.onclick=e=>{if(e.target.closest('.ckc'))return;detail(S.items[Number(tr.dataset.i)])});
+ box.querySelectorAll('[data-ck]').forEach(c=>c.onchange=()=>{c.checked?S.sel.add(c.dataset.ck):S.sel.delete(c.dataset.ck);c.closest('tr').classList.toggle('sel',c.checked);bulkBar();syncAll()});
+ const all=box.querySelector('#txcAll');if(all)all.onchange=()=>{box.querySelectorAll('[data-ck]').forEach(c=>{c.checked=all.checked;all.checked?S.sel.add(c.dataset.ck):S.sel.delete(c.dataset.ck);c.closest('tr').classList.toggle('sel',all.checked)});bulkBar()};
+ syncAll();bulkBar();
  const pv=box.querySelector('#txcPrev'),nx=box.querySelector('#txcNext');if(pv)pv.onclick=()=>{S.page--;load()};if(nx)nx.onclick=()=>{S.page++;load()};
+}
+function syncAll(){const a=document.getElementById('txcAll');if(!a)return;const cs=[...document.querySelectorAll('[data-ck]')];a.checked=cs.length>0&&cs.every(c=>c.checked);a.indeterminate=!a.checked&&cs.some(c=>c.checked)}
+function bulkBar(){
+ let b=document.getElementById('txcBulk');const n=S.sel.size;
+ if(!n){if(b)b.remove();return}
+ if(!b){b=document.createElement('div');b.id='txcBulk';b.className='txcBulk';(document.getElementById('txcList')||root()).appendChild(b)}
+ b.innerHTML=`<div class="t"><b>${n} transaksi dipilih</b><a id="txcClr">Batalkan pilihan</a></div><div class="b"><button type="button" id="txcBRaw">JADIKAN SALES TRANSAKSI</button><button type="button" class="p" id="txcBOwn">JADIKAN SALES MAINTAIN</button></div>`;
+ b.querySelector('#txcClr').onclick=()=>{S.sel.clear();renderList()};
+ b.querySelector('#txcBRaw').onclick=()=>bulkDialog('RAW');b.querySelector('#txcBOwn').onclick=()=>bulkDialog('OWNER');
+}
+function bulkDialog(mode){
+ const n=S.sel.size,lab=mode==='RAW'?'Sales transaksi (Sales di file ST)':'Sales maintain (pemilik dealer-brand)';
+ const o=overlay(`<h3>Koreksi ${N(n)} transaksi</h3><div class="sub">Periode ${E(S.period)} · Sales efektif semua transaksi terpilih dijadikan <b>${E(lab)}</b>.</div>
+  <div class="txcMsg warn">Transaksi yang sudah sesuai, kredit tetap ke penjual, atau tanpa pemilik dealer-brand dilewati otomatis. Maksimal 200 transaksi per proses.</div>
+  <div class="txcForm"><label for="txcBWhy">Alasan koreksi (min. 5 karakter)</label><textarea id="txcBWhy" placeholder="Contoh: dealer salah kode induk, dikembalikan ke pemilik"></textarea><div id="txcErr"></div></div>
+  <div class="txcAct"><button type="button" class="txcBtn ghost" id="txcCancel">Batal</button><button type="button" class="txcBtn" id="txcBGo">Proses ${N(n)} transaksi</button></div>`);
+ o.querySelector('#txcCancel').onclick=closeModal;
+ o.querySelector('#txcBGo').onclick=async()=>{
+  const why=o.querySelector('#txcBWhy').value.trim(),err=o.querySelector('#txcErr'),btn=o.querySelector('#txcBGo');
+  if(why.length<5){err.innerHTML='<div class="txcMsg bad">Isi alasan minimal 5 karakter.</div>';return}
+  if(n>200){err.innerHTML='<div class="txcMsg bad">Maksimal 200 transaksi per proses. Kurangi pilihan.</div>';return}
+  S.saving=true;btn.disabled=true;btn.textContent='Memproses & publish ulang…';err.innerHTML='<div class="txcMsg warn">Data dipublish ulang satu kali agar semua halaman ikut berubah. Bisa beberapa menit; jangan tutup halaman.</div>';
+  try{const r=await rpc('apiTxCorrBulk',TOKEN,S.period,[...S.sel],mode,why);S.saving=false;closeModal();S.sel.clear();
+   const sk=Object.entries(r.skipped||{}).map(([k,v])=>v+' '+k).join(', ');
+   S.msg={t:r.changed?'ok':'warn',m:r.changed?`${N(r.changed)} transaksi dikoreksi ke ${lab}.${sk?' Dilewati: '+sk+'.':''}`:`Tidak ada yang diubah.${sk?' Dilewati: '+sk+'.':''}`};showMsg();S.tab==='SEARCH'?search():load();}
+  catch(e){S.saving=false;btn.disabled=false;btn.textContent='Proses '+N(n)+' transaksi';err.innerHTML=`<div class="txcMsg bad">${E(e.message||String(e))}</div>`}
+ };
 }
 async function load(){
  const my=++seq;S.busy=true;renderList();
@@ -156,7 +191,7 @@ function revokeDialog(id){
 async function openPage(id){
  addCss();const r=document.getElementById(id||ID);if(!r)return;
  try{S.boot=await rpc('apiTxCorrBoot',TOKEN)}catch(e){r.innerHTML='<div class="banner bad">'+E(e.message||String(e))+'</div>';return}
- S.period=S.period||S.boot.period;S.tab='REVIEW';S.page=1;S.q='';S.region='';S.items=[];S.data=null;S.msg=null;S.searched=false;
+ S.sel.clear();S.period=S.period||S.boot.period;S.tab='REVIEW';S.page=1;S.q='';S.region='';S.items=[];S.data=null;S.msg=null;S.searched=false;
  shell();load();
 }
 window.dsmTxCorrection={openPage};

@@ -398,3 +398,47 @@ Fakta kode yang perlu diingat:
 - Tahap 2 poin 1–2 (komitmen mingguan + review) selesai; tabel `dsm_commit` dibuat otomatis saat pertama dipakai. Belum diuji dengan MySQL asli. Belum: perbandingan vs kemarin (butuh snapshot harian).
 - Tab AKSI versi HP selesai (sub-menu per layar, sheet komitmen, telepon dealer). Perlu uji di HP asli.
 - Dibanding kemarin (tanpa snapshot), notifikasi komitmen, dan pengingat Senin selesai. Pengingat butuh cron notif_cli.php + push aktif; belum diuji nyata.
+
+## Agent API + Telegram — disetujui, BELUM dikoding (2026-11-10)
+- Tujuan: bot Telegram tim IT (OpenClaw + GPT) bisa baca data DSM. DSM hanya menyediakan API; setup bot sepenuhnya urusan IT.
+- Mockup disetujui: `dsm-agent-telegram.html` (di luar repo): Profil belum/sudah tersambung, alur chat, Admin > Pengguna & Akses > Sambungan Telegram.
+- Dokumen untuk IT: `doc/agent-api/API_UNTUK_IT.md` (v0.1, menunggu review user).
+- Rencana kode (tunggu "gas"):
+  1. `agent_api.php` baru (terpisah dari `api.php`), GET read-only, header `Authorization: Bearer <BOT_KEY>` + `X-Telegram-User-Id`. Whitelist resource -> fungsi baca yang sudah ada (apiDashboard, apiExec, apiKpiTree, apiTeamKpi, apiRank, apiMyRank, apiTeam, apiEarlyWarning, apiPotensi, apiWeeklyAnalysis, apiCompare, apiGrowthType, apiDOS, apiTransactionGroups, apiDealerSearch, apiDealerDetail, apiDealerStock, apiDealerHistorySummary, apiDealerTutupList, apiTMTeam/apiTMKpi/apiTMRank, apiOrderList, apiCommitBoot, apiHariLibur). Jawaban diringkas (bukan payload layar), paging maks 100, rate limit, log.
+  2. Tabel baru (auto-create): `dsm_tg_link` (telegram_id, nik, username, linked_at, expires_at, last_used, revoked_at, revoked_by, session_key), `dsm_tg_code` (hash kode, nik, until, used), `dsm_agent_key` (hash, label, aktif), `dsm_agent_log`.
+  3. Identitas: semua fungsi DSM menerima `$token` dan pakai `authSession_` -> agent_api membuat sesi internal per sambungan dan memanggil fungsi yang sama, jadi filter role 100% sama dengan web. `authSession_` sudah otomatis menolak bila akun nonaktif atau VERSI berubah (ganti/reset PIN) -> syarat "putus otomatis" sudah gratis.
+  4. Profil: kartu Hubungkan Telegram (kode 6 digit, 5 menit, sekali pakai) + Putuskan. Admin: panel Sambungan Telegram di grup Pengguna & Akses (+ "Putuskan semua" khusus Super Admin). Super Admin: buat/cabut BOT_KEY.
+- PERHATIAN saat koding:
+  - `authSession_` menggeser `until` (sliding). agent_api WAJIB cek `expires_at` sambungan (tetap 30 hari) SEBELUM memakai sesi.
+  - Jangan pakai `issue_()` dengan deviceId: itu masuk daftar perangkat (DEVICE_MAX=5) dan bisa mengusir perangkat web user. Buat sesi internal tanpa registrasi perangkat.
+  - Login DSM pakai PIN (bukan password); teks UI "password diganti" di mockup = "PIN diganti".
+  - Pastikan `api.php` (browser) tidak bisa memakai sesi internal agent untuk fungsi tulis (tandai sesi `agent=1`, tolak di DSM_WRITE_FNS).
+- Diputuskan user 2026-11-10: semua role termasuk Admin/Super Admin sambungan 30 hari tetap; nomor telepon dealer/kontak DISAMARKAN di jawaban agent (contoh 0812****789). Modul Klaim TIDAK dibuka ke agent (keputusan user 2026-11-10).
+
+## Agent API Paket 1 (fondasi) — selesai kode, diuji lokal (2026-11-10)
+- File: `agent_api.php` (baru), `lib/agent.php` (baru), `tools/agent_cli.php` (baru, alat sementara sebelum panel Admin), `api.php` (tolak sesi internal agent di pintu browser).
+- Resource jalan: `health`, `me`, `link` (POST), `akan_habis` (untuk pengingat H-3, cukup BOT_KEY). Resource data = Paket 3.
+- Diuji di MariaDB lokal kosong (bukan data asli): health, BOT_KEY salah 401, belum terhubung, kode salah, link sukses 30 hari, kode sekali pakai, resource belum ada, VERSI berubah -> LINK_REVOKED, kedaluwarsa, akan_habis, sesi agent ditolak api.php, sesi normal tidak terganggu, tabel _sessions bersih.
+- BELUM diuji: `agentCall_` (sesi sekali pakai memanggil fungsi DSM) karena belum ada resource data; nama/role/cakupan di `me` (DB uji tanpa snapshot); header Authorization di Apache Laragon (kalau kosong, tambah di .htaccess: `SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1`).
+- Uji wajib di Laragon: (1) `php tools/agent_cli.php key "Bot IT"` simpan BOT_KEY; (2) `php tools/agent_cli.php code <NIK asli>`; (3) curl POST `?r=link` dengan kode -> nama & role muncul; (4) `?r=me`; (5) ganti PIN user lewat web -> `?r=me` jadi LINK_REVOKED; (6) `php tools/agent_cli.php unlink-all uji` -> semua LINK_REVOKED; (7) login web user yang sama tetap normal.
+- Next: Paket 2 (Profil Hubungkan Telegram, panel Sambungan Telegram + Putuskan Semua, panel BOT_KEY), tunggu "gas".
+- 2026-11-16 keputusan user: DSM tidak punya halaman Profil. Kartu "Hubungkan Telegram" ditaruh di menu akun (klik kartu nama di pojok kiri bawah, sejajar Perangkat Saya / Ganti PIN / Keluar), membuka halaman baru "Telegram Agent" (pola sama seperti PAGE 'perangkat', lihat index.php sekitar baris 6507 dan render()). Paket 2 wajib mengganti semua teks "DSM > Profil > Hubungkan Telegram" (lib/agent.php, doc/agent-api/API_UNTUK_IT.md, mockup) menjadi "klik nama di pojok kiri bawah > Telegram Agent". Lokasi di HP perlu dicek saat Paket 2.
+- 2026-11-16 Paket 1 LOLOS uji user di Laragon (data asli, port 8080): link dengan kode -> ARI SUPER ADMIN 30 hari; ganti PIN -> LINK_REVOKED; login web dengan PIN baru normal. Catatan: cakupan kosong untuk Super Admin, tampilkan "Nasional" di Paket 3. BOT_KEY id 859 = key uji (terlihat di screenshot), WAJIB dicabut sebelum key untuk IT dibuat.
+
+## Agent API Paket 2 (tampilan) — selesai kode, diuji lokal (2026-11-16)
+- Mockup acuan: dsm-agent-telegram-v2.html (disetujui user, di luar repo).
+- File: `assets/telegram_agent.js` (baru: halaman Telegram Agent + panel Admin), `lib/agent.php` (endpoint apiTgState/apiTgCode/apiTgUnlink/apiTgAdminList/apiTgAdminUnlink/apiTgAdminUnlinkAll/apiAgentKeyList/apiAgentKeyCreate/apiAgentKeyRevoke/apiTgBotSave, teks "Profil" diganti lokasi baru, cakupan "Nasional" untuk role pusat), `api.php` (require + whitelist + WRITE_FNS), `index.php` (titles 'telegram', render() diperlakukan seperti 'perangkat', menu akun desktop, sembunyi di sidebar desktop, ikon + label drawer HP, panggil dsmTgAdminPanel), `assets/searchable.js` (loader), `assets/admin_revision.js` (panel masuk tab Pengguna & Akses).
+- Lokasi: desktop = klik kartu nama kiri bawah > Telegram Agent. HP = drawer LAINNYA > Telegram (pola sama dengan Perangkat; BEDA dari mockup layar 2 yang di topbar, karena di HP menu akun memang ada di drawer).
+- Semua role melihat menu (data bot otomatis sesuai hak akses). Mode Demo ditolak.
+- Diuji lokal (DB uji, snapshot 3 orang): state/code/link/unlink sendiri, Sales ditolak panel admin, Admin bisa lihat & putus satu, Admin ditolak BOT_KEY & Putuskan Semua, Super Admin buat/cabut key, simpan username bot, Putuskan Semua wajib alasan >=5 huruf. Tampilan halaman + panel dirender di harness (1200px & 390px): tanpa scroll horizontal, tanpa error console.
+- BELUM diuji: di dalam aplikasi asli (menu akun, drawer HP, tab Pengguna & Akses, timing load telegram_agent.js saat Admin dibuka pertama kali).
+- Catatan: tabel Admin menandai "PIN DIGANTI" hanya setelah sambungan dipakai/dibuka pemiliknya (cek VERSI terjadi saat dipakai), sebelum itu masih AKTIF tetapi bot tetap ditolak.
+- Next: Paket 3 (resource data). Tunggu "gas".
+- 2026-11-16 Paket 2b: panel Admin Sambungan Telegram diganti sesuai mockup v3 yang disetujui user (dsm-tg-admin-v3.html, di luar repo): header biru, kartu ringkasan berikon, daftar dengan avatar + batang masa berlaku + cari + filter status + muat lagi (20/halaman), kolom kanan BOT_KEY / username bot / Putuskan Semua (container query >=900px), HP satu kolom dan tabel geser dengan kolom nama menempel. Hanya `assets/telegram_agent.js` yang berubah. Diuji di harness 1440px & 390px: tanpa scroll horizontal, tanpa error console. Belum diuji di aplikasi asli.
+
+## Agent API Paket 3 (resource data) — selesai kode, diuji lokal terbatas (2026-11-16)
+- File: `lib/agent.php` (agentResource_ + AGENT_RESOURCES, agentTrim_ paging, agentMaskDeep_ penyamaran nomor HP, agentPeople_, agentCall_ kini memanggil tmBeginRequest_ seperti api.php dan mengisi argumen null), `agent_api.php` (memuat modul yang sama dengan api.php; cabang default menjalankan resource), `doc/agent-api/API_UNTUK_IT.md` v0.2.
+- Jawaban = payload asli fungsi DSM (bukan bentuk baru), dipangkas + disamarkan. Kalau ada resource yang terlalu besar/aneh untuk GPT, ringkas per resource setelah dicoba IT dengan data asli.
+- Diuji lokal (snapshot uji tanpa transaksi): orang (Super Admin semua, Sales hanya dirinya), cari, periode salah, parameter wajib, resource tidak dikenal, Sales minta nik orang lain -> FORBIDDEN "Data di luar cakupan", hari_libur/komitmen/dealer_tutup/tm_peringkat jalan, sesi internal terhapus. ringkasan/peringkat gagal di DB uji karena tidak ada data periode (wajar).
+- WAJIB uji di Laragon dengan data asli: semua resource sekali per role (Super Admin, ASM, Sales, Telemarketing), ukuran jawaban ringkasan/dos/transaksi (waktu & besar), cek tidak ada nomor HP utuh.
+- Catatan: dealer_cari memakai daftar customers dari apiDashboard (bukan apiDealerSearch yang khusus admin).

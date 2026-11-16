@@ -21,7 +21,7 @@ R.new = async () => {
   const en = c => div || (b.budget[c] && b.budget[c].enabled);
   shell(hero(div ? 'Ajukan untuk divisi' : 'Ajukan klaim', div ? 'ADMIN · DI LUAR SALES' : 'PEMOHON', { back: true }) +
     `<div class="sec">${b.blocked ? `<div class="note red">Pengajuan diblokir: petty cash ${esc(b.blocked.number)} melewati tenggat.</div>` : ''}${cats.map(c => { const types = S.L.types.filter(t => t.category === c && t.name !== 'Reimburse petty cash'); const bb = b.budget[c];
-      return `<div class="card" style="${en(c) ? '' : 'opacity:.5'}"><div class="row"><b>${CATIC[c]} ${c}</b>${!div && bb && bb.enabled ? `<span class="mut" style="${bb.available < 0 ? 'color:#D2453F;font-weight:800' : ''}">Sisa ${rp(bb.available)}</span>` : ''}</div>
+      return `<div class="card" style="${en(c) ? '' : 'opacity:.5'}"><div class="row"><b>${CATIC[c]} ${c}</b>${!div && bb && bb.enabled && !bb.none ? `<span class="mut" style="${bb.available < 0 ? 'color:#D2453F;font-weight:800' : ''}">Sisa ${rp(bb.available)}</span>` : ''}</div>
       ${en(c) ? `<div class="chips">${types.map(t => `<span class="chip" data-new="${t.id}" data-cat="${c}">${esc(t.name)}</span>`).join('')}</div>${types.length > 1 && c !== 'Perdin' ? `<div class="gab" data-gab="${c}"><span>＋ Gabung beberapa jenis dalam satu klaim</span></div>` : ''}` : '<div class="mut" style="margin-top:6px">Belum diaktifkan oleh Admin.</div>'}</div>`; }).join('')}
       <div id="gabbar" class="hide"><div class="mut" id="gabinfo" style="text-align:center;margin-bottom:8px"></div><div class="two"><button class="btn g" id="gabx">BATAL</button><button class="btn" id="gabok">LANJUT</button></div></div></div>`, { hero: false });
   let gc = null; const sel = [];

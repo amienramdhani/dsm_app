@@ -170,3 +170,13 @@ Approved by user 2026-10-28 (mockup `dsm-ringkasan-harian.html` v4, di luar repo
 - Tahap 2: komitmen mingguan tersimpan + review minggu lalu + "vs kemarin" (butuh foto harian).
 - Komitmen: dibuat sendiri atau diberikan atasan; TIDAK perlu persetujuan penerima (langsung aktif, penerima boleh beri catatan). Terlihat oleh pemilik dan atasan di hierarki; Admin lihat semua.
 - Kecepatan tindak lanjut peluang: ditunda (belum ada sumber data).
+
+## Agent API & Telegram (2026-11-10, disetujui user)
+- DSM membuka API baca-saja untuk bot Telegram tim IT (OpenClaw + GPT). Setup bot urusan IT; DSM hanya API.
+- Identitas user lewat kode hubungkan 6 digit dari Profil DSM (5 menit, sekali pakai). PIN tidak pernah dikirim ke Telegram.
+- Sambungan berlaku tetap 30 hari (tidak geser) + pengingat H-3. Tiap request dicek: akun aktif, role terkini, sambungan belum habis/dicabut.
+- Data mengikuti role user DSM yang tersambung (filter sama dengan web). Tidak dibuka: manajemen user/PIN, panel Super Admin, semua aksi tulis, config.
+- Ada halaman Admin "Sambungan Telegram" untuk lihat & memutus sambungan.
+- Modul Klaim tidak dibuka ke agent.
+- Semua role (termasuk Admin/Super Admin) sambungan Telegram 30 hari tetap.
+- Nomor telepon dealer/kontak disamarkan di jawaban agent (contoh 0812****789).

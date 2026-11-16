@@ -169,6 +169,58 @@ function apiTxCorrSave($token, $period, $key, $newNik, $reason = null) {
     });
 }
 
+/** Koreksi massal: jadikan Sales efektif banyak transaksi = Sales di file ST (RAW) atau pemilik dealer-brand (OWNER). Satu periode, maks. 200, satu kali publish ulang. */
+function apiTxCorrBulk($token, $period, $keys, $mode, $reason = null) {
+    $reason = text_($reason); if (mb_strlen($reason) < 5) fail_('Isi alasan minimal 5 karakter.');
+    $mode = js_upper(text_($mode)); if (!in_array($mode, ['RAW', 'OWNER'], true)) fail_('Mode koreksi tidak valid.');
+    $period = PortalCore::month($period); if (is_string($keys)) $keys = json_decode($keys, true);
+    $keys = is_array($keys) ? array_values(array_unique(array_map('strval', $keys))) : [];
+    if (!$keys) fail_('Pilih minimal satu transaksi.'); if (count($keys) > 200) fail_('Maksimal 200 transaksi per proses.');
+    foreach ($keys as $k) if (!preg_match('/^[0-9a-f]{40}$/', $k)) fail_('Kunci transaksi tidak valid.');
+    return with_lock_(function () use ($token, $period, $keys, $mode, $reason) {
+        @ini_set('memory_limit', '2560M');
+        $db = snapshot_(); $u = adminGuard_($token, $db); $meta = $db['meta']; assertPeriodOpen_($period);
+        if (!isset($db['raw'][$period])) fail_('Periode ini tidak punya data ST.');
+        txAttrSchema_(); txcSchema_(); $pdo = db_();
+        $rows = txPrepRows_($meta, dataRowsUnscoped_((string) $db['raw'][$period])); $tk = txKeys_($rows); $want = array_flip($keys); $idx = [];
+        foreach ($tk as $i => $k) if (isset($want[$k['key']])) $idx[$k['key']] = $i;
+        $ph = implode(',', array_fill(0, count($keys), '?')); $q = $pdo->prepare("SELECT tx_key, owner_nik, eff_nik, marker FROM dsm_attr WHERE period = ? AND tx_key IN ($ph)"); $q->execute(array_merge([$period], $keys));
+        $at = []; foreach ($q->fetchAll(PDO::FETCH_ASSOC) as $a) $at[$a['tx_key']] = $a;
+        $todo = []; $skip = ['tidak ditemukan' => 0, 'sudah sesuai' => 0, 'kredit tetap ke penjual' => 0, 'tanpa pemilik dealer-brand' => 0, 'Sales tujuan tidak valid' => 0, 'di luar kewenangan' => 0];
+        foreach ($keys as $key) {
+            if (!isset($idx[$key])) { $skip['tidak ditemukan']++; continue; }
+            $t = $rows[$idx[$key]]; $a = $at[$key] ?? null; $raw = (string) $t['nik']; $cur = $a && (string) $a['eff_nik'] !== '' ? (string) $a['eff_nik'] : $raw;
+            if ($a && ($a['marker'] ?? '') === 'KREDIT_TETAP') { $skip['kredit tetap ke penjual']++; continue; }
+            $target = $mode === 'RAW' ? $raw : (string) ($a['owner_nik'] ?? '');
+            if ($target === '') { $skip['tanpa pemilik dealer-brand']++; continue; }
+            if ($target === $cur) { $skip['sudah sesuai']++; continue; }
+            $p = PortalCore::person($meta['people'], $target);
+            if (!$p || !truthy($p['sales'] ?? null) || (function_exists('ptIsVac_') && ptIsVac_($p))) { $skip['Sales tujuan tidak valid']++; continue; }
+            if (!dbaCanManageNik_($u, $db, $cur) || !dbaCanManageNik_($u, $db, $target)) { $skip['di luar kewenangan']++; continue; }
+            $todo[] = ['key' => $key, 'ref' => $tk[$idx[$key]]['ref'], 'fp' => $tk[$idx[$key]]['fp'], 'raw' => $raw, 'from' => $cur, 'to' => $target];
+        }
+        $skip = array_filter($skip);
+        if (!$todo) return ['ok' => true, 'changed' => 0, 'skipped' => $skip, 'requested' => count($keys)];
+        unset($rows);
+        $now = iso_now(); $deact = []; $newIds = [];
+        $tkeys = array_column($todo, 'key'); $ph2 = implode(',', array_fill(0, count($tkeys), '?'));
+        $s = $pdo->prepare("SELECT id FROM dsm_txcorr WHERE active = 1 AND tx_key IN ($ph2)"); $s->execute($tkeys); foreach ($s->fetchAll(PDO::FETCH_COLUMN) as $id) $deact[] = (int) $id;
+        checkpoint_($u['nik'], 'Koreksi massal ' . count($todo) . ' transaksi (' . $mode . ') · ' . $reason);
+        $undo = function () use ($pdo, &$newIds, $deact) {
+            foreach ($newIds as $id) $pdo->prepare('DELETE FROM dsm_txcorr WHERE id = ?')->execute([$id]);
+            foreach ($deact as $id) $pdo->prepare("UPDATE dsm_txcorr SET active = 1, revoked_by = '', revoked_at = '', revoke_reason = '' WHERE id = ?")->execute([$id]);
+        };
+        try {
+            if ($deact) $pdo->prepare("UPDATE dsm_txcorr SET active = 0, revoked_by = ?, revoked_at = ?, revoke_reason = 'DIGANTI KOREKSI MASSAL' WHERE active = 1 AND tx_key IN ($ph2)")->execute(array_merge([$u['nik'], $now], $tkeys));
+            $ins = $pdo->prepare('INSERT INTO dsm_txcorr (tx_key, tx_ref, period, raw_nik, new_nik, reason, actor, created_at, fp, active) VALUES (?,?,?,?,?,?,?,?,?,1)');
+            foreach ($todo as $x) { $ins->execute([$x['key'], mb_substr($x['ref'], 0, 400), $period, $x['raw'], $x['to'], mb_substr($reason, 0, 500), $u['nik'], $now, $x['fp']]); $newIds[] = (int) $pdo->lastInsertId(); }
+            txcRepublish_($db, $u, $period, 'KOREKSI_MASSAL ' . count($todo) . ' transaksi (' . $mode . ') · ' . $reason, $undo);
+        } catch (Throwable $e) { $undo(); throw $e; }
+        audit_($u['nik'], 'TX_CORRECTION_BULK', count($todo) . ' transaksi · ' . $period . ' · ' . $mode . ' · ' . $reason);
+        return ['ok' => true, 'changed' => count($todo), 'skipped' => $skip, 'requested' => count($keys), 'mode' => $mode];
+    });
+}
+
 function apiTxCorrRevoke($token, $id, $reason = null) {
     $reason = text_($reason); if (mb_strlen($reason) < 5) fail_('Isi alasan pencabutan minimal 5 karakter.'); $id = (int) $id;
     return with_lock_(function () use ($token, $id, $reason) {

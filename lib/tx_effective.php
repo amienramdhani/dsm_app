@@ -115,6 +115,9 @@ function effectiveRows_(array $meta, array $rows): array {
     $cut = function_exists('dbaCutover_') ? dbaCutover_() : '2026-10-01'; $custs = $meta['customers'] ?? []; $prods = $meta['products'] ?? [];
     $origin = [];
     foreach ($rows as $i => $t) { if (($t['qty'] ?? 0) > 0 && !empty($prods[$t['sku'] ?? '']['device'])) $origin[jkey([$t['company'] ?? '', $t['doc'] ?? '', $t['customer'] ?? '', js_upper(text_($prods[$t['sku']]['brand'] ?? ''))])] = (string) ($t['nik'] ?? ''); }
+    // Perlu Ditinjau hanya untuk Sales berbeda LINTAS Big Region (semua tanggal); satu region cukup diberi marker. Wilayah kosong/tidak dikenal dianggap lintas region.
+    $wilOf = []; foreach ($meta['people'] ?? [] as $p) $wilOf[(string) $p['nik']] = text_($p['wilayah'] ?? '');
+    $xreg = function (string $a, string $b) use ($wilOf): bool { $wa = $wilOf[$a] ?? ''; $wb = $wilOf[$b] ?? ''; return $wa === '' || $wb === '' || $wa !== $wb; };
     foreach ($rows as $i => $t) {
         $date = (string) ($t['date'] ?? ''); $induk = (string) ($t['customer'] ?? ''); $sku = (string) ($t['sku'] ?? '');
         $brand = js_upper(text_($prods[$sku]['brand'] ?? '')); $eff = (string) ($t['nik'] ?? '');
@@ -129,8 +132,8 @@ function effectiveRows_(array $meta, array $rows): array {
             $changed = $owner[$i] !== $raw[$i];
             if ($changed || $date >= $cut) {
                 [$expNik, $kind] = txOwnerInfo_($ctx, $induk, $brand, $date);
-                if ($changed) { $marker = $kind === 'TRANSFER' ? 'TRANSFER' : 'ST_BERBEDA'; $code = $marker; if ($marker === 'ST_BERBEDA' && $date >= $cut) $review = 1; }
-                elseif ($expNik !== '' && $expNik !== $raw[$i]) { $marker = 'ST_BERBEDA'; $code = 'ST_BERBEDA'; $review = 1; }
+                if ($changed) { $marker = $kind === 'TRANSFER' ? 'TRANSFER' : 'ST_BERBEDA'; $code = $marker; if ($marker === 'ST_BERBEDA' && $xreg($raw[$i], $owner[$i])) $review = 1; }
+                elseif ($expNik !== '' && $expNik !== $raw[$i]) { $marker = 'ST_BERBEDA'; $code = 'ST_BERBEDA'; if ($xreg($raw[$i], $expNik)) $review = 1; }
             }
         }
         if ($induk !== '' && !isset($custs[$induk])) { $review = 1; if ($code === '') $code = 'DEALER_BARU'; }

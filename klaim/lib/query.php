@@ -119,7 +119,7 @@ function claim_detail(array $u, int $id): array {
       'created_at' => $ba['created_at'], 'explanation' => $ba['explanation'], 'snapshot' => jdec($ba['snapshot']), 'version' => (int) $ba['version_no'], 'signs' => $signs, 'required' => ba_required_roles($c), 'complete' => ba_complete($c), 'files' => files_of('ba', (int) $ba['id']), 'extra' => jdec($ba['extra'] ?? null) ?: null];
   }
   $period = $c['budget_period'] ?: date('Y-m');
-  $bctx = $c['outside_sales'] ? null : budget_info((int) $c['claimant_id'], $c['category'], $period);
+  $bctx = claim_budget($c, $period);
   $hist = q("SELECT * FROM claim_history WHERE ref_type='claim' AND ref_id=? ORDER BY id", [$id]);
   $route = jdec($c['route']) ?: [];
   // izin

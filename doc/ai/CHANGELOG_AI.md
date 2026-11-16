@@ -786,3 +786,16 @@ Validation:
 
 ## Kartu KPI ≤700px: baris label kiri / nilai kanan
 - Rule 2 kolom sebelumnya menumpuk label di atas nilai; dikembalikan ke baris label kiri, nilai kanan (font 10.5px, boleh turun baris bila panjang). Tetap 2 kolom.
+
+## 2026-11-10 Agent API Paket 1
+- Tambah agent_api.php + lib/agent.php + tools/agent_cli.php: BOT_KEY (hash), kode hubungkan 6 digit, sambungan Telegram 30 hari tetap, cek akun aktif & VERSI, rate limit, log, resource health/me/link/akan_habis.
+- api.php: sesi internal agent (flag agent=1) ditolak di pintu browser.
+
+## 2026-11-16 Agent API Paket 2
+- Halaman Telegram Agent (menu akun desktop, drawer Lainnya di HP): buat kode 6 digit + hitung mundur, salin & buka bot, status sambungan, putuskan.
+- Panel Admin Sambungan Telegram (Admin & Super Admin), BOT_KEY + username bot + Putuskan Semua (Super Admin).
+- Teks API menunjuk lokasi baru; cakupan role pusat = Nasional.
+
+## 2026-11-16 Agent API Paket 3
+- 26 resource data baca-saja di agent_api.php memanggil fungsi DSM yang sama dengan web atas nama user sambungan; paging, pemangkasan, penyamaran nomor HP; konteks Telemarketing ikut.
+- Dokumen IT v0.2.

@@ -362,11 +362,8 @@ function claim_check(array $c, ?array $rule = null): array {
   foreach (duplicate_notes($c, $notes) as $m) $err[] = $m;
   // budget
   $period = $c['budget_period'] ?: date('Y-m');
-  $bi = null;
-  if (!$c['outside_sales']) {
-    $bi = budget_info((int) $c['claimant_id'], $c['category'], $period, (int) $c['id']);
-    if ($bi['available'] < $c['total']) $trig['OVER_BUDGET'] = 1;
-  }
+  $bi = claim_budget($c, $period, (int) $c['id']);
+  if ($bi && $bi['available'] < $c['total']) $trig['OVER_BUDGET'] = 1;
   return ['errors' => array_values(array_unique($err)), 'triggers' => array_keys($trig), 'budget' => $bi, 'period' => $period, 'notes' => $notes, 'kind' => $multi ? 'multi' : $parts[0]['kind'], 'info' => $info];
 }
 function duplicate_notes(array $c, array $notes): array {
@@ -426,7 +423,7 @@ function ba_create(array $u, array $c, array $trigs, string $explain, string $cr
   $auto = claim_check($c)['info'] ?? []; foreach (['digit', 'hari'] as $k) if (!empty($auto[$k]) && in_array($k === 'digit' ? 'DIGIT_BBM' : 'NOTA_HARI', $trigs, true)) $extra[$k] = $auto[$k];
   must_sign($u);
   if (ba_row((int) $c['id'])) fail('Klaim ini sudah mempunyai BA (satu klaim satu BA).');
-  $period = $c['budget_period'] ?: date('Y-m'); $bi = $c['outside_sales'] ? null : budget_info((int) $c['claimant_id'], $c['category'], $period, (int) $c['id']);
+  $period = $c['budget_period'] ?: date('Y-m'); $bi = claim_budget($c, $period, (int) $c['id']);
   $snap = $bi ? ['period' => $period, 'avail_before' => $bi['available'], 'claim_amount' => (int) $c['total'], 'over' => max(0, (int) $c['total'] - max(0, $bi['available']))] : null;
   $id = ins('claim_ba', ['number' => next_number('BA', $c['entity']), 'claim_id' => $c['id'], 'creator_id' => $u['id'], 'creator_role' => $creatorRole,
     'triggers' => jenc($trigs), 'explanation' => $explain, 'snapshot' => jenc($snap), 'extra' => $extra ? jenc($extra) : null, 'version_no' => max(1, (int) $c['current_version']), 'created_at' => now()]);
