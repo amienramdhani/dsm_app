@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSM · Mockup DOS, Transaksi, Peringkat (rapi)</title>
+<style>
+*{box-sizing:border-box}i,em{font-style:normal}body{margin:0;font:13px/1.45 Arial,sans-serif;background:#F4F6F9;color:#153d50}
+.wrap{max-width:1400px;margin:0 auto;padding:18px 4px 40px}
+.nav{position:sticky;top:0;z-index:5;background:#F4F6F9;padding:10px 0;display:flex;gap:8px}.nav a{font-size:11px;font-weight:800;letter-spacing:.4px;padding:7px 14px;border-radius:9px;background:#fff;border:1px solid #DCE6EE;color:#43627a;text-decoration:none}
+.sec{margin:8px 0 40px}
+.note{background:#FFF8EC;border:1px solid #F6DDB2;border-radius:12px;padding:11px 16px;font-size:12px;color:#7a4f0c;margin-bottom:14px}
+.note b{color:#5a3a06}.note ul{margin:5px 0 0 18px;padding:0}.note li{margin:2px 0}
+h1{font-size:22px;margin:0}.psub{font-size:12px;color:#7C8899;margin:2px 0 12px}
+.meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:11.5px;color:#62798B;margin-bottom:12px}.meta b{color:#153d50}.meta .sp{color:#C9D3DD}
+.ii{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;background:#E6EEF6;color:#43627a;font-size:9px;font-weight:800;vertical-align:1px;cursor:help}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.seg{display:flex;background:#E9EFF5;border-radius:9px;padding:3px}.seg span{font-size:11px;font-weight:800;letter-spacing:.4px;padding:6px 12px;border-radius:7px;color:#43627a;cursor:pointer}.seg span.on{background:#0B5CAD;color:#fff}
+.seg.sm span{padding:5px 10px}
+.lbl{font-size:9.5px;font-weight:800;letter-spacing:.5px;color:#8A9AA8;margin-right:2px}
+.ghost{height:34px;border:1px solid #DCE6EE;border-radius:9px;padding:0 12px;font-size:11px;font-weight:800;letter-spacing:.4px;color:#43627a;display:flex;align-items:center;gap:6px;background:#fff}
+.right{margin-left:auto}
+.kpis{display:grid;gap:10px;margin-bottom:12px}
+.k{background:#fff;border-radius:12px;padding:10px 14px;box-shadow:0 3px 10px #1d40500a;display:grid;grid-template-columns:5px 1fr;gap:0 12px;border:1.5px solid transparent}
+.k:before{content:"";grid-row:1/4;border-radius:3px;background:var(--c)}.k.click{cursor:pointer}.k.click:hover{border-color:var(--c)}
+.k small{font-size:10px;font-weight:800;letter-spacing:.5px;color:#7C8899}.k b{font-size:21px;color:var(--c)}.k span{font-size:11px;color:#7C8899}
+.fbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.in{flex:1 1 240px;height:36px;border:1px solid #DCE6EE;border-radius:9px;padding:0 12px;display:flex;align-items:center;color:#9AA6B6;font-size:12px;background:#fff}
+.sel{height:36px;border:1px solid #DCE6EE;border-radius:9px;padding:0 12px;display:flex;align-items:center;gap:8px;font-size:12px;color:#43627a;background:#fff}
+.sel small{font-size:9.5px;font-weight:800;letter-spacing:.4px;color:#8A9AA8}.sel b{color:#153d50}.sel:after{content:"▾";color:#9AA6B6;margin-left:6px}
+.fbtn{height:36px;border-radius:9px;padding:0 14px;display:flex;align-items:center;gap:6px;font-weight:800;font-size:11px;letter-spacing:.4px;color:#fff;background:linear-gradient(90deg,#FFB020,#F07A0C);border:0}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.cz{font-size:10.5px;font-weight:800;letter-spacing:.3px;padding:5px 10px;border-radius:999px;border:1.5px solid var(--c);color:var(--c);background:#fff;cursor:pointer;display:flex;gap:6px;align-items:center}
+.cz em{font-weight:700;opacity:.75}.cz.on{background:var(--c);color:#fff}
+.card{background:#fff;border-radius:14px;box-shadow:0 3px 10px #1d40500a;padding:14px 16px;margin-bottom:12px}
+.ct{display:flex;align-items:center;gap:10px;margin-bottom:10px}.ct b{font-size:12px;letter-spacing:.5px}.ct small{font-size:11px;color:#7C8899}
+table{width:100%;border-collapse:collapse}
+th{font-size:10px;letter-spacing:.5px;text-align:left;color:#43627a;padding:8px 10px;border-bottom:2px solid #0B5CAD;background:#F7FAFC;white-space:nowrap}
+th.r,td.r{text-align:right}td{padding:8px 10px;border-bottom:1px solid #EEF2F6;white-space:nowrap}
+.keep{font-size:11px;color:#8A9AA8;font-style:italic;margin:-4px 0 10px}
+.ph{height:110px;border:1.5px dashed #D3DEE8;border-radius:12px;display:grid;place-items:center;color:#9AA6B6;font-size:12px;background:#FAFCFE;margin-bottom:12px}
+.me{background:#fff;border-radius:14px;box-shadow:0 3px 10px #1d40500a;padding:12px 16px;display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:0;margin-bottom:12px}
+.me>div{padding:2px 16px;border-left:1px solid #EEF2F6}.me>div:first-child{border-left:0;padding-left:0}
+.me small{font-size:10px;font-weight:800;letter-spacing:.5px;color:#7C8899;display:block}.me b{font-size:22px}.me span{display:block;font-size:11px;color:#7C8899}
+.leg{display:flex;gap:6px;align-items:center;font-size:10.5px;color:#7C8899}.tg{font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:5px}
+.gold{background:#FFF1C9;color:#8A5A00}.rose{background:#FBE3E1;color:#A3201B}.grn{background:#E2F5EA;color:#0E6E48}
+tr.top td{background:#FFFBEF}tr.bot td{background:#FFF6F5}
+.mdl{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;font-size:11px;font-weight:800}
+</style></head><body><div class="wrap">
+<div class="nav"><a href="#dos">DOS</a><a href="#trx">TRANSAKSI</a><a href="#rank">PERINGKAT</a><span style="margin-left:auto;font-size:11px;color:#8A9AA8;align-self:center">Desktop · angka contoh · tabel utama tetap seperti sekarang</span></div>
+
+<!-- ================= DOS ================= -->
+<section class="sec" id="dos">
+<div class="note"><b>DOS — sekarang:</b>
+<ul><li>Kotak info biru 3 baris (posisi stok, SO s.d., catatan Desember 2025) di atas kartu.</li>
+<li>Tombol Export, pilihan DOS Bulan Berjalan / N Hari, kartu, dan 6 kolom filter + TERAPKAN + RESET ditumpuk berurutan.</li>
+<li>Kondisi (MENIPIS, HABIS, dst.) disembunyikan di dropdown.</li></ul>
+<b>Usulan:</b> info jadi 1 baris + ⓘ. Pilihan DOS dan Export satu baris. 5 kartu ramping (MENIPIS/HABIS dan PERLU CEK DATA bisa diklik). Filter: cari + Region + Brand + FILTER LAIN (Sub Region, TYPE). Kondisi jadi chip berwarna.</div>
+
+<h1>DOS</h1><div class="psub">Estimasi stok suplai kita · monitoring di luar KPI</div>
+<div class="meta">Posisi stok <b>28 Sep 2026</b><span class="sp">|</span>ST s.d. <b>28 Sep</b><span class="sp">|</span>SO s.d. <b>27 Sep</b><span class="sp">|</span>Kecepatan SO <b>29 Agu–28 Sep (30 hari)</b> <i class="ii" title="Stok dihitung sejak Desember 2025. Bulan/region tanpa data dianggap 0. Peta kelengkapan di Admin → Data & Kesehatan.">i</i></div>
+<div class="row"><span class="seg"><span>DOS BULAN BERJALAN</span><span class="on">DOS 30 HARI TERAKHIR</span></span>
+ <span class="seg sm"><span>7</span><span>14</span><span class="on">30</span><span>60</span></span><span style="font-size:11px;color:#8A9AA8">hari</span>
+ <span class="ghost right">⬇ EXPORT EXCEL</span></div>
+<div class="kpis" style="grid-template-columns:repeat(5,1fr)">
+ <div class="k" style="--c:#1E5FB8"><small>ESTIMASI STOK</small><b>48.215</b><span>unit device · sesuai filter</span></div>
+ <div class="k" style="--c:#C25A12"><small>SELL OUT 30 HARI</small><b>31.904</b><span>periode sejajar posisi stok</span></div>
+ <div class="k" style="--c:#0E7C6B"><small>DOS GABUNGAN</small><b>45,3 hari</b><span>stok ÷ rata-rata SO harian</span></div>
+ <div class="k click" style="--c:#C0362C"><small>MENIPIS / HABIS</small><b>1.284</b><span>pasangan dealer–TYPE · klik untuk saring</span></div>
+ <div class="k click" style="--c:#D98A00"><small>PERLU CEK DATA</small><b>213</b><span>pasangan dealer–TYPE · klik untuk saring</span></div>
+</div>
+<div class="fbar"><div class="in">🔍 Cari dealer / TYPE / sales…</div><div class="sel"><small>REGION</small><b>Semua</b></div><div class="sel"><small>BRAND</small><b>Semua</b></div><button class="fbtn">FILTER LAIN</button><span class="ghost">RESET</span></div>
+<div class="chips"><span class="lbl">KONDISI</span>
+ <span class="cz" style="--c:#C0362C">HABIS <em>412</em></span><span class="cz" style="--c:#D98A00">PERLU CEK DATA <em>213</em></span><span class="cz on" style="--c:#E0622A">MENIPIS <em>872</em></span><span class="cz" style="--c:#12866A">CUKUP <em>3.904</em></span><span class="cz" style="--c:#2E6E9E">STOK TINGGI <em>1.150</em></span><span class="cz" style="--c:#6D3FD8">BELUM BERGERAK <em>655</em></span><span class="cz" style="--c:#6B7785">TIDAK AKTIF <em>298</em></span>
+ <span class="ii" title="Arti kondisi">i</span></div>
+<div class="card"><div class="ct"><b>DOS PER WILAYAH DALAM CAKUPAN</b><small>Klik wilayah untuk mempersempit hasil</small></div>
+<p class="keep">Tabel tetap seperti sekarang ↓</p>
+<table><thead><tr><th>REGION INDUK</th><th>WILAYAH</th><th class="r">DEALER UNIK</th><th class="r">MENIPIS/HABIS</th><th class="r">ESTIMASI STOK</th><th class="r">SO 30 HARI</th><th class="r">RATA-RATA/HARI</th><th class="r">DOS</th></tr></thead>
+<tbody><tr><td>JAWA BARAT</td><td>BIG CIREBON</td><td class="r">214</td><td class="r">96</td><td class="r">5.412</td><td class="r">2.980</td><td class="r">99,3</td><td class="r">54,5 hari</td></tr>
+<tr><td>JAWA TENGAH</td><td>BIG SEMARANG</td><td class="r">188</td><td class="r">74</td><td class="r">4.120</td><td class="r">2.640</td><td class="r">88</td><td class="r">46,8 hari</td></tr></tbody></table></div>
+</section>
+
+<!-- ================= TRANSAKSI ================= -->
+<section class="sec" id="trx">
+<div class="note"><b>Transaksi — sekarang:</b>
+<ul><li>4 kartu gradasi besar di atas.</li>
+<li>Filter Rincian Transaksi: 2 kotak tanggal + TERAPKAN + RESET + Download RAW, plus kalimat keterangan di bawah judul.</li></ul>
+<b>Usulan:</b> kartu dibuat ramping sama kayak Tim. Kalender, pola hari, dan tabel harian <b>tidak diubah</b>. Filter rincian jadi 1 rentang tanggal + pilihan cepat (7 HARI, BULAN INI), keterangan jadi ⓘ, Download RAW pindah ke kanan.</div>
+
+<h1>TRANSAKSI</h1><div class="psub">MTD 1–28 Sep 2026 vs LMTD 1–28 Agu 2026</div>
+<div class="kpis" style="grid-template-columns:repeat(4,1fr)">
+ <div class="k" style="--c:#0B5CAD"><small>HARI BERTRANSAKSI</small><b>24</b><span>bulan pilihan</span></div>
+ <div class="k" style="--c:#1E5FB8"><small>SELL THRU</small><b>41.336</b><span>unit device · bulan pilihan</span></div>
+ <div class="k" style="--c:#C25A12"><small>SELL OUT</small><b>29.898</b><span>s.d. 28 Sep 2026</span></div>
+ <div class="k" style="--c:#9A6400"><small>OMZET</small><b>Rp 58,4 M</b><span>termasuk aksesori</span></div>
+</div>
+<div class="ph">Kalender harian · Pola per hari · Transaksi harian per brand — tetap seperti sekarang</div>
+<div class="card"><div class="ct"><b>RINCIAN TRANSAKSI</b><i class="ii" title="Filter tanggal hanya untuk rincian; kartu dan tabel harian tetap bulanan. QTY termasuk aksesori.">i</i></div>
+<div class="fbar"><div class="sel"><small>TANGGAL</small><b>1 Sep – 28 Sep 2026</b></div>
+ <span class="seg sm"><span>HARI INI</span><span>7 HARI</span><span class="on">BULAN INI</span></span>
+ <span class="ghost">RESET</span><span class="ghost right">⬇ DOWNLOAD RAW</span></div>
+<p class="keep">Tabel rincian tetap seperti sekarang ↓</p>
+<table><thead><tr><th>TANGGAL</th><th>DEALER</th><th>SALES</th><th>BRAND</th><th>TYPE</th><th class="r">QTY</th><th class="r">OMZET</th></tr></thead>
+<tbody><tr><td>28 Sep 2026</td><td>CV. GEDANK CELL</td><td>MIFTAKHUL HUDA</td><td>ITEL</td><td>A70</td><td class="r">40</td><td class="r">Rp 46.000.000</td></tr>
+<tr><td>28 Sep 2026</td><td>RISM JAYA BARU</td><td>DODI PERMANA</td><td>MOTOPAD</td><td>PAD 60</td><td class="r">12</td><td class="r">Rp 27.600.000</td></tr></tbody></table></div>
+</section>
+
+<!-- ================= PERINGKAT ================= -->
+<section class="sec" id="rank">
+<div class="note"><b>Peringkat — sekarang:</b>
+<ul><li>Posisi saya = 1 kalimat + 2 kartu besar + kalimat keterangan.</li>
+<li>2 dropdown, tab Dalam cakupan/Nasional, kotak info biru, dan legenda + paragraf kecil ditumpuk dalam 5 lapis sebelum tabel.</li></ul>
+<b>Usulan:</b> posisi saya jadi 1 kartu 3 kolom. Semua pilihan 1 baris (SALES/ASM, dasar, cakupan). Info biru jadi ⓘ di judul. Legenda pindah ke samping judul tabel. Tabel <b>tetap</b>.</div>
+
+<h1>PERINGKAT</h1><div class="psub">MTD 1–28 Sep 2026 vs LMTD 1–28 Agu 2026</div>
+<div class="me">
+ <div><small>POSISI SAYA · KPI AKHIR</small><b style="color:#0E7C6B">92,4%</b><span>MIFTAKHUL HUDA · Sales · <i class="ii" title="Acuan KPI Akhir nasional pada periode pilihan. Nilai seri mendapat peringkat sama.">i</i></span></div>
+ <div><small>PERINGKAT REGION INDUK</small><b>#3</b><span>JAWA TIMUR · 41 peserta</span></div>
+ <div><small>PERINGKAT NASIONAL</small><b>#17</b><span>Sales · 312 peserta</span></div>
+</div>
+<div class="row"><span class="lbl">PERINGKAT</span><span class="seg"><span class="on">SALES</span><span>ASM</span></span>
+ <div class="sel"><small>DASAR</small><b>KPI Akhir (semua kelompok)</b></div>
+ <span class="lbl" style="margin-left:6px">CAKUPAN</span><span class="seg"><span class="on">DALAM CAKUPAN SAYA</span><span>NASIONAL</span></span></div>
+<div class="card"><div class="ct"><b>PAPAN PERINGKAT · SALES</b><i class="ii" title="Urutan berdasarkan KPI Akhir = rata-rata KPI Brand yang berlaku. Peringkat Sales hanya membandingkan jabatan utama Sales. Nilai seri mendapat peringkat sama. Skor belum tersedia tidak dinilai.">i</i>
+ <span class="leg right"><span class="tg gold">3 TERATAS</span><span class="tg rose">3 TERBAWAH</span><span class="tg grn">KPI ≥ 90%</span></span></div>
+<p class="keep">Tabel tetap seperti sekarang ↓</p>
+<table><thead><tr><th>PERINGKAT</th><th>NAMA</th><th>REGION</th><th class="r">ALL BRAND</th><th class="r">MOTOPAD</th><th class="r">KELOMPOK BERLAKU</th><th class="r">KPI AKHIR</th><th>STATUS</th></tr></thead>
+<tbody><tr class="top"><td><span class="mdl gold">1</span></td><td>RIDHO ALFIAN</td><td>JAKARTA</td><td class="r">118,2%</td><td class="r">104,0%</td><td class="r">2</td><td class="r"><b style="color:#0E7C6B">111,1%</b></td><td>Final</td></tr>
+<tr class="top"><td><span class="mdl gold">2</span></td><td>DEDE PUJI IMAN FAUZI</td><td>BIG SEMARANG</td><td class="r">109,5%</td><td class="r">98,1%</td><td class="r">2</td><td class="r"><b style="color:#0E7C6B">103,8%</b></td><td>Final</td></tr>
+<tr><td>18</td><td>THEO FALCHEN S</td><td>JAKARTA</td><td class="r">84,0%</td><td class="r">77,2%</td><td class="r">2</td><td class="r"><b>80,6%</b></td><td>Final</td></tr>
+<tr class="bot"><td><span class="mdl rose">41</span></td><td>VACANT MADURA</td><td>JAWA TIMUR 1</td><td class="r">12,0%</td><td class="r">—</td><td class="r">1</td><td class="r"><b>12,0%</b></td><td>Final</td></tr></tbody></table></div>
+</section>
+</div></body></html>

@@ -33,8 +33,15 @@ function me(): ?array {
   $uid = $_SESSION['uid'] ?? null;
   if (!$uid) return null;
   $u = user_row((int) $uid);
+  $real = (int) ($_SESSION['real_uid'] ?? $uid);
+  // Masuk sebagai akun demo hanya sah selama Mode Demo menyala dan akun demo masih aktif; selain itu kembali ke akun asli.
+  if ($real !== (int) $uid && (!$u || !$u['active'] || (dsm_present() && (!test_mode() || !is_demo_nik($u['nik'] ?? null))))) {
+    $_SESSION['uid'] = $real; unset($_SESSION['backup']); $uid = $real; $u = user_row($real);
+  }
   if (!$u || !$u['active']) return null;
-  $u['real_id'] = (int) ($_SESSION['real_uid'] ?? $uid);
+  $GLOBALS['CLAIM_DEMO'] = is_demo_nik($u['nik'] ?? null) ? 1 : 0;
+  $u['is_demo'] = (bool) $GLOBALS['CLAIM_DEMO'];
+  $u['real_id'] = $real;
   $u['impersonating'] = $u['real_id'] !== (int) $uid;
   if (!empty($_SESSION['backup']['id'])) {
     $b = backup_grant((int) $_SESSION['backup']['id'], (int) $uid);
@@ -58,7 +65,35 @@ function has_role(array $u, string $r): bool { return in_array($r, $u['roles'], 
 function is_sa(array $u): bool { return has_role($u, 'SA'); }
 function real_is_sa(array $u): bool { static $c = []; $id = $u['real_id']; return $c[$id] ??= (bool) preg_match('/\bSA\b/', (string) val("SELECT roles FROM claim_users WHERE id=?", [$id]) ?: ''); }
 function test_mode(): bool { return setting('test_mode', dsm_present() ? '0' : '1') === '1'; } // di DSM (produksi) bawaannya MATI
-function sa_free(array $u): bool { return is_sa($u) && test_mode(); }
+/** Jalan pintas Super Admin di semua tahap: hanya untuk instalasi uji mandiri. Di DSM, uji dilakukan lewat "Masuk sebagai" akun demo. */
+function sa_free(array $u): bool { return is_sa($u) && test_mode() && !dsm_present(); }
+
+/* ---------- data demo ----------
+ * Akun demo = NIK berawalan UJI-. Klaim & petty cash milik akun demo diberi is_demo=1.
+ * Konteks demo = pengguna efektif adalah akun demo. Pengguna asli hanya melihat is_demo=0, akun demo hanya is_demo=1,
+ * sehingga data demo tidak pernah masuk antrean, budget, monitoring, realisasi, kalender, atau export asli. */
+function is_demo_nik(?string $nik): bool { return $nik !== null && str_starts_with($nik, 'UJI-'); }
+function demo_ctx(): int { return (int) ($GLOBALS['CLAIM_DEMO'] ?? 0); }
+function demo_of_user(int $uid): int { return is_demo_nik((string) val("SELECT nik FROM claim_users WHERE id=?", [$uid])) ? 1 : 0; }
+/** Potongan SQL untuk menyaring pengguna sesuai konteks (asli / demo). */
+function demo_user_sql(string $col = 'nik'): string { return demo_ctx() ? "$col LIKE 'UJI-%'" : "($col IS NULL OR $col NOT LIKE 'UJI-%')"; }
+/** Saringan region Admin/RGM, sama dengan covers_region(): daftar wilayah menang, region tunggal cadangan, keduanya kosong = semua. */
+function region_scope(array $u, string $col = 'region'): ?array {
+  $a = $u['area_list'] ?: ($u['region'] ? [$u['region']] : []);
+  if (!$a) return null;
+  return [$col . ' IN (' . implode(',', array_fill(0, count($a), '?')) . ')', $a];
+}
+/** Transfer milik klaim/petty cash dalam konteks yang sama (asli atau demo). */
+function demo_transfer_sql(string $t): string {
+  $d = demo_ctx();
+  return "(($t.ref_type='claim' AND $t.ref_id IN (SELECT id FROM claims WHERE is_demo=$d)) OR ($t.ref_type='pc' AND $t.ref_id IN (SELECT id FROM claim_pc WHERE is_demo=$d)))";
+}
+/** Pastikan kolom penanda demo sudah ada (sekali, lalu diingat di setting). */
+function ensure_demo_schema(): void {
+  static $done = false; if ($done) return; $done = true;
+  try { if (setting('schema_demo') === '1') return; } catch (Throwable $e) { return; }
+  migrate_schema(); set_setting('schema_demo', '1');
+}
 function setting(string $k, ?string $d = null): ?string { $v = val("SELECT sval FROM claim_settings WHERE skey=?", [$k]); return $v ?? $d; }
 function set_setting(string $k, ?string $v): void { if (val("SELECT 1 FROM claim_settings WHERE skey=?", [$k])) ex("UPDATE claim_settings SET sval=? WHERE skey=?", [$v, $k]); else ex("INSERT INTO claim_settings (skey,sval) VALUES (?,?)", [$k, $v]); }
 function is_claimant(array $u): bool { return (bool) $u['can_submit']; }
@@ -91,13 +126,13 @@ function norm_wa(?string $v): ?string {
  *  Kalau ada user peran itu tanpa batasan badan usaha, semuanya sudah tercakup (hasil kosong). */
 function uncovered_entities(string $role): array {
   $covered = []; $any = false; $users = 0;
-  foreach (q("SELECT * FROM claim_users WHERE active=1") as $r) { $u = shape_user($r); if (!has_role($u, $role)) continue; $users++; if (!$u['entities']) $any = true; else foreach ($u['entities'] as $e) $covered[$e] = 1; }
+  foreach (q("SELECT * FROM claim_users WHERE active=1 AND " . demo_user_sql()) as $r) { $u = shape_user($r); if (!has_role($u, $role)) continue; $users++; if (!$u['entities']) $any = true; else foreach ($u['entities'] as $e) $covered[$e] = 1; }
   if ($any || !$users) return [];
   return array_values(array_diff(entity_options(), array_keys($covered)));
 }
 function stage_users(string $stage, ?string $region, ?string $entity): array {
   $out = [];
-  foreach (q("SELECT * FROM claim_users WHERE active=1") as $r) {
+  foreach (q("SELECT * FROM claim_users WHERE active=1 AND " . demo_user_sql()) as $r) {
     $u = shape_user($r);
     if (!has_role($u, $stage)) continue;
     if (in_array($stage, ['ADMIN', 'RGM'], true) && !covers_region($u, $region)) continue;
@@ -113,7 +148,8 @@ function notify_stage(string $stage, array $claim, string $text, string $rt = 'c
 
 /* ---------- nomor ---------- */
 function next_number(string $prefix, ?string $entity): string {
-  $ym = date('ym'); $key = $entity === '' ? "$prefix-$ym" : $prefix . '-' . ($entity ?: 'XX') . '-' . $ym; // entity '' = nomor tanpa kode badan usaha
+  $ym = date('ym'); if (demo_ctx()) $prefix = 'DEMO-' . $prefix; // nomor demo terpisah supaya nomor asli tidak loncat
+  $key = $entity === '' ? "$prefix-$ym" : $prefix . '-' . ($entity ?: 'XX') . '-' . $ym; // entity '' = nomor tanpa kode badan usaha
   if (!val("SELECT 1 FROM claim_seq WHERE skey=?", [$key])) ex("INSERT INTO claim_seq (skey,n) VALUES (?,0)", [$key]);
   ex("UPDATE claim_seq SET n=n+1 WHERE skey=?", [$key]);
   return "$key-" . str_pad((string) val("SELECT n FROM claim_seq WHERE skey=?", [$key]), 4, '0', STR_PAD_LEFT);
@@ -130,6 +166,7 @@ function in_scope(array $u, array $c, string $role): bool {
   };
 }
 function can_view(array $u, array $c): bool {
+  if ((int) ($c['is_demo'] ?? 0) !== demo_ctx()) return false;
   if ((int) $c['claimant_id'] === (int) $u['id'] || (int) ($c['created_by'] ?? 0) === (int) $u['id']) return true;
   foreach (['SA', 'ADMIN', 'AUDIT', 'HOS', 'FM', 'FT', 'RGM'] as $r) if (has_role($u, $r) && in_scope($u, $c, $r)) return true;
   return false;

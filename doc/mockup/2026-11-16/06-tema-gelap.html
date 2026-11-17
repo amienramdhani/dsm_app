@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>DSM - Mockup Tema Gelap</title>
+<style>
+:root{--bg:#0B1628;--bar:#101E35;--card:#14243D;--card2:#1B2E4C;--line:#24395A;--ink:#E8EEF7;--mut:#8EA0BB;--acc:#5AA2FF}
+body.charcoal{--bg:#121417;--bar:#1A1D21;--card:#1F2328;--card2:#282D33;--line:#30363D;--ink:#ECEEF1;--mut:#9AA3AE;--acc:#5AA2FF}
+body.amoled{--bg:#000;--bar:#0A0A0A;--card:#111214;--card2:#1A1C1F;--line:#24272B;--ink:#F2F3F5;--mut:#8D939C;--acc:#4D9BFF}
+body.petrol{--bg:#0A1E28;--bar:#0F2A37;--card:#123241;--card2:#183E50;--line:#21495C;--ink:#E6F1F5;--mut:#8BAAB7;--acc:#4FC3D9}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,sans-serif;background:var(--bg);color:var(--ink);transition:background .3s}
+.app{max-width:430px;margin:0 auto;min-height:100vh;padding-bottom:100px;background:var(--bg);transition:.3s}
+.pk{position:sticky;top:0;z-index:50;background:var(--bar);border-bottom:1px solid var(--line);padding:8px 10px 10px}
+.pk small{display:block;font-size:10px;font-weight:800;letter-spacing:.8px;color:var(--mut);margin:0 2px 6px}
+.pks{display:flex;gap:7px}
+.op{flex:1;text-align:center;cursor:pointer}
+.sw{height:42px;border-radius:12px;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;gap:4px}
+.sw i{width:14px;height:20px;border-radius:4px}
+.op.on .sw{border-color:var(--acc)}
+.op b{display:block;font-size:10px;font-weight:800;margin-top:4px;color:var(--mut)}
+.op.on b{color:var(--ink)}
+.tbar{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--bar);border-bottom:1px solid var(--line)}
+.logo{background:var(--card2);border-radius:10px;padding:6px 10px;font-weight:800;font-size:13px;letter-spacing:2px;color:#9CC3FF}
+.logo span{color:#FFA94D}
+.dl{display:flex;align-items:center;gap:7px;font-size:10.5px;color:var(--mut)}
+.dl i{width:8px;height:8px;border-radius:50%;background:#34D399}
+.dl b{display:block;font-size:13px;color:var(--ink)}
+.rf{margin-left:auto;width:34px;height:34px;border-radius:10px;background:var(--card2);display:grid;place-items:center;color:var(--acc)}
+.frow{display:flex;align-items:center;padding:9px 14px;background:var(--bar);border-bottom:1px solid var(--line);font-size:13px;font-weight:600}
+.frow b{margin-left:auto;background:var(--card2);color:var(--acc);padding:7px 12px;border-radius:9px;font-size:12px}
+.body{padding:18px 14px 10px}
+h1{font-size:24px;font-weight:800}
+.vs{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:11px;color:var(--mut)}
+.pl{display:inline-flex;gap:6px;align-items:center;padding:4px 8px 4px 4px;border-radius:99px;font-size:11px;font-weight:700}
+.pl em{font-style:normal;font-size:9.5px;font-weight:800;padding:2px 6px;border-radius:99px;background:rgba(255,255,255,.1)}
+.mtd{background:rgba(90,162,255,.14);color:#9CC3FF;border:1px solid rgba(90,162,255,.3)}
+.lmtd{background:rgba(255,169,77,.13);color:#FFC48A;border:1px solid rgba(255,169,77,.3)}
+.warn{margin-top:12px;background:rgba(250,204,21,.1);border:1px solid rgba(250,204,21,.3);border-radius:12px;padding:9px 12px;font-size:11.5px;color:#FDE68A}
+.kg{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+.kc{display:flex;gap:9px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px}
+.kc .ic{width:30px;border-radius:9px;display:grid;place-items:center;flex:none;font-size:14px;font-weight:800}
+.kc span{font-size:9.5px;font-weight:700;letter-spacing:.5px;color:var(--mut)}
+.kc .n{font-size:19px;font-weight:800;margin:1px 0}
+.kc small{font-size:9.5px;color:var(--mut);line-height:1.3;display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;margin-top:12px;overflow:hidden}
+.ch{padding:13px 14px;border-bottom:1px solid var(--line)}
+.ch b{font-size:14px;font-weight:800}.ch small{display:block;font-size:11px;color:var(--mut);margin-top:2px}
+.cb{padding:12px 14px}
+.fbtn{text-align:center;color:#fff;font-weight:800;font-size:13px;letter-spacing:1px;padding:11px;border-radius:12px;background:linear-gradient(135deg,#FFB020,#F07A0C)}
+.pg{margin-top:9px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:9px;text-align:center;font-size:11.5px;font-weight:700}
+.pg div{display:flex;gap:6px;margin-top:7px}
+.pg i{font-style:normal;flex:1;background:var(--card);border:1px solid var(--line);border-radius:9px;padding:7px;font-size:11px;color:var(--acc)}
+.dc{margin-top:10px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:11px}
+.dc b{color:#9CC3FF;font-size:12.5px}.dc small{font-size:10px;color:var(--mut);margin-left:4px}
+.st{display:inline-block;margin-top:7px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;display:flex;justify-content:space-around;align-items:center;padding:8px 4px 14px;background:var(--bar);border-top:1px solid var(--line);border-radius:20px 20px 0 0}
+.nv{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:9.5px;font-weight:600;color:var(--mut)}
+.nv svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.nv.on{color:var(--acc)}.nv.on svg{background:rgba(90,162,255,.15);border-radius:10px;padding:3px;width:26px;height:26px}
+.nv.kl svg{background:#F39A1E;border-radius:12px;padding:5px;width:34px;height:30px;stroke:#fff}
+.desc{margin:10px 14px 0;font-size:11.5px;color:var(--mut);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px 11px;line-height:1.5}
+.desc b{color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="pk"><small>PILIH TEMA GELAP</small><div class="pks" id="pks"></div></div>
+<div class="app">
+ <div class="tbar"><div class="logo">D<span>S</span>M</div><div class="dl"><i></i><div>Data lengkap s.d.<b>30 Sep 2026</b></div></div><div class="rf">↻</div></div>
+ <div class="frow">Nasional / 91 data Sales<b>Filter</b></div>
+ <div class="desc" id="desc"></div>
+ <div class="body">
+  <h1>DEALER</h1>
+  <div class="vs"><span class="pl mtd"><em>MTD</em>1–30 Sep 2026</span>vs<span class="pl lmtd"><em>LMTD</em>1–30 Agu 2026</span></div>
+  <div class="warn">⚠ ST belum lengkap s.d. 30 Sep 2026 untuk <b>KALIMANTAN</b></div>
+  <div class="kg">
+   <div class="kc"><div class="ic" style="background:rgba(52,211,153,.15);color:#34D399">✓</div><div><span>AKTIF</span><div class="n">884</div><small>Minimal 2 unit bulan ini</small></div></div>
+   <div class="kc"><div class="ic" style="background:rgba(90,162,255,.15);color:#7DB5FF">↺</div><div><span>DA BULAN LALU</span><div class="n">1.149</div><small>Order bulan lalu, belum order</small></div></div>
+   <div class="kc"><div class="ic" style="background:rgba(251,191,36,.15);color:#FBBF24">◐</div><div><span>IDLE</span><div class="n">570</div><small>Terakhir order 2 bulan lalu</small></div></div>
+   <div class="kc"><div class="ic" style="background:rgba(248,113,113,.15);color:#F87171">Ⅱ</div><div><span>PASIF</span><div class="n">937</div><small>Tiga bulan tanpa order</small></div></div>
+   <div class="kc"><div class="ic" style="background:rgba(167,139,250,.16);color:#A78BFA">★</div><div><span>NOO PER BRAND</span><div class="n">111</div><small>Bukan sekadar outlet baru</small></div></div>
+   <div class="kc"><div class="ic" style="background:rgba(45,212,191,.15);color:#2DD4BF">↑</div><div><span>SELL OUT</span><div class="n">29.901</div><small>s.d. 29 Sep · belum sejajar ST</small></div></div>
+  </div>
+  <div class="card"><div class="ch"><b>DAFTAR DEALER</b><small>Tampilan versi kartu dan dapat difilter</small></div>
+   <div class="cb"><div class="fbtn">⚲ FILTER</div>
+    <div class="pg">1–20 dari 3.839<div><i>20 ▾</i><i style="opacity:.45">Sebelumnya</i><i>Berikutnya</i></div></div>
+    <div class="dc"><b>PT. MANUNGGAL UTAMA MANDIRI</b><small>319.047 · JAKARTA</small><br><span class="st" style="background:rgba(248,113,113,.15);color:#FCA5A5">PASIF di 3 brand</span></div>
+    <div class="dc"><b>CV. SINAR SELULAR</b><small>208.114 · CIREBON</small><br><span class="st" style="background:rgba(52,211,153,.15);color:#6EE7B7">AKTIF di 4 brand</span></div>
+   </div></div>
+ </div>
+</div>
+<div class="nav">
+ <div class="nv"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>BERANDA</div>
+ <div class="nv on"><svg viewBox="0 0 24 24"><path d="M4 10h16l-1.5-5h-13zM5 10v10h14V10M9 20v-5h6v5"/></svg>DEALER</div>
+ <div class="nv"><svg viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/></svg>BRAND</div>
+ <div class="nv"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6"/></svg>TRANSAKSI</div>
+ <div class="nv kl"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7zM10 13l2 2 4-4"/></svg>KLAIM</div>
+ <div class="nv"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>LAINNYA</div>
+</div>
+<script>
+const T=[
+ ['','Navy Malam','#0B1628','#14243D','Biru navy gelap. Paling nyambung sama DSM, rekomendasi gue.'],
+ ['charcoal','Charcoal','#121417','#1F2328','Abu arang netral, gaya GitHub/Slack mode gelap. Paling netral.'],
+ ['amoled','Hitam Pekat','#000000','#111214','Hitam total. Paling hemat baterai di HP layar AMOLED, tapi kontras paling keras.'],
+ ['petrol','Petrol Gelap','#0A1E28','#123241','Petrol gelap. Ada nuansa hijau-biru, beda dari app lain.']
+];
+let cur=0;
+function render(){
+ document.getElementById('pks').innerHTML=T.map((t,i)=>`<div class="op ${i===cur?'on':''}" data-i="${i}"><div class="sw" style="background:${t[2]}"><i style="background:${t[3]}"></i><i style="background:${t[3]}"></i></div><b>${t[1]}</b></div>`).join('');
+ document.body.className=T[cur][0];
+ document.getElementById('desc').innerHTML=`<b>${T[cur][1]}</b> · ${T[cur][4]}`;
+}
+document.getElementById('pks').onclick=e=>{const o=e.target.closest('.op');if(!o)return;cur=+o.dataset.i;render()};
+render();
+</script>
+</body>
+</html>

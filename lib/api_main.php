@@ -19,7 +19,7 @@ function apiBootstrap($token) {
     }
     $u['tmVisible'] = $tmSeen;
     $u['klaim'] = klaimAccess_((string) $u['nik'], (string) $u['role']);
-    return ['user' => $u, 'people' => js_filter($db['meta']['people'], fn($p) => isset($set[(string) $p['nik']])), 'periods' => $periods, 'processed' => $db['processed'] ?? null, 'version' => $db['id'], 'exportAccess' => $exportAccess, 'demo' => $demo];
+    return ['user' => $u, 'people' => js_filter($db['meta']['people'], fn($p) => isset($set[(string) $p['nik']])), 'periods' => $periods, 'processed' => $db['processed'] ?? null, 'version' => $db['id'], 'exportAccess' => $exportAccess, 'demo' => $demo, 'ui' => function_exists('uiPrefsGet_') ? uiPrefsGet_((string) $u['nik']) : null];
 }
 
 function apiDashboard($token, $period, $selection) {
@@ -60,7 +60,7 @@ function apiDashboard($token, $period, $selection) {
         if (!isset($knownTypes[$tk])) { $knownTypes[$tk] = true; $result['types'][] = ['brand' => $product['brand'], 'type' => $type, 'qty' => 0]; }
         if (!isset($knownCustomers[(string) $t['customer']])) {
             $knownCustomers[(string) $t['customer']] = true; $c = $db['meta']['customers'][$t['customer']] ?? null;
-            $result['customers'][] = ['id' => $t['customer'], 'nama' => js_or($c['nama'] ?? null, $t['customer'] . ' (belum di master)'), 'nik' => $db['stock']['owners'][$t['customer']] ?? null, 'kota' => js_or($c['kota'] ?? null, ''), 'region' => js_or($c['region'] ?? null, ''), 'alamat' => js_or($c['alamat'] ?? null, ''), 'hp' => js_or($c['hp'] ?? null, ''), 'status' => 'BELUM ORDER', 'last' => null, 'jeda' => null, 'current' => PortalCore::metrics([], $db, $period), 'previous' => PortalCore::metrics([], $db, $result['previousPeriod']), 'brands' => array_map(fn($b) => array_merge(['brand' => $b['brand']], PortalCore::metrics([], $db, $period, $b['brand'])), $result['brands'])];
+            $result['customers'][] = ['id' => $t['customer'], 'nama' => js_or($c['nama'] ?? null, $t['customer'] . ' (belum di master)'), 'nik' => $db['stock']['owners'][$t['customer']] ?? null, 'kota' => js_or($c['kota'] ?? null, ''), 'region' => js_or($c['region'] ?? null, ''), 'alamat' => js_or($c['alamat'] ?? null, ''), 'hp' => js_or($c['hp'] ?? null, ''), 'status' => function_exists('dsDealer_') ? dsDealer_($db, $period, (string) $t['customer'])['status'] : 'BELUM ORDER', 'last' => null, 'jeda' => null, 'current' => PortalCore::metrics([], $db, $period), 'previous' => PortalCore::metrics([], $db, $result['previousPeriod']), 'brands' => array_map(fn($b) => array_merge(['brand' => $b['brand']], PortalCore::metrics([], $db, $period, $b['brand'])), $result['brands'])];
         }
     }
     // Generic owner remains the Master Customer fallback for backward compatibility.
@@ -86,7 +86,7 @@ function apiDashboard($token, $period, $selection) {
         $result['customers'][] = [
             'id'=>(string)$dealerId, 'nama'=>js_or($cm['nama'] ?? null, 'Master belum tersedia'), 'nik'=>text_($cm['nik'] ?? null),
             'region'=>$cm['region'] ?? '', 'kota'=>$cm['kota'] ?? '', 'alamat'=>$cm['alamat'] ?? '', 'hp'=>$cm['hp'] ?? '',
-            'status'=>'BELUM ORDER', 'last'=>null, 'jeda'=>null,
+            'status'=>function_exists('dsDealer_') ? dsDealer_($db, $period, (string) $dealerId)['status'] : 'BELUM ORDER', 'last'=>null, 'jeda'=>null,
             'current'=>PortalCore::metrics([], $db, $period), 'previous'=>PortalCore::metrics([], $db, $result['previousPeriod']),
             'brands'=>array_map(fn($b)=>array_merge(['brand'=>$b['brand']], PortalCore::metrics([], $db, $period, $b['brand'])), $result['brands'])
         ];

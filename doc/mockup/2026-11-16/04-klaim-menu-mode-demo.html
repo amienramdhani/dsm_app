@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>DSM Klaim - Mockup Menu & Mode Demo</title>
+<style>
+:root{--navy:#1F3B63;--blue:#0B5CAD;--ink:#16202E;--mut:#7C8899;--line:#E6EAF0;--bg:#F4F6F9;--or:#F07A0C}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,sans-serif;color:var(--ink);background:#E9EDF2}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--bg);padding-bottom:96px;position:relative}
+/* mockup switch */
+.mk{position:sticky;top:0;z-index:60;background:#fff;border-bottom:1px solid var(--line);padding:8px 10px}
+.mk .row{display:flex;gap:6px}
+.mk button{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:8px 4px;font-weight:800;font-size:10.5px;letter-spacing:.3px;color:#5B6778}
+.mk button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.roles{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;margin-top:7px}
+.roles::-webkit-scrollbar{display:none}
+.roles span{flex:none;font-size:10.5px;font-weight:800;padding:5px 10px;border-radius:99px;background:#F1F4F8;color:#5B6778;cursor:pointer}
+.roles span.on{background:var(--blue);color:#fff}
+/* demo banner */
+.dban{display:none;background:#FFF3E0;border-bottom:2px solid var(--or);color:#8A4B0B;font-size:11.5px;font-weight:800;padding:7px 14px;align-items:center;gap:8px}
+.dban.show{display:flex}
+.dban em{font-style:normal;margin-left:auto;background:var(--or);color:#fff;padding:3px 8px;border-radius:8px;font-size:10px}
+/* header */
+.hd{background:var(--navy);color:#fff;padding:18px 16px 20px}
+.hd .r{display:flex;align-items:center;gap:12px}
+.av{width:48px;height:48px;border-radius:16px;background:rgba(255,255,255,.14);display:grid;place-items:center;font-weight:800;font-size:16px}
+.hd small{font-size:10.5px;font-weight:700;letter-spacing:1px;opacity:.75}
+.hd h1{font-size:19px;font-weight:800}
+.bell{margin-left:auto;width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.12);display:grid;place-items:center;position:relative}
+.bell i{position:absolute;top:8px;right:9px;width:8px;height:8px;border-radius:50%;background:#FF6B57;border:2px solid var(--navy)}
+.modec{margin-top:14px;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:9px 12px;font-size:12px}
+.modec b{font-size:12.5px}
+.modec span{margin-left:auto;font-size:11px;font-weight:800;background:#fff;color:var(--navy);padding:5px 10px;border-radius:8px}
+.prof{margin-top:10px;display:flex;gap:6px}
+.prof div{flex:1;font-size:10.5px;background:rgba(255,255,255,.08);border-radius:10px;padding:7px 9px;display:flex;align-items:center;gap:6px}
+.prof .warn{background:#FFE7C2;color:#8A4B0B;font-weight:700}
+/* body */
+.wrap{padding:12px}
+.sec{font-size:10.5px;font-weight:800;letter-spacing:1px;color:var(--mut);margin:14px 4px 7px}
+.sec:first-child{margin-top:2px}
+.grp{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.it{display:flex;align-items:center;gap:12px;padding:12px 13px;border-top:1px solid #EEF1F5;cursor:pointer}
+.it:first-child{border-top:0}
+.ic{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-size:16px;flex:none}
+.it .tx{flex:1;min-width:0}
+.it b{display:block;font-size:13px;font-weight:700}
+.it small{display:block;font-size:10.5px;color:var(--mut);margin-top:1px}
+.it .ar{color:#B5C0CE;font-size:18px}
+.it .bd{font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:7px;background:#FFE4E4;color:#C2373F}
+.it .bd.ok{background:#E2F5EA;color:#0E6E48}
+.qg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.q{background:#fff;border:1px solid var(--line);border-radius:14px;padding:11px 4px;text-align:center;font-size:10px;font-weight:700;line-height:1.2;cursor:pointer}
+.q .ic{margin:0 auto 6px;width:38px;height:38px}
+.back{margin-top:14px;display:flex;align-items:center;justify-content:center;gap:8px;background:#fff;border:1.5px solid #F2C7C3;color:#B42318;border-radius:14px;padding:13px;font-weight:800;font-size:12.5px;letter-spacing:.4px}
+.ver{text-align:center;font-size:10px;color:#A6B0BE;margin-top:10px}
+/* nav */
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;display:flex;justify-content:space-around;align-items:flex-end;padding:8px 4px 14px;background:#fff;border-top:1px solid var(--line);z-index:30}
+.nv{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;font-weight:700;color:var(--mut);cursor:pointer;position:relative}
+.nv i{font-style:normal;font-size:19px;width:44px;height:30px;border-radius:12px;display:grid;place-items:center;filter:grayscale(1);opacity:.75}
+.nv.on{color:var(--blue)}
+.nv.on i{background:#E6EEFA;filter:none;opacity:1}
+.nv.fab i{width:52px;height:52px;border-radius:18px;background:var(--or);color:#fff;filter:none;opacity:1;font-size:24px;margin-top:-22px;box-shadow:0 8px 18px rgba(240,122,12,.35)}
+.nv .cnt{position:absolute;top:-2px;right:calc(50% - 22px);background:#E5484D;color:#fff;font-size:9px;font-weight:800;padding:1px 5px;border-radius:8px}
+/* compare */
+.cmp{margin-top:12px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px}
+.cmp b{font-size:12px}
+.cr{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+.cr span{font-size:10px;font-weight:700;padding:3px 7px;border-radius:7px;background:#F1F4F8;color:#5B6778}
+.cr span.x{background:#FFE4E4;color:#C2373F;text-decoration:line-through}
+.cr span.n{background:#E2F5EA;color:#0E6E48}
+.lb{font-size:10px;font-weight:800;color:var(--mut);margin-top:8px;letter-spacing:.5px}
+/* DEMO */
+.sw{display:flex;align-items:center;gap:12px;padding:14px;border-radius:16px;background:#fff;border:1px solid var(--line)}
+.sw.on{border:2px solid var(--or);background:#FFF8EF}
+.sw .tx{flex:1}
+.sw b{font-size:14px;display:block}.sw small{font-size:11px;color:var(--mut);display:block;margin-top:2px;line-height:1.4}
+.tg{width:52px;height:30px;border-radius:99px;background:#CBD3DE;position:relative;cursor:pointer;flex:none;transition:.2s}
+.tg::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.2);transition:.2s}
+.tg.on{background:var(--or)}.tg.on::after{left:25px}
+.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.stat div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.stat b{font-size:17px;display:block}.stat small{font-size:9.5px;color:var(--mut);font-weight:700}
+.acc{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ac{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;align-items:center;gap:9px;cursor:pointer}
+.ac .ic{width:32px;height:32px;font-size:14px;border-radius:10px}
+.ac b{font-size:12px;display:block}.ac small{font-size:9.5px;color:var(--mut)}
+.ac em{margin-left:auto;font-style:normal;font-size:10px;font-weight:800;color:var(--blue)}
+.off{opacity:.45;pointer-events:none}
+.danger{margin-top:10px;border:1.5px solid #F2C7C3;background:#fff;color:#B42318;border-radius:12px;padding:12px;text-align:center;font-weight:800;font-size:12px;cursor:pointer}
+.info{background:#EEF5FF;border:1px solid #CFE0F5;color:#1E4E8C;border-radius:12px;padding:10px 12px;font-size:11.5px;line-height:1.5;margin-top:10px}
+.info.w{background:#FFF8E6;border-color:#F5DFA0;color:#5C4400}
+/* sheet */
+.ov{position:fixed;inset:0;background:rgba(16,24,40,.4);display:none;z-index:70}
+.ov.show{display:block}
+.sheet{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:100%;max-width:430px;background:#fff;border-radius:22px 22px 0 0;padding:16px;z-index:71;display:none}
+.sheet.show{display:block}
+.sheet h3{font-size:16px}
+.sheet p{font-size:12px;color:#3D4A5C;line-height:1.55;margin-top:8px}
+.sheet ul{margin:10px 0 0 0;list-style:none;display:flex;flex-direction:column;gap:7px}
+.sheet li{font-size:12px;display:flex;gap:8px;background:#F6F8FB;border-radius:10px;padding:9px 10px}
+.btns{display:flex;gap:8px;margin-top:14px}
+.btns button{flex:1;border:0;border-radius:12px;padding:13px;font-weight:800;font-size:12px}
+.bg1{background:#F1F4F8;color:#3D4A5C}.bg2{background:var(--or);color:#fff}.bg3{background:#B42318;color:#fff}
+.view{display:none}.view.on{display:block}
+
+/* ==== PALET ==== */
+body{--hd:#1F3B63;--hdInk:#fff;--hdBox:rgba(255,255,255,.1);--hdLine:rgba(255,255,255,.18);--acc:#0B5CAD;--accS:#E6EEFA;--fab:#F07A0C;--bgp:#F4F6F9}
+body.p-dsm{--hd:#0B5CAD;--acc:#0B5CAD;--accS:#E6EEFA;--fab:#F07A0C}
+body.p-petrol{--hd:#10394E;--acc:#10394E;--accS:#E3EEF2;--fab:#E7A51A}
+body.p-royal{--hd:#1D4ED8;--acc:#1D4ED8;--accS:#E4EBFD;--fab:#F07A0C}
+body.p-tosca{--hd:#0F766E;--acc:#0F766E;--accS:#DDF3F0;--fab:#F07A0C}
+body.p-langit{--hd:#CFE3F7;--hdInk:#10294A;--hdBox:#fff;--hdLine:#B7D1EE;--acc:#0B5CAD;--accS:#E6EEFA;--fab:#0B5CAD;--bgp:#F4F7FB}
+body.p-sky{--hd:#BAD7FA;--hdInk:#0D2547;--hdBox:#fff;--hdLine:#9FC4F3;--acc:#1D4ED8;--accS:#E4EBFD;--fab:#1D4ED8;--bgp:#F3F7FD}
+body.p-putih{--hd:#fff;--hdInk:#16202E;--hdBox:#F4F6F9;--hdLine:#E6EAF0;--acc:#0B5CAD;--accS:#E6EEFA;--fab:#0B5CAD}
+.app{background:var(--bgp)!important}
+.hd{background:var(--hd)!important;color:var(--hdInk)!important;border-bottom:1px solid var(--hdLine)}
+.hd .av,.bell{background:var(--hdBox)!important;border:1px solid var(--hdLine)}
+.bell i{border-color:var(--hd)!important}
+.modec{background:var(--hdBox)!important;border-color:var(--hdLine)!important}
+.modec span{background:var(--acc)!important;color:#fff!important}
+body:not(.p-langit):not(.p-sky):not(.p-putih) .modec span{background:#fff!important;color:var(--hd)!important}
+.prof div:not(.warn){background:var(--hdBox)!important}
+.nv.on{color:var(--acc)!important}.nv.on i{background:var(--accS)!important}
+.nv.fab i{background:var(--fab)!important;box-shadow:0 8px 18px rgba(0,0,0,.18)!important}
+.roles span.on{background:var(--acc)!important}
+.ac em{color:var(--acc)!important}
+.pal{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-top:7px}
+.pal::-webkit-scrollbar{display:none}
+.pal div{flex:none;text-align:center;cursor:pointer;width:58px}
+.pal i{display:block;height:26px;border-radius:9px;border:2px solid #E6EAF0;position:relative;overflow:hidden}
+.pal i::after{content:"";position:absolute;right:4px;bottom:4px;width:10px;height:10px;border-radius:50%;background:var(--d)}
+.pal div.on i{border-color:#16202E}
+.pal b{display:block;font-size:9px;font-weight:800;color:#5B6778;margin-top:3px}
+</style>
+</head>
+<body>
+<div class="mk">
+ <div class="row"><button data-v="menu" class="on">MENU RAPI</button><button data-v="demo">MODE DEMO</button></div>
+ <div class="pal" id="pal"></div>
+ <div class="roles" id="roles"></div>
+</div>
+<div class="app">
+ <div class="dban" id="dban">🧪 MODE DEMO AKTIF · data tidak masuk laporan asli<em id="dbanAs">SUPER ADMIN</em></div>
+ <div class="hd">
+  <div class="r"><div class="av">AR</div><div><small id="hRole">SUPER ADMIN</small><h1 id="hName">Ari</h1></div><div class="bell">🔔<i></i></div></div>
+  <div class="modec" id="modec"></div>
+  <div class="prof"><div class="warn">👤 WhatsApp belum diisi</div><div>✍️ Tanda tangan ✓</div></div>
+ </div>
+
+ <div class="view on" id="vmenu"><div class="wrap" id="menu"></div></div>
+
+ <div class="view" id="vdemo"><div class="wrap" id="demo"></div></div>
+</div>
+<div class="nav" id="nav"></div>
+<div class="ov" id="ov"></div><div class="sheet" id="sheet"></div>
+
+<script>
+const C={b:['#E6EEFA','#0B5CAD'],g:['#E2F5EA','#0E6E48'],o:['#FFF1DC','#C25A12'],r:['#FBE3E1','#B42318'],p:['#EEE8FB','#6D3FD8'],t:['#E3F4F6','#0E7C8C'],s:['#EEF1F5','#5B6778'],y:['#FFF6D6','#8A6200']};
+const ic=(e,c)=>`<div class="ic" style="background:${C[c][0]};color:${C[c][1]}">${e}</div>`;
+// before / after nav per role
+const R={
+ sa:{n:'Super Admin',old:['Beranda','Pengguna','Kode','Atur','Menu'],nav:[['🏠','Beranda'],['👥','Pengguna'],['🔑','Kode'],['⚙️','Atur'],['☰','Menu']],note:'Nav sudah pas. Yang dirapikan isi Menu: dikelompokkan, Mode Demo masuk sini.',
+  q:[['⛽','Harga BBM','o'],['🏢','Badan usaha','b'],['🗓️','Kalender','t'],['🧪','Mode demo','y']],
+  g:[['PENGATURAN KLAIM',[['⛽','Harga BBM','Harga per liter terbaru','o'],['🏢','Badan usaha','PT / CV yang dipakai','b'],['⚙️','Aturan & batas','Ambang BA, hari menunggu, mode','s']]],
+     ['UJI & DEMO',[['🧪','Mode demo','Mati · nyalakan untuk tes semua peran','y','demo'],['🎭','Masuk sebagai…','Hanya muncul saat Mode demo nyala','p']]]]},
+ pemohon:{n:'Pemohon (Sales)',old:['Beranda','Klaim saya','Ajukan','Petty cash','Kalender','Menu'],nav:[['🏠','Beranda'],['🧾','Klaim saya',2],['➕','Ajukan','fab'],['💵','Petty cash'],['☰','Menu']],note:'6 jadi 5: Kalender pindah ke Menu. AJUKAN jadi tombol oren di tengah, biar langsung ketemu.',
+  q:[['🗓️','Kalender','t'],['📄','Draf saya','s'],['↩️','Perlu revisi','r'],['❓','Panduan','b']],
+  g:[['KLAIM SAYA',[['↩️','Perlu revisi','1 klaim dikembalikan Admin','r','1'],['📄','Draf tersimpan','Belum dikirim','s']]]]},
+ admin:{n:'Admin',old:['Antrean','BA','Revisi','Diproses','Kalender','Menu'],nav:[['📥','Antrean',8],['📝','BA'],['↩️','Revisi'],['⏳','Diproses'],['☰','Menu']],note:'6 jadi 5: Kalender pindah ke Menu.',
+  q:[['🗓️','Kalender','t'],['🔐','Kode pengganti','p'],['⬇️','Export','g'],['❓','Panduan','b']],
+  g:[['ALAT ADMIN',[['🔐','Terbitkan kode untuk pengganti','Saat ada yang cuti','p']]]]},
+ audit:{n:'Audit',old:['Antrean BA','Semua klaim','Budget','Export','Kalender','Menu'],nav:[['🏠','Antrean BA',3],['📚','Semua'],['📊','Budget'],['⬇️','Export'],['☰','Menu']],note:'6 jadi 5: Kalender pindah ke Menu.',
+  q:[['🗓️','Kalender','t'],['📈','Realisasi','g'],['⚙️','Aturan BA','s'],['❓','Panduan','b']],g:[]},
+ hos:{n:'HOS',old:['Antrean','BA','Semua klaim','Budget','Realisasi','Kalender','Menu'],nav:[['🏠','Antrean',5],['📝','BA'],['📚','Semua'],['📊','Budget'],['☰','Menu']],note:'7 jadi 5 (paling padat sekarang). Realisasi jadi tab di dalam Budget, Kalender ke Menu.',
+  q:[['🗓️','Kalender','t'],['💵','Petty cash','o'],['⚙️','Aturan BA','s'],['⬇️','Export','g']],g:[]},
+ fm:{n:'Finance Manager',old:['Antrean','BA','Diproses','Budget','Realisasi','Kalender','Menu'],nav:[['🏠','Antrean',4],['📝','BA'],['⏳','Diproses'],['📊','Budget'],['☰','Menu']],note:'7 jadi 5. Realisasi jadi tab di Budget, Kalender ke Menu.',
+  q:[['🗓️','Kalender','t'],['📚','Semua klaim','b'],['⚙️','Aturan BA','s'],['⬇️','Export','g']],g:[]},
+ ft:{n:'Finance Transfer',old:['Siap transfer','Akan datang','Riwayat','Realisasi','Kalender','Menu'],nav:[['💸','Transfer',6],['🔜','Akan datang'],['🕘','Riwayat'],['📈','Realisasi'],['☰','Menu']],note:'6 jadi 5: Kalender ke Menu.',
+  q:[['🗓️','Kalender','t'],['💵','Petty cash','o'],['🔐','Kode pengganti','p'],['⬇️','Export','g']],g:[]},
+ rgm:{n:'RGM',old:['Beranda','Antrean PC','Diproses','Kalender','Menu'],nav:[['🏠','Beranda'],['📥','Antrean PC',2],['⏳','Diproses'],['🗓️','Kalender'],['☰','Menu']],note:'Sudah 5, tidak berubah.',
+  q:[['❓','Panduan','b']],g:[]}
+};
+let role='sa',view='menu',demoOn=false,asRole=null;
+const $=id=>document.getElementById(id);
+
+function nav(){
+ const r=R[asRole||role];
+ $('nav').innerHTML=r.nav.map((n,i)=>`<div class="nv ${n[2]==='fab'?'fab':''} ${(view==='menu'?i===r.nav.length-1:n[1]==='Atur')?'on':''}"><i>${n[0]}</i>${n[1]}${typeof n[2]==='number'?`<span class="cnt">${n[2]}</span>`:''}</div>`).join('');
+}
+function header(){
+ const r=R[asRole||role];
+ document.getElementById('hName').textContent=asRole?'Demo '+R[asRole].n.split(' (')[0]:'Ari';
+ $('hRole').textContent=r.n.toUpperCase()+(asRole?' (DEMO)':'');
+ $('modec').innerHTML=`<div>Masuk sebagai<br><b>${r.n}</b></div><span>GANTI ▾</span>`;
+ $('dban').classList.toggle('show',demoOn);
+ $('dbanAs').textContent=asRole?'SEBAGAI '+R[asRole].n.toUpperCase():'SUPER ADMIN';
+}
+function menu(){
+ const r=R[role];
+ let h=`<div class="sec">AKSES CEPAT</div><div class="qg">${r.q.map(q=>`<div class="q" ${q[1]==='Mode demo'?'data-go="demo"':''}>${ic(q[0],q[2])}${q[1]}</div>`).join('')}</div>`;
+ r.g.forEach(([t,items])=>{h+=`<div class="sec">${t}</div><div class="grp">${items.map(it=>`<div class="it" ${it[4]==='demo'?'data-go="demo"':''}>${ic(it[0],it[3])}<div class="tx"><b>${it[1]}</b><small>${it[4]==='demo'?(demoOn?'NYALA · 7 akun demo aktif':'Mati · nyalakan untuk tes semua peran'):it[2]}</small></div>${it[4]&&it[4]!=='demo'?`<span class="bd">${it[4]}</span>`:''}<div class="ar">›</div></div>`).join('')}</div>`});
+ h+=`<div class="sec">AKUN SAYA</div><div class="grp">
+  <div class="it">${ic('👤','b')}<div class="tx"><b>Profil (WhatsApp)</b><small>Nomor dipakai untuk notifikasi</small></div><span class="bd">BELUM DIISI</span><div class="ar">›</div></div>
+  <div class="it">${ic('✍️','p')}<div class="tx"><b>Tanda tangan</b><small>Dipakai di BA & approval</small></div><span class="bd ok">✓ ADA</span><div class="ar">›</div></div>
+  <div class="it">${ic('🔑','s')}<div class="tx"><b>Masuk kode cadangan</b><small>Kalau menggantikan orang lain</small></div><div class="ar">›</div></div></div>
+  <div class="back">↩ KEMBALI KE DSM</div><div class="ver">DSM Klaim · Mockup</div>`;
+ h+=`<div class="cmp"><b>Navigasi bawah · ${r.n}</b><div class="lb">SEKARANG (${r.old.length})</div><div class="cr">${r.old.map(o=>`<span class="${r.nav.some(n=>n[1]===o||(o==='Semua klaim'&&n[1]==='Semua')||(o==='Siap transfer'&&n[1]==='Transfer'))?'':'x'}">${o}</span>`).join('')}</div><div class="lb">SESUDAH (${r.nav.length})</div><div class="cr">${r.nav.map(n=>`<span class="n">${n[1]}</span>`).join('')}</div><div class="info" style="margin-top:8px">${r.note}</div></div>`;
+ $('menu').innerHTML=h;
+}
+function demo(){
+ const accs=[['pemohon','🧾','g'],['rgm','📥','t'],['admin','📝','b'],['audit','🔍','p'],['hos','👔','o'],['fm','💼','b'],['ft','💸','g']];
+ $('demo').innerHTML=`<div class="sec">MODE DEMO</div>
+ <div class="sw ${demoOn?'on':''}"><div class="tx"><b>${demoOn?'Mode demo NYALA':'Mode demo MATI'}</b><small>${demoOn?'Akun demo semua peran aktif. Semua klaim yang dibuat ditandai DEMO dan tidak masuk budget, monitoring, maupun export asli.':'Nyalakan untuk tes alur klaim dari pengajuan sampai transfer, tanpa mengganggu data asli.'}</small></div><div class="tg ${demoOn?'on':''}" id="tg"></div></div>
+ ${demoOn?`<div class="stat"><div><b>7</b><small>AKUN DEMO</small></div><div><b>12</b><small>KLAIM DEMO</small></div><div><b>Rp 3,4 jt</b><small>NOMINAL DEMO</small></div></div>
+ <div class="sec">MASUK SEBAGAI</div><div class="acc">${accs.map(([k,e,c])=>`<div class="ac" data-as="${k}">${ic(e,c)}<div><b>${R[k].n.replace(' (Sales)','')}</b><small>Demo ${R[k].n.split(' ')[0]}</small></div><em>${asRole===k?'AKTIF':'MASUK'}</em></div>`).join('')}
+  <div class="ac" data-as="">${ic('🛡️','s')}<div><b>Super Admin</b><small>Akun asli lu</small></div><em>${!asRole?'AKTIF':'KEMBALI'}</em></div></div>
+ <div class="info">Selama demo nyala, semua layar menampilkan pita oren <b>MODE DEMO AKTIF</b> di atas biar nggak ketuker.</div>
+ <div class="danger" id="purge">🗑 HAPUS PERMANEN DATA DEMO</div>`
+ :`<div class="sec">SAAT DINYALAKAN</div><div class="grp">
+  <div class="it">${ic('👥','b')}<div class="tx"><b>7 akun demo muncul</b><small>Sales, RGM, Admin, Audit, HOS, FM, FT</small></div></div>
+  <div class="it">${ic('🎭','p')}<div class="tx"><b>Masuk sebagai peran mana pun</b><small>Bisa ajukan, setujui, transfer</small></div></div>
+  <div class="it">${ic('🏷️','y')}<div class="tx"><b>Semua data ditandai DEMO</b><small>Tidak memotong budget asli</small></div></div></div>
+  <div class="sec">SAAT DIMATIKAN</div><div class="grp">
+  <div class="it">${ic('🙈','s')}<div class="tx"><b>Akun demo disembunyikan otomatis</b><small>Tidak bisa dipakai, tidak muncul di daftar</small></div></div>
+  <div class="it">${ic('📊','g')}<div class="tx"><b>Data demo hilang dari laporan</b><small>Budget, monitoring, realisasi, export bersih</small></div></div>
+  <div class="it">${ic('♻️','t')}<div class="tx"><b>Data demo disimpan, tidak dihapus</b><small>Muncul lagi kalau demo dinyalakan</small></div></div></div>
+  <div class="info w">Data demo tetap di database sampai lu tekan <b>Hapus permanen data demo</b>.</div>`}`;
+ $('tg').onclick=()=>demoOn?sheetOff():sheetOn();
+ const pg=$('purge');if(pg)pg.onclick=sheetPurge;
+}
+function sheet(h){$('sheet').innerHTML=h;$('sheet').classList.add('show');$('ov').classList.add('show')}
+function close(){$('sheet').classList.remove('show');$('ov').classList.remove('show')}
+function sheetOn(){sheet(`<h3>🧪 Nyalakan Mode Demo?</h3><p>Akun demo untuk semua peran akan diaktifkan. Pengguna asli tetap bisa memakai Klaim seperti biasa dan <b>tidak melihat</b> data demo.</p><div class="btns"><button class="bg1" data-x>BATAL</button><button class="bg2" data-on>NYALAKAN</button></div>`)}
+function sheetOff(){sheet(`<h3>Matikan Mode Demo?</h3><ul><li>🙈 7 akun demo disembunyikan</li><li>📊 12 klaim demo (Rp 3,4 jt) hilang dari budget, monitoring & export</li><li>♻️ Data demo disimpan, muncul lagi saat demo dinyalakan</li></ul><div class="btns"><button class="bg1" data-x>BATAL</button><button class="bg2" data-off>MATIKAN</button></div>`)}
+function sheetPurge(){sheet(`<h3 style="color:#B42318">Hapus permanen data demo?</h3><p>12 klaim demo, foto bukti, BA, dan riwayat approval demo akan <b>dihapus selamanya</b>. Data asli tidak tersentuh.</p><div class="btns"><button class="bg1" data-x>BATAL</button><button class="bg3" data-x>HAPUS PERMANEN</button></div>`)}
+document.addEventListener('click',e=>{
+ if(e.target.matches('[data-x]')||e.target.id==='ov')close();
+ if(e.target.matches('[data-on]')){demoOn=true;close();render()}
+ if(e.target.matches('[data-off]')){demoOn=false;asRole=null;close();render()}
+ const a=e.target.closest('[data-as]');if(a){asRole=a.dataset.as||null;render()}
+ const g=e.target.closest('[data-go="demo"]');if(g){view='demo';render()}
+});
+document.querySelectorAll('.mk button').forEach(b=>b.onclick=()=>{view=b.dataset.v;render()});
+$('roles').onclick=e=>{const s=e.target.closest('span');if(!s)return;role=s.dataset.r;asRole=null;view='menu';render()};
+function render(){
+ document.querySelectorAll('.mk button').forEach(b=>b.classList.toggle('on',b.dataset.v===view));
+ $('roles').style.display=view==='menu'?'flex':'none';
+ $('roles').innerHTML=Object.keys(R).map(k=>`<span data-r="${k}" class="${k===role?'on':''}">${R[k].n}</span>`).join('');
+ $('vmenu').classList.toggle('on',view==='menu');$('vdemo').classList.toggle('on',view==='demo');
+ if(view==='demo'&&role!=='sa')role='sa';
+ header();nav();menu();demo();window.scrollTo(0,0);
+}
+render();
+
+const PAL=[['p-navy','Navy (skrg)','#1F3B63','#F07A0C'],['p-dsm','Biru DSM','#0B5CAD','#F07A0C'],['p-petrol','Petrol','#10394E','#E7A51A'],['p-royal','Biru Royal','#1D4ED8','#F07A0C'],['p-tosca','Tosca','#0F766E','#F07A0C'],['p-langit','Biru Langit','#CFE3F7','#0B5CAD'],['p-sky','Sky','#BAD7FA','#1D4ED8'],['p-putih','Putih','#FFFFFF','#0B5CAD']];
+let pal='p-dsm';
+function renderPal(){document.getElementById('pal').innerHTML=PAL.map(p=>`<div class="${p[0]===pal?'on':''}" data-pal="${p[0]}"><i style="background:${p[2]};--d:${p[3]}"></i><b>${p[1]}</b></div>`).join('');document.body.className=pal}
+document.getElementById('pal').onclick=e=>{const d=e.target.closest('[data-pal]');if(!d)return;pal=d.dataset.pal;renderPal()};
+renderPal();
+</script>
+</body>
+</html>

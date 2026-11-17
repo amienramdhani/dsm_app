@@ -31,3 +31,23 @@ Options -Indexes
   # HSTS hanya dikirim bila diakses lewat HTTPS
   Header always set Strict-Transport-Security "max-age=31536000" "expr=%{HTTPS} == 'on'"
 </IfModule>
+
+# --- Kecepatan: kompresi + cache aset (2026-11-17) ---
+# Kompres teks sebelum dikirim (HTML, CSS, JS, JSON). Butuh mod_deflate; kalau tidak aktif, bagian ini diabaikan.
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain application/javascript text/javascript application/json application/manifest+json image/svg+xml
+</IfModule>
+<IfModule mod_headers.c>
+  # Aset bernomor versi (?v=...) boleh disimpan HP setahun; versi berubah otomatis setiap file diganti.
+  <If "%{QUERY_STRING} =~ /(^|&)v=/">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </If>
+  # Gambar & ikon tanpa versi: simpan 7 hari.
+  <FilesMatch "\.(png|jpe?g|webp|svg|ico)$">
+    Header set Cache-Control "public, max-age=604800"
+  </FilesMatch>
+  # Service worker dan halaman utama selalu dicek ulang supaya update langsung terasa.
+  <FilesMatch "^(sw\.js|index\.php)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>

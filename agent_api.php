@@ -47,6 +47,7 @@ require_once __DIR__ . '/lib/api_info.php';
 require_once __DIR__ . '/lib/api_menu.php';
 require_once __DIR__ . '/lib/api_export2.php';
 require_once __DIR__ . '/lib/api_brand.php';
+require_once __DIR__ . '/lib/dealer_status.php';
 require_once __DIR__ . '/lib/rescache.php';
 require_once __DIR__ . '/lib/api_telemarketing.php';
 require_once __DIR__ . '/lib/api_push.php';
@@ -142,7 +143,7 @@ try {
     agentReply_(200, ['ok' => true, 'result' => $out]);
 
 } catch (AgentError $e) {
-    agentLog_($keyId, $tgId, $nik, $res, $params, $e->codeName, (int) ((microtime(true) - $t0) * 1000));
+    agentLog_($keyId, $tgId, $nik, $res, $params, $e->why !== '' ? $e->why : $e->codeName, (int) ((microtime(true) - $t0) * 1000));
     agentReply_($e->http, ['ok' => false, 'code' => $e->codeName, 'message' => $e->getMessage()]);
 } catch (AppError $e) {
     // Pesan dari fungsi DSM (mis. di luar hak akses role).

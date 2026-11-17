@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>DSM - Mockup Background</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Inter,sans-serif;color:#16202E;background:#E9EDF3}
+.app{max-width:430px;margin:0 auto;min-height:100vh;position:relative;padding-bottom:100px;transition:background .35s}
+/* ===== BACKGROUND OPTIONS ===== */
+.bg0{background:linear-gradient(180deg,#DCEBF8 0%,#EEF4FB 30%,#F3F6FB 60%,#E9EEFA 100%)}
+.bg0 .body{background:radial-gradient(circle at 0% 10%,rgba(150,200,240,.45),transparent 40%),radial-gradient(circle at 100% 30%,rgba(170,180,240,.35),transparent 40%)}
+.bg1{background:#F4F6F9}
+.bg2{background:#FFFFFF}
+.bg2 .kc,.bg2 .card{border:1px solid #E6EAF0!important;box-shadow:none!important}
+.bg3{background:#EEF4FB}
+.bg4{background:#F4F6F9}
+.bg4 .body{background-image:radial-gradient(#CBD5E1 1px,transparent 1.2px);background-size:18px 18px}
+.bg5{background:#F4F6F9}
+.bg5 .body{background:linear-gradient(#0B5CAD,#0B5CAD) top/100% 170px no-repeat}
+.bg5 .ttl h1,.bg5 .ttl .vs{color:#fff}
+.bg6{background:#F6F5F2}
+.bg7{background:#F4F6F9}
+.bg7 .body{background-image:linear-gradient(#E3E8EF 1px,transparent 1px),linear-gradient(90deg,#E3E8EF 1px,transparent 1px);background-size:24px 24px}
+
+/* picker */
+.pk{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid #E6EAF0;padding:8px 10px 10px}
+.pk small{display:block;font-size:10px;font-weight:800;letter-spacing:.8px;color:#7C8899;margin:0 2px 6px}
+.pks{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none}
+.pks::-webkit-scrollbar{display:none}
+.op{flex:none;width:74px;text-align:center;cursor:pointer}
+.sw{height:46px;border-radius:12px;border:2px solid #E6EAF0;position:relative;overflow:hidden}
+.op.on .sw{border-color:#0B5CAD;box-shadow:0 0 0 2px #CFE1F5}
+.op b{display:block;font-size:9.5px;font-weight:800;margin-top:4px;line-height:1.2;color:#3D4A5C}
+.op .rec{position:absolute;top:3px;right:3px;background:#12A86B;color:#fff;font-size:7.5px;font-weight:800;padding:1px 4px;border-radius:5px}
+
+/* top app bar (dari screenshot) */
+.tbar{display:flex;align-items:center;gap:12px;padding:10px 14px;background:rgba(255,255,255,.75);border-bottom:1px solid #E1E8F2}
+.logo{background:#fff;border-radius:10px;padding:6px 10px;font-weight:800;font-size:13px;letter-spacing:2px;color:#2B4C8C;box-shadow:0 2px 6px rgba(0,0,0,.05)}
+.logo span{color:#F07A0C}
+.dl{display:flex;align-items:center;gap:7px;font-size:10.5px;color:#5B6778}
+.dl i{width:8px;height:8px;border-radius:50%;background:#12A86B}
+.dl b{display:block;font-size:13px;color:#16202E}
+.rf{margin-left:auto;width:34px;height:34px;border-radius:10px;background:#EAF0F8;display:grid;place-items:center;color:#0B5CAD}
+.frow{display:flex;align-items:center;gap:12px;padding:9px 14px;background:#fff;border-bottom:1px solid #E6EAF0;font-size:13px;font-weight:600}
+.frow b{margin-left:auto;background:#EEF2F7;color:#0B5CAD;padding:7px 12px;border-radius:9px;font-size:12px}
+
+.body{padding:18px 14px 10px;min-height:calc(100vh - 160px)}
+.ttl h1{font-size:24px;font-weight:800;letter-spacing:-.3px}
+.vs{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:11px;color:#7C8899;flex-wrap:wrap}
+.pl{display:inline-flex;gap:6px;align-items:center;padding:4px 8px 4px 4px;border-radius:99px;font-size:11px;font-weight:700}
+.pl em{font-style:normal;font-size:9.5px;font-weight:800;padding:2px 6px;border-radius:99px;background:#fff}
+.mtd{background:#E3EEFC;color:#1E4E8C;border:1px solid #C7DBF5}
+.lmtd{background:#FDEBD5;color:#8A4B0B;border:1px solid #F7D2A6}
+.warn{margin-top:12px;background:#FFF8E6;border:1px solid #F5DFA0;border-radius:12px;padding:9px 12px;font-size:11.5px;color:#5C4400}
+.kg{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+.kc{display:flex;gap:9px;background:#fff;border-radius:16px;padding:10px;box-shadow:0 4px 14px rgba(16,40,80,.06)}
+.kc .ic{width:30px;border-radius:9px;display:grid;place-items:center;flex:none;font-size:14px;font-weight:800}
+.kc span{font-size:9.5px;font-weight:700;letter-spacing:.5px;color:#7C8899}
+.kc .n{font-size:19px;font-weight:800;margin:1px 0}
+.kc small{font-size:9.5px;color:#7C8899;line-height:1.3;display:block}
+.card{background:#fff;border-radius:16px;box-shadow:0 4px 14px rgba(16,40,80,.06);margin-top:12px;overflow:hidden}
+.ch{padding:13px 14px;border-bottom:1px solid #EEF1F5;display:flex;justify-content:space-between;align-items:center}
+.ch b{font-size:14px;font-weight:800}.ch small{display:block;font-size:11px;color:#7C8899;margin-top:2px}
+.cb{padding:12px 14px}
+.fbtn{text-align:center;color:#fff;font-weight:800;font-size:13px;letter-spacing:1px;padding:11px;border-radius:12px;background:linear-gradient(135deg,#FFB020,#F07A0C)}
+.pg{margin-top:9px;background:#F3F7FC;border:1px solid #DDE7F3;border-radius:12px;padding:9px;text-align:center;font-size:11.5px;font-weight:700}
+.pg div{display:flex;gap:6px;margin-top:7px}
+.pg i{font-style:normal;flex:1;background:#fff;border:1px solid #DDE7F3;border-radius:9px;padding:7px;font-size:11px;color:#0B5CAD}
+.dc{margin-top:10px;border:1px solid #EEF1F5;border-radius:12px;padding:11px}
+.dc b{color:#0B5CAD;font-size:12.5px}.dc small{font-size:10px;color:#7C8899;margin-left:4px}
+.dc .p{display:inline-block;margin-top:7px;background:#FBE3E1;color:#A3201B;font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px}
+
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;display:flex;justify-content:space-around;align-items:center;padding:8px 4px 14px;background:#fff;border-top:1px solid #E6EAF0;border-radius:20px 20px 0 0;box-shadow:0 -4px 16px rgba(16,40,80,.06)}
+.nv{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:9.5px;font-weight:600;color:#5B6778;letter-spacing:.3px}
+.nv svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.nv.on{color:#0B5CAD}.nv.on svg{background:#E6EEFA;border-radius:10px;padding:3px;width:26px;height:26px}
+.nv.kl svg{background:#F39A1E;color:#fff;border-radius:12px;padding:5px;width:34px;height:30px;stroke:#fff}
+.desc{margin:10px 14px 0;font-size:11.5px;color:#3D4A5C;background:#fff;border:1px solid #E6EAF0;border-radius:12px;padding:9px 11px;line-height:1.5}
+.desc b{color:#0B5CAD}
+</style>
+</head>
+<body>
+<div class="pk"><small>PILIH BACKGROUND</small><div class="pks" id="pks"></div></div>
+
+<div class="app bg0" id="app">
+ <div class="tbar"><div class="logo">D<span>S</span>M</div><div class="dl"><i></i><div>Data lengkap s.d.<b>30 Sep 2026</b></div></div><div class="rf">↻</div></div>
+ <div class="frow">Nasional / 91 data Sales<b>Filter</b></div>
+ <div class="desc" id="desc"></div>
+ <div class="body">
+  <div class="ttl"><h1>DEALER</h1><div class="vs"><span class="pl mtd"><em>MTD</em>1–30 Sep 2026</span>vs<span class="pl lmtd"><em>LMTD</em>1–30 Agu 2026</span></div></div>
+  <div class="warn">⚠ ST belum lengkap s.d. 30 Sep 2026 untuk <b>KALIMANTAN</b></div>
+  <div class="kg">
+   <div class="kc"><div class="ic" style="background:#E2F5EA;color:#0E6E48">✓</div><div><span>AKTIF</span><div class="n">884</div><small>Minimal 2 unit bulan ini</small></div></div>
+   <div class="kc"><div class="ic" style="background:#E6EEFA;color:#0B5CAD">↺</div><div><span>DA BULAN LALU</span><div class="n">1.149</div><small>Order bulan lalu, belum order</small></div></div>
+   <div class="kc"><div class="ic" style="background:#FFF1DC;color:#C9831A">◐</div><div><span>IDLE</span><div class="n">570</div><small>Terakhir order 2 bulan lalu</small></div></div>
+   <div class="kc"><div class="ic" style="background:#FBE3E1;color:#C2373F">Ⅱ</div><div><span>PASIF</span><div class="n">937</div><small>Tiga bulan tanpa order</small></div></div>
+   <div class="kc"><div class="ic" style="background:#EEE8FB;color:#6D3FD8">★</div><div><span>NOO PER BRAND</span><div class="n">111</div><small>Bukan sekadar outlet baru</small></div></div>
+   <div class="kc"><div class="ic" style="background:#E3F4F6;color:#0E7C8C">↑</div><div><span>SELL OUT</span><div class="n">29.901</div><small>s.d. 29 Sep · belum sejajar ST</small></div></div>
+  </div>
+  <div class="card"><div class="ch"><div><b>DAFTAR DEALER</b><small>Tampilan versi kartu dan dapat difilter</small></div><span>︿</span></div>
+   <div class="cb"><div class="fbtn">⚲ FILTER</div>
+    <div class="pg">1–20 dari 3.839<div><i>20 ▾</i><i style="color:#9AB3D3">Sebelumnya</i><i>Berikutnya</i></div></div>
+    <div class="dc"><b>PT. MANUNGGAL UTAMA MANDIRI</b><small>319.047 · JAKARTA</small><br><span class="p">PASIF di 3 brand</span></div>
+    <div class="dc"><b>CV. SINAR SELULAR</b><small>208.114 · CIREBON</small><br><span class="p" style="background:#E2F5EA;color:#0E6E48">AKTIF di 4 brand</span></div>
+   </div></div>
+ </div>
+</div>
+
+<div class="nav">
+ <div class="nv"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>BERANDA</div>
+ <div class="nv on"><svg viewBox="0 0 24 24"><path d="M4 10h16l-1.5-5h-13zM5 10v10h14V10M9 20v-5h6v5"/></svg>DEALER</div>
+ <div class="nv"><svg viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/></svg>BRAND</div>
+ <div class="nv"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6"/></svg>TRANSAKSI</div>
+ <div class="nv kl"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7zM10 13l2 2 4-4"/></svg>KLAIM</div>
+ <div class="nv"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>LAINNYA</div>
+</div>
+
+<script>
+const O=[
+ ['bg0','Sekarang','Background yang dipakai sekarang: gradasi biru sejuk + blob.','linear-gradient(180deg,#DCEBF8,#E9EEFA)'],
+ ['bg1','Abu Polos','Abu muda netral. Paling aman, kartu putih langsung "naik", nggak capek dilihat seharian.','#F4F6F9',1],
+ ['bg2','Putih Total','Semua putih, kartu dibatasi garis tipis tanpa bayangan. Paling bersih ala dashboard bank.','#FFFFFF'],
+ ['bg3','Biru Es','Biru sangat muda polos. Masih nyambung sama warna DSM, tapi tanpa gradasi.','#EEF4FB'],
+ ['bg4','Titik Halus','Abu polos + pola titik tipis. Ada tekstur sedikit biar nggak kosong, tetap profesional.','radial-gradient(#CBD5E1 1px,transparent 1.2px) 0 0/8px 8px,#F4F6F9'],
+ ['bg5','Pita Biru','Pita biru solid di atas (judul putih), sisanya abu polos. Ala aplikasi bank/korporat.','linear-gradient(#0B5CAD 40%,#F4F6F9 40%)'],
+ ['bg6','Hangat','Abu krem hangat. Lebih lembut di mata pas malam, kesan premium kalem.','#F6F5F2'],
+ ['bg7','Grid Kertas','Abu polos + garis kotak tipis ala kertas grafik. Nuansa "data/analitik".','linear-gradient(#DDE3EB 1px,transparent 1px) 0 0/10px 10px,linear-gradient(90deg,#DDE3EB 1px,transparent 1px) 0 0/10px 10px,#F4F6F9']
+];
+let cur='bg0';
+function render(){
+ document.getElementById('pks').innerHTML=O.map(o=>`<div class="op ${o[0]===cur?'on':''}" data-b="${o[0]}"><div class="sw" style="background:${o[3]}">${o[4]?'<span class="rec">REKOM</span>':''}</div><b>${o[1]}</b></div>`).join('');
+ document.getElementById('app').className='app '+cur;
+ const o=O.find(x=>x[0]===cur);document.getElementById('desc').innerHTML=`<b>${o[1]}</b> · ${o[2]}`;
+}
+document.getElementById('pks').onclick=e=>{const b=e.target.closest('.op');if(!b)return;cur=b.dataset.b;render()};
+render();
+</script>
+</body>
+</html>

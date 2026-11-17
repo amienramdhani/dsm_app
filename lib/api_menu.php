@@ -96,7 +96,8 @@ function apiDealerDetail($token, $period = null, $selection = null, $customer = 
     $prev = PortalCore::prev($period); $hasPrev = false; foreach ($history as $r) if (substr($r['date'], 0, 7) === $prev && $r['q'] > 0) { $hasPrev = true; break; }
     return ['id' => $customer, 'nama' => js_or($known['nama'] ?? null, $customer . ' (belum di master)'), 'alamat' => js_or($known['alamat'] ?? null, ''), 'kota' => js_or($known['kota'] ?? null, ''), 'region' => js_or($known['region'] ?? null, ''), 'hp' => js_or($known['hp'] ?? null, ''),
         'last' => $last, 'jeda' => $last ? (int) floor(iso_days($db['coverage'][$period]['cutoff']) - iso_days($last)) : null,
-        'status' => $current['qty'] >= 2 ? 'AKTIF' : ($current['qty'] > 0 ? 'BELUM MINIMUM DA' : ($hasPrev ? 'DA BULAN LALU' : 'BELUM ORDER')),
+        'status' => function_exists('dsDealer_') ? dsDealer_($db, $period, (string) $customer)['status'] : ($current['qty'] >= 2 ? 'AKTIF' : ($current['qty'] > 0 ? 'BELUM MINIMUM DA' : ($hasPrev ? 'DA BULAN LALU' : 'BELUM ORDER'))),
+        'ds' => function_exists('dsDealer_') ? (function () use ($db, $period, $customer) { $d = dsDealer_($db, $period, (string) $customer); $d['bs'] = js_obj($d['bs']); $d['bc'] = js_obj($d['bc']); return $d; })() : null,
         'current' => $current, 'picByBrand'=>$picByBrand,
         'brands' => array_map(fn($brand) => array_merge(['brand' => $brand], PortalCore::metrics($rows, $db, $period, $brand), ['sellout' => StockCore::monthly($db, $period, $ids, $customer, $brand)['qty']]), $brands)];
 }
@@ -467,7 +468,7 @@ function apiExportDealerExcel($token, $selection = null, $from = null, $to = nul
             if ($product && truthy($product['device'] ?? null) && in_array($product['brand'], $brands, true)) { $k = $get($t['customer']); $E[$k]['metrics'][$product['brand']]['so'] += $t['outQty']; }
         }
     }
-    $valid = ['AKTIF', 'BELUM MINIMUM DA', 'DA BULAN LALU', 'IDLE', 'PASIF', 'BELUM ORDER']; $legacy = text_($f['status'] ?? null);
+    $valid = function_exists('dsStatuses_') ? array_merge(dsStatuses_(dsConfig_()), ['BELUM ORDER']) : ['AKTIF', 'BELUM MINIMUM DA', 'DA BULAN LALU', 'IDLE', 'PASIF', 'BELUM ORDER']; $legacy = text_($f['status'] ?? null);
     $sl = []; $stIn = $f['statuses'] ?? null;
     if (is_array($stIn) && array_is_list($stIn)) $sl = $stIn; elseif ($legacy !== '' && $legacy !== 'ALL') $sl = [$legacy];
     $statuses = []; foreach ($sl as $x) { $t = text_($x); if ($t !== '') $statuses[] = $t; } $statuses = array_values(array_unique($statuses));

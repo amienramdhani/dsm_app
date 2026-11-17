@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSM · Mockup Kondisi DOS — opsi</title>
+<style>
+*{box-sizing:border-box}i,em{font-style:normal}body{margin:0;font:13px/1.45 Arial,sans-serif;background:#F4F6F9;color:#153d50;padding:24px}
+.opt{background:#fff;border-radius:14px;box-shadow:0 3px 10px #1d40500a;padding:16px 20px;margin:0 auto 18px;max-width:1200px}
+.oh{display:flex;align-items:center;gap:10px;margin-bottom:4px}.oh b{font-size:14px}
+.tag{background:#0B5CAD;color:#fff;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:800}.rec{background:#F07A0C}
+.note{color:#6b8090;font-size:12px;margin:0 0 14px}
+.lbl{font-size:9.5px;font-weight:800;letter-spacing:.5px;color:#8A9AA8}
+.ii{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;background:#E6EEF6;color:#43627a;font-size:9px;font-weight:800}
+/* sekarang */
+.chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.cz{font-size:10.5px;font-weight:800;padding:5px 10px;border-radius:999px;border:1.5px solid var(--c);color:var(--c);display:flex;gap:6px}.cz em{font-weight:700;opacity:.75}.cz.on{background:var(--c);color:#fff}
+/* B grup */
+.grp{display:grid;grid-template-columns:3fr 2fr 2fr;gap:10px}
+.g{border-radius:12px;padding:8px 10px;background:var(--bg)}
+.g>small{display:block;font-size:9.5px;font-weight:800;letter-spacing:.5px;color:var(--t);margin:0 0 6px 2px}
+.g .it{display:flex;gap:6px}
+.s{flex:1;background:#fff;border-radius:9px;padding:6px 10px;cursor:pointer;border:1.5px solid transparent;display:flex;align-items:baseline;justify-content:space-between;gap:6px}
+.s span{font-size:10px;font-weight:800;letter-spacing:.3px;color:#43627a;display:flex;align-items:center;gap:5px;white-space:nowrap}.s span i{width:8px;height:8px;border-radius:2px;background:var(--c)}
+.s b{font-size:15px;color:var(--c)}.s.on{border-color:var(--c);box-shadow:0 2px 8px #1d405014}
+/* C bar */
+.bar{display:flex;height:14px;border-radius:7px;overflow:hidden;gap:2px;margin-bottom:8px}.bar i{display:block;cursor:pointer}.bar i.dim{opacity:.25}
+.leg{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.lg{border-radius:9px;padding:6px 9px;background:#F7F9FB;border:1.5px solid transparent;cursor:pointer}.lg.on{border-color:var(--c);background:#fff}
+.lg div{display:flex;align-items:center;gap:5px;font-size:9.5px;font-weight:800;letter-spacing:.3px;color:#43627a;white-space:nowrap}.lg div i{width:8px;height:8px;border-radius:2px;background:var(--c)}
+.lg b{font-size:15px;color:#153d50}.lg span{font-size:10px;color:#8A9AA8;margin-left:4px}
+/* D soft */
+.soft{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.sf{font-size:10.5px;font-weight:700;padding:5px 11px;border-radius:999px;background:#F1F4F8;color:#43627a;display:flex;gap:6px;align-items:center;cursor:pointer}
+.sf i{width:8px;height:8px;border-radius:50%;background:var(--c)}.sf b{color:#153d50}
+.sf.on{background:var(--c);color:#fff}.sf.on b{color:#fff}.sf.on i{background:#fff}
+</style></head><body>
+
+<section class="opt"><div class="oh"><span class="tag" style="background:#8A9AA8">SEKARANG DI MOCKUP</span><b>Chip garis berwarna</b></div>
+<p class="note">7 warna berbaris sejajar, semuanya sama-sama mencolok.</p>
+<div class="chips"><span class="lbl">KONDISI</span><span class="cz" style="--c:#C0362C">HABIS <em>412</em></span><span class="cz" style="--c:#D98A00">PERLU CEK DATA <em>213</em></span><span class="cz on" style="--c:#E0622A">MENIPIS <em>872</em></span><span class="cz" style="--c:#12866A">CUKUP <em>3.904</em></span><span class="cz" style="--c:#2E6E9E">STOK TINGGI <em>1.150</em></span><span class="cz" style="--c:#6D3FD8">BELUM BERGERAK <em>655</em></span><span class="cz" style="--c:#6B7785">TIDAK AKTIF <em>298</em></span></div></section>
+
+<section class="opt"><div class="oh"><span class="tag rec">B · REKOMENDASI</span><b>Dikelompokkan sesuai artinya</b></div>
+<p class="note">7 kondisi dibagi 3 kelompok: <b>BUTUH TINDAKAN</b> (merah muda), <b>AMAN</b> (hijau muda), <b>TIDAK BERGERAK</b> (abu). Mata langsung ke kelompok merah, sisanya tenang. Klik kotak = saring.</p>
+<div class="grp">
+ <div class="g" style="--bg:#FDF1EF;--t:#A3201B"><small>BUTUH TINDAKAN · 1.497</small><div class="it">
+  <div class="s" style="--c:#C0362C"><span><i></i>HABIS</span><b>412</b></div>
+  <div class="s on" style="--c:#E0622A"><span><i></i>MENIPIS</span><b>872</b></div>
+  <div class="s" style="--c:#D98A00"><span><i></i>PERLU CEK DATA</span><b>213</b></div></div></div>
+ <div class="g" style="--bg:#EEF8F3;--t:#0E6E48"><small>AMAN · 5.054</small><div class="it">
+  <div class="s" style="--c:#12866A"><span><i></i>CUKUP</span><b>3.904</b></div>
+  <div class="s" style="--c:#2E6E9E"><span><i></i>STOK TINGGI</span><b>1.150</b></div></div></div>
+ <div class="g" style="--bg:#F2F4F7;--t:#5B6778"><small>TIDAK BERGERAK · 953</small><div class="it">
+  <div class="s" style="--c:#6D3FD8"><span><i></i>BELUM BERGERAK</span><b>655</b></div>
+  <div class="s" style="--c:#6B7785"><span><i></i>TIDAK AKTIF</span><b>298</b></div></div></div>
+</div></section>
+
+<section class="opt"><div class="oh"><span class="tag">C</span><b>Bar komposisi + legenda (sama kayak Status Dealer di halaman Dealer)</b></div>
+<p class="note">Seragam dengan kartu Status Dealer opsi A yang udah lu setujui. Kelihatan porsinya (mayoritas CUKUP). Kekurangan: makan tempat 2 baris.</p>
+<div class="bar"><i class="dim" style="flex:412;background:#C0362C"></i><i style="flex:872;background:#E0622A"></i><i class="dim" style="flex:213;background:#D98A00"></i><i class="dim" style="flex:3904;background:#12866A"></i><i class="dim" style="flex:1150;background:#2E6E9E"></i><i class="dim" style="flex:655;background:#6D3FD8"></i><i class="dim" style="flex:298;background:#6B7785"></i></div>
+<div class="leg">
+ <div class="lg" style="--c:#C0362C"><div><i></i>HABIS</div><b>412</b><span>5%</span></div>
+ <div class="lg on" style="--c:#E0622A"><div><i></i>MENIPIS</div><b>872</b><span>12%</span></div>
+ <div class="lg" style="--c:#D98A00"><div><i></i>PERLU CEK DATA</div><b>213</b><span>3%</span></div>
+ <div class="lg" style="--c:#12866A"><div><i></i>CUKUP</div><b>3.904</b><span>52%</span></div>
+ <div class="lg" style="--c:#2E6E9E"><div><i></i>STOK TINGGI</div><b>1.150</b><span>15%</span></div>
+ <div class="lg" style="--c:#6D3FD8"><div><i></i>BELUM BERGERAK</div><b>655</b><span>9%</span></div>
+ <div class="lg" style="--c:#6B7785"><div><i></i>TIDAK AKTIF</div><b>298</b><span>4%</span></div>
+</div></section>
+
+<section class="opt"><div class="oh"><span class="tag">D</span><b>Chip kalem (titik warna)</b></div>
+<p class="note">Paling minimal. Chip abu muda dengan titik warna, cuma yang dipilih yang berwarna penuh. Hemat tempat, tapi ga ada penekanan ke yang butuh tindakan.</p>
+<div class="soft"><span class="lbl">KONDISI</span>
+ <span class="sf" style="--c:#C0362C"><i></i>HABIS <b>412</b></span><span class="sf on" style="--c:#E0622A"><i></i>MENIPIS <b>872</b></span><span class="sf" style="--c:#D98A00"><i></i>PERLU CEK DATA <b>213</b></span><span class="sf" style="--c:#12866A"><i></i>CUKUP <b>3.904</b></span><span class="sf" style="--c:#2E6E9E"><i></i>STOK TINGGI <b>1.150</b></span><span class="sf" style="--c:#6D3FD8"><i></i>BELUM BERGERAK <b>655</b></span><span class="sf" style="--c:#6B7785"><i></i>TIDAK AKTIF <b>298</b></span><span class="ii">i</span></div></section>
+</body></html>

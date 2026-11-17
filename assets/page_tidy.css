@@ -1,0 +1,172 @@
+/* DSM · Rapikan halaman desktop. Hanya >= 821px; HP tidak disentuh. Pasangan: assets/page_tidy.js */
+@media(min-width:821px){
+ html.ptOn .ptHide{display:none!important}
+
+ /* ================= DEALER ================= */
+ html.ptOn .dsTop{margin:2px 0 4px}
+ html.ptOn .dsSeg{gap:6px;padding:2px 0 0;margin-bottom:12px}
+ html.ptOn .dsSeg span{border:1px solid #DCE6EE;border-radius:9px;padding:7px 14px;font-size:11px;letter-spacing:.4px;color:#43627A;background:#fff}
+ html.ptOn .dsSeg span.on{background:#0B5CAD;border-color:#0B5CAD;color:#fff}
+ /* 4 kartu KPI ramping */
+ .ptK4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 12px}
+ html body #app .ptK4 .ptK{position:relative;display:block;background:#fff;border-radius:14px;padding:12px 14px 12px 28px!important;box-shadow:0 3px 10px rgba(29,64,80,.06);min-width:0;border:0}
+ .ptK:before{content:"";position:absolute;left:12px;top:12px;bottom:12px;width:5px;border-radius:3px;background:var(--c)}
+ .ptK small{display:block;font-size:10px;font-weight:800;letter-spacing:.5px;color:#7C8899;text-transform:uppercase}
+ .ptK .ptKv{display:block;font-size:24px;line-height:1.15;letter-spacing:-.5px;color:var(--c);margin:1px 0 2px}
+ .ptK .ptKs{display:block;font-size:11px;line-height:1.4;color:#7C8899}
+ html body #app .ptK .ptKs b{display:inline;font-size:inherit;font-weight:800;color:#43627A}
+ .ptK .ptBk{color:#7C8899;text-decoration:none;font-weight:700;cursor:pointer;border-radius:5px;padding:0 2px}
+ .ptK .ptBk:hover{background:#E8F1FB;color:#0B5CAD}
+ .ptK .ptBk.on{background:#0B5CAD;color:#fff}.ptK .ptBk.on b{color:#fff}
+ .ptK .dsI{margin-left:4px}
+ .ptK .ptKpiBtn{margin-top:5px;font-size:9.5px;padding:2px 8px}
+ /* bar status + chip */
+ .ptSt{background:#fff;border-radius:14px;box-shadow:0 3px 10px rgba(29,64,80,.06);padding:14px 16px 12px;margin:0 0 12px}
+ .ptStH{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+ .ptStH .dsSl{margin:0;font-size:11px;letter-spacing:.6px;color:#153D50}
+ .ptStH em{font-style:normal;font-size:11px;color:#7C8899}
+ .ptBar{display:flex;height:14px;border-radius:7px;overflow:hidden;gap:2px;background:#EEF2F6}
+ .ptBar i{display:block;min-width:3px;cursor:pointer}
+ .ptSt .dsKg{grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;margin-top:10px}
+ .ptSt .dsK{display:block;position:relative;background:#F7F9FB;border:1.5px solid transparent;border-radius:10px;padding:7px 10px;box-shadow:none}
+ .ptSt .dsK:hover{border-color:#CFE0F0}
+ .ptSt .dsK.on{border-color:#0B5CAD;background:#EEF4FB}
+ .ptSt .dsK .ic{display:none}
+ .ptSt .dsK>div:last-child{display:block}
+ .ptSt .dsK span{font-size:10px;letter-spacing:.3px;color:#43627A;padding-left:15px;position:relative}
+ .ptSt .dsK span:before{content:"";position:absolute;left:0;top:50%;width:9px;height:9px;margin-top:-4px;border-radius:3px;background:var(--c,#9AA3AE)}
+ .ptSt .dsK .n{font-size:17px;margin:2px 0 0;color:#16202E}
+ .ptSt .dsK small{font-size:10.5px;color:#7C8899}
+
+ /* filter satu baris */
+ html body #app .customerFilterCard.ptTidy{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0 0 6px!important}
+ html.ptOn .customerFilterCard.ptTidy .filterCardHead,html.ptOn .customerFilterCard.ptTidy .filterCardFoot{display:none}
+ .ptFb{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:2px 0 10px}
+ .ptFb .ptFi{display:block;margin:0;font-size:0;min-width:0}
+ .ptFb .ptFi .fi,.ptFb .ptFi select,.ptFb .ptFi input{height:36px;min-height:36px;border:1px solid #DCE6EE;border-radius:9px;background-color:#fff;font-size:12px;color:#43627A;padding:0 12px;margin:0;box-shadow:none}
+ .ptFb .pt-cq{flex:1 1 200px;max-width:300px}.ptFb .pt-cq input{width:100%}
+ .ptFb .pt-cregion,.ptFb .pt-cbrand,.ptFb .pt-corder{flex:0 0 auto}
+ .ptFb .pt-cregion select,.ptFb .pt-cbrand select,.ptFb .pt-corder select{min-width:128px}
+ .ptMore{height:36px;border:0;border-radius:9px;padding:0 14px;display:inline-flex;align-items:center;gap:6px;font:800 11px Inter,Arial,sans-serif;letter-spacing:.4px;color:#fff;background:linear-gradient(90deg,#FFB020,#F07A0C);cursor:pointer;box-shadow:0 3px 10px rgba(240,122,12,.22)}
+ .ptMore.on{filter:brightness(.96)}
+ .ptMoreN{background:#fff;color:#F07A0C;border-radius:999px;padding:0 6px;font-size:10px;line-height:16px}
+ .ptMoreN[hidden]{display:none}
+ .ptChips{display:contents}
+ .ptChip{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:999px;background:#FFF1DC;color:#8A4B0B;border:1px solid #F5D9A8;font-size:10.5px;font-weight:800;letter-spacing:.2px;cursor:pointer}
+ .ptChip b{font-size:10px}
+ html body #app .ptFb .ptSum{margin-left:auto!important;flex:0 0 auto!important;width:auto!important;min-width:0!important;display:flex;align-items:center;white-space:nowrap}
+ .ptSum .filterSummaryMain{display:none}
+ .ptSum .filterResultCount{font-size:12px;color:#43627A;font-weight:700}
+ .ptAct{display:flex;align-items:center;gap:6px;margin:0}
+ .ptAct .chip,.ptAct summary{height:36px;min-height:36px;border:1px solid #DCE6EE;border-radius:9px;padding:0 12px;font:800 11px Inter,Arial,sans-serif;letter-spacing:.4px;color:#43627A;background:#fff;display:inline-flex;align-items:center;margin:0;text-transform:uppercase;box-shadow:none}
+ .ptAct .chip.primary{background:#0B5CAD!important;color:#fff!important;border-color:#0B5CAD}
+ html body #app .ptOtherGrid:not([hidden]){display:grid!important;margin:0 0 10px;padding:12px;background:#fff;border:1px solid #E3EAF2;border-radius:12px;box-shadow:0 3px 10px rgba(29,64,80,.06);grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:10px}
+ html body #app .ptOtherGrid[hidden]{display:none!important}
+
+ /* sel brand: angka + status satu baris, potensi di bawahnya */
+ #customerRows td .ptC{display:flex;flex-direction:column;gap:1px;align-items:flex-start}
+ #customerRows td .ptC1{display:flex;align-items:center;gap:7px;flex-wrap:nowrap}
+ #customerRows td .ptC1 b{font-size:14px;color:#153D50}
+ #customerRows td .ptCs{font-size:10.5px;color:#9AA6B6;line-height:1.3}
+ #customerRows td .dsStrip{display:none!important}
+ #customerRows td .dsPill{font-size:9.5px;padding:1px 6px;border-radius:5px;letter-spacing:.3px}
+ .ptLeg{margin:8px 2px 4px;font-size:11px;color:#7C8899}
+ .ptLeg b{color:#43627A}.ptLg0{color:#9AA6B6;font-weight:700}
+
+/* ================= TIM (bagian atas) ================= */
+ html body #app #view>.toolbar.ptTb{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:2px 0 12px!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
+ html body #app .ptTb>label,html body #app .ptTbMore>label{display:flex!important;flex-direction:row!important;align-items:center!important;gap:8px;margin:0;height:36px;padding:0 6px 0 12px;background:#fff;border:1px solid #DCE6EE;border-radius:9px;font-size:9.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:#9AA6B6;flex:0 0 auto}
+ html body #app #view .ptTb>label select,html body #app #view .ptTbMore>label select{height:32px;min-height:32px;width:auto;border:0!important;background-color:transparent!important;box-shadow:none!important;font:700 12px Inter,Arial,sans-serif;text-transform:none;letter-spacing:0;color:#153D50;padding:0 4px;margin:0;min-width:70px}
+ .ptTbMore{display:flex;gap:8px;flex-wrap:wrap;margin:-4px 0 12px}
+ .ptTbMore[hidden]{display:none!important}
+ /* Early Warning: judul + tab + time gone satu baris, 4 kartu ramping */
+ html body #app #view .ptEw>.ph{display:flex;align-items:center;gap:14px;flex-wrap:nowrap!important}
+ html body #app #view .ptEw>.ph>*{flex:0 0 auto!important}
+ html body #app #view .ptEw>.ph .v6seg{margin:0;flex-wrap:nowrap;white-space:nowrap}
+ html body #app #view .ptEw>.ph h3{white-space:nowrap}
+ html body #app #view .ptEw>.ph .ptTg{flex:1 1 auto!important;text-align:right;font-size:11px;color:#7C8899}
+ html body #app #view .ptEw .v6kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:4px 0 14px}
+ html body #app #view .ptEw .v6kpis .kpi{position:relative;display:block!important;background:#F7F9FB!important;border:1.5px solid transparent!important;border-radius:12px;box-shadow:inset 5px 0 0 var(--c)!important;padding:10px 14px 10px 22px!important;min-width:0;text-align:left;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+ html body #app #view .ptEw .v6kpis .kpi:before{display:block!important;content:""!important;position:absolute;left:12px;top:10px;bottom:10px;width:5px;border-radius:3px;background:var(--c)}
+ html body #app #view .ptEw .v6kpis .kpi .kic{display:none!important}
+ html body #app #view .ptEw .v6kpis .kpi .ktx{display:block}
+ html body #app #view .ptEw .v6kpis .kpi .klab{font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#7C8899}
+ html body #app #view .ptEw .v6kpis .kpi .kval{font-size:24px;line-height:1.15;color:var(--c)!important;margin:1px 0}
+ html body #app #view .ptEw .v6kpis .kpi .ksub{font-size:11px;color:#7C8899}
+ html body #app #view .ptEw .v6kpis .kpi[data-pt-st]{cursor:pointer}
+ html body #app #view .ptEw .v6kpis .kpi[data-pt-st]:hover{border-color:#CFE0F0!important}
+ html body #app #view .ptEw .v6kpis .kpi.on{background:#fff!important;border-color:var(--c)!important}
+}
+
+/* ===================== DOS (desktop) ===================== */
+@media(min-width:821px){
+ html body #app #view .ptHide{display:none!important}
+ html body #app .ptDosInfo{display:flex;align-items:center;gap:0;flex-wrap:wrap;background:none!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0 0 10px!important;font-size:12px;color:#7C8899;position:relative}
+ .ptDosInfo .ptIs{display:inline-flex;gap:5px;align-items:center;padding:0 12px;border-left:1px solid #D5DEE8}
+ .ptDosInfo .ptIs:first-child{padding-left:0;border-left:0}
+ .ptDosInfo b{color:#1D4050;font-weight:800}
+ .ptDosInfo .ptIs .ptIs{padding:0;border:0}
+ .ptI{width:18px;height:18px;border-radius:50%;border:0;background:#E3ECF5;color:#43627A;font:800 10px Inter,Arial,sans-serif;cursor:pointer;padding:0;margin-left:6px;flex:0 0 auto}
+ .ptIp{position:absolute;z-index:30;top:100%;left:0;max-width:520px;margin-top:6px;background:#fff;border:1px solid #DCE6EE;border-radius:12px;box-shadow:0 8px 24px rgba(29,64,80,.16);padding:10px 14px;font-size:12px;line-height:1.5;color:#43627A}
+ .ptIp[hidden]{display:none}
+ .ptIp div+div{margin-top:4px}.ptIp b{color:#1D4050}
+ html body #app .ptDosRow{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px}
+ html body #app .ptDosRow .dosBasis{margin:0!important;flex:1 1 auto;min-width:0;background:none!important;border:0!important;box-shadow:none!important;padding:0!important}
+ html body #app .ptDosRow .ptExp{flex:0 0 auto;height:36px;margin:0;border:1px solid #DCE6EE;border-radius:9px;background:#fff;color:#43627A;font:800 11px Inter,Arial,sans-serif;letter-spacing:.4px;text-transform:uppercase;padding:0 14px}
+ .ptK5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin:0 0 12px}
+ html body #app .ptK5 .ptK{position:relative;display:block;background:#fff;border-radius:14px;padding:12px 14px 12px 28px!important;box-shadow:0 3px 10px rgba(29,64,80,.06),inset 5px 0 0 var(--c);min-width:0;border:0}
+ .ptK5 .ptKc{cursor:pointer}.ptK5 .ptKc:hover{box-shadow:0 5px 14px rgba(29,64,80,.12),inset 5px 0 0 var(--c)}
+ html body #app .ptK5 .ptKc.on{outline:2px solid var(--c);outline-offset:-2px}
+ html body #app .ptFbD .pt-dq{flex:1 1 260px;max-width:none}.ptFbD .pt-dq input{width:100%}
+ .ptFbD .pt-dr,.ptFbD .pt-db{flex:0 0 auto}.ptFbD .pt-dr select,.ptFbD .pt-db select{min-width:128px}
+ html body #app .ptFbD .ptAct{margin-left:0}
+ html body #app .ptOtherD:not([hidden]){grid-template-columns:repeat(2,minmax(0,220px))!important}
+ .ptKd{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px}
+ .ptKdL{font-size:10px;font-weight:800;letter-spacing:.5px;color:#7C8899}
+ .ptKg{display:inline-flex;align-items:center;gap:6px;padding:4px 8px 4px 10px;border-radius:12px;background:color-mix(in srgb,var(--g) 8%,#fff)}
+ .ptKg em{font-style:normal;font-size:9px;font-weight:800;letter-spacing:.5px;color:var(--g);margin-right:2px}
+ .ptKc2{display:inline-flex;align-items:center;gap:6px;height:28px;border:1.5px solid color-mix(in srgb,var(--c) 45%,#fff);background:#fff;border-radius:999px;padding:0 11px;font:800 10.5px Inter,Arial,sans-serif;letter-spacing:.3px;color:var(--c);cursor:pointer}
+ .ptKc2 i{width:7px;height:7px;border-radius:50%;background:var(--c)}
+ .ptKc2:hover{background:color-mix(in srgb,var(--c) 8%,#fff)}
+ html body #app .ptKc2.on{background:var(--c);border-color:var(--c);color:#fff}.ptKc2.on i{background:#fff}
+}
+@media(min-width:821px){
+ html body #app .ptFbD>label,html body #app .ptOtherD>label{display:flex!important;flex-direction:row!important;align-items:center!important;gap:8px;margin:0;height:36px;padding:0 6px 0 12px;background:#fff;border:1px solid #DCE6EE;border-radius:9px;font-size:9.5px!important;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:#9AA6B6;flex:0 0 auto}
+ html body #app .ptFbD>label.pt-dq{flex:1 1 260px;padding:0;font-size:0!important}
+ html body #app #view .ptFbD>label select,html body #app #view .ptOtherD>label select{height:32px;min-height:32px;width:auto;border:0!important;background-color:transparent!important;box-shadow:none!important;font:700 12px Inter,Arial,sans-serif;text-transform:none;letter-spacing:0;color:#153D50;padding:0 4px;margin:0;min-width:80px}
+ html body #app #view .ptFbD>label.pt-dq input{height:34px;border:0!important;background:transparent!important;box-shadow:none!important;width:100%;font:500 12px Inter,Arial,sans-serif;padding:0 12px}
+}
+
+/* ===================== TRANSAKSI (desktop) ===================== */
+@media(min-width:821px){
+ html body #app .transactionDetailPanel>summary .hint{display:none!important}
+ html body #app #view .transactionDetailPanel .toolbar.ptTrx{display:flex!important;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 12px!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
+ html body #app .ptTrx>label{display:flex!important;flex-direction:row!important;align-items:center!important;gap:8px;margin:0;height:36px;padding:0 6px 0 12px;background:#fff;border:1px solid #DCE6EE;border-radius:9px;font-size:9.5px!important;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:#9AA6B6;flex:0 0 auto}
+ html body #app #view .ptTrx>label input{height:32px;min-height:32px;width:auto;border:0!important;background:transparent!important;box-shadow:none!important;font:700 12px Inter,Arial,sans-serif;color:#153D50;padding:0 4px;margin:0}
+ .ptQk{display:inline-flex;background:#EEF2F7;border-radius:9px;padding:3px;gap:2px}
+ .ptQk button{height:30px;border:0;border-radius:7px;background:transparent;padding:0 12px;font:800 10.5px Inter,Arial,sans-serif;letter-spacing:.4px;color:#43627A;cursor:pointer}
+ html body #app .ptQk button.on{background:#0B5CAD;color:#fff}
+ html body #app .ptTrx #trxReset{height:36px;border:1px solid #DCE6EE;border-radius:9px;background:#fff;color:#43627A;font:800 11px Inter,Arial,sans-serif;letter-spacing:.4px;text-transform:uppercase;padding:0 14px;margin:0}
+ html body #app .ptTrx .ptRaw{margin-left:auto!important;height:36px;border:1px solid #DCE6EE;border-radius:9px;background:#fff;color:#43627A;font:800 11px Inter,Arial,sans-serif;letter-spacing:.4px;padding:0 14px}
+}
+
+/* ===================== PERINGKAT (desktop) ===================== */
+@media(min-width:821px){
+ .ptK3{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+ html body #app #view>.toolbar.ptRk{display:flex!important;align-items:center;gap:8px;flex-wrap:wrap;margin:2px 0 12px!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;position:relative}
+ html body #app .ptRk>label{display:flex!important;flex-direction:row!important;align-items:center!important;gap:8px;margin:0;height:36px;padding:0 6px 0 12px;background:#fff;border:1px solid #DCE6EE;border-radius:9px;font-size:9.5px!important;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:#9AA6B6;flex:0 0 auto}
+ html body #app #view .ptRk>label select{height:32px;min-height:32px;width:auto;border:0!important;background-color:transparent!important;box-shadow:none!important;font:700 12px Inter,Arial,sans-serif;text-transform:none;letter-spacing:0;color:#153D50;padding:0 4px;margin:0;min-width:90px}
+ html body #app .ptRk .ptRkTabs{display:inline-flex!important;background:#EEF2F7;border-radius:9px;padding:3px;gap:2px;margin:0!important;border:0!important;width:auto!important}
+ html body #app .ptRk .ptRkTabs button{height:30px;border:0!important;border-radius:7px;background:transparent!important;padding:0 14px;font:800 10.5px Inter,Arial,sans-serif;letter-spacing:.4px;text-transform:uppercase;color:#43627A;box-shadow:none!important}
+ html body #app .ptRk .ptRkTabs button.on{background:#0B5CAD!important;color:#fff!important}
+ .ptRkLeg{display:inline-flex;gap:6px;margin-left:auto;align-items:center}
+ .ptRk .ptIp{top:100%;right:0;left:auto}
+}
+
+/* ===================== BAR FILTER HALAMAN LAIN (desktop) ===================== */
+@media(min-width:821px){
+ html body #app #view .toolbar.ptGen{display:flex!important;align-items:center;gap:8px;flex-wrap:wrap;margin:2px 0 12px!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
+ html body #app .ptGen>label{display:flex!important;flex-direction:row!important;align-items:center!important;gap:8px;margin:0;height:36px;padding:0 6px 0 12px;background:#fff;border:1px solid #DCE6EE;border-radius:9px;font-size:9.5px!important;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:#9AA6B6;flex:0 0 auto}
+ html body #app #view .ptGen>label select,html body #app #view .ptGen>label input{height:32px;min-height:32px;width:auto;border:0!important;background-color:transparent!important;box-shadow:none!important;font:700 12px Inter,Arial,sans-serif;text-transform:none;letter-spacing:0;color:#153D50;padding:0 4px;margin:0;min-width:80px}
+ html body #app #view .ptGen>input.fi,html body #app #view .ptGen>select.fi{height:36px;border:1px solid #DCE6EE!important;border-radius:9px;background-color:#fff!important;font:700 12px Inter,Arial,sans-serif;color:#153D50}
+}

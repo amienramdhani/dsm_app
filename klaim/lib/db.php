@@ -72,10 +72,15 @@ function migrate_schema(): array {
     db()->exec($st); $made[] = $m[1];
   }
   // kolom tambahan untuk database yang sudah ada (aditif)
-  foreach ([['claim_users', 'areas', 'VARCHAR(500)'], ['claim_users', 'sign_img', $sqlite ? 'TEXT' : 'MEDIUMTEXT'], ['claim_ba_sign', 'img', $sqlite ? 'TEXT' : 'MEDIUMTEXT'], ['claims', 'entity_by', 'INT'], ['claims', 'rev_notes', $sqlite ? 'TEXT' : 'MEDIUMTEXT'], ['claim_rules', 'min_km_mobil', 'INT'], ['claim_rules', 'min_km_motor', 'INT'], ['claims', 'type_ids', 'VARCHAR(200)'], ['claim_users', 'wa', 'VARCHAR(20)'], ['claim_ba', 'extra', $sqlite ? 'TEXT' : 'MEDIUMTEXT'], ['claim_rules', 'days', 'VARCHAR(400)'], ['claim_rules', 'max_no_nota', 'INT'], ['claim_rules', 'min_km_makan', 'INT'], ['claim_backup', 'to_user_id', 'INT'], ['claim_backup', 'duration_min', 'INT'], ['claim_backup', 'active_until', 'DATETIME'], ['claim_backup', 'use_count', 'INT'], ['claim_backup', 'max_use', 'INT'], ['claim_backup', 'last_used_at', 'DATETIME'], ['claim_backup', 'revoked_at', 'DATETIME'], ['claim_backup', 'revoked_by', 'INT']] as [$tb, $col, $ty]) {
+  foreach ([['claim_users', 'areas', 'VARCHAR(500)'], ['claim_users', 'sign_img', $sqlite ? 'TEXT' : 'MEDIUMTEXT'], ['claim_ba_sign', 'img', $sqlite ? 'TEXT' : 'MEDIUMTEXT'], ['claims', 'entity_by', 'INT'], ['claims', 'rev_notes', $sqlite ? 'TEXT' : 'MEDIUMTEXT'], ['claim_rules', 'min_km_mobil', 'INT'], ['claim_rules', 'min_km_motor', 'INT'], ['claims', 'type_ids', 'VARCHAR(200)'], ['claim_users', 'wa', 'VARCHAR(20)'], ['claim_ba', 'extra', $sqlite ? 'TEXT' : 'MEDIUMTEXT'], ['claim_rules', 'days', 'VARCHAR(400)'], ['claim_rules', 'max_no_nota', 'INT'], ['claim_rules', 'min_km_makan', 'INT'], ['claim_backup', 'to_user_id', 'INT'], ['claim_backup', 'duration_min', 'INT'], ['claim_backup', 'active_until', 'DATETIME'], ['claim_backup', 'use_count', 'INT'], ['claim_backup', 'max_use', 'INT'], ['claim_backup', 'last_used_at', 'DATETIME'], ['claim_backup', 'revoked_at', 'DATETIME'], ['claim_backup', 'revoked_by', 'INT'], ['claims', 'is_demo', 'INT'], ['claim_pc', 'is_demo', 'INT']] as [$tb, $col, $ty]) {
     $has = $sqlite ? (bool) array_filter(q("PRAGMA table_info($tb)"), fn($r) => $r['name'] === $col)
       : (bool) val("SELECT 1 FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name=? AND column_name=?", [$tb, $col]);
     if (!$has) { db()->exec("ALTER TABLE $tb ADD COLUMN $col $ty NULL"); $made[] = "$tb.$col"; }
+  }
+  // Penanda demo: isi data lama (klaim/petty cash milik akun UJI-* = demo, selain itu asli).
+  foreach (['claims', 'claim_pc'] as $tb) {
+    ex("UPDATE $tb SET is_demo=1 WHERE is_demo IS NULL AND claimant_id IN (SELECT id FROM claim_users WHERE nik LIKE 'UJI-%')");
+    ex("UPDATE $tb SET is_demo=0 WHERE is_demo IS NULL");
   }
   foreach (['UPDATE', 'DELETE'] as $op) {
     $n = 'claim_history_no_' . strtolower($op);

@@ -12,7 +12,7 @@ function need_role(array $u, string ...$roles): void { if (sa_free($u) || has_ro
 function can_manage_user(array $u, array $t): bool { return sa_free($u) || has_role($u, 'SA') || (has_role($u, 'ADMIN') && covers_region($u, $t['region'])); }
 
 try {
-  sess();
+  sess(); ensure_demo_schema();
   $in = body(); $a = $in['a'] ?? '';
   if ($a === 'login') {
     if (dsm_present()) fail('Masuk lewat DSM.', 401);
@@ -29,10 +29,14 @@ try {
     fail('Mode lihat: Super Admin tidak bisa mengubah data atas nama orang lain. Klik "kembali" dulu.', 403);
 
   switch ($a) {
-    case 'me': out(['dsm_role' => dsm_present() ? (dsm_auth()['role'] ?? '') : null, 'me' => $u, 'counts' => counts($u), 'test_mode' => test_mode(), 'aging_days' => aging_days()]);
-    case 'switch_user': // Super Admin: ganti peran untuk menguji
+    case 'me': out(['dsm_role' => dsm_present() ? (dsm_auth()['role'] ?? '') : null, 'me' => $u, 'counts' => counts($u), 'test_mode' => test_mode(), 'demo' => demo_ctx() === 1, 'real_sa' => real_is_sa($u), 'aging_days' => aging_days()]);
+    case 'switch_user': // Super Admin: masuk sebagai akun demo (di DSM hanya akun UJI-* dan hanya saat Mode Demo nyala)
       if (!real_is_sa($u)) fail('Hanya Super Admin.', 403);
       $t = user_row((int) $in['user_id']); if (!$t) fail('Pengguna tidak ada.');
+      if (dsm_present() && (int) $t['id'] !== (int) $u['real_id']) {
+        if (!test_mode()) fail('Nyalakan Mode Demo dulu.', 403);
+        if (!is_demo_nik($t['nik'] ?? null) || !$t['active']) fail('Hanya bisa masuk sebagai akun demo.', 403);
+      }
       $_SESSION['uid'] = $t['id']; unset($_SESSION['backup']);
       hist('user', (int) $u['real_id'], 'Super Admin beralih ke ' . $t['name'], $u);
       out(['me' => me()]);
@@ -40,9 +44,9 @@ try {
       if (!val("SELECT 1 FROM claim_types WHERE name='Uang makan'")) sync_claim_types(); // jenis baru muncul tanpa menunggu migrate.php
       out(['kota' => array_column(q("SELECT val FROM claim_lookup WHERE kind='kota' ORDER BY val"), 'val'), 'brand' => brand_options(),
         'bank' => array_column(q("SELECT val FROM claim_lookup WHERE kind='bank' ORDER BY val"), 'val'), 'gate' => array_column(q("SELECT name FROM claim_gate ORDER BY used DESC, name LIMIT 300"), 'name'),
-        'fuel' => q("SELECT effective_from, pertalite, pertamax FROM claim_fuel_price ORDER BY effective_from DESC, id DESC"), 'types' => q("SELECT id, category, name, active, locked FROM claim_types WHERE active=1 ORDER BY sort_no"), 'regions' => array_column(q("SELECT DISTINCT region FROM claim_users WHERE region IS NOT NULL ORDER BY region"), 'region'),
+        'fuel' => q("SELECT effective_from, pertalite, pertamax FROM claim_fuel_price ORDER BY effective_from DESC, id DESC"), 'types' => q("SELECT id, category, name, active, locked FROM claim_types WHERE active=1 ORDER BY sort_no"), 'regions' => array_column(q("SELECT DISTINCT region FROM claim_users WHERE region IS NOT NULL AND " . demo_user_sql() . " ORDER BY region"), 'region'),
         'entities' => entity_options(), 'rules' => ['min_km_makan' => min_km_makan(current_rule()), 'bbm_round' => (int) (current_rule()['bbm_round'] ?? 0)],
-        'people' => q("SELECT id, name, job, region FROM claim_users WHERE can_submit=1 AND active=1 ORDER BY name")]);
+        'people' => q("SELECT id, name, job, region FROM claim_users WHERE can_submit=1 AND active=1 AND " . demo_user_sql() . " ORDER BY name")]);
     case 'budget': out(['period' => date('Y-m'), 'budget' => budget_all((int) $u['id'], date('Y-m')), 'blocked' => pc_blocked((int) $u['id']), 'meal_rate' => $u['meal_rate'], 'account' => ['bank' => $u['bank'], 'no' => $u['bank_no'], 'name' => $u['bank_name']]]);
     case 'upload':
       if (empty($_FILES['file'])) fail('File tidak ditemukan.');
@@ -111,7 +115,7 @@ try {
     case 'people_admin':
       need_role($u, 'ADMIN');
       $w = '1=1'; $p = []; if (!sa_free($u) && !has_role($u, 'SA') && ($u['area_list'] || $u['region'])) { $ar = $u['area_list'] ?: [$u['region']]; $w = 'region IN (' . implode(',', array_fill(0, count($ar), '?')) . ')'; $p = $ar; }
-      $rows = q("SELECT * FROM claim_users WHERE $w AND active=1 ORDER BY name", $p);
+      $rows = q("SELECT * FROM claim_users WHERE $w AND active=1 AND " . demo_user_sql() . " ORDER BY name", $p);
       foreach ($rows as &$r) { unset($r['pass_hash']); $r['ent'] = q("SELECT category, enabled, budget FROM claim_entitlement WHERE user_id=?", [$r['id']]); }
       out(['rows' => $rows]);
     case 'entitlement_save':
@@ -273,9 +277,19 @@ try {
       if ($id) upd('claim_users', $id, $f);
       else { if (!preg_match('/^[a-z0-9_.]{3,30}$/', $in['username'] ?? '')) fail('Username 3-30 huruf kecil/angka.'); $id = ins('claim_users', $f + ['username' => $in['username'], 'pass_hash' => password_hash($in['password'] ?: '123456', PASSWORD_DEFAULT), 'created_at' => now()]); }
       hist('user', $id, 'Peran/akses pengguna diubah', $u, $roles . ($f['can_submit'] ? ' +pemohon' : '')); out(['id' => $id]);
-    case 'sa_seed_uji': need_role($u, 'SA'); if (!test_mode()) fail('Aktifkan Mode tes dulu.'); $n = seed_uji_users(); out(['dibuat' => $n]);
+    case 'sa_seed_uji': need_role($u, 'SA'); if (!test_mode()) fail('Nyalakan Mode Demo dulu.'); $n = seed_uji_users(); out(['dibuat' => $n]);
     case 'sa_uji_off': need_role($u, 'SA'); $n = ex("UPDATE claim_users SET active=0 WHERE nik LIKE 'UJI-%'"); out(['nonaktif' => $n]);
-    case 'sa_testmode': need_role($u, 'SA'); set_setting('test_mode', !empty($in['on']) ? '1' : '0'); out([]);
+    case 'demo_state': if (!real_is_sa($u)) fail('Hanya Super Admin.', 403); out(demo_state());
+    case 'sa_testmode': // satu sakelar Mode Demo: nyala = akun demo aktif; mati = akun demo disembunyikan, data demo disimpan tapi tidak tampil
+      if (!real_is_sa($u) || !empty($u['impersonating'])) fail('Kembali ke akun Super Admin dulu.', 403);
+      $on = !empty($in['on']); set_setting('test_mode', $on ? '1' : '0');
+      if ($on && dsm_present()) seed_uji_users(); else if (!$on) ex("UPDATE claim_users SET active=0 WHERE nik LIKE 'UJI-%'");
+      hist('user', (int) $u['id'], 'Mode Demo ' . ($on ? 'dinyalakan' : 'dimatikan'), $u);
+      out(demo_state());
+    case 'demo_purge': // hapus permanen data demo; data asli tidak tersentuh
+      if (!real_is_sa($u) || !empty($u['impersonating'])) fail('Kembali ke akun Super Admin dulu.', 403);
+      if (trim((string) ($in['confirm'] ?? '')) !== 'HAPUS') fail('Ketik HAPUS untuk konfirmasi.', 422);
+      $n = demo_purge(); hist('user', (int) $u['id'], 'Data demo dihapus permanen', $u, jenc($n)); out(['deleted' => $n] + demo_state());
     case 'sa_reset': if (dsm_present()) fail('Reset dinonaktifkan di DSM.', 403); if (!real_is_sa($u)) fail('Hanya Super Admin.', 403); install_schema(); seed_all(); $_SESSION = []; out(['reset' => true]);
     case 'backup_issue':
       $role = $in['role'] ?? ''; if (!in_array($role, ['ADMIN', 'FT'], true)) fail('Kode cadangan hanya untuk Admin atau Finance Transfer.');
@@ -326,8 +340,8 @@ try {
       hist('user', (int) $b['for_user_id'], 'Kode cadangan #' . $b['id'] . ' dicabut oleh ' . $u['name'], $u); out([]);
     case 'backup_people': // calon penerima: pemegang peran yang sama dengan yang digantikan
       $role = $in['role'] ?? ''; $ex = (int) ($in['except'] ?? 0);
-      out(['rows' => array_values(array_filter(q("SELECT id, name, job, region, roles FROM claim_users WHERE active=1" . (test_mode() ? '' : " AND nik NOT LIKE 'UJI-%'") . " ORDER BY name"), fn($r) => (int) $r['id'] !== $ex && in_array($role, explode(',', (string) $r['roles']), true)))]);
-    case 'backup_holders': out(['rows' => q("SELECT id, name, roles FROM claim_users WHERE (roles LIKE '%ADMIN%' OR roles LIKE '%FT%') AND active=1")]);
+      out(['rows' => array_values(array_filter(q("SELECT id, name, job, region, roles FROM claim_users WHERE active=1 AND " . demo_user_sql() . " ORDER BY name"), fn($r) => (int) $r['id'] !== $ex && in_array($role, explode(',', (string) $r['roles']), true)))]);
+    case 'backup_holders': out(['rows' => q("SELECT id, name, roles FROM claim_users WHERE (roles LIKE '%ADMIN%' OR roles LIKE '%FT%') AND active=1 AND " . demo_user_sql())]);
     case 'history_user': need_role($u, 'SA', 'ADMIN'); out(['rows' => q("SELECT * FROM claim_history WHERE ref_type='user' ORDER BY id DESC LIMIT 100")]);
     default: fail('Aksi tidak dikenal: ' . $a, 404);
   }

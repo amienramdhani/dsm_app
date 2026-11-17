@@ -442,3 +442,68 @@ Fakta kode yang perlu diingat:
 - Diuji lokal (snapshot uji tanpa transaksi): orang (Super Admin semua, Sales hanya dirinya), cari, periode salah, parameter wajib, resource tidak dikenal, Sales minta nik orang lain -> FORBIDDEN "Data di luar cakupan", hari_libur/komitmen/dealer_tutup/tm_peringkat jalan, sesi internal terhapus. ringkasan/peringkat gagal di DB uji karena tidak ada data periode (wajar).
 - WAJIB uji di Laragon dengan data asli: semua resource sekali per role (Super Admin, ASM, Sales, Telemarketing), ukuran jawaban ringkasan/dos/transaksi (waktu & besar), cek tidak ada nomor HP utuh.
 - Catatan: dealer_cari memakai daftar customers dari apiDashboard (bukan apiDealerSearch yang khusus admin).
+
+## Paket revisi 2026-11-16 — disetujui, BELUM dikoding (tunggu "gas" per paket)
+Brief lengkap: `doc/ai/BRIEF_2026-11-16_PAKET_REVISI.md`. Mockup acuan: `doc/mockup/2026-11-16/`.
+- Paket 0: audit menyeluruh read-only → `doc/ai/AUDIT_2026-11.md` (hak akses API, 3 perhitungan status dealer, data uji Klaim di laporan/budget).
+- Paket 1: Admin 8 tab per objek + gabungan panel + Bento B2 solid.
+- Paket 2: Klaim Mode Demo satu sakelar + menu rapi (nav maks 5).
+- Paket 3: Aturan Status Dealer (ST, per brand + total, 6 bulan, kunci tgl 1, penanda bulan berjalan).
+- Paket 4: Background Abu Polos bawaan + pilihan biru per user.
+- Paket 5: Tema gelap (Navy Malam, Hitam Pekat).
+- Ditunda: tema warna, penyeragaman isi panel Admin.
+- STRUKTUR FINAL 3 paket: (1) Audit + Klaim [Fable], (2) Status Dealer [Fable], (3) Admin + Background + Tema gelap [Opus]. Lihat tabel di brief.
+- Ringkasan atas halaman Dealer disetujui; kartu NOO per brand & Sell Out tetap.
+
+## Audit November 2026 — SELESAI, menunggu dibaca user (2026-11-17)
+Hasil: `doc/ai/AUDIT_2026-11.md` (read-only, tidak ada kode yang diubah). Ringkasan urut bahaya ada di awal dokumen.
+- KRITIS (lapor dulu, perbaikan menunggu persetujuan): `config.php` berisi PEPPER ter-commit (S-1); `storage/cache/*.json` 220 file data asli ter-commit lagi (S-2).
+- Klaim: daftar klaim/petty cash tanpa cek peran (A-1); daftar Admin pakai `region` bukan wilayah tugas (A-2); Mode tes memberi Super Admin kuasa atas data asli (A-3); semua laporan belum menyaring data uji (U-1…U-16).
+- DSM: tidak ditemukan jalan Admin biasa/Sales memanggil fungsi Super Admin. KPI tidak memakai status dealer.
+- Status dealer dihitung di 4 tempat dengan 4 aturan (peta di Bagian 2). Keputusan yang dibutuhkan sebelum Paket Status Dealer: definisi "SUDAH ORDER = DA KPI" (D-5).
+- Bug logika yang perlu dites: kredit tetap berlaku surut (B-1), kunci periode vs transfer mundur (B-2).
+- BELUM dikerjakan: koding Klaim Mode Demo. Menunggu user bilang "gas".
+
+## Tindak lanjut audit — SELESAI KODE (2026-11-17)
+Dikerjakan atas "gas 1-4" dari user.
+1. `storage/cache/` keluar dari git (lagi) + `.gitignore`.
+2. `config.php` tidak lagi berisi PEPPER; semua rahasia di `config.local.php` (contoh: `config.local.example.php`). **Server wajib punya `config.local.php` sebelum `git pull`**, kalau tidak login gagal ("Setup portal belum selesai").
+3. Klaim Mode Demo (Paket 1 bagian 2) selesai kode: `is_demo` di claims/claim_pc (migrasi otomatis sekali), data demo terpisah dari semua laporan asli, masuk-sebagai hanya akun demo, hapus permanen data demo, nav maks 5, menu dikelompokkan, header Biru DSM, pita MODE DEMO AKTIF, Realisasi jadi tab di Budget (HOS/FM). Celah A-1 & A-2 audit ditutup. Tes `klaim/tests/run.php`: 116 lolos. BELUM dites di Laragon/server dengan login DSM asli.
+4. Kecepatan: CSS (418 KB) & JS utama (778 KB) dipindah dari `index.php` ke `assets/dsm.css` & `assets/dsm.js` (isi identik byte-per-byte). `index.php` 1,29 MB → 91 KB. `.htaccess`: kompresi gzip + cache aset ber-versi 1 tahun; `sw.js` & `index.php` no-cache. Diuji di Apache 2.4 lokal (dengan dan tanpa mod_headers/mod_deflate).
+- Belum: ganti nilai PEPPER (keputusan user: tidak perlu selama repo private); OPcache di server (setting, bukan kode).
+
+## Paket 2 — Aturan Status Dealer — SELESAI KODE, MENUNGGU CEK DATA ASLI (2026-11-17)
+- Sumber status tunggal: `lib/dealer_status.php` (aturan pola, kunci bulanan di `storage/status/<periode>.json`, penanda bulan berjalan ikut DA KPI).
+- Dipakai oleh: `PortalCore::report()` (halaman Dealer, Beranda, export, agent `dealer_cari`), Detail Dealer (`apiDealerDetail`), Analisa › Reaktivasi, filter export.
+- Layar: `assets/dealer_status.js` + `.css` (ringkasan atas Dealer, penanda opsi B, detail pola 6 bulan, Admin › Brand › Aturan Status Dealer khusus Super Admin; menggantikan panel "Ambang Status Dealer" — ambang lama di Master_Brand tidak dipakai lagi untuk status).
+- API baru (Super Admin): `apiDealerStatusRules`, `apiDealerStatusImpact`, `apiDealerStatusSave` (alasan wajib, tercatat di Audit_Log).
+- KPI/achievement/insentif: fungsi `metrics`, `kpi`, `dealerIddle`, `api_kpi`, `api_kpikhusus` TIDAK diubah.
+- Uji: `php tools/tests/dealer_status_test.php` (24 lolos, data buatan).
+- TITIK CEK (wajib, belum): user jalankan `php tools/cek_status_dealer.php` di Laragon sebelum & sesudah pull → KODE KPI harus sama; kirim angka DAMPAK.
+- Tampilan (2026-11-17, mockup `doc/mockup/2026-11-17/dsm-status-dealer-desktop.html` disetujui): desktop pakai opsi A (pita warna tanpa simbol, bulan sekali di atas, keterangan di kanan, legenda). HP tetap sel bersimbol. Tab detail dealer HP opsi 1: grid 3×2, ikon kiri, label KAPITAL 11px, "Histori ST/SO" disingkat HISTORI.
+- DISETUJUI, BELUM DIKODING (user: "jangan coding dulu"): rapikan halaman Dealer desktop pakai opsi A `doc/mockup/2026-11-17/dsm-halaman-dealer-rapi.html` — 4 kartu KPI sejajar (SUDAH ORDER, NOO, BANGKIT + asal, SELL OUT), status jadi 1 kartu (bar + 8 chip klik = filter), sel brand tanpa pita "✓ SEP" (angka + label status + pot), filter: cari + region + brand + order + tombol FILTER LAIN. Opsi B (`-B.html`) ditolak. Tunggu "gas"; cek tampilan HP sebelum pasang.
+- DISETUJUI SEBAGIAN, BELUM DIKODING: halaman Tim `doc/mockup/2026-11-17/dsm-halaman-tim-rapi.html` — yang disetujui baru bagian atas (bar filter TINGKAT/BRAND/REGION + FILTER LAIN, judul + toggle SELL THRU/DEALER AKTIF/NOO, 4 kartu KPI ramping garis warna kiri, kartu bisa diklik). Tabel belum diputuskan. Resep rapi 6 aturan di file yang sama belum dikonfirmasi.
+- Tim: tabel TETAP seperti sekarang (keputusan user 2026-11-17); yang dirapikan hanya bagian atas.
+- DISETUJUI, BELUM DIKODING: `doc/mockup/2026-11-17/dsm-dos-transaksi-peringkat-rapi.html` (bagian atas DOS, Transaksi, Peringkat; tabel tetap; filter DOS langsung jalan tanpa TERAPKAN; Transaksi dapat pilihan cepat tanggal). Kondisi DOS pakai opsi B `dsm-dos-kondisi-opsi.html` (3 grup BUTUH TINDAKAN / AMAN / TIDAK BERGERAK); kartu MENIPIS/HABIS dan PERLU CEK DATA dibuang, kartu DOS tinggal 3. Rencana: digabung ke Paket 3 (Admin+Bento → Background → Rapikan halaman → Tema gelap), tiap tahap berhenti & dites.
+- Belum: dokumen `doc/agent-api/` belum menyebut nama status baru (AKTIF, DI BAWAH MIN, BANGKIT, TURUN, IDLE, PASIF, NONAKTIF, LAINNYA, BELUM ORDER) — kabari tim IT bot.
+
+## Paket 3 tahap 1 — Admin 8 tab + Beranda Admin + Background — SELESAI KODE, BELUM DITES DI DSM ASLI (2026-11-17)
+- Admin (`assets/admin_revision.js` + `.css`, versi dimuat dari `assets/searchable.js` ?v=20261117a): 8 tab per objek sesuai brief 1a, seksi (SERING DIPAKAI / KEPEMILIKAN / HATI-HATI dst.), kata kunci tersembunyi untuk pencarian, label "· Super Admin" jadi badge SUPER ADMIN, hanya panel di seksi HATI-HATI yang merah, "Master & kebijakan" tampil sebagai "Publikasi Master", Brand › TERKAIT = tautan ke Region per brand (panelnya tetap di KPI & Target). Isi panel tidak diubah.
+- Beranda Admin (tab pertama, Bento B2 solid): tugas hari ini (approval, region belum lengkap ST, backup), panel sematan (☆ di tiap panel), data harian %, terakhir dibuka, semua menu.
+- BELUM: 1b penggabungan panel (Pengaturan Brand satu sheet, Upload Massal Dealer satu pintu, Download & Upload Master + jenis Master Dealer). Panel lama masih terpisah di seksi yang benar.
+- Background (`assets/ui_prefs.js` + `.css`, dimuat di index.php): bawaan Biru Langit #CFE3F7 (keputusan user 2026-11-17, menggantikan Abu Polos di brief), blob + kartu kaca di HP diganti latar solid + kartu putih. Pilihan per akun: tombol "Tampilan" (desktop: menu akun; HP: drawer LAINNYA). 4 terang + 4 biru solid (judul di latar jadi putih).
+- Backend: `lib/api_ui.php` (apiUiPrefs, apiUiPrefSave [diblok di Mode Demo], apiAdminHome), disimpan di Properties `UI_PREF_<NIK>`; `apiBootstrap` ikut mengirim `ui`.
+- Diuji di halaman uji (data buatan) 1440 / 390 / 360: tidak ada error console, tidak ada geser horizontal. Belum dicek di DSM asli. Latar biru: teks lain yang menempel langsung di latar (di luar judul halaman) mungkin masih gelap — cek per halaman, sekalian di tahap tema gelap.
+
+## Menu atas + rapikan halaman desktop — SELESAI KODE, BELUM DITES DI DSM ASLI (2026-11-17)
+- Menu desktop opsi B (mockup `doc/mockup/2026-11-17/dsm-menu-desktop-B.html`): `assets/topnav.js` + `.css`. Bar atas: logo, Beranda, SEMUA MENU (PANTAU/ANALISA/KERJA), tombol terpisah AI Assistant / Informasi / DSM Klaim / Admin, cari menu (Ctrl K), avatar. Hanya memanggil tombol asli `#navigation button[data-page]` (hak akses role tetap sumber tunggal); sidebar lama disembunyikan, tetap di DOM. HP tidak disentuh.
+- Rapikan halaman desktop: `assets/page_tidy.js` + `.css` (post-render DOM enhancement + CSS `@media(min-width:821px)`, handler lama tetap jalan). Halaman: Dealer (4 kartu, bar status, filter + FILTER LAIN), Tim bagian atas (tabel tetap), DOS (info 1 baris, 5 kartu, filter langsung jalan, chip kondisi berkelompok), Transaksi (4 kartu, rentang tanggal + HARI INI/7 HARI/BULAN INI), Peringkat (3 kartu posisi saya, pilihan 1 baris, keterangan di ⓘ). Brand/Analisa/Target SO/Transfer/Koreksi: hanya gaya bar filter seragam (`tidyGeneric`, aman, tidak memindah elemen).
+- Catatan: chip kondisi DOS belum menampilkan jumlah per kondisi (backend `apiDOS` belum mengirim hitungan per kondisi; perlu perubahan backend bila mau).
+- Ditunda: tema gelap, penggabungan panel Admin (1b), kabari tim IT bot soal nama status.
+- Tes: halaman uji data buatan 1440 & 390, tidak ada error console. BELUM: DSM asli, role selain Super Admin/Sales, tiga halaman terakhir (Brand dst.) hanya dites tidak error.
+
+## Header halaman desktop (banner biru) + peringatan ST di bar atas — SELESAI KODE, BELUM DITES DI DSM ASLI (2026-11-17)
+- Mockup disetujui: `doc/mockup/2026-11-17/dsm-halaman-dealer-header-tipis.html` (peringatan di bar atas) + banner biru solid opsi D (`dsm-halaman-dealer-header-D.html`).
+- `assets/page_header.js` + `.css` (baru, dimuat di index.php): memindahkan `.ptitle` + `.psub` jadi banner biru `.phBan` (judul, keterangan per halaman, chip MTD/LMTD diperkecil tanpa tahun, chip status dikunci Dealer disalin ke banner). Dilewati: beranda, admin, ai, klaim. HP tidak disentuh (`min-width:821px`).
+- `assets/topnav.js` + `.css`: penanda kuning "ST BELUM LENGKAP · N REGION" di bar atas (khusus ADMIN/SUPER ADMIN, logika sama dengan `freshnessPanel()`; banner kuning lama disembunyikan di desktop); popover tabel region. Tombol Cakupan & Periode dan garis biru permanen dari sesi ini juga di topnav.
+- Tinggi freeze: 62px (bar Cakupan & Periode bawaan tertutup, bisa dibuka).

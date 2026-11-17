@@ -471,4 +471,42 @@ t('Admin multi-region: klaim hanya masuk ke Admin yang wilayahnya mencakup regio
   eq(covers_region($b, 'BALI'), true, 'region tunggal tetap jalan'); eq(covers_region($b, 'JAWA BARAT'), false, 'region tunggal luar');
   eq(covers_region($c, 'BALI'), true, 'kosong = semua');
   $a['roles'] = ['ADMIN']; $a['impersonating'] = false; eq(in_scope($a, ['region' => 'JAWA BARAT'], 'ADMIN'), true, 'in_scope multi'); eq(in_scope($a, ['region' => 'BALI'], 'ADMIN'), false, 'in_scope luar'); });
+
+echo "== Mode Demo: data demo terpisah dari data asli ==\n";
+$snap = function () {
+  $GLOBALS['CLAIM_DEMO'] = 0; $p = date('Y-m'); $hos = U('hos'); $ft = U('ft'); $fm = U('fm');
+  return json_encode(['monitor' => monitor_budget($hos, ['period' => $p]), 'realisasi_hos' => realisasi($hos, ['period' => $p]), 'realisasi_ft' => realisasi($ft, ['period' => $p]),
+    'realisasi_fm' => realisasi($fm, ['period' => $p]), 'export' => export_claims($hos, []), 'antrean_admin' => claim_list(U('admin'), ['view' => 'queue', 'stage' => 'ADMIN']),
+    'semua' => claim_list($hos, ['view' => 'all', 'limit' => 200]), 'kalender' => cal_month($hos, $p), 'budget_dewi' => budget_all(U('dewi')['id'], $p), 'counts_admin' => counts(U('admin')),
+    'pc_mon' => pc_list($hos, ['view' => 'monitor']), 'lookup_people' => q("SELECT id FROM claim_users WHERE can_submit=1 AND active=1 AND " . demo_user_sql())]);
+};
+$before = ''; $dc = 0;
+t('ambil angka asli sebelum demo', function () use ($snap, &$before) { $before = $snap(); eq(strlen($before) > 100, true); });
+t('nyalakan demo: akun UJI-* dibuat', function () { set_setting('test_mode', '1'); eq(seed_uji_users() >= 7, true); eq(demo_state()['accounts'] >= 7, true); });
+t('klaim demo berjalan sampai transfer, bernomor DEMO-, ditandai is_demo', function () use (&$dc) {
+  $GLOBALS['CLAIM_DEMO'] = 1; $d = U('uji-dewi'); $ad = U('uji-admin'); $fm = U('uji-fm'); $ft = U('uji-ft');
+  $dc = submit($d, bbm($d, 150000)); $c = get_claim($dc); eq((int) $c['is_demo'], 1); if (!str_starts_with((string) $c['number'], 'DEMO-KLM-')) throw new Exception('nomor ' . $c['number']);
+  claim_act($ad, $dc, ['entity' => 'RISM', 'action' => 'approve']); claim_act($fm, $dc, ['entity' => 'RISM', 'action' => 'approve']);
+  claim_act($ft, $dc, ['action' => 'transfer', 'transfer_no' => 'DEMO-TRF', 'proof' => [fakefile($ft)]]); eq(get_claim($dc)['status'], 'DONE');
+  eq(count(array_filter(claim_list(U('uji-hos'), ['view' => 'all', 'limit' => 200])['rows'], fn($r) => $r['id'] === $dc)), 1, 'HOS demo melihat klaim demo');
+});
+t('angka asli IDENTIK setelah klaim demo selesai (monitor, realisasi, export, antrean, kalender, budget)', function () use ($snap, &$before) { eq($snap() === $before, true, 'snapshot asli berubah'); });
+t('pengguna asli tidak bisa membuka / menindak klaim demo', function () use (&$dc) {
+  $GLOBALS['CLAIM_DEMO'] = 0; eq(can_view(U('hos'), get_claim($dc)), false); throws(fn() => claim_detail(U('hos'), $dc));
+});
+t('akun demo tidak melihat klaim asli', function () use (&$c1) { $GLOBALS['CLAIM_DEMO'] = 1; eq(can_view(U('uji-hos'), get_claim($c1)), false); $GLOBALS['CLAIM_DEMO'] = 0; });
+t('pemohon biasa tidak bisa menarik daftar klaim / petty cash orang lain', function () {
+  $GLOBALS['CLAIM_DEMO'] = 0; $d = U('dewi');
+  foreach (['selesai', 'proses', 'all', 'ba'] as $v) foreach (claim_list($d, ['view' => $v, 'limit' => 200])['rows'] as $r) eq((int) get_claim($r['id'])['claimant_id'], (int) $d['id'], "view $v");
+  foreach (claim_list($d, ['view' => 'queue', 'stage' => 'FT', 'limit' => 200])['rows'] as $r) eq((int) get_claim($r['id'])['claimant_id'], (int) $d['id'], 'antrean FT'); eq(pc_list($d, ['view' => 'monitor']), [], 'pc monitor'); eq(pc_list($d, ['view' => 'queue', 'stage' => 'FM']), [], 'pc antrean');
+});
+t('Admin dengan wilayah tugas (areas) hanya melihat region tugasnya', function () {
+  $GLOBALS['CLAIM_DEMO'] = 0; $a = U('admin2'); $a['area_list'] = ['Jakarta']; $a['region'] = null;
+  foreach (claim_list($a, ['view' => 'proses', 'limit' => 200])['rows'] as $r) eq($r['region'], 'Jakarta');
+});
+t('matikan demo lalu hapus permanen: data demo hilang, angka asli tetap identik', function () use ($snap, &$before, &$dc) {
+  set_setting('test_mode', '0'); ex("UPDATE claim_users SET active=0 WHERE nik LIKE 'UJI-%'"); eq(demo_state()['accounts'], 0);
+  $n = demo_purge(); eq($n['klaim'] >= 1, true); eq((int) val("SELECT COUNT(*) FROM claims WHERE is_demo=1"), 0); eq(one("SELECT id FROM claims WHERE id=?", [$dc]), null);
+  eq($snap() === $before, true, 'snapshot asli berubah setelah hapus');
+});
 echo "\nHasil: $pass lolos, $failc gagal\n"; exit($failc ? 1 : 0);

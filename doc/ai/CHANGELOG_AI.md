@@ -799,3 +799,44 @@ Validation:
 ## 2026-11-16 Agent API Paket 3
 - 26 resource data baca-saja di agent_api.php memanggil fungsi DSM yang sama dengan web atas nama user sambungan; paging, pemangkasan, penyamaran nomor HP; konteks Telemarketing ikut.
 - Dokumen IT v0.2.
+
+## 2026-11-16 — Dokumen saja (tanpa perubahan kode)
+- Tambah `doc/ai/BRIEF_2026-11-16_PAKET_REVISI.md` (brief paket 0–5).
+- Tambah mockup disetujui di `doc/mockup/2026-11-16/`.
+- Catat keputusan di `DECISIONS.md` dan `HANDOFF.md`.
+
+## 2026-11-17 — Audit (dokumen saja, tanpa perubahan kode)
+- Tambah `doc/ai/AUDIT_2026-11.md`: rahasia ter-commit, hak akses API (258 fungsi `api.php` + `klaim/api.php` + `agent_api.php`), data uji Klaim, peta status dealer vs KPI, bug logika KPI/DOS/transfer/kredit tetap, daftar CSS bertumpuk.
+- `HANDOFF.md`: catatan hasil audit dan hal yang menunggu keputusan user.
+- Tidak ada yang dijalankan di database/server; temuan dari membaca kode.
+
+## 2026-11-17 — Tindak lanjut audit 1-4
+- Keamanan: PEPPER keluar dari `config.php` (pakai `config.local.php`), cache runtime keluar dari git.
+- Klaim: Mode Demo satu sakelar + data demo terpisah + menu rapi + tutup celah daftar (A-1, A-2, A-3).
+- Kecepatan: CSS/JS utama keluar dari `index.php`; gzip + cache aset di `.htaccess`.
+
+## 2026-11-17 — Paket 2: Aturan Status Dealer
+- Satu fungsi sumber status (pola 6 bulan, dikunci bulanan, per brand + total), menggantikan 4 perhitungan lama.
+- Halaman Dealer: ringkasan atas (kunci + MTD, SUDAH ORDER = DA KPI, 6 kartu status, Bangkit bulan ini), penanda opsi B per brand.
+- Admin › Brand › Aturan Status Dealer: pola, coba pola, dampak sebelum simpan.
+- Skrip cek `tools/cek_status_dealer.php` + uji `tools/tests/dealer_status_test.php`.
+
+## 2026-11-17 — Status dealer desktop opsi A + tab detail dealer kapital
+- Desktop: pola 6 bulan jadi pita warna tipis, nama bulan sekali di atas, keterangan satu baris di kanan, legenda warna.
+- HP: tab detail dealer jadi 3×2, ikon kiri, label KAPITAL (HISTORI disingkat).
+- File: `assets/dealer_status.js`, `assets/dealer_status.css`. Logika status tidak berubah.
+
+## 2026-11-17 — Paket 3 tahap 1: Admin 8 tab + Beranda Admin + Background
+- Admin dikelompokkan per objek (8 tab + seksi), pencarian membaca kata kunci tersembunyi, badge SUPER ADMIN, sematan panel & terakhir dibuka per akun.
+- Halaman depan Admin = Bento B2 (warna solid).
+- Latar belakang per akun (Abu Polos bawaan, 8 pilihan), blob HP dihapus.
+- File: assets/admin_revision.js/.css, assets/searchable.js (versi), assets/ui_prefs.js/.css (baru), lib/api_ui.php (baru), api.php, lib/api_main.php, index.php.
+
+## 2026-11-17 — Menu atas desktop + rapikan halaman desktop
+- Menu atas opsi B (topnav) menggantikan sidebar di desktop; HP tidak berubah.
+- Rapikan Dealer, Tim (atas), DOS, Transaksi, Peringkat; bar filter seragam di halaman lain.
+- File: assets/topnav.js/.css, assets/page_tidy.js/.css (baru), index.php, doc/mockup/2026-11-17/*.
+
+## 2026-11-17 — Header halaman desktop + peringatan ST di bar atas
+- Banner biru solid per halaman, penanda peringatan ST di bar atas (Admin/Super Admin), jalur halaman saat scroll, bar Cakupan & Periode bisa dibuka/tutup, garis biru permanen, bayangan bar freeze.
+- File: assets/page_header.js/.css (baru), assets/topnav.js/.css, index.php, mockup header di doc/mockup/2026-11-17/.

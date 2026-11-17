@@ -127,17 +127,18 @@ function apiAnalisa($token, $period, $selection = null) {
     $inScope = [];
     foreach (js_keys($meta['customers']) as $id) if (in_set($idSet, $meta['customers'][$id]['nik'] ?? null)) $inScope[$id] = true;
     foreach (js_keys($perMonth) as $id) $inScope[$id] = true;
-    $weights = ['DA BULAN LALU' => 1, 'IDLE' => 0.7, 'PASIF' => 0.4]; $re = []; $back = [];
+    $weights = ['DA BULAN LALU' => 1, 'IDLE' => 0.7, 'PASIF' => 0.4, 'AKTIF' => 1, 'DI BAWAH MIN' => 0.9, 'BANGKIT' => 0.9, 'TURUN' => 0.8, 'NONAKTIF' => 0.2, 'LAINNYA' => 0.5]; $re = []; $back = [];
     foreach (js_keys($inScope) as $id) {
         $series = array_map(fn($p) => $qtyIn($id, $p), $months6); $cur = $qtyIn($id, $period); $prev = $qtyIn($id, $prevP); $prev2 = $qtyIn($id, $p2);
         $earlier = js_some($months6, fn($p) => $p !== $period && $qtyIn($id, $p) > 0);
         if ($cur > 0 && $prev == 0 && $earlier) $back[] = $ownerNik($id);
         if ($cur > 0 || $isClosed($id)) continue;
-        $status = $prev > 0 ? 'DA BULAN LALU' : ($prev2 > 0 ? 'IDLE' : (($earlier || truthy($lastDate[$id] ?? null)) ? 'PASIF' : null));
+        if (function_exists('dsDealer_')) { $status = dsDealer_($db, $period, (string) $id)['status']; if ($status === 'BELUM ORDER') $status = null; } // Aturan Status Dealer (Paket 2)
+        else $status = $prev > 0 ? 'DA BULAN LALU' : ($prev2 > 0 ? 'IDLE' : (($earlier || truthy($lastDate[$id] ?? null)) ? 'PASIF' : null));
         if (!$status) continue;
         $hist = js_filter(array_slice($series, 0, -1), fn($v) => $v > 0); $avg = $hist ? array_sum($hist) / count($hist) : 0;
         $cu = $cust($id);
-        $re[] = ['id' => $id, 'nama' => $cu['nama'] ?? null, 'kota' => js_or($cu['kota'] ?? null, ''), 'hp' => js_or($cu['hp'] ?? null, ''), 'nik' => $ownerNik($id), 'sales' => $ownerName($id), 'status' => $status, 'avg' => js_mround($avg * 10) / 10, 'series' => $series, 'last' => js_or($lastDate[$id] ?? null, null), 'jeda' => $ageDays($lastDate[$id] ?? null), 'score' => js_mround($avg * $weights[$status] * 10) / 10];
+        $re[] = ['id' => $id, 'nama' => $cu['nama'] ?? null, 'kota' => js_or($cu['kota'] ?? null, ''), 'hp' => js_or($cu['hp'] ?? null, ''), 'nik' => $ownerNik($id), 'sales' => $ownerName($id), 'status' => $status, 'avg' => js_mround($avg * 10) / 10, 'series' => $series, 'last' => js_or($lastDate[$id] ?? null, null), 'jeda' => $ageDays($lastDate[$id] ?? null), 'score' => js_mround($avg * ($weights[$status] ?? 0.5) * 10) / 10];
     }
     $re = js_sort($re, fn($a, $b) => ($b['score'] - $a['score']) ?: ($b['avg'] - $a['avg']));
     $reactivation = ['months' => $months6, 'reactivated' => $back, 'rows' => array_slice($re, 0, 4000)];

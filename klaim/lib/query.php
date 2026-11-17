@@ -19,8 +19,14 @@ function row_out(array $c): array {
     'rev_holder' => $c['rev_holder'], 'rev_stage' => $c['rev_stage']];
 }
 /** Daftar klaim berdasarkan tampilan (view) dan cakupan peran. */
+/** Peran yang boleh melihat daftar di luar klaim miliknya sendiri. */
+function list_roles(): array { return ['SA', 'ADMIN', 'AUDIT', 'HOS', 'FM', 'FT']; }
+function can_list_all(array $u): bool { if (sa_free($u)) return true; foreach (list_roles() as $r) if (has_role($u, $r)) return true; return false; }
 function claim_list(array $u, array $f): array {
-  $view = $f['view'] ?? 'mine'; $w = ['1=1']; $p = [];
+  $view = $f['view'] ?? 'mine'; $w = ['is_demo=?']; $p = [demo_ctx()];
+  // Pemohon biasa (tanpa peran pengelola) hanya boleh melihat klaim miliknya.
+  if ($view !== 'mine' && empty($f['todo']) && !can_list_all($u)) $view = 'mine';
+  if ($view === 'queue' && !empty($f['stage']) && !sa_free($u) && !has_role($u, 'SA') && !has_role($u, (string) $f['stage'])) return ['rows' => [], 'total' => 0];
   $todo = [];
   if (!empty($f['todo'])) { // Perlu tindakan saya: antrean semua peran yang dipegang + revisi di Admin + revisi/BA di tangan pemohon
     $sub = fn(array $g) => claim_list($u, $g + ['limit' => 200, 'todo' => 0])['rows'];
@@ -30,7 +36,7 @@ function claim_list(array $u, array $f): array {
       foreach ([0, 1] as $ba) foreach ($sub(['view' => 'queue', 'stage' => $r, 'ba' => $ba]) as $x) $todo[(int) $x['id']] = $nm;
     }
     if (!$mineOnly && has_role($u, 'ADMIN')) foreach ($sub(['view' => 'revisi_admin']) as $x) $todo[(int) $x['id']] = 'Revisi di Admin';
-    foreach (q("SELECT * FROM claims WHERE claimant_id=? AND status IN ('WAIT','REV')", [$u['id']]) as $c) {
+    foreach (q("SELECT * FROM claims WHERE claimant_id=? AND is_demo=? AND status IN ('WAIT','REV')", [$u['id'], demo_ctx()]) as $c) {
       if ($c['status'] === 'REV' && $c['rev_holder'] === 'PEMOHON') $todo[(int) $c['id']] = 'Perbaiki klaim';
       elseif ($c['status'] === 'WAIT' && ba_pemohon_pending($c)) $todo[(int) $c['id']] = 'Tanda tangan BA';
     }
@@ -38,7 +44,7 @@ function claim_list(array $u, array $f): array {
   }
   $scopeSql = function (string $role) use ($u, &$w, &$p) {
     if (sa_free($u) || has_role($u, 'SA')) return;
-    if (in_array($role, ['ADMIN', 'RGM'], true) && $u['region']) { $w[] = 'region=?'; $p[] = $u['region']; }
+    if (in_array($role, ['ADMIN', 'RGM'], true) && ($rs = region_scope($u))) { $w[] = $rs[0]; array_push($p, ...$rs[1]); }
     if (in_array($role, ['AUDIT', 'FM', 'FT'], true) && $u['entities']) { $en = array_values(array_unique(array_merge($u['entities'], uncovered_entities($role)))); $w[] = 'entity IN (' . implode(',', array_fill(0, count($en), '?')) . ')'; array_push($p, ...$en); }
   };
   switch ($view) {
@@ -90,8 +96,7 @@ function counts(array $u): array {
     $out['lama_' . $r] = count(array_filter($rows, fn($x) => $x['aging']));
   }
   $out['notif'] = (int) val("SELECT COUNT(*) FROM claim_notif WHERE user_id=? AND is_read=0", [$u['id']]);
-  if (has_role($u, 'RGM') || sa_free($u)) $out['pc_rgm'] = (int) val("SELECT COUNT(*) FROM claim_pc WHERE status='WAIT' AND stage='RGM'" . (!sa_free($u) && $u['region'] ? " AND region='" . str_replace("'", '', $u['region']) . "'" : ''));
-  foreach (['ADMIN' => 'ADMIN', 'HOS' => 'HOS', 'FM' => 'FM', 'FT' => 'FT'] as $r => $_) if (has_role($u, $r)) $out['pcq_' . $r] = (int) val("SELECT COUNT(*) FROM claim_pc WHERE status='WAIT' AND stage=?", [$r]);
+  foreach (['RGM', 'ADMIN', 'HOS', 'FM', 'FT'] as $r) if (has_role($u, $r) || ($r === 'RGM' && sa_free($u))) { $n = count(pc_list($u, ['view' => 'queue', 'stage' => $r])); $out[$r === 'RGM' ? 'pc_rgm' : 'pcq_' . $r] = $n; }
   return $out;
 }
 
@@ -165,12 +170,19 @@ function pc_out(array $p): array {
     'realized_now' => (int) array_sum(array_column($notes, 'nominal')), 'age_days' => age_days($p['stage_since']), 'aging' => (aging_days() !== null && in_array($p['status'], ['WAIT'], true) && age_days($p['stage_since']) > aging_days())]);
 }
 function pc_list(array $u, array $f): array {
-  $w = ['1=1']; $p = []; $v = $f['view'] ?? 'mine';
-  if ($v === 'mine') { $w[] = 'claimant_id=?'; $p[] = $u['id']; }
-  elseif ($v === 'queue') { $st = $f['stage'] ?? acting_role($u); $w[] = "status='WAIT' AND stage=?"; $p[] = $st; if (!sa_free($u)) { $w[] = 'claimant_id<>?'; $p[] = $u['id']; if (in_array($st, ['ADMIN', 'RGM']) && $u['region']) { $w[] = 'region=?'; $p[] = $u['region']; } if (in_array($st, ['FM', 'FT']) && $u['entities']) { $w[] = 'entity IN (' . implode(',', array_fill(0, count($u['entities']), '?')) . ')'; array_push($p, ...$u['entities']); } } }
-  elseif ($v === 'ft') { $w[] = "status IN ('SETOR','TUTUP')"; if (!sa_free($u) && $u['entities']) { $w[] = 'entity IN (' . implode(',', array_fill(0, count($u['entities']), '?')) . ')'; array_push($p, ...$u['entities']); } }
-  elseif ($v === 'monitor') { $w[] = "status IN ('DANA','SETOR','TUTUP')"; }
-  elseif ($v === 'proses') { $w[] = "status IN ('WAIT','REV')"; if (!sa_free($u) && !has_role($u, 'HOS') && $u['region'] && has_role($u, 'ADMIN')) { $w[] = 'region=?'; $p[] = $u['region']; } }
+  $w = ['is_demo=?']; $p = [demo_ctx()]; $v = $f['view'] ?? 'mine'; $free = sa_free($u) || has_role($u, 'SA');
+  $reg = function () use ($u, &$w, &$p) { if ($rs = region_scope($u)) { $w[] = $rs[0]; array_push($p, ...$rs[1]); } };
+  $ent = function () use ($u, &$w, &$p) { if ($u['entities']) { $w[] = 'entity IN (' . implode(',', array_fill(0, count($u['entities']), '?')) . ')'; array_push($p, ...$u['entities']); } };
+  $any = fn(array $rs) => $free || (bool) array_filter($rs, fn($r) => has_role($u, $r));
+  if ($v === 'queue') {
+    $st = $f['stage'] ?? acting_role($u); if (!$free && !has_role($u, $st)) return [];
+    $w[] = "status='WAIT' AND stage=?"; $p[] = $st;
+    if (!sa_free($u)) { $w[] = 'claimant_id<>?'; $p[] = $u['id']; if (!has_role($u, 'SA')) { if (in_array($st, ['ADMIN', 'RGM'], true)) $reg(); if (in_array($st, ['FM', 'FT'], true)) $ent(); } }
+  }
+  elseif ($v === 'ft') { if (!$any(['FT', 'FM', 'HOS'])) return []; $w[] = "status IN ('SETOR','TUTUP')"; if (!$free && !has_role($u, 'HOS')) $ent(); }
+  elseif ($v === 'monitor') { if (!$any(['HOS', 'FM', 'AUDIT', 'ADMIN'])) return []; $w[] = "status IN ('DANA','SETOR','TUTUP')"; if (!$free && !has_role($u, 'HOS') && has_role($u, 'ADMIN') && !has_role($u, 'FM') && !has_role($u, 'AUDIT')) $reg(); }
+  elseif ($v === 'proses') { if (!$any(['RGM', 'ADMIN', 'HOS', 'FM', 'FT'])) return []; $w[] = "status IN ('WAIT','REV')"; if (!$free && !has_role($u, 'HOS') && !has_role($u, 'FM') && !has_role($u, 'FT')) $reg(); }
+  else { $w[] = 'claimant_id=?'; $p[] = $u['id']; }
   return array_map('pc_out', q("SELECT * FROM claim_pc WHERE " . implode(' AND ', $w) . " ORDER BY COALESCE(stage_since, created_at) ASC LIMIT 100", $p));
 }
 
@@ -184,7 +196,7 @@ function cal_month(array $u, string $ym): array {
     if (count($r['rows']) < 200) break;
   }
   $real = 0;
-  foreach (q("SELECT ref_id, created_at FROM claim_transfers WHERE ref_type='claim' AND substr(created_at,1,10)>=? AND substr(created_at,1,10)<=?", [$from, $to]) as $t) {
+  foreach (q("SELECT ref_id, created_at FROM claim_transfers t WHERE ref_type='claim' AND " . demo_transfer_sql('t') . " AND substr(created_at,1,10)>=? AND substr(created_at,1,10)<=?", [$from, $to]) as $t) {
     $c = one("SELECT * FROM claims WHERE id=?", [$t['ref_id']]); if (!$c || !can_view($u, $c)) continue;
     $d = substr($t['created_at'], 0, 10); $days[$d]['r'] = ($days[$d]['r'] ?? 0) + 1; $days[$d]['n'] = $days[$d]['n'] ?? 0; $days[$d]['sum'] = $days[$d]['sum'] ?? 0; $real++;
   }
@@ -194,6 +206,6 @@ function cal_month(array $u, string $ym): array {
 function cal_day(array $u, string $date): array {
   if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) fail('Tanggal tidak valid.', 422);
   $sub = claim_list($u, ['view' => 'all', 'from' => $date, 'to' => $date, 'limit' => 100, 'todo' => 0])['rows']; $real = [];
-  foreach (q("SELECT ref_id FROM claim_transfers WHERE ref_type='claim' AND substr(created_at,1,10)=? ORDER BY id", [$date]) as $t) { $c = one("SELECT * FROM claims WHERE id=?", [$t['ref_id']]); if ($c && can_view($u, $c)) $real[] = row_out($c); }
+  foreach (q("SELECT ref_id FROM claim_transfers t WHERE ref_type='claim' AND " . demo_transfer_sql('t') . " AND substr(created_at,1,10)=? ORDER BY id", [$date]) as $t) { $c = one("SELECT * FROM claims WHERE id=?", [$t['ref_id']]); if ($c && can_view($u, $c)) $real[] = row_out($c); }
   return ['sub' => $sub, 'real' => $real];
 }

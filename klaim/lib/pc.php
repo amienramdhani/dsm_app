@@ -4,6 +4,7 @@ require_once __DIR__ . '/claims.php';
 function get_pc(int $id): array { $p = one("SELECT * FROM claim_pc WHERE id=?", [$id]); if (!$p) fail('Petty cash tidak ditemukan.', 404); return $p; }
 function pc_route(array $claimant): array { return in_array('RGM', $claimant['roles'], true) ? ['ADMIN', 'HOS', 'FM', 'FT'] : ['RGM', 'ADMIN', 'HOS', 'FM', 'FT']; }
 function pc_view(array $u, array $p): bool {
+  if ((int) ($p['is_demo'] ?? 0) !== demo_ctx()) return false;
   if ((int) $p['claimant_id'] === (int) $u['id']) return true;
   foreach (['SA', 'ADMIN', 'HOS', 'FM', 'FT', 'RGM'] as $r) if (has_role($u, $r) && in_scope($u, $p, $r)) return true;
   return false;
@@ -33,7 +34,7 @@ function pc_submit(array $u, array $in): int {
   if (empty($in['p_start']) || empty($in['p_end']) || $in['p_end'] < $in['p_start']) fail('Periode tidak valid.');
   if (trim($in['purpose'] ?? '') === '') fail('Tujuan wajib diisi.');
   $route = pc_route($u);
-  $id = ins('claim_pc', ['number' => next_number('PC', $u['entities'][0] ?? null), 'claimant_id' => $u['id'], 'region' => $u['region'], 'entity' => $u['entities'][0] ?? null,
+  $id = ins('claim_pc', ['number' => next_number('PC', $u['entities'][0] ?? null), 'claimant_id' => $u['id'], 'is_demo' => demo_of_user((int) $u['id']), 'region' => $u['region'], 'entity' => $u['entities'][0] ?? null,
     'purpose' => trim($in['purpose']), 'remark' => trim($in['remark'] ?? '') ?: null, 'location' => $in['location'] ?? null, 'p_start' => $in['p_start'], 'p_end' => $in['p_end'], 'amount' => $amount, 'plan' => jenc($plan),
     'status' => 'WAIT', 'stage' => $route[0], 'route' => jenc($route), 'acct_bank' => $u['bank'], 'acct_no' => $u['bank_no'], 'acct_name' => $u['bank_name'],
     'stage_since' => now(), 'created_at' => now(), 'updated_at' => now()]);
@@ -119,7 +120,7 @@ function pc_send_report(array $u, int $id): array {
   if ($excess > 0) {
     $t = one("SELECT id FROM claim_types WHERE name='Reimburse petty cash'");
     $cu = user_row((int) $p['claimant_id']);
-    $claimId = ins('claims', ['claimant_id' => $cu['id'], 'created_by' => $cu['id'], 'region' => $cu['region'], 'entity' => $cu['entities'][0] ?? null, 'category' => 'Operasional', 'type_id' => $t['id'],
+    $claimId = ins('claims', ['claimant_id' => $cu['id'], 'is_demo' => demo_of_user((int) $cu['id']), 'created_by' => $cu['id'], 'region' => $cu['region'], 'entity' => $cu['entities'][0] ?? null, 'category' => 'Operasional', 'type_id' => $t['id'],
       'brand' => 'Lainnya', 'refnote' => $p['number'], 'location' => $p['location'], 'total' => $excess, 'status' => 'WAIT', 'stage' => 'ADMIN', 'budget_period' => date('Y-m'),
       'current_version' => 1, 'meta' => jenc(['keterangan' => 'Kelebihan pemakaian petty cash ' . $p['number']]), 'acct_bank' => $cu['bank'], 'acct_no' => $cu['bank_no'], 'acct_name' => $cu['bank_name'], 'acct_own' => 1,
       'pc_id' => $id, 'stage_since' => now(), 'submitted_at' => now(), 'created_at' => now(), 'updated_at' => now()]);

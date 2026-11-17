@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSM · Mockup Status Dealer (desktop) + Tab Kapital</title>
+<style>
+*{box-sizing:border-box}i{font-style:normal}body{margin:0;font:13px/1.45 Arial,sans-serif;background:#F3F6F9;color:#153d50;padding:24px}
+h1{font-size:18px;margin:0 0 4px}.sub{color:#6b8090;font-size:12px;margin:0 0 22px}
+.opt{background:#fff;border-radius:16px;box-shadow:0 4px 14px #1d40500d;padding:20px 22px;margin:0 0 22px;max-width:980px}
+.opt>header{display:flex;align-items:center;gap:10px;margin-bottom:4px}.opt>header b{font-size:14px}
+.tag{background:#0B5CAD;color:#fff;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:800}.rec{background:#F07A0C}
+.note{color:#6b8090;font-size:12px;margin:0 0 16px}
+.ttl{font-size:12px;font-weight:800;letter-spacing:.4px;margin:0 0 10px}
+.pill{display:inline-block;font-size:10px;font-weight:800;border-radius:6px;padding:2px 7px}
+.p-ak{background:#E3F6EC;color:#0E7C4F}.p-ps{background:#FDE7E7;color:#B42318}
+.legend{display:flex;gap:14px;font-size:11px;color:#6b8090;margin-top:10px}.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:5px}
+.y{background:#12A86B}.h{background:#F5C451}.n{background:#E6EBF1}.a{background:#fff;border:1.5px dashed #CBD3DE}
+
+/* A — pita warna */
+.A{display:grid;grid-template-columns:110px 70px repeat(6,1fr) 260px;column-gap:6px;row-gap:0;align-items:center}
+.A .hd{font-size:10px;font-weight:800;color:#8a9aa8;text-align:center;padding-bottom:6px}
+.A .row{display:contents}.A .row>*{padding:9px 0;border-top:1px solid #EEF2F6}
+.A .nm{font-weight:800;font-size:12px}.A .c{height:12px;border-radius:4px;padding:0!important;margin:9px 0;border-top:0!important;position:relative}
+.A .c:after{content:"";position:absolute;left:0;right:0;top:-10px;border-top:1px solid #EEF2F6}
+.A .ket{font-size:11px;color:#6b8090;padding-left:12px!important}
+.A .tot .nm{color:#0B5CAD}
+
+/* B — heatmap angka */
+.B{display:grid;grid-template-columns:110px 70px repeat(6,1fr);gap:5px;align-items:center}
+.B .hd{font-size:10px;font-weight:800;color:#8a9aa8;text-align:center}
+.B .nm{font-weight:800;font-size:12px}
+.B .c{height:30px;border-radius:7px;display:grid;place-items:center;font-size:12px;font-weight:700}
+.B .c.y{color:#fff}.B .c.y.l{background:#7FD3AE;color:#0b4d33}.B .c.h{color:#6b4700}.B .c.n{color:#a6b2c0}
+.B .ket{grid-column:3/-1;font-size:11px;color:#6b8090;margin:-2px 0 8px}
+
+/* C — titik ringkas */
+.C{display:grid;grid-template-columns:110px 70px 150px 70px 1fr;gap:0;align-items:center}
+.C>*{padding:10px 0;border-top:1px solid #EEF2F6}.C .hd{border:0;font-size:10px;font-weight:800;color:#8a9aa8;padding:0 0 6px}
+.C .nm{font-weight:800;font-size:12px}.dots{display:flex;gap:6px}.dots i{width:14px;height:14px;border-radius:50%}
+.C .sc{font-weight:800;font-size:12px}.C .ket{font-size:11px;color:#6b8090}
+
+/* Tabs */
+.phones{display:flex;gap:26px;flex-wrap:wrap}
+.ph{width:360px;background:#fff;border:1px solid #e2eaf0;border-radius:22px;padding:14px;box-shadow:0 6px 20px #1d405012}
+.ph small{display:block;font-size:11px;font-weight:800;color:#8a9aa8;margin:0 0 8px}
+.t1{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.t1 button{display:flex;align-items:center;justify-content:center;gap:6px;height:38px;border:0;border-radius:10px;background:#0B5CAD;color:#fff;font:800 11px Arial;letter-spacing:.4px}
+.t1 button.on{background:#0A2E57;box-shadow:inset 0 -3px #00A5D9}
+.t2{display:flex;gap:6px;overflow:auto;padding-bottom:4px;scrollbar-width:none}
+.t2 button{flex:0 0 auto;height:34px;padding:0 14px;border-radius:999px;border:1.5px solid #CFE0F0;background:#fff;color:#0B5CAD;font:800 11px Arial;letter-spacing:.4px}
+.t2 button.on{background:#0B5CAD;border-color:#0B5CAD;color:#fff}
+.t0{display:grid;grid-template-columns:repeat(6,1fr);gap:3px}
+.t0 button{height:58px;border:0;border-radius:9px;background:#0B5CAD;color:#fff;font:800 7.5px Arial;letter-spacing:-.1px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:0}
+.t0 button.on{background:#0A2E57;box-shadow:inset 0 -3px #00A5D9}
+svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
+</style></head><body>
+<h1>Status Dealer di desktop — biar ga rame</h1>
+<p class="sub">Contoh data dari screenshot (dealer dengan ITEL, MOTOPAD, MOTOROLA, VILLAON · dikunci 1 SEP). Warna: hijau = order memenuhi DA, kuning = order tapi di bawah minimum, abu = tidak order, putus-putus = belum jadi dealer.</p>
+
+<!-- A -->
+<section class="opt"><header><span class="tag rec">A · REKOMENDASI</span><b>Pita warna, bulan ditulis sekali</b></header>
+<p class="note">Ceklis & silang dibuang, sel jadi pita tipis. Nama bulan cuma di atas (bukan tiap baris). Keterangan pindah ke kanan, jadi satu brand = satu baris. Tinggi turun kira-kira 60%.</p>
+<div class="ttl">STATUS DEALER · 🔒 DIKUNCI 1 SEP</div>
+<div class="A">
+ <span></span><span></span><span class="hd">MAR</span><span class="hd">APR</span><span class="hd">MEI</span><span class="hd">JUN</span><span class="hd">JUL</span><span class="hd">AGU</span><span class="hd" style="text-align:left;padding-left:12px">KETERANGAN</span>
+ <div class="row tot"><span class="nm">TOTAL</span><span><i class="pill p-ak">AKTIF</i></span><i class="c y"></i><i class="c y"></i><i class="c y"></i><i class="c y"></i><i class="c y"></i><i class="c y"></i><span class="ket">Aturan #3 · order SEP 1.647 unit</span></div>
+ <div class="row"><span class="nm">ITEL</span><span><i class="pill p-ak">AKTIF</i></span><i class="c y"></i><i class="c y"></i><i class="c y"></i><i class="c y"></i><i class="c y"></i><i class="c y"></i><span class="ket">SEP 599 unit · memenuhi DA · 18 Sep</span></div>
+ <div class="row"><span class="nm">MOTOPAD</span><span><i class="pill p-ak">AKTIF</i></span><i class="c n"></i><i class="c n"></i><i class="c y"></i><i class="c y"></i><i class="c y"></i><i class="c y"></i><span class="ket">SEP 1.005 unit · memenuhi DA · 22 Sep</span></div>
+ <div class="row"><span class="nm">MOTOROLA</span><span><i class="pill p-ak">AKTIF</i></span><i class="c y"></i><i class="c y"></i><i class="c y"></i><i class="c y"></i><i class="c y"></i><i class="c y"></i><span class="ket">SEP 43 unit · memenuhi DA · 9 Sep</span></div>
+ <div class="row"><span class="nm">VILLAON</span><span><i class="pill p-ps">PASIF</i></span><i class="c y"></i><i class="c y"></i><i class="c n"></i><i class="c n"></i><i class="c n"></i><i class="c n"></i><span class="ket">Belum order SEP</span></div>
+</div>
+<div class="legend"><span><i class="y"></i>Order (DA)</span><span><i class="h"></i>Di bawah min</span><span><i class="n"></i>Tidak order</span><span><i class="a"></i>Belum dealer</span></div>
+</section>
+
+<!-- B -->
+<section class="opt"><header><span class="tag">B</span><b>Heatmap angka unit</b></header>
+<p class="note">Sel berisi unit bulan itu, bukan ceklis. Lebih informatif (keliatan naik-turun), tapi isinya jadi mirip tabel Histori di bawahnya → dobel. Perlu tambahan kecil di backend (unit per bulan per brand).</p>
+<div class="ttl">STATUS DEALER · 🔒 DIKUNCI 1 SEP</div>
+<div class="B">
+ <span></span><span></span><span class="hd">MAR</span><span class="hd">APR</span><span class="hd">MEI</span><span class="hd">JUN</span><span class="hd">JUL</span><span class="hd">AGU</span>
+ <span class="nm" style="color:#0B5CAD">TOTAL</span><span><i class="pill p-ak">AKTIF</i></span><i class="c y">5.120</i><i class="c y">6.244</i><i class="c y">5.464</i><i class="c y">9.084</i><i class="c y">5.931</i><i class="c y">3.458</i>
+ <span class="nm">ITEL</span><span><i class="pill p-ak">AKTIF</i></span><i class="c y">4.800</i><i class="c y">5.990</i><i class="c y">4.200</i><i class="c y">7.392</i><i class="c y">4.100</i><i class="c y">2.918</i>
+ <span class="nm">MOTOPAD</span><span><i class="pill p-ak">AKTIF</i></span><i class="c n">–</i><i class="c n">–</i><i class="c y l">20</i><i class="c y l">70</i><i class="c y">396</i><i class="c y">500</i>
+ <span class="nm">MOTOROLA</span><span><i class="pill p-ak">AKTIF</i></span><i class="c y">300</i><i class="c y">234</i><i class="c y">1.244</i><i class="c y">1.622</i><i class="c y">1.435</i><i class="c y l">40</i>
+ <span class="nm">VILLAON</span><span><i class="pill p-ps">PASIF</i></span><i class="c y l">15</i><i class="c y l">20</i><i class="c n">–</i><i class="c n">–</i><i class="c n">–</i><i class="c n">–</i>
+</div>
+<p class="note" style="margin:8px 0 0">Angka MAR di contoh ini karangan (screenshot cuma sampai APR).</p>
+</section>
+
+<!-- C -->
+<section class="opt"><header><span class="tag">C</span><b>Titik ringkas</b></header>
+<p class="note">Paling hemat tempat. Tapi bulan mana yang bolong harus ditebak dari urutan titik (kiri = MAR, kanan = AGU), kurang jelas buat yang baru pakai.</p>
+<div class="ttl">STATUS DEALER · 🔒 DIKUNCI 1 SEP</div>
+<div class="C">
+ <span class="hd"></span><span class="hd"></span><span class="hd">MAR → AGU</span><span class="hd">ORDER</span><span class="hd">KETERANGAN</span>
+ <span class="nm" style="color:#0B5CAD">TOTAL</span><span><i class="pill p-ak">AKTIF</i></span><span class="dots"><i class="y"></i><i class="y"></i><i class="y"></i><i class="y"></i><i class="y"></i><i class="y"></i></span><span class="sc">6/6</span><span class="ket">Aturan #3 · order SEP 1.647 unit</span>
+ <span class="nm">ITEL</span><span><i class="pill p-ak">AKTIF</i></span><span class="dots"><i class="y"></i><i class="y"></i><i class="y"></i><i class="y"></i><i class="y"></i><i class="y"></i></span><span class="sc">6/6</span><span class="ket">SEP 599 unit · 18 Sep</span>
+ <span class="nm">MOTOPAD</span><span><i class="pill p-ak">AKTIF</i></span><span class="dots"><i class="n"></i><i class="n"></i><i class="y"></i><i class="y"></i><i class="y"></i><i class="y"></i></span><span class="sc">4/6</span><span class="ket">SEP 1.005 unit · 22 Sep</span>
+ <span class="nm">MOTOROLA</span><span><i class="pill p-ak">AKTIF</i></span><span class="dots"><i class="y"></i><i class="y"></i><i class="y"></i><i class="y"></i><i class="y"></i><i class="y"></i></span><span class="sc">6/6</span><span class="ket">SEP 43 unit · 9 Sep</span>
+ <span class="nm">VILLAON</span><span><i class="pill p-ps">PASIF</i></span><span class="dots"><i class="y"></i><i class="y"></i><i class="n"></i><i class="n"></i><i class="n"></i><i class="n"></i></span><span class="sc">2/6</span><span class="ket">Belum order SEP</span>
+</div>
+</section>
+
+<!-- Tabs -->
+<section class="opt"><header><span class="tag">BONUS</span><b>Tombol tab detail dealer — KAPITAL (HP 360px)</b></header>
+<p class="note">Sisa pertanyaan sebelumnya. Sekarang 6 ubin sempit, teks 8px. Dua opsi pengganti:</p>
+<div class="phones">
+ <div class="ph"><small>SEKARANG (6 kolom, cuma dikapital)</small><div class="t0">
+  <button class="on"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9H3z"/></svg>RINGKASAN</button><button><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>STATUS</button><button><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7"/></svg>HISTORI</button><button><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13"/></svg>STOK</button><button><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>TRANSAKSI</button><button><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 15-5 16 0"/></svg>KONTAK</button></div>
+  <p class="note" style="margin:8px 0 0">Teks kekecilan, susah kebaca.</p></div>
+ <div class="ph"><small>OPSI 1 · REKOMENDASI — 3×2, ikon kiri</small><div class="t1">
+  <button class="on"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9H3z"/></svg>RINGKASAN</button><button><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>STATUS</button><button><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7"/></svg>HISTORI</button><button><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13"/></svg>STOK</button><button><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>TRANSAKSI</button><button><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 15-5 16 0"/></svg>KONTAK</button></div>
+  <p class="note" style="margin:8px 0 0">Teks 11px, semua kelihatan tanpa geser. Tinggi total ±82px.</p></div>
+ <div class="ph"><small>OPSI 2 — pill geser</small><div class="t2">
+  <button class="on">RINGKASAN</button><button>STATUS</button><button>HISTORI ST/SO</button><button>STOK</button><button>TRANSAKSI</button><button>KONTAK</button></div>
+  <p class="note" style="margin:8px 0 0">Paling ramping (1 baris), tapi KONTAK/TRANSAKSI ketutup, harus digeser.</p></div>
+</div>
+</section>
+</body></html>

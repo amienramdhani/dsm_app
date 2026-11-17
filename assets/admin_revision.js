@@ -1,33 +1,117 @@
 /* DSM approved Admin focus / menu structure / Edit User polish / KPI compact */
 (function(){
 'use strict';
+/* Paket 3 (2026-11-17): 8 tab per OBJEK + seksi + kata kunci tersembunyi + Beranda Admin (Bento B2, warna solid).
+   Isi panel TIDAK diubah; hanya dipindah/dikelompokkan. Penggabungan panel (1b) menyusul. */
+const T=(re,kw,o)=>Object.assign({re,kw},o||{});
 const GROUPS=[
- ['u','Pengguna & Akses','#2B7BE0',/akun pengguna|tambah user|hak export|keamanan akun|kredit tetap ke penjual|sambungan telegram/i],
- ['ap','Approval','#E5354E',/^approval/i],
- ['d','Dealer','#0E9F6E',/cari & edit dealer|riwayat pemilik dealer|tambah dealer|upload dealer|bulk edit customer|update kontak|pic dealer|big region per dealer|dealer tutup|transfer dealer|riwayat transfer|ganti kode induk/i],
- ['h','Upload Harian','#F07A0C',/upload regional/i],
- ['md','Master Data','#6D3FD8',/master product|brand & klasifikasi|region map|hari libur|download data master/i],
- ['kt','KPI & Target','#7C4DCE',/kpi khusus|edit target|atur kpi|region per brand/i],
- ['ka','Kebijakan & Aturan','#B7791F',/master & kebijakan|brand · ambang|bulk master/i],
- ['tm','Telemarketing','#A04BC7',/penugasan telemarketing|kpi telemarketing/i],
- ['fo','Form Order','#0F8F96',/badan usaha.*form order|badan usaha/i],
- ['s','Sistem','#6F7B8E',/.*/i],
+ ['ap','Approval','#E5354E','✅','Persetujuan menunggu',[['',[T(/^approval/i,'setuju persetujuan approve')]]]],
+ ['h','Data Harian','#F07A0C','📊','Upload & kelengkapan data',[
+  ['SERING DIPAKAI',[T(/upload regional/i,'sell thru sell out harian st so upload'),T(/status sync/i,'sinkron sync'),T(/kelengkapan data per region/i,'lengkap region belum upload'),T(/peta kelengkapan/i,'kalender lengkap tanggal')]],
+  ['PENGECEKAN',[T(/catatan kualitas/i,'kualitas error janggal'),T(/kunci periode/i,'lock bulan final tutup periode')]],
+  ['HATI-HATI',[T(/pemulihan regional/i,'restore rollback kembalikan',{w:1})]]]],
+ ['d','Dealer','#0E9F6E','🏪','Data & kepemilikan dealer',[
+  ['SERING DIPAKAI',[T(/cari & edit dealer/i,'customer toko kontak sales edit'),T(/^tambah dealer/i,'customer baru noo'),T(/upload dealer/i,'customer massal tambah edit upload'),T(/bulk edit customer/i,'dealer massal field'),T(/update kontak/i,'kontak telepon alamat pic massal hp')]],
+  ['KEPEMILIKAN',[T(/transfer dealer/i,'pindah sales brand kepemilikan'),T(/riwayat transfer/i,'history log transfer'),T(/riwayat pemilik/i,'history sales pemilik'),T(/big region per dealer/i,'wilayah region'),T(/dealer tutup/i,'nonaktif tutup')]],
+  ['HATI-HATI',[T(/ganti kode induk/i,'hapus delete kode induk',{w:1})]]]],
+ ['b','Brand','#B98900','🏷️','Semua setelan brand',[
+  ['SEMUA SETELAN BRAND',[T(/brand & klasifikasi/i,'brand aktif kelas klasifikasi'),T(/aturan status dealer/i,'ambang status dealer pola brand'),T(/brand · ambang/i,'ambang status dealer brand'),T(/pic dealer/i,'pic sales brand'),T(/product rules|aturan produk/i,'aturan produk brand type')]],
+  ['TERKAIT',[T(null,'',{link:'region per brand',label:'Region per brand & target Big Region',sub:'Ada di tab KPI & Target'})]]]],
+ ['kt','KPI & Target','#7C4DCE','🎯','Target & indikator',[
+  ['TARGET',[T(/edit target/i,'target bulan sales'),T(/region per brand/i,'brand target region big region wilayah')]],
+  ['KPI',[T(/atur kpi/i,'bobot indikator brand kpi'),T(/kpi khusus/i,'type indikator khusus'),T(/kpi telemarketing/i,'telemarketing tm target')]]]],
+ ['md','Master Data','#6D3FD8','🗂️','Produk, wilayah, publikasi',[
+  ['SERING DIPAKAI',[T(/bulk master/i,'massal upload download master'),T(/download data master/i,'download working file master'),T(/master product/i,'type barang produk brand'),T(/cek kesehatan/i,'health error master'),T(/^master & kebijakan/i,'publish kebijakan terbitkan publikasi',{name:'Publikasi Master'})]],
+  ['WILAYAH & KALENDER',[T(/region map/i,'wilayah peta region'),T(/hari libur/i,'kalender libur cuti')]],
+  ['FORM ORDER & TELEMARKETING',[T(/badan usaha/i,'order pt cv form order'),T(/penugasan telemarketing/i,'telemarketing follow up telepon')]]]],
+ ['u','Pengguna & Akses','#2B7BE0','👤','Akun, PIN, izin',[['',[T(/akun pengguna/i,'user login pin role'),T(/tambah user/i,'user massal'),T(/keamanan akun/i,'security pin 2fa sesi'),T(/hak export/i,'download izin export'),T(/kredit tetap ke penjual/i,'kredit sales penjual'),T(/sambungan telegram|telegram/i,'bot notif telegram')]]]],
+ ['s','Sistem','#6F7B8E','⚙️','Backup & log',[['',[T(/autobackup|backup/i,'cadangan backup'),T(/riwayat aktivitas/i,'audit log aktivitas'),T(/notifikasi khusus/i,'push pesan notifikasi')]],['LAINNYA',[T(/.*/,'',{rest:1})]]]],
 ];
+const HOME=['home','Beranda Admin','#0B5CAD','🏠','Ringkasan & sematan'];
 const hexRgb=h=>{const x=String(h).replace('#','');const v=parseInt(x.length===3?x.split('').map(c=>c+c).join(''):x,16);return[(v>>16)&255,(v>>8)&255,v&255]};
 const rgba=(h,a)=>{const[r,g,b]=hexRgb(h);return`rgba(${r},${g},${b},${a})`};
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pend=k=>k==='ap'&&window.dsmApprovalPending>0?`<em class="dsmPend">${window.dsmApprovalPending} baru</em>`:'';
-const groupFor=name=>GROUPS.find(g=>g[3].test(name||''))||GROUPS[GROUPS.length-1];
+const G=k=>k==='home'?HOME:GROUPS.find(g=>g[0]===k)||GROUPS[GROUPS.length-1];
+/* cari tempat panel: grup, seksi, urutan */
+function placeFor(name){let pos=0;for(const g of GROUPS)for(let si=0;si<g[5].length;si++)for(const t of g[5][si][1]){pos++;if(t.re&&!t.rest&&t.re.test(name||''))return{g:g[0],s:si,pos,t}}const g=GROUPS[GROUPS.length-1];return{g:g[0],s:g[5].length-1,pos:999,t:{kw:''}}}
+/* preferensi per akun (disimpan di server) */
+const UI=()=>{try{return(window.dsmUi&&window.dsmUi.prefs)||{pins:[],recent:[]}}catch(e){return{pins:[],recent:[]}}};
+const saveUi=patch=>{try{if(window.dsmUi&&window.dsmUi.save)return window.dsmUi.save(patch)}catch(e){}return Promise.resolve()};
+function ago(t){const m=Math.round((Date.now()-t)/60000);if(m<1)return'baru';if(m<60)return m+' mnt';const h=Math.round(m/60);if(h<24)return h+' jam';const d=Math.round(h/24);return d===1?'kemarin':d+' hari'}
 function enhanceAdminGroups(wrap){
- if(!wrap||wrap.dataset.dsmRev==='1')return;const nav=wrap.querySelector('.admTabs'),list=wrap.querySelector('.admList'),finder=wrap.querySelector('#adminFeatureSearch');if(!nav||!list||!finder)return;
- wrap.dataset.dsmRev='1';nav.classList.add('dsmAdminTabs');list.classList.add('dsmFocusMode');const items=[...list.querySelectorAll(':scope>.adminFeature')];
- items.forEach(d=>{const g=groupFor(d.dataset.feature||d.querySelector('summary')?.innerText||'');d.dataset.dsmGroup=g[0];d.dataset.tab=g[0];d.dataset.dsmColor=g[2];d.style.setProperty('--dsm-soft',rgba(g[2],.085));d.style.setProperty('--dsm-mid',rgba(g[2],.14));d.style.setProperty('--dsm-line',rgba(g[2],.28));d.style.setProperty('--dsm-shadow',rgba(g[2],.11));d.style.setProperty('--dsm-strong',g[2]);});
- const newNav=nav.cloneNode(false);nav.replaceWith(newNav);const newFinder=finder.cloneNode(true);finder.replaceWith(newFinder);const countEl=wrap.querySelector('#adminFeatureCount');let cur=(items[0]?.dataset.dsmGroup)||'u',q='';
+ if(!wrap||wrap.dataset.dsmRev==='2')return;const nav=wrap.querySelector('.admTabs'),list=wrap.querySelector('.admList'),finder=wrap.querySelector('#adminFeatureSearch');if(!nav||!list||!finder)return;
+ wrap.dataset.dsmRev='2';wrap.classList.add('dsmAdm8');nav.classList.add('dsmAdminTabs');list.classList.add('dsmFocusMode');const items=[...list.querySelectorAll(':scope>.adminFeature')];
+ const byName={};
+ items.forEach(d=>{const name=d.dataset.feature||d.querySelector('summary')?.innerText||'',pl=placeFor(name),g=G(pl.g);byName[name]=d;
+  d.dataset.dsmGroup=pl.g;d.dataset.tab=pl.g;d.dataset.dsmSec=String(pl.s);d.dataset.dsmPos=String(pl.pos);d.dataset.dsmColor=g[2];
+  d.style.setProperty('--dsm-soft',rgba(g[2],.085));d.style.setProperty('--dsm-mid',rgba(g[2],.14));d.style.setProperty('--dsm-line',rgba(g[2],.28));d.style.setProperty('--dsm-shadow',rgba(g[2],.11));d.style.setProperty('--dsm-strong',g[2]);
+  d.dataset.hay=((d.dataset.hay||(name+' '+d.textContent))+' '+(pl.t.kw||'')+' '+g[1]).toLowerCase().replace(/\s+/g,' ');
+  const sp=d.querySelector(':scope>summary>span');
+  if(sp&&!sp.dataset.dsm8){sp.dataset.dsm8='1';const tn=[...sp.childNodes].find(n=>n.nodeType===3&&n.textContent.trim());
+   if(tn){let txt=tn.textContent;const sa=/·\s*super admin/i.test(txt);txt=txt.replace(/\s*·\s*super admin\s*/i,' ').trim();if(pl.t.name)txt=pl.t.name;tn.textContent=txt;if(sa){const b=document.createElement('b');b.className='dsmSA';b.textContent='SUPER ADMIN';tn.after(b)}}}
+  const warn=!!(pl.t.w||/HATI-HATI/.test(G(pl.g)[5][pl.s]?.[0]||''));d.classList.toggle('admWarn',warn);if(!warn)d.querySelector(':scope>summary .admWl')?.remove();else if(sp&&!sp.querySelector('.admWl')){const w=document.createElement('span');w.className='admWl';w.textContent='HATI-HATI';const t0=[...sp.childNodes].find(n=>n.nodeType===3&&n.textContent.trim());if(t0)t0.after(w);else sp.prepend(w)}
+  const sum=d.querySelector(':scope>summary');if(sum&&!sum.querySelector('.dsmPin')){const pb=document.createElement('button');pb.type='button';pb.className='dsmPin';pb.title='Sematkan di Beranda Admin';pb.setAttribute('aria-label','Sematkan panel');pb.dataset.pin=name;pb.textContent='☆';sum.appendChild(pb)}
+ });
+ /* urutkan + judul seksi */
+ const sorted=items.slice().sort((a,b)=>GROUPS.findIndex(g=>g[0]===a.dataset.dsmGroup)-GROUPS.findIndex(g=>g[0]===b.dataset.dsmGroup)||(+a.dataset.dsmSec)-(+b.dataset.dsmSec)||(+a.dataset.dsmPos)-(+b.dataset.dsmPos));
+ const heads=[];let last='';
+ sorted.forEach(d=>{const key=d.dataset.dsmGroup+'|'+d.dataset.dsmSec;if(key!==last){last=key;const g=G(d.dataset.dsmGroup),sec=g[5][+d.dataset.dsmSec];
+   /* tautan pintas seksi (mis. Brand › TERKAIT) diletakkan setelah seksinya */
+   if(sec&&sec[0]){const h=document.createElement('div');h.className='dsmSecHd'+(/HATI-HATI/.test(sec[0])?' warn':'');h.dataset.dsmGroup=d.dataset.dsmGroup;h.textContent=sec[0];list.appendChild(h);heads.push(h)}}
+  list.appendChild(d)});
+ /* tautan pintas (seksi yang isinya link, mis. Brand › TERKAIT) */
+ GROUPS.forEach(g=>g[5].forEach(sec=>sec[1].filter(t=>t.link).forEach(t=>{const target=items.find(d=>(d.dataset.feature||'').toLowerCase().includes(t.link));if(!target)return;
+  const h=document.createElement('div');h.className='dsmSecHd';h.dataset.dsmGroup=g[0];h.textContent=sec[0];const a=document.createElement('button');a.type='button';a.className='dsmLink';a.dataset.dsmGroup=g[0];a.innerHTML=`<span><b>${esc(t.label)}</b><small>${esc(t.sub)}</small></span><i>›</i>`;a.onclick=()=>goPanel(target);
+  const lastOfG=[...list.children].filter(x=>x.dataset.dsmGroup===g[0]).pop();(lastOfG||list.lastChild).after(h);h.after(a);heads.push(h,a)})));
+ const home=document.createElement('div');home.className='dsmHome';list.prepend(home);
+ const newNav=nav.cloneNode(false);nav.replaceWith(newNav);const newFinder=finder.cloneNode(true);finder.replaceWith(newFinder);newFinder.placeholder='Cari panel… brand, target, kontak';const countEl=wrap.querySelector('#adminFeatureCount');
+ let cur=(()=>{try{return sessionStorage.getItem('dsm-adm-tab')||'home'}catch(e){return'home'}})(),q='';
  const pick=document.createElement('button');pick.type='button';pick.className='dsmCatPick';pick.setAttribute('aria-haspopup','dialog');newNav.before(pick);
- function openSheet(){if(document.querySelector('.dsmCatSheet'))return;const avail=GROUPS.filter(g=>total(g[0])>0),ov=document.createElement('div');ov.className='dsmCatSheet';ov.setAttribute('role','dialog');ov.setAttribute('aria-modal','true');ov.innerHTML='<div class="dsmCatBox"><div class="dsmCatGrab"></div><h3>Pilih kategori Admin</h3>'+avail.map(g=>`<button type="button" data-k="${g[0]}" class="${g[0]===cur?'on':''}${q?(count(g[0])?' hit':' dim'):''}" style="--c:${g[2]}"><span>${g[1]}</span><em>${q?count(g[0]):total(g[0])}</em>${pend(g[0])}</button>`).join('')+'</div>';const done=()=>{ov.remove();document.removeEventListener('keydown',esc)},esc=e=>{if(e.key==='Escape')done()};ov.onclick=e=>{if(e.target===ov){done();return}const b=e.target.closest('[data-k]');if(!b)return;cur=b.dataset.k;done();paint()};document.addEventListener('keydown',esc);document.body.appendChild(ov)}
- pick.onclick=openSheet;
  const hit=d=>!q||(d.dataset.hay||d.textContent||'').toLowerCase().includes(q),total=k=>items.filter(d=>d.dataset.dsmGroup===k).length,count=k=>items.filter(d=>d.dataset.dsmGroup===k&&hit(d)).length;
- function paint(){const avail=GROUPS.filter(g=>total(g[0])>0);if(!avail.some(g=>g[0]===cur))cur=avail[0]?.[0]||'s';if(q&&count(cur)===0){const f=avail.find(g=>count(g[0])>0);if(f)cur=f[0]}newNav.innerHTML=avail.map(g=>`<button type="button" data-k="${g[0]}" class="${g[0]===cur?'on':''}${q?(count(g[0])?' hit':' dim'):''}" style="--c:${g[2]}"><span>${g[1]}</span><em>${q?count(g[0]):total(g[0])}</em>${pend(g[0])}</button>`).join('');{const g=GROUPS.find(x=>x[0]===cur)||GROUPS[GROUPS.length-1];pick.style.setProperty('--c',g[2]);pick.innerHTML=`<span>${g[1]}</span><em>${q?count(cur):total(cur)}</em>${pend(cur)}<i aria-hidden="true">▾</i>`}items.forEach(d=>{const show=d.dataset.dsmGroup===cur&&hit(d);d.hidden=!show;if(q&&show&&q.length>1)d.open=true});if(countEl)countEl.textContent=q?`${items.filter(hit).length} panel cocok dari ${items.length}`:`${items.length} panel · ketuk untuk membuka`;const hh=wrap.querySelector('.dsmDetailHost');if(hh&&hh._owner&&hh._owner.hidden){const o=hh._owner;release(hh);o.open=false}clearFocus(list)}
- newNav.onclick=e=>{const b=e.target.closest('[data-k]');if(!b)return;cur=b.dataset.k;paint()};newFinder.oninput=e=>{q=e.target.value.trim().toLowerCase();if(!q)items.forEach(d=>d.open=false);paint()};list.addEventListener('toggle',e=>{const d=e.target;if(!(d instanceof HTMLDetailsElement)||d.parentElement!==list)return;const h=ensureHost(list);if(d.open)activate(h,list,d);else{if(h._owner===d)release(h);if(!list.querySelector(':scope>details.adminFeature[open]'))clearFocus(list)}},true);window.addEventListener('dsm-approval-badge',()=>{if(wrap.isConnected)paint()});paint();
+ const avail=()=>[HOME].concat(GROUPS.filter(g=>total(g[0])>0));
+ const tabBtn=g=>{const k=g[0],n=k==='home'?'':(q?count(k):total(k));return `<button type="button" data-k="${k}" class="${k===cur&&!q?'on':''}${q&&k!=='home'?(count(k)?' hit':' dim'):''}${q&&k==='home'?' dim':''}" style="--c:${g[2]}"><span>${esc(g[1].toUpperCase())}</span>${n!==''?`<em>${n}</em>`:''}${pend(k)}</button>`};
+ function openSheet(){if(document.querySelector('.dsmCatSheet'))return;const ov=document.createElement('div');ov.className='dsmCatSheet';ov.setAttribute('role','dialog');ov.setAttribute('aria-modal','true');ov.innerHTML='<div class="dsmCatBox"><div class="dsmCatGrab"></div><h3>PILIH KATEGORI ADMIN</h3>'+avail().map(tabBtn).join('')+'</div>';const done=()=>{ov.remove();document.removeEventListener('keydown',escK)},escK=e=>{if(e.key==='Escape')done()};ov.onclick=e=>{if(e.target===ov){done();return}const b=e.target.closest('[data-k]');if(!b)return;go(b.dataset.k);done()};document.addEventListener('keydown',escK);document.body.appendChild(ov)}
+ pick.onclick=openSheet;
+ function go(k){cur=k;try{sessionStorage.setItem('dsm-adm-tab',k)}catch(e){}if(q){q='';newFinder.value='';items.forEach(d=>d.open=false)}paint()}
+ function goPanel(d){if(!d)return;go(d.dataset.dsmGroup);d.open=true;}
+ wrap._dsmGo=go;wrap._dsmGoPanel=goPanel;
+ function paint(){const av=avail();if(!av.some(g=>g[0]===cur))cur='home';if(q&&(cur==='home'||count(cur)===0)){const f=av.find(g=>g[0]!=='home'&&count(g[0])>0);if(f)cur=f[0]}
+  newNav.innerHTML=av.map(tabBtn).join('');{const g=G(cur);pick.style.setProperty('--c',g[2]);pick.innerHTML=`<span>${esc(g[1].toUpperCase())}</span>${cur!=='home'?`<em>${q?count(cur):total(cur)}</em>`:''}${pend(cur)}<i aria-hidden="true">▾</i>`}
+  const showHome=cur==='home'&&!q;home.hidden=!showHome;if(showHome)renderHome();
+  items.forEach(d=>{const show=!showHome&&d.dataset.dsmGroup===cur&&hit(d);d.hidden=!show;if(q&&show&&q.length>1)d.open=true;const pb=d.querySelector('.dsmPin');if(pb){const on=UI().pins.includes(d.dataset.feature);pb.textContent=on?'★':'☆';pb.classList.toggle('on',on)}});
+  heads.forEach(h=>h.hidden=showHome||!!q||h.dataset.dsmGroup!==cur);
+  wrap.classList.toggle('dsmIsHome',showHome);
+  if(countEl)countEl.textContent=q?`${items.filter(hit).length} panel cocok dari ${items.length}`:showHome?`${items.length} panel · ☆ untuk menyematkan`:`${total(cur)} panel · ketuk untuk membuka`;
+  const hh=wrap.querySelector('.dsmDetailHost');if(hh&&hh._owner&&hh._owner.hidden){const o=hh._owner;release(hh);o.open=false}clearFocus(list)}
+ /* ---------- Beranda Admin (Bento B2, solid) ---------- */
+ let homeData=null,homeReq=false;
+ function tasks(){const out=[];const n=+window.dsmApprovalPending||0;
+  out.push(n>0?{t:`Tinjau ${n} approval`,tag:'PENTING',c:'red',k:'ap'}:{t:'Tidak ada approval menunggu',done:1,k:'ap'});
+  try{const cut=REPORT?.coverage?.cutoff,rs=REPORT?.regionStatus||[];if(rs.length){const lag=rs.filter(r=>!r.st||(cut&&r.st<cut));const p=byName[Object.keys(byName).find(x=>/kelengkapan data per region/i.test(x))||''];out.push(lag.length?{t:`${lag.length} region belum lengkap ST`,tag:'DATA',c:'amber',panel:p}:{t:'Semua region lengkap ST',done:1,panel:p})}}catch(e){}
+  const b=homeData&&homeData.backup;const bp=byName[Object.keys(byName).find(x=>/autobackup|backup/i.test(x))||''];
+  if(b)out.push(b.ok?{t:'Backup harian berhasil'+(b.time?' · '+String(b.time).slice(0,16):''),done:1,panel:bp}:{t:'Backup belum jalan lebih dari 36 jam',tag:'PENTING',c:'red',panel:bp});
+  return out}
+ function ringPct(){try{const cut=REPORT?.coverage?.cutoff,rs=REPORT?.regionStatus||[];if(!rs.length)return null;const ok=rs.filter(r=>r.st&&(!cut||r.st>=cut)).length;return{p:Math.round(ok/rs.length*100),cut,lag:rs.length-ok}}catch(e){return null}}
+ function renderHome(){if(!homeData&&!homeReq&&typeof rpc==='function'){homeReq=true;rpc('apiAdminHome',TOKEN).then(r=>{homeData=r||{};if(!home.hidden)renderHome()}).catch(()=>{homeData={}})}
+  const now=new Date(),hr=now.getHours(),salam=hr<11?'Pagi':hr<15?'Siang':hr<18?'Sore':'Malam';let nama='';try{nama=String(BOOT?.user?.nama||'').trim().split(/\s+/)[0]||'';nama=nama.charAt(0).toUpperCase()+nama.slice(1).toLowerCase()}catch(e){}
+  const tgl=now.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'short'}).toUpperCase()+' · '+now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  const ts=tasks(),done=ts.filter(t=>t.done).length;const pins=UI().pins.filter(n=>byName[n]);const rec=(UI().recent||[]).filter(r=>byName[r.k]).slice(0,4);const ring=ringPct();
+  const ic=n=>{const d=byName[n];const g=G(d?.dataset.dsmGroup);return `<i class="dsmIc" style="--c:${g[2]}">${esc(d?.querySelector('.admIc')?.textContent||g[3])}</i>`};
+  const nm=n=>{const sp=byName[n]?.querySelector(':scope>summary>span');const tn=sp&&[...sp.childNodes].find(x=>x.nodeType===3&&x.textContent.trim());return esc(tn?tn.textContent.trim():n)};
+  home.innerHTML=`<div class="dsmHi"><small>${esc(tgl)}</small><h2>${salam}${nama?', '+esc(nama):''}</h2></div>
+  <div class="dsmBento">
+   <section class="dsmCard dsmTasks"><header><b>TUGAS HARI INI · ${done} DARI ${ts.length}</b></header>${ts.map((t,i)=>`<button type="button" class="dsmTask${t.done?' done':''}" data-task="${i}"><i>${t.done?'✓':''}</i><span>${esc(t.t)}</span>${t.tag?`<em class="${t.c}">${t.tag}</em>`:''}</button>`).join('')}</section>
+   <section class="dsmCard dsmPins"><header><b>PANEL SEMATAN SAYA</b><small>☆ di daftar panel untuk menambah</small></header><div class="dsmPinGrid">${pins.map(n=>`<button type="button" class="dsmPinTile" data-open="${esc(n)}">${ic(n)}<span>${nm(n)}</span></button>`).join('')||'<p class="dsmEmpty">Belum ada panel disematkan. Buka kategori, lalu ketuk ☆ di panel yang sering dipakai.</p>'}</div></section>
+   <section class="dsmCard dsmRing"><header><b>DATA HARIAN</b></header>${ring?`<div class="dsmDonut" style="--p:${ring.p}"><b>${ring.p}%</b></div><p>${ring.lag?ring.lag+' region belum lengkap':'Semua region lengkap'}${ring.cut?'<br><small>ST s.d. '+esc(ring.cut)+'</small>':''}</p>`:'<p class="dsmEmpty">Belum ada data kelengkapan.</p>'}</section>
+   <section class="dsmCard dsmRecent"><header><b>TERAKHIR DIBUKA</b></header>${rec.map(r=>`<button type="button" class="dsmRecIt" data-open="${esc(r.k)}">${ic(r.k)}<span>${nm(r.k)}</span><small>${ago(r.t)}</small></button>`).join('')||'<p class="dsmEmpty">Belum ada.</p>'}</section>
+  </div>
+  <div class="dsmAllHd">SEMUA MENU</div><div class="dsmAll">${GROUPS.filter(g=>total(g[0])>0).map(g=>`<button type="button" class="dsmAllIt" data-go="${g[0]}" style="--c:${g[2]}"><i>${g[3]}</i><b>${esc(g[1])}</b><small>${esc(g[4])}</small><em>${total(g[0])}</em>${pend(g[0])}</button>`).join('')}</div>`;
+  home.onclick=e=>{const o=e.target.closest('[data-open]');if(o){goPanel(byName[o.dataset.open]);return}const g=e.target.closest('[data-go]');if(g){go(g.dataset.go);return}const t=e.target.closest('[data-task]');if(t){const x=ts[+t.dataset.task];if(x.panel)goPanel(x.panel);else if(x.k)go(x.k)}}}
+ newNav.onclick=e=>{const b=e.target.closest('[data-k]');if(!b)return;go(b.dataset.k)};newFinder.oninput=e=>{q=e.target.value.trim().toLowerCase();if(!q)items.forEach(d=>d.open=false);paint()};
+ list.addEventListener('click',e=>{const pb=e.target.closest('.dsmPin');if(!pb)return;e.preventDefault();e.stopPropagation();const n=pb.dataset.pin,p=UI().pins.slice(),i=p.indexOf(n);if(i>=0)p.splice(i,1);else p.push(n);if(window.dsmUi&&window.dsmUi.prefs)window.dsmUi.prefs.pins=p;saveUi({pins:p});paint()},true);
+ list.addEventListener('toggle',e=>{const d=e.target;if(!(d instanceof HTMLDetailsElement)||d.parentElement!==list)return;const h=ensureHost(list);if(d.open){activate(h,list,d);const n=d.dataset.feature;if(n){const r=[{k:n,t:Date.now()}].concat((UI().recent||[]).filter(x=>x.k!==n)).slice(0,6);if(window.dsmUi&&window.dsmUi.prefs)window.dsmUi.prefs.recent=r;clearTimeout(wrap._recT);wrap._recT=setTimeout(()=>saveUi({recent:r}),1500)}}else{if(h._owner===d)release(h);if(!list.querySelector(':scope>details.adminFeature[open]'))clearFocus(list)}},true);
+ window.addEventListener('dsm-approval-badge',()=>{if(wrap.isConnected)paint()});window.addEventListener('dsm-ui-prefs',()=>{if(wrap.isConnected)paint()});paint();
 }
 function focusPanel(list,d){[...list.querySelectorAll(':scope>.adminFeature')].forEach(x=>x.classList.toggle('dsmPanelFocus',x===d));list.classList.add('hasFocus')}
 /* Isi panel tampil di area terpisah di bawah daftar (bukan akordeon): elemen dipindah, bukan di-clone. */

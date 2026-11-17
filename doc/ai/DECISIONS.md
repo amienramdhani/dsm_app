@@ -180,3 +180,23 @@ Approved by user 2026-10-28 (mockup `dsm-ringkasan-harian.html` v4, di luar repo
 - Modul Klaim tidak dibuka ke agent.
 - Semua role (termasuk Admin/Super Admin) sambungan Telegram 30 hari tetap.
 - Nomor telepon dealer/kontak disamarkan di jawaban agent (contoh 0812****789).
+
+## Revisi tampilan & aturan (2026-11-16, disetujui user, BELUM dikoding)
+Rincian lengkap: `doc/ai/BRIEF_2026-11-16_PAKET_REVISI.md`. Mockup: `doc/mockup/2026-11-16/`.
+- Warna DSM **solid**, tanpa gradient (gradient dinilai terlalu "anak muda" untuk aplikasi perusahaan).
+- Admin DSM: **8 tab per objek** (Approval, Data Harian, Dealer, Brand, KPI & Target, Master Data, Pengguna & Akses, Sistem). **Menggantikan** aturan lama "Admin dibagi 5 tab". Halaman depan Admin = Bento B2 Personal (tugas hari ini, panel sematan per user, terakhir dibuka).
+- Gabungan panel: Pengaturan Brand (sub-tab), Upload Massal Dealer (1 pintu, 3 jenis), Download & Upload Master (termasuk Master Dealer). Proses backend tetap yang lama.
+- Status dealer: dasar **Sell Thru**, dihitung **per brand dan total**, pola **6 bulan yang sudah selesai**, **dikunci tiap tanggal 1**, aturan pola bisa diatur + status baru. Bulan berjalan hanya **penanda** (✓ sudah order / ⏳ belum) + "Bangkit bulan ini". **KPI/achievement/insentif sales tidak ikut berubah** (tetap aturan KPI sendiri). Penanda ✓ bulan berjalan = aturan DA KPI. Kartu dealer tetap desain sekarang; penanda = strip di bawah status tiap kotak brand (opsi B).
+- Nama status: AKTIF, DI BAWAH MIN, BANGKIT, TURUN, IDLE, PASIF, NONAKTIF, LAINNYA. **DA BULAN LALU dihapus** (diganti penanda ⏳). Label status maks ±12 huruf, satu baris.
+- Klaim: **satu sakelar Mode Demo** (mati = akun demo tersembunyi + data demo keluar dari semua laporan/budget/export, data disimpan; ada hapus permanen). Nav bawah maks 5 per peran, Kalender ke Menu. Warna Biru DSM.
+- Background bawaan **Abu Polos #F4F6F9**; pilihan per user: Biru Langit, Sky, Tosca Muda, Biru DSM, Petrol, Navy, Biru Royal. Tema gelap: Navy Malam, Hitam Pekat.
+- Tema warna (Corporate/Material/Sport) **ditunda**.
+- Pengerjaan **per paket** (0 audit → 1 Admin → 2 Klaim → 3 Status Dealer → 4 Background → 5 Gelap), tiap paket dites user sebelum lanjut.
+
+## STATUS-DEALER-001 — Aturan Status Dealer (disetujui user 2026-11-17, "gass paket 2")
+- Isi brief Paket 3 lama (`doc/ai/BRIEF_2026-11-16_PAKET_REVISI.md`) berlaku.
+- Status dihitung dari SELURUH transaksi dealer (bukan cakupan orang yang membuka) supaya satu dealer punya satu status terkunci.
+- Kartu "SUDAH ORDER": mode PER BRAND = sama persis dengan DA KPI brand itu; mode TOTAL = jumlah dealer, dengan ⓘ "beda dengan DA KPI karena KPI per dealer-brand".
+- Dealer tutup tidak dihitung di ringkasan status (tampil DEALER TUTUP).
+- Status dikunci saat bulan sebelumnya sudah ditutup (data ST lengkap s.d. akhir bulan, atau periode dikunci); sebelum itu tampil "sementara".
+- Periode lampau yang sudah dikunci tidak ikut berubah saat aturan diubah.

@@ -1,0 +1,110 @@
+/* DSM · Menu atas desktop (opsi B). Hanya aktif saat JS memasang html.tnOn (lebar >= 821px). */
+@media(min-width:821px){
+ html.tnOn body #app,html.tnOn body #app.desktopCollapsed{--v2side:0px!important;padding-left:0!important}
+ /* sidebar lama disembunyikan tapi tetap ada di DOM: tombolnya jadi sumber menu */
+ html.tnOn body #app>.topbar{position:absolute!important;left:-9999px!important;top:0!important;width:1px!important;height:1px!important;min-height:0!important;padding:0!important;overflow:hidden!important;visibility:hidden!important;pointer-events:none!important;box-shadow:none!important}
+ html.tnOn body #app .desktopCollapse{display:none!important}
+ html.tnOn:not(.tnSubOpen) body #app>.updbar,html.tnOn:not(.tnSubOpen) body #app>.subbar{display:none!important}
+ html.tnOn body #app>.updbar{top:62px!important}
+ html.tnOn body #app>.subbar{top:62px!important}
+ html.tnOn body #app>.updbar,html.tnOn body #app>.subbar{box-shadow:0 8px 16px -6px rgba(10,46,87,.28),0 2px 4px rgba(10,46,87,.08),inset 0 -3px 0 #3F4FD6!important}
+
+ /* elemen yang menempel di atas halaman turun di bawah bar menu + bar konteks */
+ html.tnOn .admTabs{top:74px!important}
+ html.tnOn .tm-sticky-actions,html.tnOn .tm-kpi-list,html.tnOn .tt-side{top:74px!important}
+ html.tnOn.tnSubOpen .admTabs{top:128px!important}
+ html.tnOn.tnSubOpen .tm-sticky-actions,html.tnOn.tnSubOpen .tm-kpi-list,html.tnOn.tnSubOpen .tt-side{top:128px!important}
+ html.tnOn .demoBanner{top:62px!important}
+ #tnBar{position:-webkit-sticky;position:sticky;top:0;z-index:64;height:62px;display:flex;align-items:center;gap:6px;padding:0 24px;background:#fff;border-bottom:1px solid #DCE7F2;box-shadow:0 2px 10px rgba(10,46,87,.05);font-family:Inter,"Segoe UI",Arial,sans-serif}
+ #tnBar svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+ #tnBar em{font-style:normal}
+ .tnLogo{display:flex;align-items:center;margin-right:16px;flex:none}
+ .tnLogo img{display:block;height:38px;width:auto;max-width:130px;object-fit:contain}
+ .tnTab{display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 14px;border:0;border-radius:10px;background:none;font:700 13px Inter,"Segoe UI",Arial,sans-serif;color:#3B5568;cursor:pointer;white-space:nowrap;position:relative}
+ .tnTab:hover{background:#F1F6FB;color:#0B5CAD}
+ .tnTab.open{background:#E8F1FB;color:#0B5CAD}
+ .tnTab.on{background:#0B5CAD;color:#fff;box-shadow:0 4px 12px rgba(11,92,173,.25)}
+ .tnTab:focus-visible,.tnMi:focus-visible,.tnPi:focus-visible,.tnAv:focus-visible,.tnRi:focus-visible{outline:3px solid #F0A400;outline-offset:2px}
+ .tnTab .tnCar{width:14px;height:14px;transition:transform .15s}
+ .tnTab.open .tnCar{transform:rotate(180deg)}
+ .tnBd{min-width:18px;height:18px;border-radius:99px;padding:0 6px;display:inline-grid;place-items:center;font-size:10px;font-weight:800;background:#FDE8EB;color:#D1293F}
+ .tnTab.on .tnBd{background:#fff;color:#0B5CAD}
+ .tnVs{width:1px;height:24px;background:#DCE7F2;margin:0 8px;flex:none}
+ .tnSp{flex:1;min-width:8px}
+ .tnDd{position:relative}
+ .tnMega{position:absolute;left:0;top:calc(100% + 10px);width:calc(var(--tnc,3)*246px + 28px);display:grid;grid-template-columns:repeat(var(--tnc,3),1fr);gap:8px;padding:14px;background:#fff;border:1px solid #E3EAF2;border-radius:16px;box-shadow:0 18px 44px rgba(10,46,87,.18)}
+ .tnMega[hidden],.tnPop[hidden],.tnRes[hidden]{display:none!important}
+ .tnGl{font-size:10px;font-weight:800;letter-spacing:.8px;color:#9AA6B6;padding:4px 10px 6px}
+ .tnMi{display:flex;align-items:center;gap:11px;width:100%;padding:8px 10px;border:0;border-radius:11px;background:none;text-align:left;color:#3B5568;cursor:pointer;font-family:inherit}
+ .tnMi:hover{background:#F1F6FB}
+ .tnMi.on{background:#E8F1FB}
+ .tnMi b{display:block;font-size:13px;color:#16202E}
+ .tnMi small{display:block;font-size:10.5px;color:#8A9AA8;font-weight:400}
+ .tnMic{width:34px;height:34px;border-radius:10px;background:#E8F1FB;color:#0B5CAD;display:grid;place-items:center;flex:none}
+ .tnMi.on .tnMic{background:#0B5CAD;color:#fff}
+ .tnFind{position:relative}
+ .tnFi{display:flex;align-items:center;gap:8px;height:36px;width:230px;border:1px solid #E3EAF2;border-radius:10px;padding:0 10px;background:#F8FAFC;color:#9AA6B6;margin:0;cursor:text}
+ .tnFi:focus-within{border-color:#0B5CAD;background:#fff;box-shadow:0 0 0 3px rgba(11,92,173,.12)}
+ #tnBar .tnFi input{flex:1;min-width:0;width:auto;height:auto;min-height:0;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;-webkit-appearance:none;appearance:none;outline:0;font:500 12px Inter,"Segoe UI",Arial,sans-serif;color:#16202E;padding:0!important;margin:0}
+ .tnFi input::-webkit-search-cancel-button{display:none}
+ .tnFi kbd{font:700 10px Inter,Arial,sans-serif;border:1px solid #E3EAF2;border-radius:5px;padding:1px 5px;color:#8A9AA8;background:#fff}
+ .tnRes{position:absolute;right:0;top:calc(100% + 8px);width:300px;padding:6px;background:#fff;border:1px solid #E3EAF2;border-radius:14px;box-shadow:0 14px 34px rgba(10,46,87,.16)}
+ .tnRi{display:flex;align-items:center;gap:10px;width:100%;padding:7px 8px;border:0;border-radius:10px;background:none;text-align:left;cursor:pointer;color:#3B5568;font-family:inherit}
+ .tnRi.on,.tnRi:hover{background:#E8F1FB}
+ .tnRi b{display:block;font-size:12.5px;color:#16202E}
+ .tnRi small{display:block;font-size:10.5px;color:#8A9AA8}
+ .tnNo{padding:12px;font-size:12px;color:#8A9AA8}
+ .tnPic{width:18px;height:18px;display:grid;place-items:center;flex:none}
+ .tnPic svg{width:16px;height:16px}
+ .tnAv{width:36px;height:36px;border-radius:50%;border:0;background:#F07A0C;color:#fff;font:800 13px Inter,Arial,sans-serif;cursor:pointer;margin-left:6px;display:grid;place-items:center}
+ .tnAv:hover{filter:brightness(1.06)}
+ .tnPop{position:absolute;right:0;top:calc(100% + 10px);width:230px;padding:6px;background:#fff;border:1px solid #E3EAF2;border-radius:14px;box-shadow:0 14px 34px rgba(10,46,87,.16)}
+ .tnMe{padding:8px 10px 10px;border-bottom:1px solid #EEF2F6;margin-bottom:4px}
+ .tnMe b{display:block;font-size:13px;color:#16202E}
+ .tnMe small{font-size:10.5px;color:#8A9AA8;letter-spacing:.3px}
+ .tnPi{display:flex;align-items:center;gap:10px;width:100%;height:36px;padding:0 10px;border:0;border-radius:9px;background:none;font:600 13px Inter,"Segoe UI",Arial,sans-serif;color:#3B5568;cursor:pointer;text-align:left}
+ .tnPi:hover{background:#F1F6FB}
+ .tnPi.out{color:#D1293F}
+ .tnPop hr{border:0;border-top:1px solid #EEF2F6;margin:4px 0}
+}
+/* layar sempit: ikon saja untuk 4 tombol sendiri, cari menu mengecil */
+@media(min-width:821px) and (max-width:1180px){
+ .tnTop span{display:none}
+ .tnTop{padding:0 10px}
+ .tnFi{width:150px}
+ .tnFi kbd{display:none}
+ #tnBar{padding:0 14px}
+}
+@media(max-width:820px){#tnBar{display:none!important}}
+
+@media(min-width:821px){
+ #tnBar .tnScope{display:inline-flex;align-items:center;gap:6px;height:38px;border:1px solid #DCE6EE;border-radius:11px;background:#fff;padding:0 12px;margin-right:8px;font:800 11px Inter,"Segoe UI",Arial,sans-serif;letter-spacing:.3px;text-transform:uppercase;color:#43627A;cursor:pointer;white-space:nowrap}
+ #tnBar .tnScope b{font-size:10px;transition:transform .15s}
+ #tnBar .tnScope:hover{background:#F2F7FC}
+ #tnBar .tnScope.on{background:#E3EEFB;border-color:#B9D2EE;color:#0B5CAD}
+ #tnBar .tnScope.on b{transform:rotate(180deg)}
+}
+@media(max-width:1180px){#tnBar .tnScT{display:none}}
+html.tnOn:not(.tnSubOpen) #tnBar{box-shadow:0 8px 16px -6px rgba(10,46,87,.24),0 2px 4px rgba(10,46,87,.08),inset 0 -3px 0 #3F4FD6}
+@media(min-width:821px){html.tnOn body #main{box-shadow:none!important}}
+
+/* peringatan ST di bar atas + jalur halaman */
+@media(min-width:821px){
+ html.tnOn body #app .freshness.v7warn{display:none!important}
+ #tnBar .tnWarnWrap{position:relative;margin-right:8px}
+ #tnBar .tnWarnWrap[hidden]{display:none}
+ #tnBar .tnWarn{display:inline-flex;align-items:center;gap:7px;height:38px;border:1px solid #F3DE9C;border-radius:11px;background:#FFF3CC;color:#7A5A00;padding:0 12px;font:800 11px Inter,"Segoe UI",Arial,sans-serif;letter-spacing:.3px;cursor:pointer;white-space:nowrap}
+ #tnBar .tnWarn b{font-size:10px}
+ #tnBar .tnWarn:hover{background:#FFEDB0}
+ #tnBar .tnWarnPop{position:absolute;right:0;top:calc(100% + 10px);width:360px;max-height:70vh;overflow:auto;background:#fff;border:1px solid #E3EAF2;border-radius:14px;box-shadow:0 14px 34px rgba(10,46,87,.18);padding:12px 14px;font-size:12px;color:#43627A;line-height:1.5;z-index:70}
+ #tnBar .tnWarnPop[hidden]{display:none}
+ #tnBar .tnWh{font-weight:800;color:#10394E;margin-bottom:8px}
+ #tnBar .tnWarnPop table{width:100%;border-collapse:collapse;font-size:11.5px}
+ #tnBar .tnWarnPop th{text-align:left;font-size:9.5px;letter-spacing:.4px;color:#8A99AB;padding:4px 6px;border-bottom:1px solid #EEF2F6;text-transform:uppercase}
+ #tnBar .tnWarnPop td{padding:5px 6px;border-bottom:1px solid #F3F6F9}
+ #tnBar .tnWarnPop tr.lag td{background:#FFF8E1;font-weight:700;color:#7A5A00}
+ #tnBar .tnWarnPop p{margin:8px 0 0;font-size:10.5px;color:#8A99AB}
+}
+@media(min-width:821px) and (max-width:1560px){
+}
+#tnBar .tnWarnPop th::before,#tnBar .tnWarnPop th::after{display:none!important}

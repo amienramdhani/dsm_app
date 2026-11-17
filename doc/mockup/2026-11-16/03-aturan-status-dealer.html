@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>DSM - Mockup Aturan Status Dealer</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,sans-serif;color:#16202E;background:#F4F6F9}
+.app{max-width:430px;margin:0 auto;min-height:100vh;padding:0 0 110px}
+.hd{background:#0B5CAD;color:#fff;padding:16px 16px 18px}
+.hd small{font-size:10.5px;font-weight:700;letter-spacing:1px;opacity:.8}
+.hd h1{font-size:20px;font-weight:800;margin-top:2px}
+.hd p{font-size:11.5px;opacity:.85;margin-top:4px;line-height:1.45}
+.wrap{padding:12px;display:flex;flex-direction:column;gap:10px}
+.card{background:#fff;border:1px solid #E6EAF0;border-radius:16px;padding:13px;box-shadow:0 4px 14px rgba(16,40,80,.05)}
+.ct{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.ct b{font-size:13px;font-weight:800;letter-spacing:.3px}
+.ct small{font-size:10.5px;color:#7C8899}
+.lbl{font-size:10px;font-weight:800;letter-spacing:.8px;color:#7C8899;margin-bottom:6px}
+.seg{display:flex;background:#F1F4F8;border-radius:10px;padding:3px}
+.seg span{flex:1;text-align:center;font-size:11px;font-weight:800;padding:7px 4px;border-radius:8px;color:#7C8899;cursor:pointer}
+.seg span.on{background:#fff;color:#0B5CAD;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.num{display:flex;align-items:center;justify-content:space-between;background:#F1F4F8;border-radius:10px;padding:4px}
+.num i{font-style:normal;width:30px;height:30px;border-radius:8px;background:#fff;display:grid;place-items:center;font-weight:800;color:#0B5CAD;cursor:pointer}
+.num b{font-size:14px}
+.leg{display:flex;gap:10px;flex-wrap:wrap;font-size:10.5px;color:#5B6778;margin-top:4px}
+.leg span{display:flex;align-items:center;gap:4px}
+.c{width:20px;height:20px;border-radius:6px;display:inline-grid;place-items:center;font-size:11px;font-weight:800}
+.c.y{background:#12A86B;color:#fff}.c.h{background:#F5B53F;color:#fff}.c.n{background:#E5484D;color:#fff}.c.a{background:#EEF1F5;color:#9AA6B6;border:1px dashed #C5CEDA}
+/* rules */
+.mh{display:grid;grid-template-columns:16px repeat(6,1fr) 1.7fr;gap:4px;align-items:center;font-size:9.5px;font-weight:800;color:#7C8899;letter-spacing:.4px;padding:0 2px 6px;text-align:center}
+.mh .cur{color:#0B5CAD}
+.rule{display:grid;grid-template-columns:16px repeat(6,1fr) 1.7fr;gap:4px;align-items:center;padding:7px 2px;border-top:1px solid #EEF1F5}
+.rule.hit{background:#EEF5FF;border-radius:10px;border-top-color:transparent;outline:2px solid #0B5CAD}
+.rule .no{font-size:10px;color:#9AA6B6;font-weight:800;text-align:center}
+.cell{height:28px;border-radius:7px;display:grid;place-items:center;font-size:12px;font-weight:800;cursor:pointer;user-select:none}
+.st{font-size:9px;font-weight:800;padding:5px 4px;border-radius:8px;text-align:center;cursor:pointer;line-height:1.15}
+.add{margin-top:8px;border:1.5px dashed #C5CEDA;border-radius:10px;padding:9px;text-align:center;font-size:11.5px;font-weight:800;color:#0B5CAD;cursor:pointer}
+.hint{font-size:10.5px;color:#7C8899;line-height:1.45;margin-top:8px}
+/* sim */
+.simrow{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.sm{text-align:center}
+.sm small{display:block;font-size:9.5px;font-weight:800;color:#7C8899;margin-bottom:4px}
+.sm .cell{height:40px;font-size:15px}
+.res{margin-top:10px;border-radius:12px;padding:11px;display:flex;align-items:center;gap:10px}
+.res b{font-size:16px;font-weight:800}
+.res small{display:block;font-size:10.5px;opacity:.85}
+/* impact */
+.imp{display:flex;flex-direction:column;gap:6px}
+.ir{display:grid;grid-template-columns:1.4fr 1fr 1fr .9fr;gap:6px;align-items:center;font-size:11.5px}
+.ir.h{font-size:9.5px;font-weight:800;color:#7C8899;letter-spacing:.4px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+.dl{font-weight:800;font-size:10.5px;text-align:right}
+.up{color:#12A86B}.dn{color:#E5484D}.eq{color:#9AA6B6}
+/* status list */
+.sl{display:flex;flex-wrap:wrap;gap:6px}
+.sp{font-size:10.5px;font-weight:800;padding:5px 9px;border-radius:99px;display:flex;align-items:center;gap:5px}
+.sp em{font-style:normal;font-size:9px;opacity:.7}
+/* bottom */
+.bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:#fff;border-top:1px solid #E6EAF0;padding:10px 12px 16px;display:flex;gap:8px}
+.bar button{flex:1;border:0;border-radius:12px;padding:13px;font-weight:800;font-size:12px;letter-spacing:.5px}
+.b1{background:#F1F4F8;color:#3D4A5C}.b2{background:#0B5CAD;color:#fff}
+/* picker sheet */
+.ov{position:fixed;inset:0;background:rgba(16,24,40,.35);display:none;z-index:20}
+.ov.show{display:block}
+.sheet{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:100%;max-width:430px;background:#fff;border-radius:20px 20px 0 0;padding:14px;z-index:21;display:none}
+.sheet.show{display:block}
+.sheet h3{font-size:14px;margin-bottom:10px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opts div{padding:10px;border-radius:10px;font-weight:800;font-size:12px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="app">
+ <div class="hd"><small>ADMIN › BRAND › ATURAN STATUS DEALER</small><h1>Aturan Status Dealer</h1>
+  <p>Status ditentukan dari <b>pola order 6 bulan yang sudah selesai</b> dan <b>dikunci tiap tanggal 1</b>. Status November = pola Mei–Oktober. Order bulan berjalan tampil sebagai penanda, tidak mengubah status.</p></div>
+ <div class="wrap">
+
+  <!-- dasar hitung -->
+  <div class="card">
+   <div class="ct"><b>DASAR HITUNG</b><small>berlaku untuk semua aturan</small></div>
+   <div class="lbl">UNIT DIHITUNG DARI</div>
+   <div class="seg" data-g="src"><span class="on">SELL THRU</span><span>SELL OUT</span></div>
+   <div class="lbl" style="margin-top:10px">CAKUPAN</div>
+   <div class="seg" data-g="scope"><span class="on">PER BRAND</span><span>TOTAL SEMUA BRAND</span></div>
+   <div class="g2">
+    <div><div class="lbl">"ORDER" = MINIMAL</div><div class="num"><i data-d="-1" data-k="min">−</i><b><span id="min">2</span> unit</b><i data-d="1" data-k="min">+</i></div></div>
+    <div><div class="lbl">"DI BAWAH MIN" = </div><div class="num" style="justify-content:center;padding:9px"><b style="font-size:12px">1 s.d. <span id="min2">1</span> unit</b></div></div>
+   </div>
+   <div class="leg" style="margin-top:10px"><span><i class="c y">✓</i>Order</span><span><i class="c h">½</i>Di bawah min</span><span><i class="c n">✕</i>Tidak order</span><span><i class="c a">•</i>Bebas</span></div>
+  </div>
+
+  <!-- aturan -->
+  <div class="card">
+   <div class="ct"><b>ATURAN POLA ORDER</b><small>ketuk kotak untuk ganti</small></div>
+   <div class="mh"><span>#</span><span>MEI</span><span>JUN</span><span>JUL</span><span>AGU</span><span>SEP</span><span class="cur">OKT</span><span>STATUS</span></div>
+   <div id="rules"></div>
+   <div class="add" id="addRule">+ TAMBAH ATURAN</div>
+   <div class="hint">Aturan #3: Jul & Agu order, Sep & Okt tidak → <b>TURUN</b>. Aturan #7: 6 bulan penuh tanpa order → <b>TIDAK AKTIF</b> (ditaruh sebelum PASIF biar kena duluan). Kalau tidak ada aturan yang cocok, dealer masuk <b>LAINNYA</b>.</div>
+  </div>
+
+  <!-- simulator -->
+  <div class="card">
+   <div class="ct"><b>COBA POLA</b><small>simulasi 1 dealer</small></div>
+   <div class="simrow" id="sim"></div>
+   <div class="res" id="res"></div>
+  </div>
+
+
+  <div class="card">
+   <div class="ct"><b>PENANDA BULAN BERJALAN</b><small>November · s.d. hari ini</small></div>
+   <div class="hint" style="margin-top:0;margin-bottom:9px">Status tetap, tapi dealer yang sudah order bulan ini dapat tanda <b style="color:#0E6E48">✓ ORDER NOV</b>. Yang statusnya bagus tapi belum order dapat tanda <b style="color:#B4530E">⏳ BELUM ORDER</b>.</div>
+   <div class="lbl">BANGKIT BULAN INI</div>
+   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px">
+    <div style="background:#FFF1DC;border-radius:10px;padding:8px;text-align:center"><b style="font-size:16px;color:#B7791F">58</b><div style="font-size:9px;font-weight:800;color:#B7791F">DARI IDLE</div></div>
+    <div style="background:#FBE3E1;border-radius:10px;padding:8px;text-align:center"><b style="font-size:16px;color:#A3201B">21</b><div style="font-size:9px;font-weight:800;color:#A3201B">DARI PASIF</div></div>
+    <div style="background:#FDE8D4;border-radius:10px;padding:8px;text-align:center"><b style="font-size:16px;color:#B4530E">17</b><div style="font-size:9px;font-weight:800;color:#B4530E">DARI TURUN</div></div>
+    <div style="background:#E5E7EB;border-radius:10px;padding:8px;text-align:center"><b style="font-size:16px;color:#374151">6</b><div style="font-size:9px;font-weight:800;color:#374151">DARI TDK AKTIF</div></div>
+   </div>
+   <div class="lbl">CONTOH DI DAFTAR DEALER</div>
+   
+   <div style="border:1px solid #EEF1F5;border-radius:12px;padding:10px;margin-bottom:6px"><b style="font-size:12.5px;color:#0B5CAD">CV. BERKAH PHONE</b> <small style="font-size:10px;color:#7C8899">Indramayu</small><div style="margin-top:6px;display:flex;gap:5px;flex-wrap:wrap"><span class="sp" style="background:#FFF1DC;color:#B7791F">IDLE</span><span class="sp" style="background:#E2F5EA;color:#0E6E48">✓ ORDER NOV · 4 unit · 12 Nov</span></div></div>
+   <div style="border:1px solid #EEF1F5;border-radius:12px;padding:10px"><b style="font-size:12.5px;color:#0B5CAD">SINAR CELL</b> <small style="font-size:10px;color:#7C8899">Cirebon</small><div style="margin-top:6px;display:flex;gap:5px;flex-wrap:wrap"><span class="sp" style="background:#E2F5EA;color:#0E6E48">AKTIF</span><span class="sp" style="background:#FDE8D4;color:#B4530E">⏳ BELUM ORDER NOV</span></div></div>
+   <div class="hint">Di FILTER Dealer nanti ada pilihan: <b>Sudah order bulan ini</b> / <b>Belum order bulan ini</b>, dikombinasikan dengan status. Contoh: IDLE + sudah order = dealer yang bangkit.</div>
+  </div>
+  <!-- dampak -->
+  <div class="card">
+   <div class="ct"><b>DAMPAK SEBELUM SIMPAN</b><small>contoh · Nasional · Nov 2026</small></div>
+   <div class="imp">
+    <div class="ir h"><span>STATUS</span><span style="text-align:right">SEKARANG</span><span style="text-align:right">SESUDAH</span><span style="text-align:right">SELISIH</span></div>
+    <div id="imp"></div>
+   </div>
+   <div class="hint">Angka di sini cuma contoh. Di aplikasi nanti dihitung dari data asli sebelum lu tekan SIMPAN.</div>
+  </div>
+
+  <!-- daftar status -->
+  <div class="card">
+   <div class="ct"><b>DAFTAR STATUS</b><small>bisa tambah status baru</small></div>
+   <div class="sl" id="sl"></div>
+   <div class="add" style="margin-top:10px">+ STATUS BARU</div>
+  </div>
+
+  <!-- per brand -->
+  <div class="card">
+   <div class="ct"><b>PENGECUALIAN PER BRAND</b><small>opsional</small></div>
+   <div class="ir" style="padding:6px 0;border-top:1px solid #EEF1F5"><span><b>Standar</b></span><span style="grid-column:span 3;text-align:right;font-size:11px;color:#7C8899">8 aturan di atas</span></div>
+   <div class="ir" style="padding:6px 0;border-top:1px solid #EEF1F5"><span><b>Samsung</b></span><span style="grid-column:span 3;text-align:right;font-size:11px;color:#7C8899">ikut Standar</span></div>
+   <div class="ir" style="padding:6px 0;border-top:1px solid #EEF1F5"><span><b>Infinix</b></span><span style="grid-column:span 3;text-align:right;font-size:11px;color:#C25A12;font-weight:700">aturan sendiri · min 3 unit</span></div>
+   <div class="add">+ ATUR BRAND LAIN</div>
+  </div>
+ </div>
+</div>
+
+<div class="bar"><button class="b1">RESET KE STANDAR</button><button class="b2">SIMPAN ATURAN</button></div>
+<div class="ov" id="ov"></div>
+<div class="sheet" id="sheet"><h3>Pilih status</h3><div class="opts" id="opts"></div></div>
+
+<script>
+const S={
+ 'AKTIF':['#E2F5EA','#0E6E48'],
+ 'BELUM MINIMUM DA':['#FFF4D6','#8A5A00'],
+ 'KEMBALI AKTIF':['#E3F4F6','#0E7C8C'],
+ 'TURUN':['#FDE8D4','#B4530E'],
+ 'DA BULAN LALU':['#E6EEFA','#0B5CAD'],
+ 'IDLE':['#FFF1DC','#B7791F'],
+ 'PASIF':['#FBE3E1','#A3201B'],
+ 'TIDAK AKTIF':['#E5E7EB','#374151'],
+ 'LAINNYA':['#EEF1F5','#5B6778']
+};
+const CY=['y','h','n','a'],SYM={y:'✓',h:'½',n:'✕',a:'•'};
+let R=[
+ [['a','a','a','a','a','y'],'AKTIF'],
+ [['a','a','a','a','a','h'],'BELUM MINIMUM DA'],
+ [['a','a','y','y','n','n'],'TURUN'],
+ [['a','a','n','n','n','y'],'KEMBALI AKTIF'],
+ [['a','a','a','a','y','n'],'DA BULAN LALU'],
+ [['a','a','a','y','n','n'],'IDLE'],
+ [['n','n','n','n','n','n'],'TIDAK AKTIF'],
+ [['a','a','a','n','n','n'],'PASIF']
+];
+let sim=['n','y','y','y','n','n'],pickFor=null;
+const $=id=>document.getElementById(id);
+const cell=(v,ri,ci)=>`<div class="cell c ${v}" style="width:auto;height:30px" data-r="${ri}" data-c="${ci}">${SYM[v]}</div>`;
+const match=(p,s)=>p.every((v,i)=>v==='a'||v===s[i]||(v==='y'&&false));
+function find(s){return R.findIndex(r=>match(r[0],s))}
+function render(){
+ const hit=find(sim);
+ $('rules').innerHTML=R.map((r,i)=>`<div class="rule ${i===hit?'hit':''}"><span class="no">${i+1}</span>${r[0].map((v,ci)=>cell(v,i,ci)).join('')}<span class="st" data-p="${i}" style="background:${S[r[1]][0]};color:${S[r[1]][1]}">${r[1]} ▾</span></div>`).join('');
+ $('sim').innerHTML=['MEI','JUN','JUL','AGU','SEP','OKT'].map((m,i)=>`<div class="sm"><small>${m}</small><div class="cell c ${sim[i]==='a'?'n':sim[i]}" data-s="${i}" style="width:auto">${SYM[sim[i]==='a'?'n':sim[i]]}</div></div>`).join('');
+ const st=hit<0?'LAINNYA':R[hit][1];
+ $('res').style.background=S[st][0];$('res').style.color=S[st][1];
+ $('res').innerHTML=`<div style="flex:1"><small>STATUS NOVEMBER (dikunci 1 Nov)</small><b>${st}</b></div><small style="text-align:right">${hit<0?'tidak ada aturan cocok':'kena aturan #'+(hit+1)}</small>`;
+ const imp=[['AKTIF',884,861],['BELUM MINIMUM DA',212,235],['KEMBALI AKTIF',0,58],['TURUN',0,134],['DA BULAN LALU',1149,1015],['IDLE',570,512],['PASIF',937,688],['TIDAK AKTIF',0,249],['LAINNYA',0,0]];
+ $('imp').innerHTML=imp.map(([k,a,b])=>{const d=b-a;return `<div class="ir"><span><i class="dot" style="background:${S[k][1]}"></i>${k}</span><span style="text-align:right">${a.toLocaleString('id')}</span><span style="text-align:right;font-weight:800">${b.toLocaleString('id')}</span><span class="dl ${d>0?'up':d<0?'dn':'eq'}">${d>0?'+':''}${d||'–'}</span></div>`}).join('');
+ $('sl').innerHTML=Object.keys(S).map(k=>`<span class="sp" style="background:${S[k][0]};color:${S[k][1]}">${k}${['KEMBALI AKTIF','TURUN','TIDAK AKTIF'].includes(k)?'<em>BARU</em>':''}</span>`).join('');
+}
+document.addEventListener('click',e=>{
+ const c=e.target.closest('[data-r]');
+ if(c){const r=+c.dataset.r,ci=+c.dataset.c;const v=R[r][0][ci];R[r][0][ci]=CY[(CY.indexOf(v)+1)%4];render();return}
+ const s=e.target.closest('[data-s]');
+ if(s){const i=+s.dataset.s;const order=['y','h','n'];sim[i]=order[(order.indexOf(sim[i])+1)%3];render();return}
+ const p=e.target.closest('[data-p]');
+ if(p){pickFor=+p.dataset.p;$('opts').innerHTML=Object.keys(S).map(k=>`<div data-o="${k}" style="background:${S[k][0]};color:${S[k][1]}">${k}</div>`).join('');$('ov').classList.add('show');$('sheet').classList.add('show');return}
+ const o=e.target.closest('[data-o]');
+ if(o){R[pickFor][1]=o.dataset.o;close();render();return}
+ if(e.target.id==='ov')close();
+ if(e.target.id==='addRule'){R.push([['a','a','a','a','a','a'],'LAINNYA']);render()}
+ const n=e.target.closest('[data-k]');
+ if(n){const v=Math.max(1,+$('min').textContent+ +n.dataset.d);$('min').textContent=v;$('min2').textContent=v-1||'–'}
+ const sg=e.target.closest('.seg span');
+ if(sg){sg.parentNode.querySelectorAll('span').forEach(x=>x.classList.toggle('on',x===sg))}
+});
+function close(){$('ov').classList.remove('show');$('sheet').classList.remove('show')}
+render();
+</script>
+</body>
+</html>

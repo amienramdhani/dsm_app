@@ -11,7 +11,7 @@ const wkt = d => d ? tgl(d.slice(0, 10)) + ' ' + d.slice(11, 19).replace(/:/g, '
 const wktS = d => d ? (+d.slice(8, 10)) + ' ' + BLN[+d.slice(5, 7)] + ' ' + d.slice(11, 19).replace(/:/g, '.') : '-';
 const today = () => new Date(Date.now() - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
 const STAGE = { RGM: 'RGM', ADMIN: 'Admin', AUDIT: 'Audit', HOS: 'HOS', FM: 'Finance Manager', FT: 'Finance Transfer', PEMOHON: 'Pemohon' };
-const CATCOL = { Transportasi: 'linear-gradient(135deg,#3C8DE0,#1E5FB8)', Entertain: 'linear-gradient(135deg,#8C6BE8,#6D3FD8)', Perdin: 'linear-gradient(135deg,#27B38F,#12866A)', Operasional: 'linear-gradient(135deg,#FFB020,#F07A0C)' };
+const CATCOL = { Transportasi: '#1E5FB8', Entertain: '#6D3FD8', Perdin: '#12866A', Operasional: '#F07A0C' };
 const CATIC = { Transportasi: '⛽', Entertain: '🍽', Perdin: '🧳', Operasional: '🏢' };
 
 async function api(a, data = {}, _again = false) {
@@ -82,15 +82,17 @@ const skeleton = () => `<div class="skel"></div><div class="skel"></div><div cla
 
 /* ---------- kerangka ---------- */
 const MODES = {
-  pemohon: { n: 'Pemohon', nav: [['🏠', 'Beranda', '#/home'], ['🧾', 'Klaim saya', '#/mine'], ['➕', 'Ajukan', '#/new'], ['💵', 'Petty cash', '#/pc'], ['🗓️', 'Kalender', '#/kalender'], ['☰', 'Menu', '#/menu']] },
+  pemohon: { n: 'Pemohon', nav: [['🏠', 'Beranda', '#/home'], ['🧾', 'Klaim saya', '#/mine'], ['➕', 'Ajukan', '#/new'], ['💵', 'Petty cash', '#/pc'], ['☰', 'Menu', '#/menu']] },
   rgm: { n: 'RGM', nav: [['🏠', 'Beranda', '#/home'], ['📥', 'Antrean PC', '#/pcq/RGM'], ['⏳', 'Diproses', '#/pcproses'], ['🗓️', 'Kalender', '#/kalender'], ['☰', 'Menu', '#/menu']] },
-  admin: { n: 'Admin', nav: [['📥', 'Antrean', '#/home'], ['📝', 'BA', '#/ba'], ['↩️', 'Revisi', '#/revisi'], ['⏳', 'Diproses', '#/proses'], ['🗓️', 'Kalender', '#/kalender'], ['☰', 'Menu', '#/menu']] },
-  audit: { n: 'Audit', nav: [['🏠', 'Antrean BA', '#/home'], ['📚', 'Semua klaim', '#/all'], ['📊', 'Budget', '#/monitor'], ['⬇️', 'Export', '#/rekap'], ['🗓️', 'Kalender', '#/kalender'], ['☰', 'Menu', '#/menu']] },
-  hos: { n: 'HOS', nav: [['🏠', 'Antrean', '#/home'], ['📝', 'BA', '#/ba'], ['📚', 'Semua klaim', '#/all'], ['📊', 'Budget', '#/monitor'], ['📈', 'Realisasi', '#/realisasi'], ['🗓️', 'Kalender', '#/kalender'], ['☰', 'Menu', '#/menu']] },
-  fm: { n: 'Finance Manager', nav: [['🏠', 'Antrean', '#/home'], ['📝', 'BA', '#/ba'], ['⏳', 'Diproses', '#/proses'], ['📊', 'Budget', '#/monitor'], ['📈', 'Realisasi', '#/realisasi'], ['🗓️', 'Kalender', '#/kalender'], ['☰', 'Menu', '#/menu']] },
-  ft: { n: 'Finance Transfer', nav: [['💸', 'Siap transfer', '#/home'], ['🔜', 'Akan datang', '#/upcoming'], ['🕘', 'Riwayat', '#/selesai'], ['📈', 'Realisasi', '#/realisasi'], ['🗓️', 'Kalender', '#/kalender'], ['☰', 'Menu', '#/menu']] },
+  admin: { n: 'Admin', nav: [['📥', 'Antrean', '#/home'], ['📝', 'BA', '#/ba'], ['↩️', 'Revisi', '#/revisi'], ['⏳', 'Diproses', '#/proses'], ['☰', 'Menu', '#/menu']] },
+  audit: { n: 'Audit', nav: [['🏠', 'Antrean BA', '#/home'], ['📚', 'Semua', '#/all'], ['📊', 'Budget', '#/monitor'], ['⬇️', 'Export', '#/rekap'], ['☰', 'Menu', '#/menu']] },
+  hos: { n: 'HOS', nav: [['🏠', 'Antrean', '#/home'], ['📝', 'BA', '#/ba'], ['📚', 'Semua', '#/all'], ['📊', 'Budget', '#/monitor'], ['☰', 'Menu', '#/menu']] },
+  fm: { n: 'Finance Manager', nav: [['🏠', 'Antrean', '#/home'], ['📝', 'BA', '#/ba'], ['⏳', 'Diproses', '#/proses'], ['📊', 'Budget', '#/monitor'], ['☰', 'Menu', '#/menu']] },
+  ft: { n: 'Finance Transfer', nav: [['💸', 'Transfer', '#/home'], ['🔜', 'Akan datang', '#/upcoming'], ['🕘', 'Riwayat', '#/selesai'], ['📈', 'Realisasi', '#/realisasi'], ['☰', 'Menu', '#/menu']] },
   sa: { n: 'Super Admin', nav: [['🏠', 'Beranda', '#/home'], ['👥', 'Pengguna', '#/sa/users'], ['🔑', 'Kode', '#/sa/codes'], ['⚙️', 'Atur', '#/sa/settings'], ['☰', 'Menu', '#/menu']] },
 };
+/** HOS & FM: Realisasi menjadi tab di dalam Budget. */
+const budTabs = cur => ['hos', 'fm'].includes(curMode()) ? `<div class="tabs"><span class="${cur === 'monitor' ? 'a' : ''}" data-go="#/monitor">Budget</span><span class="${cur === 'realisasi' ? 'a' : ''}" data-go="#/realisasi">Realisasi</span></div>` : '';
 function availModes() {
   const r = S.me.roles, m = [];
   if (S.me.can_submit) m.push('pemohon'); if (r.includes('RGM')) m.push('rgm');
@@ -101,15 +103,17 @@ function curMode() { const a = availModes(); if (!S.mode || !a.includes(S.mode))
 function setMode(m) { S.mode = m; sessionStorage.setItem('mode_' + S.me.id, m); }
 function shell(inner, opt = {}) {
   const mode = curMode(); const nav = MODES[mode].nav; const hash = location.hash || '#/home';
-  const cur = nav.findIndex(n => n[2] === hash.split('?')[0]);
+  const hp = hash.split('?')[0]; let cur = nav.findIndex(n => n[2] === hp);
+  if (cur < 0 && hp === '#/realisasi') cur = nav.findIndex(n => n[2] === '#/monitor');
   const nb = { '#/home': 0, '#/revisi': S.counts.revisi_admin || 0, '#/pc': 0, '#/ba': S.counts['ba_' + ({ admin: 'ADMIN', hos: 'HOS', fm: 'FM' }[mode] || '')] || 0 };
   const bell = `<div class="ib" data-go="#/notif">🔔${S.counts.notif ? `<i>${S.counts.notif}</i>` : ''}</div>`;
   const modes = availModes();
   const mb = modes.length > 1 ? `<div class="modebar">${modes.map(m => `<span class="${m === mode ? 'a' : ''}" data-mode="${m}">${MODES[m].n}</span>`).join('')}</div>` : '';
   const bm = S.me.backup_role ? `<div class="testbar bk" id="bkbar"><span>Akses cadangan ${STAGE[S.me.backup_role]}${S.me.backup_for ? ' · menggantikan ' + esc(S.me.backup_for) : ''}<small>masuk ke-${S.me.backup_uses} dari ${S.me.backup_max}</small></span><b id="bkcd">⏱ --:--</b><u data-do="bkexit">Keluar</u></div>` : '';
-  const im = S.me.impersonating ? `<div class="testbar" style="background:#E8F1FB;color:#14437F">Anda sedang ${S.testMode ? 'sebagai' : 'melihat sebagai'} ${esc(S.me.name)} (Super Admin${S.testMode ? '' : ' · mode lihat, tidak bisa mengubah'}) · <u data-do="unimp">kembali</u></div>` : '';
-  const tm = S.testMode && S.me.roles.includes('SA') ? `<div class="testbar">MODE TES AKTIF: Super Admin boleh bertindak di semua tahap</div>` : '';
-  $('#app').innerHTML = `${bm}${im}${tm}${opt.hero === false ? '' : opt.heroHtml || ''}${opt.noModes ? '' : (opt.showModes ? mb : '')}${inner}<div class="nav n${nav.length}">${nav.map((n, i) => `<div class="${i === cur ? 'a' : ''}" data-go="${n[2]}"><em>${navIcon(n[1])}</em>${n[1]}${nb[n[2]] && i !== cur ? `<span class="nb">${nb[n[2]]}</span>` : ''}</div>`).join('')}</div>`;
+  const demoBar = S.testMode && (S.realSa || S.demo);
+  const im = !demoBar && S.me.impersonating ? `<div class="testbar" style="background:#E8F1FB;color:#14437F">Anda sedang melihat sebagai ${esc(S.me.name)} (Super Admin) · <u data-do="unimp">kembali</u></div>` : '';
+  const tm = demoBar ? `<div class="dban">🧪 MODE DEMO AKTIF<em>${S.me.impersonating ? 'SEBAGAI ' + esc(MODES[mode].n.toUpperCase()) : 'SUPER ADMIN'}</em>${S.me.impersonating ? '<u data-do="unimp">KEMBALI</u>' : ''}</div>` : '';
+  $('#app').innerHTML = `${bm}${im}${tm}${opt.hero === false ? '' : opt.heroHtml || ''}${opt.noModes ? '' : (opt.showModes ? mb : '')}${inner}<div class="nav n${nav.length}">${nav.map((n, i) => `<div class="${i === cur ? 'a' : ''}${n[1] === 'Ajukan' ? ' fab' : ''}" data-go="${n[2]}"><em>${navIcon(n[1])}</em>${n[1]}${nb[n[2]] && i !== cur ? `<span class="nb">${nb[n[2]]}</span>` : ''}</div>`).join('')}</div>`;
   window.scrollTo(0, 0); bkTick(); return bell;
 }
 /* ikon garis bawah, gaya DSM induk */
@@ -117,7 +121,7 @@ const NAVP = { home: 'M3 11 12 3l9 8M5 10v11h5v-7h4v7h5V10', receipt: 'M5 3h14v1
   inbox: 'M3 13h5l2 3h4l2-3h5M5 5h14l2 8v6H3v-6z', doc: 'M6 2h9l5 5v15H6zM14 2v6h6M9 13h6m-6 4h4', undo: 'M9 14 4 9l5-5M4 9h10a6 6 0 0 1 0 12h-3', clock: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18m0 4v5l3 3', stack: 'M12 3 2 8l10 5 10-5-10-5M2 13l10 5 10-5M2 18l10 5 10-5',
   chart: 'M4 20V10m8 10V4m8 16v-7M2 22h20', down: 'M12 3v12m0 0-5-5m5 5 5-5M4 21h16', send: 'M7 7h12m0 0-4-4m4 4-4 4M17 17H5m0 0 4 4m-4-4 4-4', cal: 'M4 5h16v16H4zM4 10h16M9 3v4m6-4v4', hist: 'M3 12a9 9 0 1 0 3-6.7M3 4v5h5M12 8v4l3 2', trend: 'M3 17l6-6 4 4 8-8M15 7h6v6',
   users: 'M8 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8m-6 10v-3a6 6 0 0 1 12 0v3m2-17a4 4 0 0 1 0 8m2 3a5 5 0 0 1 4 5v1', key: 'M15 7a4 4 0 1 1-3.5 6L4 20H2v-3l1-1h2v-2h2l2.5-2.5A4 4 0 0 1 15 7m1.5-1.5h0', kal: 'M5 4h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2m-2 6h18M8 2v4m8-4v4M7 14h2m3 0h2m3 0h0M7 17.5h2m3 0h2', gear: 'M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6m7.4 3a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14.5 2h-5l-.4 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6a7 7 0 0 0 0 2.4l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2l.4 2.6h5l.4-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2' };
-const NAVK = { 'Beranda': 'home', 'Klaim saya': 'receipt', 'Ajukan': 'plus', 'Petty cash': 'wallet', 'Menu': 'more', 'Antrean': 'inbox', 'Antrean PC': 'inbox', 'Antrean BA': 'doc', 'BA': 'doc', 'Revisi': 'undo', 'Diproses': 'clock', 'Semua klaim': 'stack', 'Budget': 'chart', 'Export': 'down', 'Siap transfer': 'send', 'Akan datang': 'cal', 'Riwayat': 'hist', 'Realisasi': 'trend', 'Kalender': 'kal', 'Pengguna': 'users', 'Kode': 'key', 'Atur': 'gear' };
+const NAVK = { 'Beranda': 'home', 'Klaim saya': 'receipt', 'Ajukan': 'plus', 'Petty cash': 'wallet', 'Menu': 'more', 'Antrean': 'inbox', 'Antrean PC': 'inbox', 'Antrean BA': 'doc', 'BA': 'doc', 'Revisi': 'undo', 'Diproses': 'clock', 'Semua klaim': 'stack', 'Budget': 'chart', 'Export': 'down', 'Siap transfer': 'send', 'Transfer': 'send', 'Semua': 'stack', 'Akan datang': 'cal', 'Riwayat': 'hist', 'Realisasi': 'trend', 'Kalender': 'kal', 'Pengguna': 'users', 'Kode': 'key', 'Atur': 'gear' };
 const navIcon = l => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${NAVP[NAVK[l]] || NAVP.more}"/></svg>`;
 function hero(title, sub, opt = {}) {
   const bell = `<div class="ib" data-go="#/notif">🔔${S.counts.notif ? `<i>${S.counts.notif}</i>` : ''}</div>`;
@@ -147,7 +151,7 @@ function bkTick() {
 }
 setInterval(bkTick, 1000);
 async function loadMe() {
-  const j = await api('me'); S.me = j.me; BK_END = S.me && S.me.backup_role ? Date.now() + S.me.backup_left * 1000 : 0; setTimeout(bkTick, 0); S.dsmRole = j.dsm_role; S.counts = j.counts; S.testMode = j.test_mode; S.aging = j.aging_days;
+  const j = await api('me'); S.me = j.me; BK_END = S.me && S.me.backup_role ? Date.now() + S.me.backup_left * 1000 : 0; setTimeout(bkTick, 0); S.dsmRole = j.dsm_role; S.counts = j.counts; S.testMode = j.test_mode; S.demo = !!j.demo; S.realSa = !!j.real_sa; S.aging = j.aging_days;
   if (!S.L) { S.L = (await api('lookups')); }
 }
 async function refreshCounts() { try { const j = await api('counts'); S.counts = j.counts; } catch (e) {} }
@@ -267,21 +271,50 @@ R.notif = async () => {
   shell(hero('Notifikasi', 'LONCENG', { back: true, nobell: true }) + `<div class="sec">${j.rows.length ? j.rows.map(n => `<div class="li" ${n.ref_type ? `data-go="#/${n.ref_type === 'pc' ? 'pcd' : 'claim'}/${n.ref_id}"` : ''} style="${n.is_read ? '' : 'border-color:#F07A0C'}"><div class="dot" style="background:${{ tugas: '#1E5FB8', revisi: '#F07A0C', ditolak: '#D2453F', selesai: '#12866A' }[n.kind] || '#5B7285'}">${{ tugas: '📥', revisi: '↩️', ditolak: '⛔', selesai: '✅' }[n.kind] || '•'}</div><div class="t"><b style="white-space:normal">${esc(n.text)}</b><span>${wkt(n.created_at)}</span></div></div>`).join('') : emptyBox('Belum ada notifikasi.')}</div>`, { hero: false });
 };
 
-/* ---------- menu ---------- */
+/* ---------- menu (dikelompokkan, header Biru DSM) ---------- */
+const KC = { b: ['#E6EEFA', '#0B5CAD'], g: ['#E2F5EA', '#0E6E48'], o: ['#FFF1DC', '#C25A12'], r: ['#FBE3E1', '#B42318'], p: ['#EEE8FB', '#6D3FD8'], t: ['#E3F4F6', '#0E7C8C'], s: ['#EEF1F5', '#5B6778'], y: ['#FFF6D6', '#8A6200'] };
+const kic = (e, c) => `<div class="ic" style="background:${KC[c][0]};color:${KC[c][1]}">${e}</div>`;
+const kit = (e, c, t, sub, go, bd = '', bdok = false) => `<div class="it"${go ? ` data-go="${go}"` : ''}>${kic(e, c)}<div class="tx"><b>${esc(t)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</div>${bd ? `<span class="bd${bdok ? ' ok' : ''}">${esc(bd)}</span>` : ''}${go ? '<div class="ar">›</div>' : ''}</div>`;
+function menuDef(m) {
+  const c = S.counts || {}; const kal = ['🗓️', 'Kalender', 't', '#/kalender'];
+  const D = {
+    pemohon: { q: [kal, ['📄', 'Draf saya', 's', '#/mine?tab=draft'], ['↩️', 'Perlu revisi', 'r', '#/mine?tab=revisi'], ['✅', 'Selesai', 'g', '#/mine?tab=selesai']],
+      g: [['KLAIM SAYA', [['↩️', 'r', 'Perlu revisi', c.mine_revisi ? c.mine_revisi + ' klaim dikembalikan' : 'Tidak ada', '#/mine?tab=revisi', c.mine_revisi ? String(c.mine_revisi) : ''], ['📄', 's', 'Draf tersimpan', 'Belum dikirim', '#/mine?tab=draft'], ['⛔', 'r', 'Ditolak', 'Klaim yang ditolak', '#/mine?tab=ditolak']]]] },
+    rgm: { q: [], g: [] },
+    admin: { q: [kal, ['🔐', 'Kode pengganti', 'p', '#/sa/codes'], ['⬇️', 'Export', 'g', '#/rekap'], ['📊', 'Budget', 'b', '#/monitor']],
+      g: [['PENGATURAN KLAIM', [['👥', 'b', 'Hak klaim', 'Budget & akses pemohon', '#/a/hak'], ['📇', 't', 'Update massal WA & rekening', 'Unggah file Excel', '#/a/massal'], ['🏷️', 'o', 'Jenis klaim', 'Aktif / nonaktif jenis', '#/a/jenis'], ['⚙️', 's', 'Pengaturan klaim', 'Aturan BA & batas', '#/a/atur']]],
+        ['ALAT ADMIN', [['✅', 'g', 'Selesai', 'Klaim yang sudah ditransfer', '#/selesai'], ['💵', 'o', 'Petty cash Admin', 'Menunggu Anda', '#/pcq/ADMIN', c.pcq_ADMIN ? String(c.pcq_ADMIN) : ''], ['🏢', 'b', 'Ajukan untuk divisi', 'Klaim di luar sales', '#/new?div=1']]]] },
+    audit: { q: [kal, ['⚙️', 'Aturan BA', 's', '#/a/atur'], ['⬇️', 'Export', 'g', '#/rekap']], g: [] },
+    hos: { q: [kal, ['💵', 'Petty cash', 'o', '#/pcmon'], ['⚙️', 'Aturan BA', 's', '#/a/atur'], ['⬇️', 'Export', 'g', '#/rekap']], g: [] },
+    fm: { q: [kal, ['📚', 'Semua klaim', 'b', '#/all'], ['⚙️', 'Aturan BA', 's', '#/a/atur'], ['⬇️', 'Export', 'g', '#/rekap']], g: [] },
+    ft: { q: [kal, ['💵', 'Petty cash', 'o', '#/pcq/FT'], ['🔐', 'Kode pengganti', 'p', '#/sa/codes'], ['⬇️', 'Export', 'g', '#/rekap']], g: [] },
+    sa: { q: [['⛽', 'Harga BBM', 'o', '#/sa/harga'], ['🏢', 'Badan usaha', 'b', '#/sa/bu'], kal, ['🧪', 'Mode demo', 'y', '#/sa/demo']],
+      g: [['PENGATURAN KLAIM', [['⛽', 'o', 'Harga BBM', 'Harga per liter terbaru', '#/sa/harga'], ['🏢', 'b', 'Badan usaha', 'PT / CV yang dipakai', '#/sa/bu'], ['⚙️', 's', 'Aturan & batas', 'Hari menunggu, reset uji', '#/sa/settings']]],
+        ['UJI & DEMO', [['🧪', 'y', 'Mode demo', S.testMode ? 'NYALA · akun demo aktif' : 'Mati · nyalakan untuk tes semua peran', '#/sa/demo'], ...(S.testMode ? [['🎭', 'p', 'Masuk sebagai…', 'Pilih akun demo per peran', '#/sa/demo']] : [])]]] },
+  };
+  return D[m] || { q: [], g: [] };
+}
+function menuHead(sub) {
+  const mode = curMode(); const ini = S.me.name.split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
+  return `<div class="khd"><div class="r"><div class="av">${esc(ini)}</div><div><small>${esc(sub || MODES[mode].n.toUpperCase() + (S.demo ? ' (DEMO)' : ''))}</small><h1>${esc(S.me.name)}</h1></div><div class="bell" data-go="#/notif">🔔${S.counts.notif ? '<i></i>' : ''}</div></div>
+    <div class="modec" id="modec"><div>Masuk sebagai<br><b>${esc(MODES[mode].n)}</b></div><span>GANTI ▾</span></div>
+    <div class="prof"><div class="${S.me.wa ? '' : 'warn'}" data-go="#/profil">👤 WhatsApp ${S.me.wa ? '✓' : 'belum diisi'}</div><div class="${S.me.has_sign ? '' : 'warn'}" data-go="#/ttd">✍️ Tanda tangan ${S.me.has_sign ? '✓' : 'belum diisi'}</div></div></div>`;
+}
+function modeSheet() {
+  const ms = availModes(); const cur = curMode();
+  sheet(`<h3>Masuk sebagai</h3><div class="kgrp">${ms.map(m => `<div class="it" data-mode="${m}">${kic(m === cur ? '✓' : '•', m === cur ? 'b' : 's')}<div class="tx"><b>${esc(MODES[m].n)}</b><small>${m === cur ? 'Sedang dipakai' : 'Ketuk untuk pindah'}</small></div></div>`).join('')}</div>
+    ${S.realSa && !S.me.impersonating ? `<div class="kgrp" style="margin-top:10px"><div class="it" data-go="#/sa/demo">${kic('🎭', 'p')}<div class="tx"><b>Akun demo</b><small>${S.testMode ? 'Masuk sebagai peran lain untuk uji' : 'Nyalakan Mode demo dulu'}</small></div><div class="ar">›</div></div></div>` : ''}
+    ${S.me.impersonating ? `<button class="btn g" data-do="unimp" style="margin-top:10px">KEMBALI KE SUPER ADMIN</button>` : ''}`, (el, close) => el.addEventListener('click', e => { if (e.target.closest('[data-mode],[data-go],[data-do]')) close(); }));
+}
 R.menu = async () => {
-  const m = curMode(); const links = [];
-  if (m === 'admin') links.push(['✅', 'Selesai', '#/selesai'], ['👥', 'Hak klaim', '#/a/hak'], ['📇', 'Update massal WA & rekening', '#/a/massal'], ['🏷️', 'Jenis klaim', '#/a/jenis'], ['⚙️', 'Pengaturan klaim', '#/a/atur'], ['⬇️', 'Rekap dan export', '#/rekap'], ['💵', 'Petty cash Admin', '#/pcq/ADMIN'], ['🏢', 'Ajukan untuk divisi', '#/new?div=1'], ['📊', 'Monitoring budget', '#/monitor']);
-  if (['audit', 'hos', 'fm', 'ft'].includes(m)) links.push(['⬇️', 'Rekap dan export', '#/rekap']);
-  if (m === 'ft') links.push(['💵', 'Petty cash (transfer & setoran)', '#/pcq/FT']);
-  if (m === 'fm' || m === 'hos') links.push(['⚙️', 'Lihat aturan BA', '#/a/atur']);
-  if (m === 'hos') links.push(['💵', 'Petty cash', '#/pcmon']);
-  if (m === 'fm') links.push(['📚', 'Semua klaim', '#/all']);
-  if (m === 'sa') links.push(['⛽', 'Harga BBM', '#/sa/harga'], ['🏢', 'Badan usaha', '#/sa/bu'], ['🎭', 'Ganti peran (uji)', '#/sa/switch']);
-  if (['admin', 'ft'].includes(m)) links.push(['🔐', 'Terbitkan kode untuk pengganti', '#/sa/codes']);
-  if (m === 'sa') links.push(['🗓️', 'Kalender', '#/kalender']);
-  links.unshift(['👤', 'Profil saya (WhatsApp)' + (S.me.wa ? '' : ' · belum diisi'), '#/profil'], ['✍️', 'Tanda tangan saya' + (S.me.has_sign ? '' : ' (belum diisi)'), '#/ttd']);
-  links.push(['🔑', 'Masuk kode cadangan', '#/kode']);
-  shell(hero(S.me.name, ROLE_LBL(), { back: false }) + `<div class="sec">${links.map(l => `<div class="li" data-go="${l[2]}"><div class="dot" style="background:#10394E">${l[0]}</div><div class="t"><b>${l[1]}</b></div>›</div>`).join('')}<div class="li" id="lo"><div class="dot" style="background:#D2453F">⎋</div><div class="t"><b>${window.CLAIM_DSM && S.dsmRole !== 'OPERASIONAL' ? 'KEMBALI KE DSM' : 'KELUAR'}</b></div></div></div>`, { hero: false });
+  const m = curMode(); const d = menuDef(m);
+  let h = '<div class="kwrap">';
+  if (d.q.length) h += `<div class="ksec">AKSES CEPAT</div><div class="kqg">${d.q.map(q => `<div class="q" data-go="${q[3]}">${kic(q[0], q[2])}${esc(q[1])}</div>`).join('')}</div>`;
+  d.g.forEach(([t, items]) => { h += `<div class="ksec">${t}</div><div class="kgrp">${items.map(it => kit(it[0], it[1], it[2], it[3], it[4], it[5] || '')).join('')}</div>`; });
+  h += `<div class="ksec">AKUN SAYA</div><div class="kgrp">${kit('👤', 'b', 'Profil (WhatsApp)', 'Nomor dipakai untuk follow-up', '#/profil', S.me.wa ? '✓ ADA' : 'BELUM DIISI', !!S.me.wa)}${kit('✍️', 'p', 'Tanda tangan', 'Dipakai di BA & approval', '#/ttd', S.me.has_sign ? '✓ ADA' : 'BELUM DIISI', !!S.me.has_sign)}${kit('🔑', 's', 'Masuk kode cadangan', 'Kalau menggantikan orang lain', '#/kode')}</div>`;
+  h += `<div class="kback" id="lo">↩ ${window.CLAIM_DSM && S.dsmRole !== 'OPERASIONAL' ? 'KEMBALI KE DSM' : 'KELUAR'}</div><div class="kver">DSM Klaim</div></div>`;
+  shell(menuHead() + h, { hero: false });
+  $('#modec').onclick = modeSheet;
   $('#lo').onclick = async () => { if (window.CLAIM_DSM) { if (S.dsmRole === 'OPERASIONAL') dsmLogout(); else location.href = '../index.php'; return; } await api('logout'); S.me = null; S.L = null; location.hash = '#/login'; route(); };
 };
 /* ---------- profil: nomor WhatsApp ---------- */

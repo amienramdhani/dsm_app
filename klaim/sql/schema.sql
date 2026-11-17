@@ -46,7 +46,7 @@ CREATE TABLE claim_seq (
 );
 CREATE TABLE claims (
  id {AI},
- number VARCHAR(40) NULL UNIQUE,
+ number VARCHAR(40) NULL UNIQUE, is_demo INT NOT NULL DEFAULT 0,
  claimant_id INT NOT NULL, created_by INT NOT NULL,
  region VARCHAR(60) NULL, entity VARCHAR(40) NULL, entity_by INT NULL, type_ids VARCHAR(200) NULL,
  category VARCHAR(30) NOT NULL, type_id INT NOT NULL,
@@ -103,7 +103,7 @@ CREATE TABLE claim_transfers (
  id {AI}, ref_type VARCHAR(10) NOT NULL, ref_id INT NOT NULL, transfer_no VARCHAR(60) NOT NULL, amount BIGINT NOT NULL, user_id INT NOT NULL, entity VARCHAR(40) NULL, created_at DATETIME NOT NULL
 );
 CREATE TABLE claim_pc (
- id {AI}, number VARCHAR(40) NULL UNIQUE, claimant_id INT NOT NULL, region VARCHAR(60) NULL, entity VARCHAR(40) NULL,
+ id {AI}, number VARCHAR(40) NULL UNIQUE, is_demo INT NOT NULL DEFAULT 0, claimant_id INT NOT NULL, region VARCHAR(60) NULL, entity VARCHAR(40) NULL,
  purpose VARCHAR(200) NOT NULL, remark {LTXT} NULL, location VARCHAR(80) NULL, p_start DATE NOT NULL, p_end DATE NOT NULL, amount BIGINT NOT NULL,
  plan {LTXT} NULL, status VARCHAR(20) NOT NULL, stage VARCHAR(12) NULL, route {LTXT} NULL,
  rev_stage VARCHAR(12) NULL, rev_holder VARCHAR(12) NULL, rev_note {LTXT} NULL,

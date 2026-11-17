@@ -1,0 +1,90 @@
+/* Aturan Status Dealer (Paket 2) — warna solid, kartu putih */
+.dsPill{display:inline-block;font-size:10px;font-weight:800;padding:2px 8px;border-radius:99px;white-space:nowrap;letter-spacing:.2px}
+.dsStrip{margin:6px 3px 0;font-size:9.5px;font-weight:800;padding:3px 0;border-radius:7px;text-align:center;white-space:nowrap}
+.dsStrip.ok{background:#12A86B;color:#fff}.dsStrip.h{background:#FFF1C9;color:#8A5A00}.dsStrip.no{background:#F1F4F8;color:#9AA6B6}
+td .dsStrip{display:inline-block;margin:0 0 0 4px;padding:2px 6px}
+.dsTop{margin:4px 0 14px}
+.dsChips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.dsChip{display:inline-flex;gap:6px;align-items:center;padding:4px 9px 4px 4px;border-radius:99px;font-size:11px;font-weight:700}
+.dsChip em{font-style:normal;font-size:9.5px;font-weight:800;padding:2px 6px;border-radius:99px;background:#fff}
+.dsChip.lock{background:#EEF1F5;color:#3D4A5C;border:1px solid #DDE3EB}.dsChip.temp{background:#FFF6E5;color:#8A4B0B;border:1px solid #F5D9A8}
+.dsChip.mtd{background:#E3EEFC;color:#1E4E8C;border:1px solid #C7DBF5}
+.dsSeg{display:flex;gap:6px;overflow-x:auto;padding:2px 0 4px;scrollbar-width:none}.dsSeg::-webkit-scrollbar{display:none}
+.dsSeg span{flex:none;border:1.5px solid #E1E6ED;background:#fff;border-radius:10px;padding:7px 12px;font-size:11px;font-weight:800;color:#5B6778;cursor:pointer;white-space:nowrap}
+.dsSeg span.on{background:#16202E;border-color:#16202E;color:#fff}
+.dsSl{font-size:10.5px;font-weight:800;letter-spacing:.8px;color:#7C8899;margin:14px 2px 8px;display:flex;align-items:center;gap:6px}
+.dsI{width:16px;height:16px;border-radius:50%;background:#E6EAF0;color:#5B6778;font-size:10px;display:inline-grid;place-items:center;cursor:pointer;flex:none}
+.dsKg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:9px}
+.dsK{display:flex;gap:9px;background:#fff;border:1px solid #E6EAF0;border-radius:16px;padding:10px;cursor:pointer;min-width:0}
+.dsK>div:last-child{min-width:0}
+.dsK .ic{width:30px;height:30px;align-self:flex-start;border-radius:9px;display:grid;place-items:center;flex:none;font-size:14px;font-weight:800}
+.dsK span{font-size:9.5px;font-weight:800;letter-spacing:.5px;color:#7C8899;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dsK .n{font-size:20px;font-weight:800;margin:1px 0;color:#16202E}
+.dsK small{font-size:9.5px;color:#7C8899;line-height:1.3;display:block}
+.dsK.big{grid-column:1/-1;border:2px solid #12A86B;background:#F3FBF7;cursor:default}
+.dsK.big .ic{background:#12A86B;color:#fff}.dsK.big .n{font-size:26px;color:#0E6E48}
+.dsK .dsKpi{display:inline-block;margin-top:5px;font-size:9.5px;font-weight:800;background:#12A86B;color:#fff;padding:3px 8px;border-radius:7px;cursor:pointer;border:0;box-shadow:none}
+.dsBk{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.dsBk div{border-radius:12px;padding:9px 4px;text-align:center;cursor:pointer;border:2px solid transparent}
+.dsBk div.on{border-color:#16202E}.dsBk b{display:block;font-size:17px;font-weight:800}.dsBk small{font-size:9px;font-weight:800;letter-spacing:.3px}
+/* sheet keterangan */
+#dsOv{position:fixed;inset:0;background:rgba(16,24,40,.45);z-index:9999;display:none;align-items:flex-end;justify-content:center}
+#dsOv.on{display:flex}
+.dsSheet{background:#fff;width:100%;max-width:520px;border-radius:20px 20px 0 0;max-height:80vh;overflow:auto;padding:4px 16px 22px}
+@media(min-width:900px){#dsOv{align-items:center}.dsSheet{border-radius:18px}}
+.dsSh{display:flex;align-items:center;padding:12px 0 8px;border-bottom:1px solid #EEF1F5;margin-bottom:10px}.dsSh b{font-size:15px}
+.dsSh button{margin-left:auto;border:0;background:#EEF1F5;border-radius:10px;width:32px;height:32px;cursor:pointer}
+.dsOpts{display:grid;grid-template-columns:1fr 1fr;gap:8px}.dsOpts div{padding:11px;border-radius:12px;font-weight:800;font-size:12px;text-align:center;cursor:pointer}
+/* pola */
+.dsPola,.dsSim{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;min-width:0}
+.dsPola small,.dsSim small{display:block;text-align:center;font-size:9px;font-weight:700;color:#7C8899}
+.dsc{display:grid;place-items:center;height:26px;border-radius:7px;font-style:normal;font-weight:800;font-size:12px;cursor:default}
+.dsc.y{background:#12A86B;color:#fff}.dsc.h{background:#FFE7A3;color:#8A5A00}.dsc.n{background:#F1F4F8;color:#9AA6B6}.dsc.a{background:#fff;border:1.5px dashed #CBD3DE;color:#9AA6B6}
+.dsDet{margin:12px 0}.dsDet h4{margin:0 0 8px}
+.dsDetRow{display:grid;grid-template-columns:70px auto 1fr;gap:6px 8px;align-items:center;padding:8px 0;border-top:1px solid #EEF1F5}
+.dsDetRow b{font-size:12px}.dsDetRow .dsPill{justify-self:start}.dsDetRow small{grid-column:1/-1;color:#7C8899;font-size:11px}
+@media(max-width:560px){.dsDetRow{grid-template-columns:70px 1fr}.dsDetRow .dsPola{grid-column:1/-1}}
+/* admin */
+.dsSA{font-size:9.5px;font-weight:800;background:#16202E;color:#fff;padding:2px 7px;border-radius:7px;letter-spacing:.5px}
+.dsMin{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.dsMin button{width:36px;height:36px;border-radius:10px;border:1.5px solid #E1E6ED;background:#fff;font-size:18px;font-weight:800;cursor:pointer}
+.dsMin b{font-size:20px;min-width:34px;text-align:center}.dsMin b small{font-size:10px;color:#7C8899;font-weight:700}.dsMin span{font-size:12px;color:#3D4A5C}.dsMin u{cursor:pointer;color:#0B5CAD}
+.dsRules{background:#fff;border:1px solid #E6EAF0;border-radius:14px;padding:6px}
+.dsRules.ro{opacity:.6}.dsRules.ro .dsc,.dsRules.ro .st{pointer-events:none}
+.dsRh,.dsRule{display:grid;grid-template-columns:16px repeat(6,minmax(22px,1fr)) minmax(86px,1.5fr) 34px;gap:3px;align-items:center}
+@media(min-width:700px){.dsRh,.dsRule{grid-template-columns:22px repeat(6,minmax(34px,1fr)) minmax(130px,1.6fr) 48px;gap:5px}}
+.dsRh small{text-align:center;font-size:9px;font-weight:800;color:#7C8899}
+.dsRule{padding:4px 0;border-top:1px solid #F1F4F8}.dsRule:first-of-type{border-top:0}.dsRule.hit{background:#F3FBF7;border-radius:8px}
+.dsRule .no{font-size:11px;font-weight:800;color:#7C8899;text-align:center}.dsRule .dsc{cursor:pointer}
+.dsRule .st{font-size:9.5px;font-weight:800;padding:6px 5px;border-radius:9px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dsRule .ops{display:flex;gap:5px;font-size:12px;justify-content:center}.dsRule .ops u{cursor:pointer;text-decoration:none;color:#7C8899;font-weight:800}
+.dsNote{background:#FFF6E5;border:1px solid #F5D9A8;color:#8A4B0B;border-radius:12px;padding:9px 11px;font-size:12px;margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.dsSim .dsc{cursor:pointer;height:34px}
+.dsRes{display:flex;align-items:center;gap:10px;border-radius:14px;padding:11px 14px;margin-top:8px}
+.dsRes div{flex:1}.dsRes small{font-size:10px;font-weight:700;display:block}.dsRes b{font-size:18px;font-weight:800}
+.dsCnt{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center;max-width:320px}.dsCnt b{text-align:right}
+.dsImp{background:#fff;border:1px solid #E6EAF0;border-radius:14px;padding:6px 10px;margin-top:8px;max-width:520px}
+.dsImp>div{display:grid;grid-template-columns:1.6fr 1fr 1fr .8fr;gap:6px;align-items:center;padding:6px 0;border-top:1px solid #F1F4F8;font-size:12.5px}
+.dsImp>div>span:nth-child(n+2),.dsImp>div>b{text-align:right}
+.dsImp .h{border-top:0;font-size:10px;font-weight:800;color:#7C8899;letter-spacing:.4px}
+.dsImp .d{font-weight:800}.dsImp .d.up{color:#0E6E48}.dsImp .d.dn{color:#B42318}
+
+/* tab Status di detail dealer */
+.dealerTabs.ds6{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important}
+.dealerTabs.ds6 .modalTab{flex-direction:row!important;gap:6px!important;min-height:38px!important;height:38px;padding:0 4px!important;font-size:11px!important;font-weight:800;letter-spacing:.4px;text-transform:uppercase;border-radius:10px;margin:0!important}
+.dealerTabs.ds6 .modalTab svg{width:15px;height:15px;flex:0 0 auto}.dealerTabs.ds6 .modalTab span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+@media(max-width:340px){.dealerTabs.ds6 .modalTab{font-size:10px!important;letter-spacing:0}}
+#dealerStatusTab .dsDet{margin-top:0}
+.statusBadge.dsGo{cursor:pointer}.statusBadge.dsGo::after{content:' ›'}
+
+/* Status dealer desktop: opsi A (pita warna, bulan sekali di atas, keterangan di kanan) */
+.dsDetHead,.dsLeg{display:none}
+@media(min-width:561px){
+.dsDetHead{display:grid;grid-template-columns:96px 92px minmax(0,1fr) minmax(200px,32%);gap:0 10px;align-items:end;padding-bottom:4px}
+.dsDetHead .dsPola small,.dsDetHead>small{font-size:10px;font-weight:800;color:#8A9AA8;letter-spacing:.3px}.dsDetHead>small{padding-left:6px}
+.dsDetRow{grid-template-columns:96px 92px minmax(0,1fr) minmax(200px,32%);gap:0 10px;padding:9px 0}
+.dsDetRow .dsPola small{display:none}.dsDetRow .dsc{height:12px;font-size:0;border-radius:4px}.dsDetRow .dsc.n,.dsLeg .dsc.n{background:#E6EBF1}
+.dsDetRow small{grid-column:auto;padding-left:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dsDetRow.dsTot>b{color:#0B5CAD}
+.dsLeg{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px;font-size:11px;color:#7C8899}.dsLeg .dsc{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:5px;font-size:0}
+}

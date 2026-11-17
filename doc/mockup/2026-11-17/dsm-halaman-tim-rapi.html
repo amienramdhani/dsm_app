@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSM · Mockup Halaman Tim (rapi) + Resep Rapi Semua Halaman</title>
+<style>
+*{box-sizing:border-box}i,em{font-style:normal}body{margin:0;font:13px/1.45 Arial,sans-serif;background:#F3F6F9;color:#153d50}
+.note{max-width:1400px;margin:18px auto 0;background:#FFF8EC;border:1px solid #F6DDB2;border-radius:12px;padding:12px 16px;font-size:12px;color:#7a4f0c}
+.note b{color:#5a3a06}.note ol{margin:6px 0 0 18px;padding:0}.note li{margin:2px 0}
+.rules{max-width:1400px;margin:12px auto 0;background:#fff;border-radius:14px;box-shadow:0 3px 10px #1d40500a;padding:14px 18px}
+.rules h3{margin:0 0 8px;font-size:12px;letter-spacing:.6px}.rules .g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 18px}
+.rules .g div{font-size:12px;color:#43627a;padding-left:22px;position:relative}.rules .g div b{color:#153d50}
+.rules .g div:before{content:attr(data-n);position:absolute;left:0;top:0;width:16px;height:16px;border-radius:50%;background:#0B5CAD;color:#fff;font-size:10px;font-weight:800;display:grid;place-items:center}
+.page{max-width:1400px;margin:14px auto 40px;padding:0 4px}
+h1{font-size:22px;margin:0}.psub{font-size:12px;color:#7C8899;margin:2px 0 10px}
+.banner{margin:0 0 12px;background:#FFF7DD;border:1px solid #F3DE9C;border-radius:10px;padding:7px 12px;font-size:11.5px;color:#7a5a00;display:flex;justify-content:space-between}.banner a{color:#0B5CAD;font-weight:700;text-decoration:none}
+.fbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.sel{height:36px;border:1px solid #DCE6EE;border-radius:9px;padding:0 12px;display:flex;align-items:center;gap:8px;font-size:12px;color:#43627a;background:#fff}
+.sel small{font-size:9.5px;font-weight:800;letter-spacing:.4px;color:#8A9AA8}.sel b{color:#153d50}.sel:after{content:"▾";color:#9AA6B6;margin-left:8px}
+.fbtn{height:36px;border-radius:9px;padding:0 14px;display:flex;align-items:center;gap:6px;font-weight:800;font-size:11px;letter-spacing:.4px;color:#fff;background:linear-gradient(90deg,#FFB020,#F07A0C);border:0}
+.card{background:#fff;border-radius:14px;box-shadow:0 3px 10px #1d40500a;padding:14px 16px}
+.ch{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.ch h2{font-size:14px;margin:0;letter-spacing:.3px}
+.seg{display:flex;background:#EEF3F8;border-radius:9px;padding:3px}.seg span{font-size:11px;font-weight:800;letter-spacing:.4px;padding:6px 12px;border-radius:7px;color:#43627a}.seg span.on{background:#0B5CAD;color:#fff}
+.tg{margin-left:auto;font-size:11.5px;color:#7C8899}.tg b{color:#153d50}
+.ii{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;background:#E6EEF6;color:#43627a;font-size:9px;font-weight:800;vertical-align:1px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.k{border-radius:12px;padding:10px 14px;background:#F7F9FB;display:grid;grid-template-columns:5px 1fr;gap:0 12px;cursor:pointer;border:1.5px solid transparent}
+.k:before{content:"";grid-row:1/4;border-radius:3px;background:var(--c)}.k.on{border-color:var(--c);background:#fff}
+.k small{font-size:10px;font-weight:800;letter-spacing:.5px;color:#7C8899}.k b{font-size:21px;color:var(--c)}.k span{font-size:11px;color:#7C8899}
+table{width:100%;border-collapse:collapse}
+th{font-size:10px;letter-spacing:.5px;text-align:left;color:#43627a;padding:8px 10px;border-bottom:2px solid #0B5CAD;background:#F7FAFC;white-space:nowrap}
+th.r,td.r{text-align:right}
+td{padding:7px 10px;border-bottom:1px solid #EEF2F6;vertical-align:middle;white-space:nowrap}
+tbody tr{cursor:pointer}tbody tr:hover td{background:#F4F8FC}
+td.no{color:#9AA6B6;font-size:11px;width:28px;border-left:3px solid var(--s)}
+.nm b{font-size:12.5px}.nm small,.rg small{display:block;font-size:10.5px;color:#8A9AA8}
+.rg{font-size:12px}
+.ach{display:flex;align-items:center;gap:8px;justify-content:flex-end}.ach .bt{width:70px;height:6px;border-radius:3px;background:#EEF2F6;position:relative;overflow:hidden}
+.ach .bt i{position:absolute;left:0;top:0;bottom:0;background:var(--s);border-radius:3px}.ach .bt:after{content:"";position:absolute;left:92.3%;top:-2px;bottom:-2px;width:2px;background:#153d50}
+.ach b{min-width:44px;text-align:right;font-size:12px}
+.pj b{color:var(--s)}.pj small,.bh small{display:block;font-size:10.5px;color:#8A9AA8}
+.bh b{font-size:12.5px}.bh small.hot{color:#C0362C;font-weight:700}
+.sp{width:70px;height:20px}
+.st{font-size:9.5px;font-weight:800;letter-spacing:.3px;padding:2px 7px;border-radius:5px;background:#FBE3E1;color:#A3201B}
+.go{color:#B8C2CE;font-size:15px}
+.vs{display:flex;gap:16px;margin-top:8px;font-size:11px;color:#7C8899}
+</style></head><body>
+
+<div class="note"><b>Halaman Tim — kenapa rame:</b>
+<ol>
+<li>Kolom PROYEKSI & BUTUH/HARI masing-masing punya pill merah ("1,0% dari target", "1.294,4× ritme"). Hampir semua baris merah, jadi mata ga tau mana yang penting.</li>
+<li>Nama sales + atasan + region + region induk ditulis menyamping berwarna-warni dalam satu baris.</li>
+<li>Kolom STATUS "Bahaya" berulang di semua baris (memang list ini isinya yang belum tembus), plus tombol "Detail →" di tiap baris.</li>
+<li>4 kartu atas punya ikon kotak besar yang isinya cuma titik.</li>
+</ol>
+<b>Usulan:</b> pill dibuang, ganti warna teks. Info kedua (atasan, region induk, unit proyeksi, ritme) jadi baris abu kecil di bawah. Status jadi garis warna di kiri baris. Klik baris = detail. Kartu atas bisa diklik buat nyaring (BAHAYA/WASPADA).</div>
+
+<div class="rules"><h3>RESEP RAPI — dipakai di SEMUA halaman (biar seragam)</h3>
+<div class="g">
+<div data-n="1"><b>Satu info, satu tempat.</b> Kalau angka sudah tampil, jangan diulang di pill/pita.</div>
+<div data-n="2"><b>Pill warna khusus status.</b> Angka biasa cukup pakai warna teks.</div>
+<div data-n="3"><b>Info kedua = abu kecil di bawah.</b> Bukan menyamping dan berwarna.</div>
+<div data-n="4"><b>Filter maks 3–4 terlihat</b> + tombol oren FILTER LAIN.</div>
+<div data-n="5"><b>KPI atas = 4 kartu ramping seragam</b>, garis warna di kiri, bisa diklik jadi filter.</div>
+<div data-n="6"><b>Klik baris = detail.</b> Tombol "Detail →" per baris dihapus, diganti tanda › abu.</div>
+</div></div>
+
+<div class="page">
+ <h1>TIM</h1><div class="psub">Pencapaian tim dan perbandingan periode · sesuai hak akses</div>
+ <div class="banner"><span>⚠ ST belum lengkap s.d. 28 Sep 2026 untuk <b>KALIMANTAN, GROSS NAS</b></span><a href="#">Lihat kelengkapan</a></div>
+ <div class="fbar"><div class="sel"><small>TINGKAT</small><b>SALES</b></div><div class="sel"><small>BRAND</small><b>ITEL</b></div><div class="sel"><small>REGION</small><b>Semua</b></div><button class="fbtn">FILTER LAIN</button></div>
+
+ <div class="card">
+  <div class="ch"><h2>EARLY WARNING · SELL THRU <i class="ii">i</i></h2>
+   <div class="seg"><span class="on">SELL THRU</span><span>DEALER AKTIF</span><span>NOO</span></div>
+   <span class="tg">time gone <b>92,3%</b> · sisa <b>2 hari kerja</b></span></div>
+  <div class="kpis">
+   <div class="k" style="--c:#0E7C6B"><small>DIPROYEKSIKAN TEMBUS</small><b>5 / 89</b><span>proyeksi ≥ 100% target</span></div>
+   <div class="k on" style="--c:#C0362C"><small>BAHAYA</small><b>34</b><span>proyeksi &lt; 80% target</span></div>
+   <div class="k" style="--c:#D98A00"><small>WASPADA</small><b>3</b><span>proyeksi 80–99%</span></div>
+   <div class="k" style="--c:#0B5CAD"><small>GAP TIM</small><b>21.156 unit</b><span>butuh 10.578 unit/hari kerja</span></div>
+  </div>
+  <table>
+   <thead><tr><th>#</th><th>SALES</th><th>REGION</th><th class="r">TARGET</th><th class="r">AKTUAL</th><th class="r">ACH vs TIME GONE</th><th class="r">PROYEKSI</th><th class="r">RUN RATE</th><th class="r">BUTUH/HARI</th><th>TREN 7 HARI</th><th></th></tr></thead>
+   <tbody id="tb"></tbody></table>
+  <div class="vs"><span>Garis kiri merah = BAHAYA, kuning = WASPADA</span><span>Garis hitam di bar = time gone 92,3%</span><span>"× ritme" merah = butuh lebih dari 3× kecepatan sekarang</span></div>
+ </div>
+</div>
+<script>
+const R=[["VACANT MADURA","ASM RIDHO SETIAWAN","JAWA TIMUR 1","JAWA TIMUR",120,0,0,0,0,"—",60,"belum jualan",[0,0,0,0,0,0,0]],
+["ARIFIN SORMANDANI","RGM TOYO","BOGOR-DEPOK","JABODETABEK",3266,30,0.9,33,1.0,"1,3",1618,"1.294×",[0,0,0,0,0,0,1]],
+["NIKO STANISLAUS","RGM TOYO","BEKASI","JABODETABEK",650,10,1.5,11,1.7,"0,4",320,"768×",[0,0,0,0,0,0,1]],
+["RIDHO ALFIAN","RGM TOYO","JAKARTA","JABODETABEK",8500,1334,15.7,1445,17.0,"55,6",3583,"64,5×",[9,3,1,1,1,1,1]],
+["DEDE PUJI IMAN FAUZI","ASM EKO PRASETYO","BIG SEMARANG","JAWA TENGAH",1011,225,22.3,244,24.1,"9,4",393,"41,9×",[5,3,2,2,4,2,6]],
+["ROBBY AGUSTINA","HEAD OF SALES JEJEN MUTAKHIR","GROSS NAS JATIM","JAWA TIMUR",396,105,26.5,114,28.7,"4,4",145.5,"33,3×",[1,1,1,1,1,5,1]],
+["THEO FALCHEN S","ASM RIDHO ALFIAN","JAKARTA","JABODETABEK",950,297,31.3,322,33.9,"12,4",326.5,"26,4×",[8,3,2,2,2,2,3]],
+["KHOIRUR ROZIQIN","ASM EKO PRASETYO","BIG SEMARANG","JAWA TENGAH",526,169,32.1,183,34.8,"7",178.5,"25,3×",[6,2,5,2,4,3,4]],
+["MOHAMMAD NOVRIAN","ASM RIDHO ALFIAN","JAKARTA","JABODETABEK",650,210,32.3,228,35.0,"8,8",220,"25,1×",[6,3,2,2,2,2,2]],
+["MIFTAKHUL HUDA","ASM DANIEL KURNIAWAN SUAWA","JAWA TIMUR 3","JAWA TIMUR",471,177,37.6,192,40.7,"7,4",147,"19,9×",[3,4,3,5,6,4,2]]];
+const f=n=>n.toLocaleString('id-ID',{maximumFractionDigits:1});
+const sp=a=>{const m=Math.max(...a,1);return `<svg class="sp" viewBox="0 0 70 20"><polyline fill="none" stroke="#9AA6B6" stroke-width="1.5" points="${a.map((v,i)=>`${i*11.5},${18-v/m*16}`).join(' ')}"/><circle cx="69" cy="${18-a[6]/m*16}" r="2.4" fill="#C0362C"/></svg>`};
+document.getElementById('tb').innerHTML=R.map((r,i)=>`<tr style="--s:#C0362C"><td class="no">${i+1}</td>
+<td class="nm"><b>${r[0]}</b><small>${r[1]}</small></td><td class="rg">${r[2]}<small>${r[3]}</small></td>
+<td class="r">${f(r[4])}</td><td class="r"><b>${f(r[5])}</b></td>
+<td class="r"><div class="ach"><span class="bt"><i style="width:${r[6]}%"></i></span><b style="color:#C0362C">${f(r[6])}%</b></div></td>
+<td class="r pj"><b>${f(r[8])}%</b><small>${f(r[7])} unit</small></td>
+<td class="r">${r[9]}</td>
+<td class="r bh"><b>${f(r[10])}</b><small class="hot">${r[11]}${r[11].includes('×')?' ritme':''}</small></td>
+<td>${sp(r[12])}</td><td class="go">›</td></tr>`).join('');
+</script>
+</body></html>

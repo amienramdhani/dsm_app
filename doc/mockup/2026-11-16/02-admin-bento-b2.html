@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>DSM - Admin Bento Solid (Mockup)</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#121A2B;--mut:#7D889B}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:"Plus Jakarta Sans",sans-serif;color:var(--ink);background:#F5F7FA}
+.app{max-width:430px;margin:0 auto;min-height:100vh;position:relative;overflow:hidden;padding-bottom:30px}
+.blob{opacity:.25!important;position:absolute;border-radius:50%;filter:blur(50px);pointer-events:none;z-index:0;transition:.4s}
+.b1{width:300px;height:300px;background:#C7E4FF;top:-100px;left:-100px;opacity:.5}
+.b2{width:280px;height:280px;background:#FFE0BD;top:80px;right:-120px;opacity:.5}
+.b3{width:260px;height:260px;background:#E9DDFF;top:560px;left:-80px;opacity:.5}
+
+.z{position:relative;z-index:1}
+.sw{position:sticky;top:0;z-index:20;display:flex;gap:6px;padding:10px 14px;background:#F5F7FA}
+.sw button{flex:1;border:0;border-radius:11px;padding:8px 4px;font:800 10px "Plus Jakarta Sans";letter-spacing:.3px;background:#fff;color:var(--mut);box-shadow:0 3px 10px rgba(20,40,80,.06)}
+.sw button.on{background:#121A2B;color:#fff}
+.glass{background:#fff;border:1px solid #EEF1F6;box-shadow:0 6px 18px rgba(25,45,90,.06),0 1px 2px rgba(25,45,90,.04)}
+.gi{display:grid;place-items:center;color:#fff;font-size:18px;border-radius:14px;flex:none;position:relative;overflow:hidden;width:40px;height:40px;box-shadow:0 8px 16px var(--sh,rgba(0,0,0,.15))}
+.gi::after{content:"";position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,255,255,.45),transparent 55%)}
+.view{display:none}.view.on{display:block}
+.head{padding:14px 18px 0;display:flex;justify-content:space-between;align-items:center}
+.head small{font-size:11px;font-weight:700;letter-spacing:1.2px;color:var(--mut)}
+.head h1{font-size:26px;font-weight:800;letter-spacing:-.4px;margin-top:2px}
+.ava{width:46px;height:46px;border-radius:16px;display:grid;place-items:center;font-weight:800;color:#fff;background:linear-gradient(135deg,#FFB020,#F07A0C);box-shadow:0 8px 18px rgba(240,122,12,.35)}
+.srch{margin:12px 14px 0;border-radius:18px;padding:13px 16px;font-size:13px;color:var(--mut)}
+.bento{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 14px 0}
+.bx{border-radius:24px;padding:14px;cursor:pointer;position:relative;overflow:hidden;transition:.2s}
+.bx:active{transform:scale(.97)}
+.s4{grid-column:span 4}.s2{grid-column:span 2}.s3{grid-column:span 3}.s1{grid-column:span 1}.r2{grid-row:span 2}
+.lbl{font-size:10.5px;font-weight:800;letter-spacing:.7px;color:var(--mut)}
+.t{font-size:13.5px;font-weight:800;margin-top:8px}
+.m{font-size:11px;color:var(--mut);margin-top:2px}
+.n{position:absolute;top:14px;right:14px;font-size:11px;font-weight:800;color:var(--mut)}
+.wh,.wh .lbl,.wh .m,.wh .n{color:#fff}.wh .m,.wh .lbl,.wh .n{opacity:.88}
+.bx.grad::before{content:"";position:absolute;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.16);top:-45px;right:-35px}
+.big{font-size:40px;font-weight:800;line-height:1}
+.go{background:#fff;font-weight:800;font-size:11px;padding:9px 14px;border-radius:12px;white-space:nowrap}
+.row{display:flex;justify-content:space-between;align-items:flex-end;gap:10px}
+.av{display:flex;margin-top:10px}.av span{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.3);border:2px solid rgba(255,255,255,.8);margin-left:-6px;display:grid;place-items:center;font-size:9.5px;font-weight:800;color:#fff}
+.av span:first-child{margin-left:0}
+.ring{width:84px;height:84px;border-radius:50%;display:grid;place-items:center;margin:8px auto}
+.ring div{width:66px;height:66px;border-radius:50%;background:#fff;display:grid;place-items:center;font-weight:800;font-size:17px}
+.qa{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.qa div{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:700;background:#F5F7FA;border-radius:14px;padding:7px 9px}
+.qa .gi{width:28px;height:28px;border-radius:9px;font-size:13px;box-shadow:none}
+/* V2 personal */
+.todo{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+.td{display:flex;align-items:center;gap:10px;background:#F5F7FA;border-radius:14px;padding:9px 11px;font-size:12px;font-weight:700}
+.ck{width:20px;height:20px;border-radius:7px;border:2px solid #C9D2DE;flex:none;display:grid;place-items:center;font-size:11px;color:#fff}
+.td.done{color:var(--mut);text-decoration:line-through}.td.done .ck{background:#12B981;border-color:#12B981}
+.td em{margin-left:auto;font-style:normal;font-size:10px;font-weight:800;padding:2px 7px;border-radius:7px}
+.pinrow{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-top:10px}
+.pinrow::-webkit-scrollbar{display:none}
+.pn{flex:none;width:92px;border-radius:18px;padding:10px;background:#F5F7FA;font-size:11px;font-weight:700;line-height:1.3}
+.pn .gi{width:32px;height:32px;border-radius:11px;font-size:15px;margin-bottom:7px;box-shadow:none}
+.pn.add{display:grid;place-items:center;color:var(--mut);border:1.5px dashed #C9D2DE;background:transparent;font-size:22px}
+.recent{margin-top:8px}
+.rc{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid rgba(220,228,238,.8);font-size:12px;font-weight:600}
+.rc:first-child{border-top:0}.rc small{margin-left:auto;color:var(--mut);font-size:10.5px}
+.rc .gi{width:28px;height:28px;border-radius:9px;font-size:13px;box-shadow:none}
+.edit{font-size:10.5px;font-weight:800;color:#F07A0C}
+/* V3 bold */
+.v3 .bx .gi{background:rgba(255,255,255,.25)!important;box-shadow:none}
+.mini{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.mini span{font-size:10px;font-weight:700;background:rgba(255,255,255,.22);border-radius:8px;padding:3px 8px}
+.spark{display:flex;align-items:flex-end;gap:4px;height:38px;margin-top:10px}
+.spark i{flex:1;background:rgba(255,255,255,.55);border-radius:4px}
+.spark i:last-child{background:#fff}
+/* page */
+.page{position:fixed;inset:0;z-index:30;background:#F4F6FB;transform:translateX(100%);transition:.35s cubic-bezier(.2,.8,.2,1);overflow:auto}
+.page.show{transform:none}
+.pin{max-width:430px;margin:0 auto;padding:0 14px 30px}
+.ph{margin:14px 0 4px;border-radius:28px;padding:18px 18px 22px;color:#fff;position:relative;overflow:hidden}
+.ph::after{content:"";position:absolute;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.14);top:-70px;right:-50px}
+.back{width:38px;height:38px;border-radius:13px;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.4);display:grid;place-items:center;font-size:18px;margin-bottom:16px;cursor:pointer;position:relative;z-index:1}
+.ph h2{font-size:22px;font-weight:800;position:relative;z-index:1}.ph small{font-size:12px;opacity:.9;position:relative;z-index:1}
+.sec{font-size:10px;font-weight:800;letter-spacing:1.2px;color:var(--mut);margin:16px 6px 8px}.sec.danger{color:#D1293F}
+.lst{border-radius:22px;overflow:hidden}
+.it{display:flex;align-items:center;gap:12px;padding:12px 13px;border-top:1px solid rgba(230,236,244,.8)}
+.it:first-child{border-top:0}
+.it .gi{width:36px;height:36px;border-radius:12px;font-size:16px;box-shadow:none}
+.it .tx{flex:1;min-width:0}.it b{display:block;font-size:13px}.it small{display:block;font-size:11px;color:var(--mut)}
+.it .ar{color:#B9C3D0;font-size:18px}
+.it .star{font-size:16px;color:#D0D7E2;cursor:pointer}.it .star.on{color:#FFB020}
+.tag{font-size:8.5px;font-weight:800;padding:2px 6px;border-radius:6px;background:#EEF0F5;color:#5A6577;margin-left:5px;vertical-align:2px}
+.it.warn{background:linear-gradient(90deg,#FFF0F2,#FFF8F9)}.it.warn b{color:#D1293F}
+.it.warn .gi{background:linear-gradient(135deg,#FF5A6E,#D1293F)!important}
+</style>
+</head>
+<body class="v1">
+<div class="app">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="sw z"><button data-v="1" class="on">B1 · CLEAN</button><button data-v="2">B2 · PERSONAL</button><button data-v="3">B3 · GRADIENT BOLD</button></div>
+  <div class="view z on" id="v1"></div>
+  <div class="view z" id="v2"></div>
+  <div class="view z v3" id="v3"></div>
+</div>
+<div class="page" id="page"><div class="pin" id="pin"></div></div>
+
+<script>
+const G=[
+ {k:'ap',n:'Approval',d:'Persetujuan menunggu',ic:'✅',g:['#FF6B7E','#E5354E'],s:[['',[['Approval','Transfer, user, perubahan dealer','✅']]]]},
+ {k:'h',n:'Data Harian',d:'Upload & kelengkapan',ic:'📊',g:['#FFB020','#F07A0C'],s:[['SERING DIPAKAI',[['Upload Regional ST / SO','Upload data harian per region','⬆️'],['Status Sync','Sinkronisasi terakhir','🔄'],['Kelengkapan Data per Region','Region yang belum upload','🧩'],['Peta Kelengkapan Data','Kalender kelengkapan','🗓️']]],['PENGECEKAN',[['Catatan Kualitas Data','Temuan data janggal','📝'],['Kunci Periode','Kunci bulan final','🔒']]],['HATI-HATI',[['Pemulihan Regional','Kembalikan data region','♻️',0,1]]]]},
+ {k:'d',n:'Dealer',d:'Data & kepemilikan',ic:'🏪',g:['#2FD3A0','#0E9F6E'],s:[['SERING DIPAKAI',[['Cari & Edit Dealer','Edit satu dealer','🔎'],['Tambah Dealer','Tambah dealer baru','➕'],['Upload Massal Dealer','Tambah+edit · field · kontak','📤']]],['KEPEMILIKAN',[['Transfer Dealer Massal','Pindah kepemilikan','🔁'],['Riwayat Transfer','Log transfer','🕘'],['Riwayat Pemilik Dealer','Siapa pernah pegang','👥'],['Big Region per Dealer','Pemetaan Big Region','🗺️',1],['Dealer Tutup','Tandai dealer nonaktif','🚫']]],['HATI-HATI',[['Ganti Kode Induk & Hapus Massal','Tidak bisa dibatalkan','⚠️',0,1]]]]},
+ {k:'b',n:'Brand',d:'Semua setelan brand',ic:'🏷️',g:['#FFD54A','#E0A800'],s:[['SEMUA SETELAN BRAND',[['Pengaturan Brand','Klasifikasi · ambang · wilayah · PIC · aturan','🏷️']]],['TERKAIT',[['Region per Brand & Target Big Region','Wilayah + target','📍',1]]]]},
+ {k:'kt',n:'KPI & Target',d:'Target & indikator',ic:'🎯',g:['#A67CFF','#7C4DCE'],s:[['TARGET',[['Edit Target','Target sales per bulan','✏️'],['Region per Brand & Target Big Region','Wilayah + target','📍',1]]],['KPI',[['Atur KPI','Indikator, bobot, target RGM','🎯',1],['KPI Khusus','Indikator khusus TYPE','⭐'],['KPI Telemarketing','Target & bobot TM','📈']]]]},
+ {k:'md',n:'Master Data',d:'Produk, wilayah, publikasi',ic:'🗂️',g:['#8D7BFF','#5B45D6'],s:[['SERING DIPAKAI',[['Download & Upload Master','Semua jenis, termasuk Dealer','🗂️'],['Master Product','Daftar produk / TYPE','📱'],['Cek Kesehatan Master','Cek semua master','🩺'],['Publikasi Master','Terbitkan perubahan','📢']]],['WILAYAH & KALENDER',[['Region Map','Peta wilayah','🗺️',1],['Hari Libur','Kalender libur','🏖️']]],['FORM ORDER & TELEMARKETING',[['Badan Usaha Form Order','Pilihan badan usaha','🧾'],['Penugasan Telemarketing','Bagi daftar telepon','📞']]]]},
+ {k:'u',n:'Pengguna & Akses',d:'Akun, PIN, izin',ic:'👤',g:['#5AA9FF','#2B7BE0'],s:[['',[['Akun Pengguna','Edit user, role, reset PIN','👤'],['Tambah User Massal','Upload banyak akun','👥'],['Keamanan Akun','Sesi, perangkat, PIN','🛡️'],['Hak Export Pengguna','Siapa boleh download','📥',1],['Kredit Tetap ke Penjual','Aturan kredit','🏷️'],['Sambungan Telegram','Hubungkan ke bot','✈️']]]]},
+ {k:'s',n:'Sistem',d:'Backup & log',ic:'⚙️',g:['#9AA6B8','#5F6B7E'],s:[['',[['Autobackup','Status & jadwal backup','💾'],['Riwayat Aktivitas','Audit log admin','📜'],['Notifikasi Khusus','Kirim notif ke user','🔔']]]]}
+];
+const by=k=>G.find(x=>x.k===k);
+const gr=g=>`linear-gradient(135deg,${g.g[0]},${g.g[1]})`;
+const gi=g=>`<div class="gi" style="background:${gr(g)};--sh:${g.g[1]}55">${g.ic}</div>`;
+const cnt=g=>g.s.reduce((a,s)=>a+s[1].length,0);
+const $=id=>document.getElementById(id);
+let PINS=['Upload Regional ST / SO','Pengaturan Brand','Edit Target','Upload Massal Dealer'];
+
+function openPage(k){
+ const g=by(k);
+ $('pin').innerHTML=`<div class="ph" style="background:${gr(g)};box-shadow:0 16px 34px ${g.g[1]}55"><div class="back" onclick="closePage()">‹</div><h2>${g.ic} ${g.n}</h2><small>${cnt(g)} panel · ${g.d}${document.body.classList.contains('v2')?' · ketuk ☆ untuk sematkan':''}</small></div>`+
+ g.s.map(([t,items])=>`${t?`<div class="sec ${t==='HATI-HATI'?'danger':''}">${t}</div>`:'<div style="height:14px"></div>'}<div class="lst glass">${items.map(([n,d,ic,sa,w])=>`<div class="it ${w?'warn':''}"><div class="gi" style="background:${gr(g)}">${ic}</div><div class="tx"><b>${n}${sa?'<span class="tag">SUPER ADMIN</span>':''}</b><small>${w?'HATI-HATI · ':''}${d}</small></div>${document.body.classList.contains('v2')&&!w?`<span class="star ${PINS.includes(n)?'on':''}" onclick="togglePin(event,'${n}','${k}')">★</span>`:'<div class="ar">›</div>'}</div>`).join('')}</div>`).join('');
+ $('page').classList.add('show');$('page').scrollTop=0;
+}
+window.closePage=()=>{$('page').classList.remove('show');if(document.body.classList.contains('v2'))v2()};
+window.togglePin=(e,n,k)=>{e.stopPropagation();PINS=PINS.includes(n)?PINS.filter(x=>x!==n):[...PINS,n];openPage(k)};
+const findG=n=>G.find(g=>g.s.some(s=>s[1].some(i=>i[0]===n)));
+const findI=n=>{for(const g of G)for(const s of g.s)for(const i of s[1])if(i[0]===n)return i};
+
+/* B1 AURORA GLASS */
+function v1(){
+ $('v1').innerHTML=`<div class="head"><div><small>LAINNYA › ADMIN</small><h1>Admin Center</h1></div><div class="ava">AH</div></div>
+ <div class="srch glass">🔍 Cari panel… brand, target, kontak</div>
+ <div class="bento">
+  <div class="bx glass s4" onclick="openPage('ap')" style="background:linear-gradient(135deg,#FF6B7E,#E5354E);border:0;box-shadow:0 12px 26px rgba(229,53,78,.3)">
+   <div class="row wh"><div><div class="lbl">APPROVAL</div><div class="big" style="margin-top:6px">3</div><div class="m">menunggu persetujuan</div><div class="av"><span>DP</span><span>RA</span><span>FN</span></div></div><div class="go" style="color:#E5354E">TINJAU ›</div></div></div>
+  <div class="bx glass s2 r2" onclick="openPage('h')"><div class="lbl">DATA HARIAN</div>
+   <div class="ring" style="background:conic-gradient(#FFB020,#F07A0C 92%,rgba(255,224,189,.7) 92%)"><div>92%</div></div>
+   <div class="t" style="text-align:center;margin-top:0">Data lengkap</div><div class="m" style="text-align:center">2 region belum upload<br>Sync 07:15</div></div>
+  <div class="bx glass s2 r2"><div class="lbl">AKSI CEPAT</div><div class="qa">
+   <div onclick="openPage('h')">${gi(by('h'))}Upload Regional</div><div onclick="openPage('d')">${gi(by('d'))}Cari Dealer</div><div onclick="openPage('kt')">${gi(by('kt'))}Edit Target</div><div onclick="openPage('b')">${gi(by('b'))}Setelan Brand</div></div></div>
+  ${['d','b','kt','md','u','s'].map(k=>{const g=by(k);return `<div class="bx glass s2" onclick="openPage('${k}')"><span class="n">${cnt(g)}</span>${gi(g)}<div class="t">${g.n}</div><div class="m">${g.d}</div></div>`}).join('')}
+ </div>`;
+}
+/* B2 PERSONAL */
+function v2(){
+ $('v2').innerHTML=`<div class="head"><div><small>SENIN, 16 NOV · 22:21</small><h1>Malam, Bro Ary 👋</h1></div><div class="ava">AH</div></div>
+ <div class="srch glass">🔍 Cari panel… brand, target, kontak</div>
+ <div class="bento">
+  <div class="bx glass s4"><div class="row" style="align-items:center"><div class="lbl">TUGAS HARI INI · 2 DARI 4</div><span class="edit">LIHAT SEMUA</span></div>
+   <div class="todo">
+    <div class="td" onclick="openPage('ap')"><span class="ck"></span>Tinjau 3 approval<em style="background:#FFE4E8;color:#E5354E">PENTING</em></div>
+    <div class="td" onclick="openPage('h')"><span class="ck"></span>2 region belum upload ST<em style="background:#FFF1DC;color:#C25A12">DATA</em></div>
+    <div class="td done"><span class="ck">✓</span>Upload regional Cirebon</div>
+    <div class="td done"><span class="ck">✓</span>Backup harian berhasil</div>
+   </div></div>
+  <div class="bx glass s4"><div class="row" style="align-items:center"><div class="lbl">PANEL SEMATAN SAYA</div><span class="edit">ATUR</span></div>
+   <div class="pinrow">${PINS.map(n=>{const g=findG(n),i=findI(n);return `<div class="pn" onclick="openPage('${g.k}')"><div class="gi" style="background:${gr(g)}">${i[2]}</div>${n}</div>`}).join('')}<div class="pn add">+</div></div></div>
+  <div class="bx glass s2"><div class="lbl">DATA HARIAN</div><div class="ring" style="width:70px;height:70px;background:conic-gradient(#F07A0C 0 92%,#FFE8CF 92%)"><div style="width:54px;height:54px;font-size:14px">92%</div></div><div class="m" style="text-align:center">Sync 07:15</div></div>
+  <div class="bx glass s2"><div class="lbl">TERAKHIR DIBUKA</div><div class="recent">
+   <div class="rc">${gi(by('b'))}Brand<small>10 mnt</small></div><div class="rc">${gi(by('d'))}Cari Dealer<small>1 jam</small></div><div class="rc">${gi(by('kt'))}Edit Target<small>kemarin</small></div></div></div>
+  <div class="bx s4" style="padding:4px 2px 0"><div class="lbl" style="margin-left:6px">SEMUA MENU</div></div>
+  ${G.filter(g=>g.k!=='ap').map(g=>`<div class="bx glass s1" style="padding:10px 6px;text-align:center" onclick="openPage('${g.k}')"><div style="display:flex;justify-content:center">${gi(g)}</div><div style="font-size:10px;font-weight:800;margin-top:7px;line-height:1.2">${g.n}</div></div>`).join('')}
+  <div class="bx glass s1" style="padding:10px 6px;text-align:center" onclick="openPage('ap')"><div style="display:flex;justify-content:center">${gi(by('ap'))}</div><div style="font-size:10px;font-weight:800;margin-top:7px">Approval</div></div>
+ </div>`;
+}
+/* B3 GRADIENT BOLD */
+function v3(){
+ const tile=(k,cls,inner)=>{const g=by(k);return `<div class="bx grad wh ${cls}" onclick="openPage('${k}')" style="background:${gr(g)};box-shadow:0 12px 26px ${g.g[1]}44">${inner(g)}</div>`};
+ $('v3').innerHTML=`<div class="head"><div><small>LAINNYA › ADMIN</small><h1>Admin Center</h1></div><div class="ava" style="background:#121A2B;box-shadow:none">AH</div></div>
+ <div class="srch glass">🔍 Cari panel… brand, target, kontak</div>
+ <div class="bento">
+  ${tile('ap','s4',g=>`<div class="row"><div><div class="lbl">APPROVAL</div><div class="big" style="margin-top:6px">3</div><div class="m">menunggu · paling lama 2 jam lalu</div></div><div class="go" style="color:#E5354E">TINJAU ›</div></div>`)}
+  ${tile('h','s3',g=>`<div class="lbl">DATA HARIAN · 7 HARI</div><div class="spark">${[70,85,60,90,95,88,92].map(v=>`<i style="height:${v}%"></i>`).join('')}</div><div class="m" style="margin-top:6px">92% lengkap · sync 07:15</div>`)}
+  ${tile('b','s1',g=>`<div style="height:100%;display:flex;flex-direction:column;justify-content:space-between">${gi(g)}<div style="font-size:11px;font-weight:800;margin-top:28px">Brand</div></div>`)}
+  ${tile('d','s2',g=>`<span class="n">${cnt(g)}</span>${gi(g)}<div class="t">Dealer</div><div class="mini"><span>Upload massal</span><span>Transfer</span></div>`)}
+  ${tile('kt','s2',g=>`<span class="n">${cnt(g)}</span>${gi(g)}<div class="t">KPI & Target</div><div class="mini"><span>Edit target</span><span>Atur KPI</span></div>`)}
+  ${tile('md','s4',g=>`<div class="row" style="align-items:center"><div style="display:flex;gap:12px;align-items:center">${gi(g)}<div><div class="t" style="margin-top:0">Master Data</div><div class="m">Download & upload semua master · cek kesehatan</div></div></div><span class="n" style="position:static">${cnt(g)}</span></div>`)}
+  ${tile('u','s2',g=>`<span class="n">${cnt(g)}</span>${gi(g)}<div class="t">Pengguna & Akses</div><div class="m">Akun, PIN, izin</div>`)}
+  ${tile('s','s2',g=>`<span class="n">${cnt(g)}</span>${gi(g)}<div class="t">Sistem</div><div class="m">Backup OK · 02:00</div>`)}
+ </div>`;
+}
+v1();v2();v3();
+document.querySelectorAll('.sw button').forEach(b=>b.onclick=()=>{
+ document.querySelectorAll('.sw button').forEach(x=>x.classList.toggle('on',x===b));
+ document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='v'+b.dataset.v));
+ document.body.className='v'+b.dataset.v;
+});
+</script>
+</body>
+</html>

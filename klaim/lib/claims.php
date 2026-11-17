@@ -156,7 +156,7 @@ function claim_save(array $u, array $in): int {
   $total = 0; foreach ($notesIn as $n) $total += max(0, (int) ($n['nominal'] ?? 0));
   $row['total'] = $total;
   if (!$id) {
-    $row += ['claimant_id' => $claimant, 'created_by' => $u['id'], 'region' => $cu['region'], 'entity' => $cu['entities'][0] ?? null, 'status' => 'DRAFT',
+    $row += ['claimant_id' => $claimant, 'is_demo' => demo_of_user($claimant), 'created_by' => $u['id'], 'region' => $cu['region'], 'entity' => $cu['entities'][0] ?? null, 'status' => 'DRAFT',
       'outside_sales' => $division ? 1 : 0, 'created_at' => now(), 'current_version' => 0, 'requires_hos' => 0];
     if ($division) $row['region'] = $meta['divisi_region'] ?? $cu['region'];
     $id = ins('claims', $row);
@@ -173,7 +173,7 @@ function claim_save(array $u, array $in): int {
     if ($nid && val("SELECT 1 FROM claim_notes WHERE id=? AND claim_id=?", [$nid, $id])) { upd('claim_notes', $nid, $nr); } else { $nid = ins('claim_notes', $nr); }
     $keep[] = $nid;
     sync_files($u, $id, $nid, $n['files'] ?? [], 'nota');
-    foreach (['asal', 'tujuan'] as $g) if (!empty($d[$g]) && !val("SELECT 1 FROM claim_gate WHERE name=?", [$d[$g]])) ins('claim_gate', ['name' => $d[$g]]);
+    if (!demo_ctx()) foreach (['asal', 'tujuan'] as $g) if (!empty($d[$g]) && !val("SELECT 1 FROM claim_gate WHERE name=?", [$d[$g]])) ins('claim_gate', ['name' => $d[$g]]);
   }
   foreach (q("SELECT id FROM claim_notes WHERE claim_id=?", [$id]) as $r) if (!in_array((int) $r['id'], $keep, true)) {
     ex("DELETE FROM claim_notes WHERE id=?", [$r['id']]); ex("UPDATE claim_files SET slot='removed' WHERE ref_type='claim' AND ref_id=? AND note_id=?", [$id, $r['id']]);

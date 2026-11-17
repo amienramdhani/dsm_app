@@ -5,11 +5,11 @@ require_once __DIR__ . '/query.php';
 function monitor_scope_ok(array $u): bool { return has_role($u, 'HOS') || has_role($u, 'AUDIT') || has_role($u, 'FM') || has_role($u, 'SA') || has_role($u, 'ADMIN'); }
 function monitor_budget(array $u, array $f): array {
   if (!monitor_scope_ok($u)) fail('Tidak diizinkan.', 403);
-  $period = $f['period'] ?? date('Y-m'); $w = ['can_submit=1', 'active=1']; $p = [];
+  $period = $f['period'] ?? date('Y-m'); $w = ['can_submit=1', 'active=1', demo_user_sql()]; $p = [];
   $global = has_role($u, 'HOS') || has_role($u, 'SA');
   if (!$global) {
     if ((has_role($u, 'AUDIT') || has_role($u, 'FM')) && $u['entities']) { $w[] = '(' . implode(' OR ', array_fill(0, count($u['entities']), "entity LIKE ?")) . ')'; foreach ($u['entities'] as $e) $p[] = "%$e%"; }
-    elseif (has_role($u, 'ADMIN') && $u['region']) { $w[] = 'region=?'; $p[] = $u['region']; }
+    elseif (has_role($u, 'ADMIN') && ($rs = region_scope($u))) { $w[] = $rs[0]; array_push($p, ...$rs[1]); }
   }
   if (!empty($f['region'])) { $w[] = 'region=?'; $p[] = $f['region']; }
   if (!empty($f['claimant_id'])) { $w[] = 'id=?'; $p[] = (int) $f['claimant_id']; }
@@ -30,12 +30,12 @@ function monitor_budget(array $u, array $f): array {
     $sum['budget'] += $tb; $sum['realized'] += $tr; $sum['reserved'] += $ts; $sum['over'] += $to;
   }
   $sum['available'] = $sum['budget'] - $sum['realized'] - $sum['reserved'];
-  return ['period' => $period, 'sum' => $sum, 'rows' => $rows, 'regions' => array_column(q("SELECT DISTINCT region FROM claim_users WHERE region IS NOT NULL AND can_submit=1 ORDER BY region"), 'region')];
+  return ['period' => $period, 'sum' => $sum, 'rows' => $rows, 'regions' => array_column(q("SELECT DISTINCT region FROM claim_users WHERE region IS NOT NULL AND can_submit=1 AND " . demo_user_sql() . " ORDER BY region"), 'region')];
 }
 function claimant_claims(array $u, int $uid, string $period): array {
   $m = monitor_budget($u, ['claimant_id' => $uid, 'period' => $period]);
   if (!$m['rows']) fail('Tidak ada data atau di luar cakupan Anda.', 403);
-  $rows = q("SELECT * FROM claims WHERE claimant_id=? AND budget_period=? AND status<>'DRAFT' ORDER BY id DESC", [$uid, $period]);
+  $rows = q("SELECT * FROM claims WHERE claimant_id=? AND budget_period=? AND status<>'DRAFT' AND is_demo=? ORDER BY id DESC", [$uid, $period, demo_ctx()]);
   return ['person' => $m['rows'][0], 'claims' => array_map('row_out', $rows)];
 }
 
@@ -44,7 +44,7 @@ function realisasi(array $u, array $f): array {
   if (!has_role($u, 'FT') && !has_role($u, 'FM') && !has_role($u, 'SA') && !has_role($u, 'HOS')) fail('Tidak diizinkan.', 403);
   $period = $f['period'] ?? date('Y-m'); $ents = $u['entities']; $mine = (int) $u['id'];
   foreach (['FT', 'FM'] as $rr) if (has_role($u, $rr)) $ents = array_values(array_unique(array_merge($ents, uncovered_entities($rr)))); // badan usaha tanpa pemegang tetap masuk
-  $scope = $ents; if (has_role($u, 'SA') || has_role($u, 'HOS')) $scope = array_column(q("SELECT DISTINCT entity FROM claims WHERE entity IS NOT NULL"), 'entity');
+  $scope = $ents; if (has_role($u, 'SA') || has_role($u, 'HOS')) $scope = array_column(q("SELECT DISTINCT entity FROM claims WHERE entity IS NOT NULL AND is_demo=?", [demo_ctx()]), 'entity');
   if (!empty($f['entity'])) $ents = [$f['entity']];
   if (has_role($u, 'SA') || has_role($u, 'HOS')) $ents = !empty($f['entity']) ? [$f['entity']] : $scope;
   if (!$ents && !has_role($u, 'FT')) return ['period' => $period, 'empty' => true];
@@ -53,7 +53,7 @@ function realisasi(array $u, array $f): array {
   $d1 = preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) ($f['from'] ?? '')) ? $f['from'] : null; $d2 = preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) ($f['to'] ?? '')) ? $f['to'] : null;
   $range = $d1 || $d2; $dcol = fn($c) => "substr($c,1,10)";
   $dflt = fn($c) => $range ? str_replace('%s', $dcol($c), ($d1 ? " AND %s>='$d1'" : '') . ($d2 ? " AND %s<='$d2'" : '')) : " AND substr($c,1,7)='" . preg_replace('/[^0-9-]/', '', $period) . "'";
-  $tf = fn($rt) => q("SELECT t.*, u.name AS uname FROM claim_transfers t JOIN claim_users u ON u.id=t.user_id WHERE t.ref_type=? AND (t.entity IN ($in) OR t.user_id=?)" . $dflt('t.created_at') . " ORDER BY t.id DESC", [$rt, ...$ents, has_role($u, 'FT') ? $mine : 0]);
+  $tf = fn($rt) => q("SELECT t.*, u.name AS uname FROM claim_transfers t JOIN claim_users u ON u.id=t.user_id WHERE t.ref_type=? AND " . demo_transfer_sql('t') . " AND (t.entity IN ($in) OR t.user_id=?)" . $dflt('t.created_at') . " ORDER BY t.id DESC", [$rt, ...$ents, has_role($u, 'FT') ? $mine : 0]);
   $cl = $tf('claim'); $pcT = $tf('pc');
   $byCat = []; $byPerson = []; $trx = [];
   foreach ($cl as $t) {
@@ -65,7 +65,7 @@ function realisasi(array $u, array $f): array {
   foreach ($pcT as $t) { $p = get_pc((int) $t['ref_id']); $cu = val("SELECT name FROM claim_users WHERE id=?", [$p['claimant_id']]);
     $trx[] = ['at' => $t['created_at'], 'ref' => $p['number'], 'who' => $cu, 'kind' => 'Transfer dana petty cash', 'amount' => (int) $t['amount'], 'transfer_no' => $t['transfer_no']]; }
   usort($trx, fn($a, $b) => strcmp($b['at'], $a['at']));
-  $pcRows = q("SELECT * FROM claim_pc WHERE entity IN ($in) AND funded_at IS NOT NULL" . $dflt('funded_at'), [...$ents]);
+  $pcRows = q("SELECT * FROM claim_pc WHERE is_demo=" . demo_ctx() . " AND entity IN ($in) AND funded_at IS NOT NULL" . $dflt('funded_at'), [...$ents]);
   $cair = array_sum(array_column($pcRows, 'amount')); $real = array_sum(array_column($pcRows, 'realized'));
   $setor = (int) array_sum(array_map(fn($r) => $r['status'] === 'SELESAI' ? (int) $r['setoran_amount'] : 0, $pcRows));
   $belum = (int) array_sum(array_map(fn($r) => $r['status'] === 'DANA' ? (int) $r['amount'] : 0, $pcRows));
@@ -79,7 +79,7 @@ function realisasi(array $u, array $f): array {
 function realisasi_fm(array $ents, string $period, ?string $d1, ?string $d2, array $cl, array $trx): array {
   $in = implode(',', array_fill(0, count($ents), '?')); $range = $d1 || $d2;
   $lo = $d1 ?: ($range ? '1970-01-01' : $period . '-01'); $hi = $d2 ?: ($range ? '2999-12-31' : date('Y-m-t', strtotime($period . '-01')));
-  $sumT = fn($a, $b) => (int) val("SELECT COALESCE(SUM(t.amount),0) FROM claim_transfers t WHERE t.ref_type='claim' AND t.entity IN ($in) AND substr(t.created_at,1,10)>=? AND substr(t.created_at,1,10)<=?", [...$ents, $a, $b]);
+  $sumT = fn($a, $b) => (int) val("SELECT COALESCE(SUM(t.amount),0) FROM claim_transfers t WHERE t.ref_type='claim' AND " . demo_transfer_sql('t') . " AND t.entity IN ($in) AND substr(t.created_at,1,10)>=? AND substr(t.created_at,1,10)<=?", [...$ents, $a, $b]);
   $total = array_sum(array_column($cl, 'amount')); $n = count($cl);
   if ($range && $d1 && $d2) { $days = max(1, (int) round((strtotime($d2) - strtotime($d1)) / 86400) + 1); $pa = date('Y-m-d', strtotime($d1 . " -$days days")); $pb = date('Y-m-d', strtotime($d1 . ' -1 day')); }
   else { $pa = date('Y-m-01', strtotime($lo . ' -1 month')); $pb = date('Y-m-t', strtotime($pa)); }
@@ -102,15 +102,15 @@ function realisasi_fm(array $ents, string $period, ?string $d1, ?string $d2, arr
   $months = []; for ($m = strtotime(substr($lo === '1970-01-01' ? $period . '-01' : $lo, 0, 7) . '-01'), $e = strtotime(substr($hi === '2999-12-31' ? $period . '-01' : $hi, 0, 7) . '-01'); $m <= $e && count($months) < 24; $m = strtotime('+1 month', $m)) $months[] = date('Y-m', $m);
   $mi = implode(',', array_fill(0, count($months), '?')); $bud = [];
   foreach ($ents as $en) {
-    $us = q("SELECT id FROM claim_users WHERE can_submit=1 AND active=1 AND entity=?", [$en]); $cats = [];
+    $us = q("SELECT id FROM claim_users WHERE can_submit=1 AND active=1 AND " . demo_user_sql() . " AND entity=?", [$en]); $cats = [];
     foreach (CATS as $cat) {
       $b = 0; foreach ($us as $x) $b += budget_of((int) $x['id'], $cat); $b *= count($months);
-      $r = (int) val("SELECT COALESCE(SUM(total),0) FROM claims WHERE status='DONE' AND outside_sales=0 AND category=? AND entity=? AND budget_period IN ($mi)", [$cat, $en, ...$months]);
+      $r = (int) val("SELECT COALESCE(SUM(total),0) FROM claims WHERE status='DONE' AND outside_sales=0 AND is_demo=" . demo_ctx() . " AND category=? AND entity=? AND budget_period IN ($mi)", [$cat, $en, ...$months]);
       if ($b || $r) $cats[] = ['cat' => $cat, 'budget' => $b, 'real' => $r];
     }
     if ($cats) $bud[] = ['entity' => $en, 'cats' => $cats];
   }
-  $pcb = q("SELECT amount FROM claim_pc WHERE entity IN ($in) AND status='DANA'", $ents);
+  $pcb = q("SELECT amount FROM claim_pc WHERE is_demo=" . demo_ctx() . " AND entity IN ($in) AND status='DANA'", $ents);
   return ['kpi' => ['total' => $total, 'n' => $n, 'avg' => $n ? intdiv($total, $n) : 0, 'prev' => $prev, 'ba_n' => $baN, 'ba_total' => $baT, 'pc_belum' => (int) array_sum(array_column($pcb, 'amount')), 'pc_belum_n' => count($pcb)],
     'tren' => $tren, 'gran' => $gran, 'byEnt' => $byEnt, 'byCat' => $byCat, 'top' => array_slice($byP, 0, 10, true), 'bud' => $bud, 'months' => count($months),
     'ba' => ['trig' => array_map(fn($cd) => $cd, array_keys($trig)), 'cnt' => array_values($trig), 'label' => array_map(fn($cd) => TRIG[$cd] ?? $cd, array_keys($trig))]];

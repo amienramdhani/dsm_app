@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSM · Mockup Halaman Dealer — Opsi B</title>
+<style>
+*{box-sizing:border-box}i,em{font-style:normal}body{margin:0;font:13px/1.45 Arial,sans-serif;background:#F3F6F9;color:#153d50}
+.note{max-width:1400px;margin:18px auto 0;background:#FFF8EC;border:1px solid #F6DDB2;border-radius:12px;padding:12px 16px;font-size:12px;color:#7a4f0c}
+.note b{color:#5a3a06}.note ol{margin:6px 0 0 18px;padding:0}.note li{margin:2px 0}
+.page{max-width:1400px;margin:14px auto 40px;padding:0 4px}
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+h1{font-size:22px;margin:0;letter-spacing:-.3px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;border-radius:999px;padding:4px 10px;background:#fff;border:1px solid #DCE6EE;color:#43627a}
+.chip b{color:#153d50}.chip.lock{background:#EEF4FB;border-color:#CFE0F0;color:#0B5CAD}
+.banner{margin:12px 0;background:#FFF7DD;border:1px solid #F3DE9C;border-radius:10px;padding:7px 12px;font-size:11.5px;color:#7a5a00;display:flex;justify-content:space-between}
+.banner a{color:#0B5CAD;font-weight:700;text-decoration:none}
+.tabs{display:flex;gap:6px;margin:4px 0 14px}.tabs span{font-size:11px;font-weight:800;letter-spacing:.4px;padding:7px 14px;border-radius:9px;background:#fff;border:1px solid #DCE6EE;color:#43627a;cursor:pointer}.tabs span.on{background:#0B5CAD;border-color:#0B5CAD;color:#fff}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.k{background:#fff;border-radius:14px;padding:12px 14px;box-shadow:0 3px 10px #1d40500a;display:grid;grid-template-columns:6px 1fr;gap:0 12px}
+.k:before{content:"";grid-row:1/4;border-radius:4px;background:var(--c)}
+.k small{font-size:10px;font-weight:800;letter-spacing:.5px;color:#7C8899}.k b{font-size:24px;letter-spacing:-.5px;color:var(--c)}.k span{font-size:11px;color:#7C8899}
+.k span u{text-decoration:none;font-weight:700;color:#43627a}
+
+.card{background:#fff;border-radius:14px;box-shadow:0 3px 10px #1d40500a;padding:14px 16px;margin-top:12px}
+.ct{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.ct b{font-size:11px;letter-spacing:.6px}.ct small{font-size:11px;color:#7C8899}
+.ii{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;background:#E6EEF6;color:#43627a;font-size:9px;font-weight:800;margin-left:4px;vertical-align:1px}
+.bar{display:flex;height:14px;border-radius:7px;overflow:hidden;gap:2px}.bar i{display:block}
+.leg{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin-top:10px}
+.lg{border-radius:10px;padding:7px 10px;cursor:pointer;border:1.5px solid transparent;background:#F7F9FB}
+.lg:hover{border-color:#CFE0F0}.lg.on{border-color:#0B5CAD;background:#EEF4FB}
+.lg div{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:800;letter-spacing:.3px;color:#43627a}.lg div i{width:9px;height:9px;border-radius:3px}
+.lg b{display:block;font-size:17px;margin-top:2px}.lg span{font-size:10.5px;color:#7C8899}
+.lg.sep{background:#fff;border:1.5px dashed #DCE6EE}
+
+.fbar{display:flex;gap:8px;align-items:center;margin:4px 0 12px;flex-wrap:wrap}
+.fbar .in{flex:1 1 260px;height:36px;border:1px solid #DCE6EE;border-radius:9px;padding:0 12px;display:flex;align-items:center;color:#9AA6B6;font-size:12px}
+.sel{height:36px;border:1px solid #DCE6EE;border-radius:9px;padding:0 12px;display:flex;align-items:center;gap:20px;font-size:12px;color:#43627a;background:#fff}
+.sel:after{content:"▾";color:#9AA6B6}
+.fbtn{height:36px;border-radius:9px;padding:0 14px;display:flex;align-items:center;gap:6px;font-weight:800;font-size:11px;letter-spacing:.4px;color:#fff;background:linear-gradient(90deg,#FFB020,#F07A0C);border:0}
+.fbtn em{background:#fff;color:#F07A0C;border-radius:999px;padding:0 6px;font-size:10px}
+.cnt{margin-left:auto;font-size:12px;color:#43627a}.cnt b{color:#153d50}
+.ghost{height:36px;border:1px solid #DCE6EE;border-radius:9px;padding:0 12px;font-size:11px;font-weight:800;letter-spacing:.4px;color:#43627a;display:flex;align-items:center;background:#fff}
+
+table{width:100%;border-collapse:collapse}
+th{font-size:10px;letter-spacing:.5px;text-align:left;color:#43627a;padding:9px 10px;border-bottom:2px solid #0B5CAD;background:#F7FAFC;white-space:nowrap}
+th.br{border-bottom-color:var(--c);color:var(--c)}th.r,td.r{text-align:right}
+td{padding:9px 10px;border-bottom:1px solid #EEF2F6;vertical-align:middle}
+tr:hover td{background:#FAFCFE}
+.dn a{color:#0B5CAD;font-weight:700;text-decoration:none;font-size:12.5px}.dn small{display:block;color:#7C8899;font-size:10.5px}
+.bc{display:grid;grid-template-columns:auto 1fr;gap:0 8px;align-items:center}
+.bc b{font-size:14px}.bc b.z{color:#B8C2CE;font-weight:700}
+.st{justify-self:start;font-size:9.5px;font-weight:800;letter-spacing:.3px;padding:1px 6px;border-radius:5px}
+.bc small{grid-column:1/-1;font-size:10.5px;color:#9AA6B6}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;vertical-align:1px}
+.pct{font-size:10.5px;font-weight:800;border-radius:999px;padding:2px 8px}
+.gap{font-weight:800;color:#C0362C}
+.sub{font-size:11px;color:#7C8899}
+.vs{display:flex;gap:16px;margin-top:6px;font-size:11px;color:#7C8899}
+
+.band{display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-radius:14px;box-shadow:0 3px 10px #1d40500a}
+.band>div{padding:12px 18px;border-left:1px solid #EEF2F6}.band>div:first-child{border-left:0}
+.band small{font-size:10px;font-weight:800;letter-spacing:.5px;color:#7C8899;display:block}.band b{font-size:22px;letter-spacing:-.4px}.band span{font-size:11px;color:#7C8899;margin-left:6px}
+.stabs{display:flex;gap:0;border-bottom:1px solid #E3EAF1;margin:0 -16px 10px;padding:0 16px;overflow:auto}
+.stabs span{white-space:nowrap;padding:9px 12px 8px;font-size:11px;font-weight:800;letter-spacing:.3px;color:#62798B;border-bottom:3px solid transparent;cursor:pointer;display:flex;align-items:center;gap:6px}
+.stabs span em{font-weight:700;color:#9AA6B6}.stabs span i{width:8px;height:8px;border-radius:50%}
+.stabs span.on{color:#0B5CAD;border-bottom-color:#0B5CAD}.stabs span.on em{color:#0B5CAD}
+.one{white-space:nowrap}.one b{font-size:13.5px}.one b.z{color:#B8C2CE;font-weight:700}.one small{color:#9AA6B6;font-size:10.5px;margin-left:5px}
+td.c1{padding:7px 10px}
+</style></head><body>
+
+<div class="note"><b>OPSI B · "Tabel duluan"</b> — buat perbandingan sama opsi A.
+<ol><li>Semua KPI atas dipadatkan jadi <b>1 pita angka</b> (tanpa kartu terpisah).</li>
+<li>Status dealer <b>nggak punya kartu sendiri</b>: jadi tab di atas tabel (SEMUA · AKTIF · IDLE · …). Klik tab = saring tabel.</li>
+<li>Sel brand <b>1 baris</b>: titik warna = status, angka = ST SEP, pot kecil di samping. Arti titik ada di tab status. Sel lebih lega dan cepat dipindai.</li></ol>
+<b>Kelebihan:</b> paling bersih dan tabel langsung kelihatan. <b>Kekurangan:</b> nama status cuma berupa warna titik, jadi harus hafal warnanya (atau hover). Bar komposisi status dan "sudah order" per status hilang dari layar utama.</div>
+<div class="page">
+ <div class="top"><h1>DEALER</h1>
+  <span class="chip">MTD <b>1–28 Sep 2026</b></span><span class="chip">vs LMTD <b>1–28 Agu 2026</b></span><span class="chip lock">🔒 STATUS DIKUNCI 1 SEP</span></div>
+ <div class="banner"><span>⚠ ST belum lengkap s.d. 28 Sep 2026 untuk <b>KALIMANTAN, GROSS NAS</b></span><a href="#">Lihat kelengkapan</a></div>
+ <div class="tabs"><span class="on">TOTAL</span><span>ITEL</span><span>MOTOPAD</span><span>MOTOROLA</span><span>VILLAON</span></div>
+
+ <div class="band">
+  <div><small>SUDAH ORDER SEP</small><b style="color:#0E7C6B">1.327</b><span>1.626 pasangan DA</span></div>
+  <div><small>NOO PER BRAND</small><b style="color:#6D3FD8">368</b><span>order pertama</span></div>
+  <div><small>BANGKIT BULAN INI <i class="ii">i</i></small><b style="color:#0E7C8C">324</b><span>200 dari IDLE · 65 NONAKTIF</span></div>
+  <div><small>SELL OUT</small><b style="color:#C25A12">29.898</b><span>s.d. 28 Sep</span></div>
+ </div>
+<div class="card">
+  <div class="stabs"><span class="on">SEMUA <em>3.831</em></span><span><i style="background:#12A86B"></i>AKTIF <em>1.164</em></span><span><i style="background:#F5C451"></i>DI BAWAH MIN <em>37</em></span><span><i style="background:#2BB3C4"></i>BANGKIT <em>14</em></span><span><i style="background:#E98A3B"></i>TURUN <em>48</em></span><span><i style="background:#F2B04E"></i>IDLE <em>516</em></span><span><i style="background:#E5534B"></i>PASIF <em>314</em></span><span><i style="background:#9CA3AF"></i>NONAKTIF <em>744</em></span><span><i style="background:#CBD5E1"></i>BELUM ORDER <em>994</em></span><span><i style="background:#6D3FD8"></i>NOO <em>368</em></span></div>
+  <div class="fbar">
+   <div class="in">🔍 Cari nama / kode dealer…</div>
+   <div class="sel">Semua region</div><div class="sel">Semua brand</div><div class="sel">Semua order</div>
+   <button class="fbtn">FILTER LAIN</button>
+   <span class="cnt"><b>3.831</b> dealer</span><span class="ghost">KOLOM</span><span class="ghost">RESET</span>
+  </div>
+  <table>
+   <thead><tr><th>DEALER</th><th>REGION PIC</th><th>TERAKHIR ORDER</th>
+    <th class="br" style="--c:#0E7C6B">ITEL</th><th class="br" style="--c:#C25A12">MOTOPAD</th><th class="br" style="--c:#1E5FB8">MOTOROLA</th><th class="br" style="--c:#62798B">VILLAON</th>
+    <th class="r">TOTAL ST</th><th class="r">SELL OUT</th><th class="r">% SO/ST</th><th class="r">GAP POTENSI</th></tr></thead>
+   <tbody>
+    <tr><td class="dn c1"><a href="#">PT.AGRES INFO TEKNOLOGI</a><small>317.811 · JAKARTA</small></td><td>JABODETABEK</td><td>22 Sep 2026</td>
+     <td class="c1"><div class="one"><span class="dot" style="background:#12A86B" title="AKTIF"></span><b>599</b><small>pot 4.803</small></div></td>
+     <td class="c1"><div class="one"><span class="dot" style="background:#12A86B" title="AKTIF"></span><b>1.005</b><small>pot 322</small></div></td>
+     <td class="c1"><div class="one"><span class="dot" style="background:#12A86B" title="AKTIF"></span><b>43</b><small>pot 1.032</small></div></td>
+     <td class="c1"><div class="one"><span class="dot" style="background:#E5534B" title="PASIF"></span><b class="z">0</b><small>peluang ~1</small></div></td>
+     <td class="r"><b>1.647</b></td><td class="r">3.683</td><td class="r"><span class="pct" style="background:#E2F5EA;color:#0E6E48">224%</span></td><td class="r gap">+4.746</td></tr>
+    <tr><td class="dn c1"><a href="#">RISM JAYA BARU</a><small>RISM2 · PURWAKARTA</small></td><td>JAWA BARAT</td><td>26 Sep 2026</td>
+     <td class="c1"><div class="one"><span class="dot" style="background:#12A86B" title="AKTIF"></span><b>720</b><small>pot 928</small></div></td>
+     <td class="c1"><div class="one"><span class="dot" style="background:#12A86B" title="AKTIF"></span><b>5</b><small>pot 12</small></div></td>
+     <td class="c1"><div class="one"><span class="dot" style="background:#12A86B" title="AKTIF"></span><b class="z">0</b><small>pot 169</small></div></td>
+     <td class="c1"><div class="one"><span class="dot" style="background:#12A86B" title="AKTIF"></span><b>126</b><small>pot 65</small></div></td>
+     <td class="r"><b>851</b></td><td class="r">884</td><td class="r"><span class="pct" style="background:#E2F5EA;color:#0E6E48">104%</span></td><td class="r gap">+299</td></tr>
+    <tr><td class="dn c1"><a href="#">RISM SINARMAS</a><small>RISM4 · SEMARANG</small></td><td>JAWA TENGAH</td><td>25 Sep 2026</td>
+     <td class="c1"><div class="one"><span class="dot" style="background:#12A86B" title="AKTIF"></span><b>517</b><small>pot 493</small></div></td>
+     <td class="c1"><div class="one"><span class="dot" style="background:#12A86B" title="AKTIF"></span><b>20</b><small>pot 8</small></div></td>
+     <td class="c1"><div class="one"><span class="dot" style="background:transparent"></span><b class="z">–</b><small>peluang ~2</small></div></td>
+     <td class="c1"><div class="one"><span class="dot" style="background:#F2B04E" title="IDLE"></span><b>100</b><small>pot 67</small></div></td>
+     <td class="r"><b>637</b></td><td class="r">554</td><td class="r"><span class="pct" style="background:#E2F5EA;color:#0E6E48">87%</span></td><td class="r gap">+2</td></tr>
+    <tr><td class="dn c1"><a href="#">CV. PRIMA GALERI PHONE SHOP</a><small>033.001 · SERANG</small></td><td>JABODETABEK</td><td>23 Sep 2026</td>
+     <td class="c1"><div class="one"><span class="dot" style="background:#12A86B" title="AKTIF"></span><b>530</b><small>pot 167</small></div></td>
+     <td class="c1"><div class="one"><span class="dot" style="background:transparent"></span><b class="z">–</b><small>peluang ~3</small></div></td>
+     <td class="c1"><div class="one"><span class="dot" style="background:transparent"></span><b class="z">–</b><small>peluang ~6</small></div></td>
+     <td class="c1"><div class="one"><span class="dot" style="background:#6D3FD8" title="★ NOO"></span><b>48</b><small>pot 1</small></div></td>
+     <td class="r"><b>578</b></td><td class="r">489</td><td class="r"><span class="pct" style="background:#E2F5EA;color:#0E6E48">85%</span></td><td class="r gap">+8</td></tr>
+    <tr><td class="dn c1"><a href="#">CV. GEDANK CELL</a><small>010.115 · PROBOLINGGO</small></td><td>JAWA TIMUR</td><td>28 Sep 2026</td>
+     <td class="c1"><div class="one"><span class="dot" style="background:#12A86B" title="AKTIF"></span><b>344</b><small>pot 331</small></div></td>
+     <td class="c1"><div class="one"><span class="dot" style="background:#12A86B" title="AKTIF"></span><b class="z">0</b><small>pot 12</small></div></td>
+     <td class="c1"><div class="one"><span class="dot" style="background:#9CA3AF" title="NONAKTIF"></span><b class="z">0</b><small>peluang ~1</small></div></td>
+     <td class="c1"><div class="one"><span class="dot" style="background:#12A86B" title="AKTIF"></span><b>199</b><small>pot 83</small></div></td>
+     <td class="r"><b>543</b></td><td class="r">454</td><td class="r"><span class="pct" style="background:#E2F5EA;color:#0E6E48">84%</span></td><td class="r gap">+12</td></tr>
+    <tr><td class="dn c1"><a href="#">PT. DISTRIBUTOR GADGET INDONESIA</a><small>005.091 · JAKARTA PUSAT</small></td><td>JABODETABEK</td><td>23 Sep 2026</td>
+     <td class="c1"><div class="one"><span class="dot" style="background:#12A86B" title="AKTIF"></span><b class="z">0</b><small>pot 33</small></div></td>
+     <td class="c1"><div class="one"><span class="dot" style="background:#12A86B" title="AKTIF"></span><b>524</b><small>pot 97</small></div></td>
+     <td class="c1"><div class="one"><span class="dot" style="background:#E98A3B" title="TURUN"></span><b class="z">0</b><small>pot 50</small></div></td>
+     <td class="c1"><div class="one"><span class="dot" style="background:transparent"></span><b class="z">–</b><small>peluang ~1</small></div></td>
+     <td class="r"><b>524</b></td><td class="r">204</td><td class="r"><span class="pct" style="background:#FBE3E1;color:#A3201B">39%</span></td><td class="r gap">+78</td></tr>
+   </tbody></table>
+  <div class="vs">Titik = status brand (warna sama dengan tab di atas) · <span><b style="color:#B8C2CE">0</b> = belum order SEP (abu)</span><span><b style="color:#B8C2CE">–</b> = belum jadi dealer brand ini</span><span>teks abu kecil = potensi / peluang</span></div>
+ </div>
+</div>
+</body></html>

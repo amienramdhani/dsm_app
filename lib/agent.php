@@ -18,10 +18,10 @@ const AGENT_RATE_KEY = 300;            // request / menit per BOT_KEY
 const AGENT_CODE_TRIES = 5;            // salah kode / 10 menit per Telegram ID sebelum diblok
 
 class AgentError extends Exception {
-    public int $http; public string $codeName;
-    public function __construct(int $http, string $code, string $msg) { parent::__construct($msg); $this->http = $http; $this->codeName = $code; }
+    public int $http; public string $codeName; public string $why = '';
+    public function __construct(int $http, string $code, string $msg, string $why = '') { parent::__construct($msg); $this->http = $http; $this->codeName = $code; $this->why = $why; }
 }
-function agentFail_(int $http, string $code, string $msg): never { throw new AgentError($http, $code, $msg); }
+function agentFail_(int $http, string $code, string $msg, string $why = ''): never { throw new AgentError($http, $code, $msg, $why); }
 
 function agentSchema_(): void {
     static $done = false; if ($done) return;
@@ -51,11 +51,17 @@ function agentKeyRevoke_(int $id, string $by): void {
 }
 function agentKeyCheck_(?string $header): int {
     agentSchema_();
-    if (!is_string($header) || !preg_match('/^Bearer\s+(dsmk_[a-f0-9]{48})$/', trim($header), $m)) agentFail_(401, 'BAD_KEY', 'BOT_KEY tidak valid.');
-    $st = db_()->prepare('SELECT id FROM dsm_agent_key WHERE key_hash=? AND active=1'); $st->execute([hash_('AGENTKEY|' . $m[1])]);
-    $id = $st->fetchColumn(); if ($id === false) agentFail_(401, 'BAD_KEY', 'BOT_KEY tidak valid.');
-    db_()->prepare('UPDATE dsm_agent_key SET last_used_ms=? WHERE id=?')->execute([now_ms(), (int) $id]);
-    return (int) $id;
+    // Alasan penolakan hanya masuk log (kolom status), bukan ke jawaban: pesan ke pemanggil tetap sama.
+    $bad = fn(string $why) => agentFail_(401, 'BAD_KEY', 'BOT_KEY tidak valid.', $why);
+    if (!is_string($header) || trim($header) === '') $bad('BAD_KEY:NO_HEADER');       // header Authorization tidak sampai ke PHP
+    if (!preg_match('/^Bearer\s+(dsmk_[a-f0-9]{48})$/', trim($header), $m)) $bad('BAD_KEY:FORMAT'); // ada, tapi bukan "Bearer dsmk_<48 hex>"
+    $st = db_()->prepare('SELECT id, active FROM dsm_agent_key WHERE key_hash=?'); $st->execute([hash_('AGENTKEY|' . $m[1])]);
+    $row = $st->fetch(PDO::FETCH_ASSOC);
+    if (!$row) $bad('BAD_KEY:NOT_FOUND');                                              // format benar, hash tidak ada di database ini
+    if ((int) $row['active'] !== 1) $bad('BAD_KEY:REVOKED');                           // key ada tapi sudah dicabut
+    $id = (int) $row['id'];
+    db_()->prepare('UPDATE dsm_agent_key SET last_used_ms=? WHERE id=?')->execute([now_ms(), $id]);
+    return $id;
 }
 
 // ---------------- Kode hubungkan ----------------

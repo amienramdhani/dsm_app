@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSM · Opsi header halaman (desktop)</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#D7E0F8;font-family:Inter,"Segoe UI",Arial,sans-serif;color:#10394E;padding:26px 28px 60px}
+h1{font-size:15px;margin:0 0 4px}.lead{font-size:12px;color:#5F7285;margin:0 0 22px}
+.opt{margin:0 0 34px}.tag{display:inline-flex;gap:8px;align-items:center;font:800 11px Inter,Arial;letter-spacing:.5px;color:#fff;background:#0B5CAD;border-radius:7px;padding:5px 10px;margin-bottom:8px}
+.rec{background:#12A86B}.note{font-size:12px;color:#43627A;margin:0 0 10px;max-width:880px;line-height:1.5}
+.stage{border-radius:14px;overflow:hidden;border:1px solid #C4D2EE;background:#E6ECFA}
+.bar{height:46px;background:#fff;border-bottom:3px solid #3F4FD6;display:flex;align-items:center;gap:14px;padding:0 20px;font-size:12px;font-weight:700;color:#43627A}
+.bar b{background:#0B5CAD;color:#fff;border-radius:9px;padding:7px 14px;font-size:12px}
+.body{padding:16px 20px 20px}
+.chip{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:5px 12px;font-size:11px;font-weight:800}
+.mtd{background:#E3EEFB;border:1px solid #B9D2EE;color:#0B5CAD}.lmtd{background:#FFEBD2;border:1px solid #F1C48F;color:#9A5A10}.vs{font-size:10px;color:#8A99AB;font-weight:700}
+.btn{height:34px;border:1px solid #DCE6EE;background:#fff;border-radius:9px;padding:0 14px;font:800 10.5px Inter,Arial;letter-spacing:.4px;color:#43627A;display:inline-flex;align-items:center}
+.fake{height:70px;border-radius:14px;background:#fff;margin-top:14px;box-shadow:0 3px 10px rgba(29,64,80,.06);padding:14px;font-size:11px;color:#9AA6B6;font-weight:700}
+/* A */
+.A{display:flex;align-items:center;gap:14px}.A .ic{width:46px;height:46px;border-radius:13px;background:#0B5CAD;color:#fff;display:grid;place-items:center;font-size:20px}
+.A h2{margin:0;font-size:25px;letter-spacing:.2px}.A .sub{font-size:12px;color:#5F7285;margin-top:2px}.A .r{margin-left:auto;display:flex;gap:8px;align-items:center}
+/* B */
+.B{background:#fff;border-radius:16px;padding:14px 18px 14px 22px;position:relative;box-shadow:0 3px 10px rgba(29,64,80,.06);display:flex;align-items:center;gap:16px}
+.B:before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:5px;border-radius:0 4px 4px 0;background:#0B5CAD}
+.B .crumb{font:800 9.5px Inter,Arial;letter-spacing:.6px;color:#8A99AB}.B h2{margin:2px 0 0;font-size:23px}
+.B .mid{display:flex;gap:8px;align-items:center;margin-left:8px}.B .r{margin-left:auto;display:flex;gap:10px;align-items:center}
+.B .st{font-size:11px;color:#5F7285;display:flex;align-items:center;gap:6px}.dot{width:8px;height:8px;border-radius:50%;background:#12A86B;display:inline-block}
+.B .sc{border:1px solid #DCE6EE;border-radius:9px;padding:6px 11px;font-size:11px;font-weight:800;color:#43627A;line-height:1.25}.B .sc small{display:block;font-size:9px;color:#9AA6B6;letter-spacing:.5px}
+/* C */
+.C h2{margin:0;font-size:25px}.C .row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:6px}
+.C .tabs{display:flex;gap:4px;margin-top:12px;border-bottom:2px solid #C4D2EE}.C .tabs span{padding:8px 16px;font:800 11px Inter,Arial;letter-spacing:.4px;color:#5F7285;margin-bottom:-2px;border-bottom:3px solid transparent}.C .tabs .on{color:#0B5CAD;border-color:#0B5CAD}
+.sc2 .bar .crumbT{font-weight:800;color:#10394E;font-size:13px}.sc2 .bar .sep{color:#B9C6D6}
+.cap{font-size:10.5px;color:#7C8899;margin:8px 0 4px;font-weight:700}
+</style></head><body>
+<h1>Opsi header halaman · desktop</h1>
+<p class="lead">Contoh pada halaman Dealer dan DOS. Latar mengikuti biru langit, kartu putih solid, tanpa gradient. Ini mockup, belum dipasang ke aplikasi.</p>
+
+<div class="opt"><span class="tag">OPSI A · IKON + JUDUL + KETERANGAN</span>
+<p class="note">Paling ringan. Judul besar dengan ikon berwarna per halaman, satu baris keterangan di bawahnya, chip periode dan tombol aksi di kanan. Tidak pakai kartu, jadi tinggi tambahan hanya sekitar 60px.</p>
+<div class="stage"><div class="bar"><span>Beranda</span><b>Semua Menu ▾</b><span>AI Assistant</span><span>Informasi</span></div><div class="body">
+<div class="A"><div class="ic">◉</div><div><h2>DEALER</h2><div class="sub">Daftar dan status dealer sesuai cakupan Anda</div></div><div class="r"><span class="chip mtd">MTD &nbsp;1–28 September 2026</span><span class="vs">vs</span><span class="chip lmtd">LMTD &nbsp;1–28 Agustus 2026</span></div></div>
+<div class="fake">Kartu KPI …</div>
+<div class="A" style="margin-top:20px"><div class="ic" style="background:#0E7C6B">▦</div><div><h2>DOS</h2><div class="sub">Estimasi stok suplai kita · monitoring di luar KPI</div></div><div class="r"><span class="btn">EXPORT</span></div></div></div></div></div>
+
+<div class="opt"><span class="tag rec">OPSI B · KARTU HEADER PUTIH (REKOMENDASI)</span>
+<p class="note">Satu kartu putih dengan garis warna di kiri (warna tiap halaman beda). Isinya: jalur menu kecil, judul, chip periode, lalu di kanan status data, ringkasan Cakupan, dan tombol aksi. Jadi info yang sekarang disembunyikan di bar Cakupan &amp; Periode tetap kelihatan tanpa menambah bar freeze. Kartu ini ikut scroll (tidak freeze).</p>
+<div class="stage"><div class="bar"><span>Beranda</span><b>Semua Menu ▾</b><span>AI Assistant</span><span>Informasi</span></div><div class="body">
+<div class="B"><div><div class="crumb">PANTAU › DEALER</div><h2>DEALER</h2></div><div class="mid"><span class="chip mtd">MTD &nbsp;1–28 Sep 2026</span><span class="vs">vs</span><span class="chip lmtd">LMTD &nbsp;1–28 Agu 2026</span></div>
+<div class="r"><div class="st"><i class="dot"></i>Data lengkap s.d. <b>28 Sep 2026</b></div><div class="sc"><small>CAKUPAN</small>Seluruh cakupan saya</div><span class="btn">EXPORT</span></div></div>
+<div class="fake">Kartu KPI …</div>
+<div class="B" style="margin-top:20px"><div style="--x:1"><div class="crumb">PANTAU › DOS</div><h2>DOS</h2></div><div class="mid"><span style="font-size:12px;color:#5F7285">Estimasi stok suplai kita · monitoring di luar KPI</span></div>
+<div class="r"><div class="st"><i class="dot"></i>Data lengkap s.d. <b>28 Sep 2026</b></div><div class="sc"><small>CAKUPAN</small>Seluruh cakupan saya</div><span class="btn">EXPORT</span></div></div></div></div></div>
+
+<div class="opt"><span class="tag">OPSI C · JUDUL MASUK KE BAR SAAT SCROLL + TAB BAGIAN</span>
+<p class="note">Judul besar di atas halaman. Begitu di-scroll, judul mengecil dan pindah ke bar atas (ada jalur "Pantau › Dealer"), jadi tidak butuh bar kedua. Di bawah judul ada tab loncat ke bagian halaman (Ringkasan, Status, Daftar) yang ikut freeze sebagai garis tipis. Paling canggih, tapi paling banyak kode.</p>
+<div class="cap">KONDISI DI ATAS HALAMAN</div>
+<div class="stage"><div class="bar"><span>Beranda</span><b>Semua Menu ▾</b><span>AI Assistant</span><span>Informasi</span></div><div class="body C">
+<h2>DEALER</h2><div class="row"><span class="chip mtd">MTD &nbsp;1–28 September 2026</span><span class="vs">vs</span><span class="chip lmtd">LMTD &nbsp;1–28 Agustus 2026</span></div>
+<div class="tabs"><span class="on">RINGKASAN</span><span>STATUS</span><span>FILTER</span><span>DAFTAR DEALER</span></div></div></div>
+<div class="cap">KONDISI SETELAH SCROLL</div>
+<div class="stage sc2"><div class="bar"><span>Beranda</span><b>Semua Menu ▾</b><span class="sep">|</span><span class="crumbT">Pantau › Dealer</span><span class="chip mtd" style="margin-left:6px">MTD 1–28 Sep</span><span style="margin-left:auto" class="btn">CAKUPAN ▾</span></div>
+<div class="body C" style="padding-top:0"><div class="tabs" style="margin-top:0;background:#fff;padding:0 14px"><span class="on">RINGKASAN</span><span>STATUS</span><span>FILTER</span><span>DAFTAR DEALER</span></div><div class="fake">Isi halaman …</div></div></div></div>
+
+<p class="note"><b>Rekomendasi gue: B.</b> Tidak menambah tinggi freeze, info Cakupan dan Data tetap kelihatan, dan kodenya kecil (hanya menata ulang elemen judul yang sudah ada). C bisa menyusul sebagai tahap berikutnya kalau lu masih mau header lebih ringkas.</p>
+</body></html>

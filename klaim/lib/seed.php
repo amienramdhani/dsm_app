@@ -76,3 +76,37 @@ function seed_all(bool $demo = true): void {
   if ($demo) ins('claim_fuel_price', ['effective_from' => '2000-01-01', 'pertalite' => 10000, 'pertamax' => 20000, 'created_by' => 1, 'created_at' => now()]); // DATA TES: ganti lewat Super Admin → Harga BBM
   set_setting('test_mode', $demo ? '1' : '0'); // produksi (tanpa akun uji): Mode tes mati
 }
+
+/* ---------- Mode Demo ---------- */
+/** Ringkasan Mode Demo untuk layar Super Admin. */
+function demo_state(): array {
+  $uji = "SELECT id FROM claim_users WHERE nik LIKE 'UJI-%'";
+  return ['on' => test_mode(), 'accounts' => (int) val("SELECT COUNT(*) FROM claim_users WHERE nik LIKE 'UJI-%' AND active=1"),
+    'claims' => (int) val("SELECT COUNT(*) FROM claims WHERE is_demo=1"), 'nominal' => (int) val("SELECT COALESCE(SUM(total),0) FROM claims WHERE is_demo=1 AND status<>'DRAFT'"),
+    'pc' => (int) val("SELECT COUNT(*) FROM claim_pc WHERE is_demo=1"),
+    'users' => array_map(fn($r) => ['id' => (int) $r['id'], 'name' => $r['name'], 'job' => $r['job'], 'roles' => $r['roles'], 'can_submit' => (int) $r['can_submit']], q("SELECT id, name, job, roles, can_submit FROM claim_users WHERE nik LIKE 'UJI-%' AND active=1 ORDER BY id")),
+    'note' => (int) val("SELECT COUNT(*) FROM claims WHERE is_demo=0 AND claimant_id IN ($uji)")];
+}
+/** Hapus permanen klaim, petty cash, BA, transfer, berkas, dan notifikasi milik data demo. Riwayat (claim_history) tidak bisa dihapus (append-only) dan tidak tampil. */
+function demo_purge(): array {
+  $cl = array_map('intval', array_column(q("SELECT id FROM claims WHERE is_demo=1"), 'id'));
+  $pc = array_map('intval', array_column(q("SELECT id FROM claim_pc WHERE is_demo=1"), 'id'));
+  $uji = array_map('intval', array_column(q("SELECT id FROM claim_users WHERE nik LIKE 'UJI-%'"), 'id'));
+  $in = fn(array $ids) => $ids ? implode(',', $ids) : '0';
+  $n = ['klaim' => count($cl), 'petty_cash' => count($pc), 'berkas' => 0];
+  db()->beginTransaction();
+  try {
+    $files = q("SELECT id, stored_name FROM claim_files WHERE (ref_type='claim' AND ref_id IN (" . $in($cl) . ")) OR (ref_type IN ('pc','ba') AND ref_id IN (" . $in(array_merge($pc, array_map('intval', array_column(q("SELECT id FROM claim_ba WHERE claim_id IN (" . $in($cl) . ")"), 'id')))) . ")) OR (ref_id IS NULL AND uploader IN (" . $in($uji) . "))");
+    $ba = $in(array_map('intval', array_column(q("SELECT id FROM claim_ba WHERE claim_id IN (" . $in($cl) . ")"), 'id')));
+    ex("DELETE FROM claim_ba_sign WHERE ba_id IN ($ba)"); ex("DELETE FROM claim_ba WHERE id IN ($ba)");
+    foreach (['claim_versions', 'claim_notes'] as $t) ex("DELETE FROM $t WHERE claim_id IN (" . $in($cl) . ")");
+    ex("DELETE FROM claim_pc_notes WHERE pc_id IN (" . $in($pc) . ")");
+    foreach (['claim_approvals', 'claim_transfers'] as $t) ex("DELETE FROM $t WHERE (ref_type='claim' AND ref_id IN (" . $in($cl) . ")) OR (ref_type='pc' AND ref_id IN (" . $in($pc) . "))");
+    ex("DELETE FROM claim_notif WHERE user_id IN (" . $in($uji) . ")");
+    ex("DELETE FROM claim_files WHERE id IN (" . $in(array_map('intval', array_column($files, 'id'))) . ")");
+    ex("DELETE FROM claims WHERE id IN (" . $in($cl) . ")"); ex("DELETE FROM claim_pc WHERE id IN (" . $in($pc) . ")");
+    db()->commit();
+  } catch (Throwable $e) { if (db()->inTransaction()) db()->rollBack(); throw $e; }
+  foreach ($files as $f) if (@unlink(upload_dir() . '/' . $f['stored_name'])) $n['berkas']++;
+  return $n;
+}

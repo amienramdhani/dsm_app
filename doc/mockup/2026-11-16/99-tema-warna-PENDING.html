@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>DSM - Mockup Tema per Halaman</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600;800&family=Playfair+Display:wght@700;800&family=Roboto:wght@400;500;700&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:ital,wght@1,700;1,800&display=swap" rel="stylesheet">
+<style>
+/* ===== TOKENS: OREN DSM (default) ===== */
+:root{
+ --font:"Plus Jakarta Sans",sans-serif;--head:"Plus Jakarta Sans",sans-serif;
+ --bg:#F4F6FB;--ink:#16202E;--mut:#7C8899;--line:#E8EDF4;
+ --a1:#FFB020;--a2:#F07A0C;--acc:#F07A0C;--soft:#FFF1E2;
+ --card:#fff;--cb:transparent;--r:20px;--rs:12px;--sh:0 8px 22px rgba(20,40,80,.07);
+ --hero:#F07A0C;--heroInk:#fff;--heroR:0 0 30px 30px;
+ --btn:#F07A0C;--btnInk:#fff;--chip:99px;--barH:7px;
+ --nav:#fff;--navOn:#F07A0C;
+}
+body.now{
+ --font:"Inter",sans-serif;--head:"Inter",sans-serif;
+ --bg:#F4F7FB;--ink:#152238;--mut:#728098;--line:#E5EBF3;
+ --a1:#0B5CAD;--a2:#0B5CAD;--acc:#0B5CAD;--soft:#EAF3FC;
+ --card:#fff;--cb:#E5EBF3;--r:16px;--rs:10px;--sh:0 6px 18px rgba(9,46,92,.06);
+ --hero:#0B5CAD;--heroInk:#fff;--heroR:0 0 22px 22px;
+ --btn:#0B5CAD;--btnInk:#fff;--chip:99px;--barH:6px;--nav:#fff;--navOn:#0B5CAD;
+}
+body.now .hd::after{display:none}
+body.now .hd{border-bottom:3px solid #00A5D9}
+body.now .fbtn{background:#F07A0C!important;box-shadow:none}
+body.now .seg b.on{background:#0B5CAD}
+body.now .nv.on{color:#0B5CAD;background:#EAF3FC;border-radius:12px}
+body.now .di.on{background:#0B5CAD}
+body.corp{
+ --font:"Inter",sans-serif;--head:"Playfair Display",serif;
+ --bg:#F7F8FA;--ink:#0F172A;--mut:#64748B;--line:#E2E8F0;
+ --a1:#0B3D91;--a2:#0B3D91;--acc:#0B3D91;--soft:#E8EEF8;
+ --card:#fff;--cb:#E2E8F0;--r:6px;--rs:4px;--sh:none;
+ --hero:#0B3D91;--heroInk:#fff;--heroR:0;
+ --btn:#0B3D91;--btnInk:#fff;--chip:3px;--barH:4px;--nav:#fff;--navOn:#0B3D91;
+}
+body.mat{
+ --font:"Roboto",sans-serif;--head:"Roboto",sans-serif;
+ --bg:#FEF7FF;--ink:#1D1B20;--mut:#79747E;--line:#E7E0EC;
+ --a1:#6750A4;--a2:#6750A4;--acc:#6750A4;--soft:#E8DEF8;
+ --card:#F3EDF7;--cb:transparent;--r:24px;--rs:99px;--sh:none;
+ --hero:#EADDFF;--heroInk:#21005D;--heroR:0 0 28px 28px;
+ --btn:#6750A4;--btnInk:#fff;--chip:99px;--barH:8px;--nav:#F3EDF7;--navOn:#1D1B20;
+}
+body.sport{
+ --font:"Barlow",sans-serif;--head:"Barlow Condensed",sans-serif;
+ --bg:#F3F3F3;--ink:#111;--mut:#707070;--line:#E3E3E3;
+ --a1:#E10600;--a2:#FF3B1F;--acc:#E10600;--soft:#F0F0F0;
+ --card:#fff;--cb:transparent;--r:4px;--rs:2px;--sh:0 4px 14px rgba(0,0,0,.07);
+ --hero:linear-gradient(115deg,#111 62%,#E10600 62%);--heroInk:#fff;--heroR:0;
+ --btn:#E10600;--btnInk:#fff;--chip:2px;--barH:9px;--nav:#fff;--navOn:#E10600;
+}
+/* indikator tetap (tidak ikut tema) */
+:root{--st:#1E5FB8;--so:#C25A12;--da:#0E7C6B;--noo:#6D3FD8;--om:#9A6400}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);transition:background .35s}
+.app{max-width:430px;margin:0 auto;min-height:100vh;position:relative;padding-bottom:96px}
+h1,h2,h3,.num,.ttl{font-family:var(--head)}
+body.sport h1,body.sport .ttl,body.sport .num,body.sport h3{font-style:italic;text-transform:uppercase;letter-spacing:.3px}
+
+/* theme bar */
+.tb{position:sticky;top:0;z-index:40;background:#fff;border-bottom:1px solid #E8EDF4;padding:8px 10px;display:flex;gap:6px;font-family:"Plus Jakarta Sans",sans-serif}
+.tb button{flex:1;border:1.5px solid #E8EDF4;background:#fff;border-radius:10px;padding:6px 2px;font:800 10px "Plus Jakarta Sans";color:#5A6577;display:flex;flex-direction:column;align-items:center;gap:4px}
+.tb button i{width:34px;height:8px;border-radius:9px;display:block}
+.tb button.on{border-color:#16202E;color:#16202E}
+
+/* header */
+.hd{background:var(--hero);color:var(--heroInk);border-radius:var(--heroR);padding:18px 18px 54px;position:relative;overflow:hidden;transition:.35s}
+.hd::after{content:"";display:none}
+body.corp .hd::after,body.sport .hd::after{display:none}
+body.mat .hd::after{background:rgba(103,80,164,.08)}
+.hrow{display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}
+.hrow small{font-size:11px;opacity:.85;font-weight:600;letter-spacing:.5px}
+.hrow h1{font-size:22px;font-weight:800;margin-top:2px}
+body.corp .hrow h1{font-size:24px}
+.ava{width:40px;height:40px;border-radius:var(--rs);display:grid;place-items:center;font-weight:800;font-size:13px;background:rgba(255,255,255,.25)}
+body.mat .ava{background:#6750A4;color:#fff;border-radius:50%}
+body.corp .ava{border:1px solid rgba(255,255,255,.4);background:none}
+.per{display:inline-flex;margin-top:10px;font-size:11px;font-weight:700;padding:5px 11px;border-radius:var(--chip);background:rgba(255,255,255,.22);position:relative;z-index:1}
+body.mat .per{background:#fff}
+body.corp .per{letter-spacing:1px;text-transform:uppercase;background:rgba(255,255,255,.12)}
+
+.wrap{padding:0 14px;margin-top:-38px;position:relative;z-index:2;display:flex;flex-direction:column;gap:10px}
+.card{background:var(--card);border:1px solid var(--cb);border-radius:var(--r);box-shadow:var(--sh);padding:13px;transition:.35s}
+.ttl{font-size:14px;font-weight:800}
+.sub{font-size:11px;color:var(--mut)}
+.sec{font-size:10.5px;font-weight:800;letter-spacing:1px;color:var(--mut);margin:6px 4px -2px}
+
+/* tabs */
+.seg{display:flex;background:var(--card);border:1px solid var(--cb);border-radius:var(--r);padding:4px;box-shadow:var(--sh)}
+.seg b{flex:1;text-align:center;font-size:11px;font-weight:800;padding:9px 4px;border-radius:calc(var(--r) - 4px);color:var(--mut);letter-spacing:.3px}
+.seg b.on{background:var(--btn);color:var(--btnInk)}
+body.mat .seg b.on{background:#E8DEF8;color:#1D1B20}
+body.corp .seg b.on{background:none;color:#0B3D91;border-bottom:2px solid #0B3D91;border-radius:0}
+body.sport .seg b.on{transform:skewX(-10deg)}
+
+/* KPI B2 */
+.kg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kp{display:flex;gap:10px;align-items:stretch;background:var(--card);border:1px solid var(--cb);border-radius:var(--r);box-shadow:var(--sh);padding:10px;transition:.35s}
+.kp .bar{width:6px;border-radius:9px;flex:none}
+body.corp .kp .bar,body.sport .kp .bar{border-radius:0}
+.kp span{font-size:10px;color:var(--mut);font-weight:700;letter-spacing:.4px}
+.kp .num{font-size:20px;font-weight:800;margin:1px 0}
+.kp small{font-size:10px;font-weight:700}
+body.sport .kp .num{font-size:24px}
+body.mat .kp{border-radius:18px}
+
+.pb{height:var(--barH);background:var(--soft);border-radius:99px;overflow:hidden;margin-top:7px}
+.pb i{display:block;height:100%;border-radius:inherit}
+body.corp .pb,body.sport .pb{border-radius:0}
+body.sport .pb{transform:skewX(-18deg)}
+body.sport .pb i{background-image:repeating-linear-gradient(90deg,transparent 0 12px,rgba(255,255,255,.35) 12px 15px)!important}
+
+/* brand cards 3 per row */
+.bg3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.bc{background:var(--card);border:1px solid var(--cb);border-radius:var(--rs);box-shadow:var(--sh);padding:9px;text-align:center}
+body.mat .bc{border-radius:18px}
+.bc b{font-size:11.5px;display:block}
+.bc .num{font-size:16px;font-weight:800;margin-top:3px}
+.bc.on{outline:2px solid var(--st)}
+
+/* filter */
+.fbtn{display:flex;justify-content:center;align-items:center;gap:8px;border-radius:var(--rs);padding:12px;font-weight:800;font-size:13px;letter-spacing:.6px;color:var(--btnInk);background:var(--btn);box-shadow:none}
+
+body.mat .fbtn{border-radius:99px;box-shadow:none}
+body.sport .fbtn{font-style:italic}
+.fbtn em{font-style:normal;background:#fff;color:var(--acc);border-radius:99px;font-size:10px;padding:2px 7px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.cp{font-size:11px;font-weight:700;padding:5px 10px;border-radius:var(--chip);background:var(--soft);color:var(--ink)}
+body.corp .cp{border:1px solid #CBD5E1;background:#fff}
+.cp x{opacity:.5;margin-left:4px}
+
+/* list rows */
+.lr{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.lr:first-child{border-top:0}
+.rk{width:26px;height:26px;border-radius:var(--rs);display:grid;place-items:center;font-size:11px;font-weight:800;background:var(--soft);color:var(--acc);flex:none}
+body.mat .rk{border-radius:50%}
+body.sport .rk{background:#111;color:#fff;font-style:italic}
+body.corp .rk{background:none;color:var(--mut)}
+.lr .tx{flex:1;min-width:0}.lr b{font-size:12.5px;display:block}.lr small{font-size:10.5px;color:var(--mut)}
+.st{font-size:9.5px;font-weight:800;padding:3px 8px;border-radius:var(--chip)}
+.s-ak{background:#E3F8EC;color:#15803D}.s-ps{background:#FFF4D6;color:#B45309}.s-tk{background:#FFE4E4;color:#DC2626}
+.pc{font-weight:800;font-size:13px}
+.gw{font-size:10px;font-weight:800;padding:2px 6px;border-radius:6px}
+.up{background:#E3F8EC;color:#15803D}.dn{background:#FFE4E4;color:#DC2626}
+
+/* table */
+.tw{overflow-x:auto;margin:0 -13px;padding:0 13px}
+table{border-collapse:separate;border-spacing:0;font-size:11.5px;min-width:520px;width:100%}
+th{font-size:9.5px;letter-spacing:.5px;color:var(--mut);text-align:right;padding:8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--card);z-index:1}
+.jump{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.jump b{flex:none;font-size:10.5px;font-weight:800;padding:6px 10px;border-radius:var(--chip);background:var(--soft);color:var(--mut)}
+.jump b.on{background:var(--btn);color:var(--btnInk)}
+body.mat .jump b.on{background:#E8DEF8;color:#1D1B20}
+
+/* DOS */
+.dg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.dk{border-radius:var(--rs);padding:8px 4px;text-align:center;color:#fff}
+.dk b{display:block;font-size:15px;font-weight:800}
+.dk span{font-size:8.5px;font-weight:800;letter-spacing:.3px}
+
+/* drawer */
+.dw{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.di{display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--cb);border-radius:var(--rs);box-shadow:var(--sh);padding:11px 10px;font-size:11px;font-weight:800;letter-spacing:.4px}
+.di i{font-style:normal;width:28px;height:28px;border-radius:var(--rs);display:grid;place-items:center;background:var(--soft);font-size:14px;flex:none}
+body.mat .di i{border-radius:50%}
+.di.on{background:var(--btn);color:var(--btnInk);border-color:transparent}
+.di.on i{background:rgba(255,255,255,.25)}
+body.mat .di.on{background:#E8DEF8;color:#1D1B20}
+.dbtn{display:flex;gap:8px}
+.dbtn b{flex:1;text-align:center;font-size:11px;font-weight:800;padding:11px;border-radius:var(--rs);background:var(--card);border:1px solid var(--line)}
+
+/* bento admin */
+.bt{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.s4{grid-column:span 4}.s2{grid-column:span 2}.s1{grid-column:span 1}
+.todo{display:flex;align-items:center;gap:9px;background:var(--bg);border-radius:var(--rs);padding:8px 10px;font-size:11.5px;font-weight:700;margin-top:6px}
+.todo .ck{width:18px;height:18px;border-radius:6px;border:2px solid #C9D2DE;flex:none}
+.todo.dn{text-decoration:line-through;color:var(--mut)}.todo.dn .ck{background:#12B981;border-color:#12B981}
+.todo em{margin-left:auto;font-style:normal;font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:var(--chip);background:#FFE4E8;color:#E5354E}
+.pin{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-top:8px}
+.pn{flex:none;width:84px;background:var(--bg);border-radius:var(--rs);padding:9px;font-size:10.5px;font-weight:700;line-height:1.25}
+.pn i{font-style:normal;display:grid;place-items:center;width:28px;height:28px;border-radius:var(--rs);background:var(--btn);color:#fff;margin-bottom:6px;font-size:13px}
+body.mat .pn i{background:#E8DEF8;border-radius:50%}
+.mi{text-align:center;font-size:9.5px;font-weight:800;line-height:1.2;padding:9px 4px}
+.mi i{font-style:normal;display:grid;place-items:center;width:34px;height:34px;margin:0 auto 6px;border-radius:var(--rs);background:var(--soft);font-size:15px}
+body.mat .mi i{border-radius:50%}
+
+/* bottom nav */
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;display:flex;justify-content:space-around;padding:8px 6px 16px;background:var(--nav);border-top:1px solid var(--line);z-index:30;transition:.35s}
+.nv{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:700;color:var(--mut);padding:6px 10px;border-radius:var(--rs);cursor:pointer}
+.nv svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nv.on{color:var(--navOn)}
+body.mat .nv.on{background:#E8DEF8;border-radius:99px}
+body.sport .nv.on{border-bottom:3px solid #E10600;border-radius:0}
+body.corp .nv.on{border-top:2px solid #0B3D91;border-radius:0}
+.pg{display:none}.pg.on{display:block}
+.note{font-size:11px;color:var(--mut);text-align:center;margin-top:4px}
+</style>
+</head>
+<body class="now">
+<div class="tb">
+ <button data-t="now" class="on"><i style="background:#0B5CAD"></i>SEKARANG</button>
+ <button data-t=""><i style="background:#F07A0C"></i>OREN</button>
+ <button data-t="corp"><i style="background:#0B3D91"></i>CORPORATE</button>
+ <button data-t="mat"><i style="background:#6750A4"></i>MATERIAL</button>
+ <button data-t="sport"><i style="background:linear-gradient(115deg,#111 60%,#E10600 60%)"></i>SPORT</button>
+</div>
+
+<div class="app" id="app"></div>
+
+<div class="nav" id="nav"></div>
+
+<script>
+const IC={
+ beranda:'<svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
+ dealer:'<svg viewBox="0 0 24 24"><path d="M4 10h16l-1.5-5h-13zM5 10v10h14V10M9 20v-5h6v5"/></svg>',
+ brand:'<svg viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/></svg>',
+ transaksi:'<svg viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6"/></svg>',
+ lainnya:'<svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>'
+};
+const NAV=[['beranda','Beranda'],['dealer','Dealer'],['brand','Brand'],['transaksi','Transaksi'],['lainnya','Lainnya']];
+const head=(sm,h)=>`<div class="hd"><div class="hrow"><div><small>${sm}</small><h1>${h}</h1></div><div class="ava">AH</div></div><div class="per">📅 November 2026 · MTD</div></div>`;
+const kp=(c,l,v,s)=>`<div class="kp"><div class="bar" style="background:${c}"></div><div><span>${l}</span><div class="num">${v}</div><small style="color:${c}">${s}</small></div></div>`;
+const pb=(w,c)=>`<div class="pb"><i style="width:${w}%;background:${c}"></i></div>`;
+
+const PG={
+beranda:()=>head('Selamat malam,','Bro Ary')+`<div class="wrap">
+ <div class="seg"><b class="on">RINGKASAN</b><b>TIM & KPI</b><b>AKSI</b></div>
+ <div class="kg">${kp('var(--st)','SELL THRU','87,4%','Rp 4,37 M')}${kp('var(--so)','SELL OUT','64,1%','Rp 3,12 M')}${kp('var(--da)','DEALER AKTIF','142','+6 vs LM')}${kp('var(--noo)','NOO','18','target 25')}</div>
+ <div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><div class="ttl">Proyeksi Sell Thru</div><span class="sub">akhir bulan</span></div>
+  <div class="num" style="font-size:28px;font-weight:800;margin-top:6px;color:var(--st)">104%</div>${pb(87,'var(--st)')}<div class="sub" style="margin-top:6px">Aktual 87,4% · sisa 14 hari kerja</div></div>
+ <div class="sec">BRAND</div>
+ <div class="bg3">${[['Samsung',92],['Oppo',88],['Vivo',71],['Xiaomi',95],['Infinix',63],['Realme',80]].map((b,i)=>`<div class="bc ${i===0?'on':''}"><b>${b[0]}</b><div class="num" style="color:${b[1]>=85?'#15803D':b[1]>=70?'#B45309':'#DC2626'}">${b[1]}%</div>${pb(b[1],'var(--st)')}</div>`).join('')}</div>
+</div>`,
+
+dealer:()=>head('Daftar','Dealer')+`<div class="wrap">
+ <div class="fbtn">FILTER <em>2 aktif · 86 dealer</em></div>
+ <div class="chips"><span class="cp">Cirebon Kota <x>✕</x></span><span class="cp">Status: Aktif <x>✕</x></span></div>
+ <div class="card">${[['Sinar Cell','Cirebon Kota · Dimas P.','s-ak','AKTIF','Rp 182 jt'],['Maju Jaya Ponsel','Kuningan · Rina A.','s-ak','AKTIF','Rp 140 jt'],['Berkah Phone','Indramayu · Fajar N.','s-ps','PASIF','Rp 41 jt'],['Global Selular','Majalengka · Dimas P.','s-ak','AKTIF','Rp 96 jt'],['Mitra Gadget','Cirebon Kab · Rina A.','s-tk','TIDAK AKTIF','Rp 0']].map(d=>`<div class="lr"><div class="rk">🏪</div><div class="tx"><b>${d[0]}</b><small>${d[1]}</small></div><div style="text-align:right"><span class="st ${d[2]}">${d[3]}</span><div class="sub" style="margin-top:4px;font-weight:700">${d[4]}</div></div></div>`).join('')}</div>
+</div>`,
+
+brand:()=>head('Pencapaian','Brand')+`<div class="wrap">
+ <div class="fbtn">FILTER <em>1 aktif</em></div>
+ <div class="card">${[['Samsung',92,'+12%','up'],['Xiaomi',95,'+8%','up'],['Oppo',88,'+3%','up'],['Realme',80,'-2%','dn'],['Vivo',71,'-9%','dn'],['Infinix',63,'-14%','dn']].map((b,i)=>`<div class="lr"><div class="rk">${i+1}</div><div class="tx"><b>${b[0]}</b>${pb(b[1],b[1]>=85?'var(--st)':b[1]>=70?'#E3A008':'#DC2626')}</div><div style="text-align:right;min-width:62px"><div class="pc">${b[1]}%</div><span class="gw ${b[3]}">${b[2]}</span></div></div>`).join('')}</div>
+ <div class="note">Warna status & indikator tidak ikut tema</div>
+</div>`,
+
+transaksi:()=>head('Rincian','Transaksi')+`<div class="wrap">
+ <div class="fbtn">FILTER <em>Nov 2026</em></div>
+ <div class="jump"><b class="on">IDENTITAS</b><b>SELL THRU</b><b>SELL OUT</b><b>GROWTH</b></div>
+ <div class="card"><div class="tw"><table>
+  <tr><th>DEALER</th><th>QTY ST</th><th>OMZET ST</th><th>QTY SO</th><th>GROWTH</th></tr>
+  ${[['Sinar Cell',42,'182 jt',38,'+12%','up'],['Maju Jaya',35,'140 jt',31,'+4%','up'],['Global Sel.',24,'96 jt',19,'-3%','dn'],['Berkah Ph.',11,'41 jt',9,'-18%','dn'],['Cahaya Cell',29,'118 jt',27,'+9%','up']].map(r=>`<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td><span class="gw ${r[5]}">${r[4]}</span></td></tr>`).join('')}
+ </table></div></div>
+</div>`,
+
+dos:()=>head('Days of Stock','DOS')+`<div class="wrap">
+ <div class="fbtn">FILTER <em>Semua brand</em></div>
+ <div class="card"><div class="ttl" style="margin-bottom:8px">Kondisi Stok</div><div class="dg">
+  ${[['HABIS',12,'#DC2626'],['CEK DATA',4,'#7C3AED'],['MENIPIS',23,'#EA580C'],['CUKUP',61,'#16A34A'],['TINGGI',17,'#2563EB'],['BLM GERAK',8,'#64748B'],['TDK AKTIF',5,'#9CA3AF']].map(d=>`<div class="dk" style="background:${d[2]}"><b>${d[1]}</b><span>${d[0]}</span></div>`).join('')}</div>
+  <div class="sub" style="margin-top:8px">ⓘ Arti kondisi · warna kondisi tetap di semua tema</div></div>
+ <div class="card">${[['Sinar Cell','Samsung A16',4,'MENIPIS','#EA580C'],['Global Selular','Oppo A3',0,'HABIS','#DC2626'],['Maju Jaya','Vivo Y19',38,'CUKUP','#16A34A']].map(d=>`<div class="lr"><div class="rk">📦</div><div class="tx"><b>${d[0]}</b><small>${d[1]}</small></div><div style="text-align:right"><div class="pc">${d[2]} hari</div><span class="st" style="background:${d[4]}22;color:${d[4]}">${d[3]}</span></div></div>`).join('')}</div>
+</div>`,
+
+admin:()=>head('Lainnya › Admin','Malam, Bro Ary 👋')+`<div class="wrap"><div class="bt">
+ <div class="card s4"><div style="display:flex;justify-content:space-between"><span class="sec" style="margin:0">TUGAS HARI INI · 2/4</span></div>
+  <div class="todo"><span class="ck"></span>Tinjau 3 approval<em>PENTING</em></div><div class="todo"><span class="ck"></span>2 region belum upload ST</div><div class="todo dn"><span class="ck"></span>Backup harian berhasil</div></div>
+ <div class="card s4"><span class="sec" style="margin:0">PANEL SEMATAN</span><div class="pin">${[['⬆️','Upload Regional'],['🏷️','Pengaturan Brand'],['✏️','Edit Target'],['📤','Upload Massal Dealer']].map(p=>`<div class="pn"><i>${p[0]}</i>${p[1]}</div>`).join('')}</div></div>
+ ${[['✅','Approval'],['📊','Data Harian'],['🏪','Dealer'],['🏷️','Brand'],['🎯','KPI & Target'],['🗂️','Master Data'],['👤','Pengguna'],['⚙️','Sistem']].map(m=>`<div class="card s1 mi"><i>${m[0]}</i>${m[1]}</div>`).join('')}
+</div></div>`,
+
+lainnya:()=>head('Menu','LAINNYA')+`<div class="wrap">
+ <div class="sec">PANTAU</div><div class="dw">${[['📦','DOS','dos'],['👥','TIM'],['📞','FOLLOW UP'],['🧾','FORM ORDER']].map(d=>`<div class="di" ${d[2]?`onclick="go('${d[2]}')"`:''}><i>${d[0]}</i>${d[1]}</div>`).join('')}</div>
+ <div class="sec">ANALISA</div><div class="dw">${[['📈','ANALISA'],['🎯','KPI'],['🏆','PERINGKAT'],['🤖','AI ASSISTANT']].map(d=>`<div class="di"><i>${d[0]}</i>${d[1]}</div>`).join('')}</div>
+ <div class="sec">LAINNYA</div><div class="dw">${[['ℹ️','INFORMASI'],['🛠️','ADMIN','admin'],['📱','PERANGKAT'],['🎨','TAMPILAN']].map(d=>`<div class="di ${d[1]==='TAMPILAN'?'on':''}" ${d[2]?`onclick="go('${d[2]}')"`:''}><i>${d[0]}</i>${d[1]}</div>`).join('')}</div>
+ <div class="dbtn"><b>DEMO</b><b>KUNCI PIN</b><b style="color:#DC2626">KELUAR</b></div>
+ <div class="note">Ketuk DOS atau ADMIN untuk lihat halamannya</div>
+</div>`
+};
+
+let cur='beranda';
+function go(p){cur=p;render();window.scrollTo(0,0)}
+window.go=go;
+function render(){
+ document.getElementById('app').innerHTML=PG[cur]();
+ const navKey=['dos','admin'].includes(cur)?'lainnya':cur;
+ document.getElementById('nav').innerHTML=NAV.map(([k,n])=>`<div class="nv ${k===navKey?'on':''}" onclick="go('${k}')">${IC[k]}${n}</div>`).join('');
+}
+document.querySelectorAll('.tb button').forEach(b=>b.onclick=()=>{
+ document.querySelectorAll('.tb button').forEach(x=>x.classList.toggle('on',x===b));
+ document.body.className=b.dataset.t;
+});
+render();
+</script>
+</body>
+</html>

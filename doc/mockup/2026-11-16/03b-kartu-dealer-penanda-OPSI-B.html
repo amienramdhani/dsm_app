@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>DSM - Mockup Penanda di Kartu Dealer</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,sans-serif;color:#16202E;background:#F4F6F9}
+.app{max-width:430px;margin:0 auto;padding:10px 12px 40px}
+.sw{position:sticky;top:0;z-index:9;background:#F4F6F9;padding:6px 0 10px;display:flex;gap:6px}
+.sw button{flex:1;border:1.5px solid #E6EAF0;background:#fff;border-radius:10px;padding:8px 4px;font-weight:800;font-size:10.5px;color:#5B6778}
+.sw button.on{background:#16202E;color:#fff;border-color:#16202E}
+.desc{font-size:11.5px;color:#3D4A5C;background:#fff;border:1px solid #E6EAF0;border-radius:12px;padding:9px 11px;line-height:1.5;margin-bottom:10px}
+.card{background:#fff;border:1px solid #E1E6ED;border-radius:18px;padding:16px 14px;margin-bottom:12px}
+.t{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.t b{font-size:15px;color:#1C5EA8;font-weight:700}
+.t small{font-size:11px;color:#7C8899}
+.pill{display:inline-block;margin-top:10px;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:99px;background:#FBE3E1;color:#B42318}
+.pic{font-size:11px;color:#7C8899;margin-top:5px}
+.m3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.m3 div{background:#F1F5F9;border-radius:10px;padding:8px}
+.m3 span{font-size:10px;color:#3D4A5C}.m3 b{display:block;font-size:16px;font-weight:600;margin-top:2px}
+.bg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
+.bx{border:1.5px solid #C2473F;border-radius:10px;padding:10px 2px 9px;text-align:center;position:relative}
+.bx.ak{border-color:#2D7A67}
+.bx .nm{font-size:10.5px;color:#5B6778}
+.bx .q{font-size:15px;font-weight:700;margin:3px 0 5px}
+.st{display:inline-block;font-size:10px;font-weight:800;padding:2px 8px;border-radius:99px;background:#FBE3E1;color:#B42318}
+.bx.ak .st{background:#E2F5EA;color:#0E6E48}
+.last{font-size:11px;color:#7C8899;margin-top:10px}
+.btn{margin-top:12px;background:#1A66A8;color:#fff;border-radius:12px;padding:12px;text-align:center;font-weight:700;font-size:13px}
+/* OPSI A: badge pojok */
+.ca{position:absolute;top:-8px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:800;padding:2px 6px;border-radius:99px;border:2px solid #fff;white-space:nowrap}
+.ca.ok{background:#12A86B;color:#fff}.ca.h{background:#F5B53F;color:#fff}
+/* OPSI B: strip bawah */
+.strip{margin:7px 4px 0;font-size:9.5px;font-weight:800;padding:3px 0;border-radius:7px}
+.strip.ok{background:#12A86B;color:#fff}.strip.no{background:#F1F4F8;color:#9AA6B6}.strip.h{background:#FFF1C9;color:#8A5A00}
+/* ringkasan */
+.sum{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:11.5px;border-radius:10px;padding:8px 10px}
+.sum.ok{background:#F0FAF5;color:#0E6E48;border:1px solid #CDEEDC}
+.sum.no{background:#FFF6EE;color:#8A4B0B;border:1px solid #F5D9BD}
+.sum b{font-weight:800}
+.view{display:none}.view.on{display:block}
+</style>
+</head>
+<body>
+<div class="app">
+ <div class="sw"><button data-v="a" class="on">A · BADGE ATAS</button><button data-v="b">B · STRIP BAWAH</button><button data-v="c">C · BARIS RINGKAS</button></div>
+ <div class="desc" id="desc"></div>
+ <div id="cards"></div>
+</div>
+<script>
+const DESC={
+ a:'<b>A · Badge atas</b> (rekomendasi): kartu sama persis kayak sekarang. Brand yang sudah order Nov dapat badge hijau kecil <b>✓ NOV</b> nempel di garis atas kotaknya. Ditambah satu baris ringkas di atas "Terakhir order".',
+ b:'<b>B · Strip bawah</b>: tiap kotak brand dapat strip di bawah status: hijau <b>✓ NOV</b>, abu <b>BELUM</b>. Paling jelas, tapi kotak jadi sedikit lebih tinggi.',
+ c:'<b>C · Baris ringkas</b>: kotak brand tidak berubah sama sekali. Penanda cuma satu baris di atas "Terakhir order". Paling minimal, tapi nggak kelihatan brand mana yang sudah order.'
+};
+const D=[
+ {n:'PT. MANUNGGAL UTAMA MANDIRI',kode:'319.047',kota:'JAKARTA',pill:'PASIF di 3 brand',pic:'PIC: GROSS NAS / JABODETABEK · GROSS NAS / JAKARTA',st:700,so:0,om:'Rp 1,31 M',last:'22 Sep 2026',
+  br:[['ITEL',0,'PASIF',0],['REALME',0,'PASIF',0],['SAMSUNG',700,'AKTIF',0],['VILLAON',0,'PASIF',0]]},
+ {n:'CV. BERKAH PHONE',kode:'208.551',kota:'INDRAMAYU',pill:'IDLE di 1 brand',pic:'PIC: FAJAR N. / CIREBON',st:5,so:2,om:'Rp 9,8 jt',last:'12 Nov 2026',
+  br:[['SAMSUNG',4,'IDLE',4],['OPPO',1,'PASIF',1],['VIVO',0,'AKTIF',0]]}
+];
+let v='a';
+function badge(q){return q>=2?'<span class="ca ok">✓ NOV</span>':q===1?'<span class="ca h">½ NOV</span>':''}
+function strip(q){return q>=2?'<div class="strip ok">✓ NOV · '+q+'u</div>':q===1?'<div class="strip h">½ NOV · 1u</div>':'<div class="strip no">BELUM NOV</div>'}
+function sum(d){const ok=d.br.filter(b=>b[3]>=2),u=d.br.reduce((a,b)=>a+b[3],0),u2=ok.reduce((a,b)=>a+b[3],0);
+ return ok.length?`<div class="sum ok">✓ <span><b>Order Nov: ${ok.length} brand · ${u2} unit</b> (${ok.map(b=>b[0][0]+b[0].slice(1).toLowerCase()).join(', ')})</span></div>`:`<div class="sum no">⏳ <span><b>Belum order November</b></span></div>`}
+function render(){
+ document.querySelectorAll('.sw button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+ document.getElementById('desc').innerHTML=DESC[v];
+ document.getElementById('cards').innerHTML=D.map(d=>`<div class="card">
+  <div class="t"><b>${d.n}</b><small>${d.kode} · ${d.kota}</small></div>
+  <span class="pill" style="${d.pill.startsWith('IDLE')?'background:#FFF1DC;color:#B7791F':''}">${d.pill}</span>
+  <div class="pic">${d.pic}</div>
+  <div class="m3"><div><span>SELL THRU</span><b>${d.st}</b></div><div><span>SELL OUT</span><b>${d.so}</b></div><div><span>Omzet</span><b>${d.om}</b></div></div>
+  <div class="bg">${d.br.map(b=>`<div class="bx ${b[2]==='AKTIF'?'ak':''}" style="${b[2]==='IDLE'?'border-color:#C9831A':''}">${v==='a'?badge(b[3]):''}<div class="nm">${b[0]}</div><div class="q">${b[1]}</div><span class="st" style="${b[2]==='IDLE'?'background:#FFF1DC;color:#B7791F':''}">${b[2]}</span>${v==='b'?strip(b[3]):''}</div>`).join('')}</div>
+  ${v!=='b'?sum(d):''}
+  <div class="last">Terakhir order ${d.last}</div>
+  <div class="btn">Lihat detail →</div></div>`).join('');
+}
+document.querySelector('.sw').onclick=e=>{const b=e.target.closest('button');if(!b)return;v=b.dataset.v;render()};
+render();
+</script>
+</body>
+</html>

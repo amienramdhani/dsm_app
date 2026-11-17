@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>DSM - Mockup Menu Admin</title>
+<style>
+:root{--ink:#16202E;--mut:#7C8899;--line:#E6ECF4;--o1:#FFB020;--o2:#F07A0C;--red:#D1293F}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:#F3F6FB}
+.app{max-width:430px;margin:0 auto;min-height:100vh;position:relative;overflow:hidden;padding-bottom:40px}
+.blob{position:absolute;border-radius:50%;filter:blur(50px);opacity:.45;pointer-events:none}
+.b1{width:260px;height:260px;background:#BFE3FF;top:-80px;left:-80px}.b2{width:240px;height:240px;background:#FFE1C2;top:40px;right:-100px}
+.top{position:relative;padding:44px 18px 10px}
+.top small{font-size:11px;color:var(--mut);font-weight:700;letter-spacing:1px}
+.top h1{font-size:24px;font-weight:800;margin-top:2px}
+/* mode switch */
+.mode{position:relative;display:flex;background:rgba(255,255,255,.7);backdrop-filter:blur(12px);border:1px solid #fff;border-radius:14px;padding:4px;margin:10px 18px 0;box-shadow:0 6px 18px rgba(20,40,80,.06)}
+.mode button{flex:1;border:0;background:none;padding:9px;border-radius:10px;font-weight:800;font-size:12px;letter-spacing:.5px;color:var(--mut)}
+.mode button.on{background:linear-gradient(135deg,var(--o1),var(--o2));color:#fff;box-shadow:0 6px 14px rgba(240,122,12,.3)}
+.info{position:relative;margin:12px 18px 0;border-radius:16px;padding:11px 13px;font-size:12px;line-height:1.5}
+.info.bad{background:#FFF1F1;color:#8A1F2C;border:1px solid #FFD6DB}
+.info.good{background:#EAFBF3;color:#0B6B47;border:1px solid #C6F0DC}
+.info b{font-weight:800}
+/* search */
+.search{position:relative;margin:12px 18px 0}
+.search input{width:100%;border:1px solid #fff;background:rgba(255,255,255,.85);backdrop-filter:blur(10px);border-radius:14px;padding:12px 14px 12px 38px;font-size:14px;box-shadow:0 6px 18px rgba(20,40,80,.06);outline:none}
+.search input:focus{border-color:var(--o1)}
+.search i{position:absolute;left:13px;top:11px;font-style:normal;font-size:15px;opacity:.6}
+.hint{position:relative;margin:6px 20px 0;font-size:11px;color:var(--mut)}
+.hint a{color:var(--o2);font-weight:700}
+/* tabs */
+.tabs{position:relative;display:flex;gap:8px;overflow-x:auto;padding:12px 18px 6px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;display:flex;align-items:center;gap:6px;border:1px solid #fff;background:rgba(255,255,255,.8);padding:8px 12px;border-radius:12px;font-size:11.5px;font-weight:800;letter-spacing:.3px;color:#3B4656;box-shadow:0 4px 12px rgba(20,40,80,.05);transition:.2s;white-space:nowrap}
+.tab .dot{width:8px;height:8px;border-radius:50%}
+.tab.on{color:#fff;border-color:transparent}
+.tab.dim{opacity:.35}
+.tab em{font-style:normal;font-size:10px;background:#fff;color:var(--red);border-radius:8px;padding:1px 6px}
+.tab.on em{background:rgba(255,255,255,.3);color:#fff}
+.tab .cnt{font-size:10px;background:#16202E;color:#fff;border-radius:8px;padding:1px 6px}
+/* list */
+.list{position:relative;margin:8px 18px 0}
+.sec{font-size:10.5px;font-weight:800;letter-spacing:1px;color:var(--mut);margin:14px 4px 7px}
+.sec.danger{color:var(--red)}
+.card{background:rgba(255,255,255,.92);border-radius:18px;box-shadow:0 8px 22px rgba(20,40,80,.07);overflow:hidden}
+.it{display:flex;align-items:center;gap:12px;padding:12px 13px;border-top:1px solid var(--line);cursor:pointer;transition:.15s}
+.it:first-child{border-top:0}
+.it:active{background:#F5F8FD}
+.ic{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:17px;flex:none}
+.it .tx{flex:1;min-width:0}
+.it b{display:block;font-size:13.5px}
+.it small{display:block;font-size:11px;color:var(--mut);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tag{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.4px;padding:2px 6px;border-radius:6px;margin-left:5px;vertical-align:2px}
+.sa{background:#EEF0F5;color:#5A6577}
+.new{background:#FFF0DD;color:#C25A12}
+.mv{background:#E8F1FF;color:#1E5FB8}
+.br{background:#FFF4C2;color:#8A6200}
+.it .arw{color:#B5C0CE;font-size:18px}
+.it.warn{background:#FFF6F7}
+.it.warn .ic{background:var(--red)!important;color:#fff}
+.it.warn b{color:var(--red)}
+.from{display:block;font-size:10px;color:#1E5FB8;margin-top:2px;font-weight:600}
+.empty{text-align:center;color:var(--mut);font-size:12px;padding:30px}
+/* bottom sheet */
+.ov{position:fixed;inset:0;background:rgba(16,24,40,.35);opacity:0;pointer-events:none;transition:.25s;z-index:10}
+.ov.show{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:50%;bottom:0;transform:translate(-50%,100%);width:100%;max-width:430px;max-height:86vh;overflow:auto;background:#fff;border-radius:24px 24px 0 0;z-index:11;transition:.3s cubic-bezier(.2,.8,.2,1);padding:10px 18px 24px}
+.sheet.show{transform:translate(-50%,0)}
+.grab{width:40px;height:5px;border-radius:9px;background:#DDE3EC;margin:0 auto 12px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh h2{font-size:17px}.sh small{font-size:11px;color:var(--mut)}
+.x{margin-left:auto;border:0;background:#F1F4F8;width:32px;height:32px;border-radius:10px;font-size:15px}
+.stabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -18px 12px;padding:0 18px}
+.stabs::-webkit-scrollbar{display:none}
+.stab{flex:none;border:1px solid var(--line);background:#fff;padding:7px 11px;border-radius:10px;font-size:11px;font-weight:800;color:#3B4656;white-space:nowrap}
+.stab.on{background:linear-gradient(135deg,var(--o1),var(--o2));color:#fff;border-color:transparent}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;font-size:10px;letter-spacing:.5px;color:var(--mut);padding:8px 6px;border-bottom:1px solid var(--line)}
+td{padding:9px 6px;border-bottom:1px solid var(--line)}
+.pill{font-size:10px;font-weight:800;padding:2px 8px;border-radius:8px}
+.on1{background:#E3F8EC;color:#15803D}.off1{background:#F1F2F5;color:#7C8899}
+.opts{display:grid;gap:8px;margin-bottom:12px}
+.opt{border:1.5px solid var(--line);border-radius:14px;padding:11px 12px;display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.opt.on{border-color:var(--o2);background:#FFF8F0}
+.opt .rd{width:18px;height:18px;border-radius:50%;border:2px solid #C5CEDA;flex:none;margin-top:1px}
+.opt.on .rd{border:5px solid var(--o2)}
+.opt b{font-size:13px}.opt small{display:block;font-size:11px;color:var(--mut);margin-top:2px}
+.btns{display:flex;gap:8px;margin-top:6px}
+.btn{flex:1;border:0;border-radius:12px;padding:12px;font-weight:800;font-size:12px;letter-spacing:.4px}
+.b1x{background:#F1F4F8;color:#3B4656}.b2x{background:linear-gradient(135deg,var(--o1),var(--o2));color:#fff}
+select{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px;font-size:13px;background:#fff;margin-bottom:8px}
+.note{font-size:11px;color:var(--mut);background:#F7F9FC;border-radius:12px;padding:9px 11px;margin:8px 0;line-height:1.5}
+.note.blue{background:#EEF5FF;color:#1E4E8C}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="blob b1"></div><div class="blob b2"></div>
+  <div class="top"><small>LAINNYA › ADMIN</small><h1>Pengaturan Admin</h1></div>
+
+  <div class="mode"><button data-m="before">SEBELUM</button><button data-m="after" class="on">SESUDAH</button></div>
+  <div class="info" id="info"></div>
+
+  <div class="search"><i>🔍</i><input id="q" placeholder="Cari panel… (coba: brand, target, kontak)"></div>
+  <div class="hint" id="hint"></div>
+
+  <div class="tabs" id="tabs"></div>
+  <div class="list" id="list"></div>
+</div>
+
+<div class="ov" id="ov"></div>
+<div class="sheet" id="sheet"></div>
+
+<script>
+/* ================= DATA ================= */
+// k=kunci panel, n=judul, d=deskripsi, ic, sa=super admin, w=hati-hati, kw=kata kunci tersembunyi
+const P={
+ appr:{n:"Approval",d:"Persetujuan transfer, user, perubahan dealer",ic:"✅",kw:"setuju persetujuan"},
+ upreg:{n:"Upload Regional ST / SO",d:"Upload data harian per region",ic:"⬆️",kw:"sell thru sell out harian"},
+ sync:{n:"Status Sync",d:"Kondisi sinkronisasi data terakhir",ic:"🔄",kw:"sinkron"},
+ kelreg:{n:"Kelengkapan Data per Region",d:"Region mana yang belum upload",ic:"🧩",kw:"lengkap region"},
+ peta:{n:"Peta Kelengkapan Data",d:"Kalender kelengkapan per tanggal",ic:"🗓️",kw:"kalender lengkap"},
+ kual:{n:"Catatan Kualitas Data",d:"Temuan data janggal",ic:"📝",kw:"kualitas error"},
+ kunci:{n:"Kunci Periode",d:"Kunci bulan yang sudah final",ic:"🔒",kw:"lock periode bulan"},
+ pulih:{n:"Pemulihan Regional",d:"Kembalikan data region ke versi sebelumnya",ic:"♻️",w:1,kw:"restore rollback"},
+ cariDl:{n:"Cari & Edit Dealer",d:"Edit satu dealer, kontak, sales",ic:"🔎",kw:"customer toko"},
+ tambahDl:{n:"Tambah Dealer",d:"Tambah satu dealer baru",ic:"➕",kw:"customer baru noo"},
+ upDl:{n:"Upload Dealer (Tambah + Edit)",d:"Satu file dealer baru & perubahan",ic:"📤",kw:"customer massal"},
+ bulkCust:{n:"Bulk Edit Customer",d:"Edit field customer via file",ic:"📑",kw:"dealer massal"},
+ kontak:{n:"Update Kontak Dealer Massal",d:"PIC, nomor HP, alamat",ic:"📇",sa:1,kw:"telepon alamat pic dealer"},
+ massDl:{n:"Upload Massal Dealer",d:"Tambah+edit · edit field · kontak saja — 1 pintu",ic:"📤",kw:"customer massal kontak telepon alamat bulk edit"},
+ pic:{n:"PIC Dealer per Brand",d:"Siapa pegang dealer di tiap brand",ic:"🤝",kw:"brand pic sales"},
+ bigreg:{n:"Big Region per Dealer",d:"Pemetaan dealer ke Big Region",ic:"🗺️",sa:1,kw:"wilayah region"},
+ tutup:{n:"Dealer Tutup",d:"Tandai dealer yang sudah tidak aktif",ic:"🚫",kw:"nonaktif tutup"},
+ transfer:{n:"Transfer Dealer Massal",d:"Pindah kepemilikan per brand / semua brand",ic:"🔁",kw:"pindah sales brand"},
+ rtrans:{n:"Riwayat Transfer",d:"Log transfer dealer",ic:"🕘",kw:"history"},
+ rpemilik:{n:"Riwayat Pemilik Dealer",d:"Siapa saja yang pernah pegang",ic:"👥",kw:"history sales"},
+ gantiInduk:{n:"Ganti Kode Induk & Hapus Dealer Massal",d:"Tidak bisa dibatalkan",ic:"⚠️",w:1,kw:"hapus delete kode induk"},
+ akun:{n:"Akun Pengguna",d:"Edit user, role, reset PIN",ic:"👤",kw:"user login pin role"},
+ tambahUser:{n:"Tambah User Massal",d:"Upload banyak akun sekaligus",ic:"👥",kw:"user massal"},
+ export:{n:"Hak Export Pengguna",d:"Siapa boleh download data",ic:"📥",sa:1,kw:"download izin"},
+ keamanan:{n:"Keamanan Akun",d:"Sesi, perangkat, PIN",ic:"🛡️",kw:"security pin"},
+ kredit:{n:"Kredit Tetap ke Penjual",d:"Aturan kredit penjualan",ic:"🏷️",kw:"kredit sales"},
+ telegram:{n:"Sambungan Telegram",d:"Hubungkan akun ke bot",ic:"✈️",kw:"bot notif"},
+ brandKlas:{n:"Brand & Klasifikasi",d:"Aktif/nonaktif, kelas brand",ic:"🏷️",kw:"brand"},
+ brandAmb:{n:"Brand · Ambang Status Dealer",d:"Batas aktif/pasif per brand",ic:"🎚️",kw:"brand status dealer"},
+ brandHub:{n:"Pengaturan Brand",d:"Klasifikasi · ambang · wilayah · PIC · aturan produk",ic:"🏷️",kw:"brand ambang klasifikasi pic region aturan produk product rules"},
+ regBrand:{n:"Region per Brand & Target Big Region",d:"Wilayah tiap brand + targetnya",ic:"📍",sa:1,kw:"brand target region"},
+ product:{n:"Master Product",d:"Daftar produk / TYPE",ic:"📱",kw:"type barang brand"},
+ masterKeb:{n:"Master & Kebijakan",d:"Publikasikan perubahan master / KPI",ic:"📢",kw:"publish"},
+ publish:{n:"Publikasi Master",d:"Terbitkan perubahan master & KPI",ic:"📢",kw:"publish kebijakan"},
+ bulkM:{n:"Bulk Master & Kebijakan",d:"Product, Sales, Region, Target, KPI…",ic:"🗂️",sa:1,kw:"massal upload"},
+ bulkHub:{n:"Download & Upload Master",d:"Semua jenis master, termasuk Master Dealer",ic:"🗂️",kw:"massal upload download bulk dealer customer product sales target kpi region"},
+ dlMaster:{n:"Download Data Master",d:"Working file master",ic:"⬇️",kw:"download"},
+ regmap:{n:"Region Map",d:"Peta wilayah",ic:"🗺️",sa:1,kw:"wilayah"},
+ libur:{n:"Hari Libur",d:"Kalender libur nasional & cuti",ic:"🏖️",kw:"kalender"},
+ sehat:{n:"Cek Kesehatan Master",d:"Cek semua master sekaligus",ic:"🩺",kw:"health error master"},
+ aturKpi:{n:"Atur KPI",d:"Indikator, bobot, target RGM",ic:"🎯",sa:1,kw:"bobot indikator brand"},
+ editTarget:{n:"Edit Target",d:"Target sales per bulan",ic:"✏️",kw:"target bulan brand"},
+ kpiKhusus:{n:"KPI Khusus",d:"Indikator khusus TYPE",ic:"⭐",kw:"type brand"},
+ tmTugas:{n:"Penugasan Telemarketing",d:"Bagi daftar telepon",ic:"📞",kw:"telemarketing follow up"},
+ tmKpi:{n:"KPI Telemarketing",d:"Target & bobot TM",ic:"📈",kw:"telemarketing target"},
+ bu:{n:"Badan Usaha Form Order",d:"Pilihan badan usaha di form",ic:"🧾",kw:"order pt cv"},
+ backup:{n:"Autobackup",d:"Status & jadwal backup",ic:"💾",kw:"cadangan"},
+ aktivitas:{n:"Riwayat Aktivitas",d:"Audit log admin",ic:"📜",kw:"audit log"},
+ notif:{n:"Notifikasi Khusus",d:"Kirim notif ke user",ic:"🔔",kw:"push pesan"}
+};
+
+const BEFORE=[
+ {k:'u',n:'Pengguna & Akses',c:'#2B7BE0',s:[['',['akun','tambahUser','export','keamanan','kredit','telegram']]]},
+ {k:'ap',n:'Approval',c:'#E5354E',badge:3,s:[['',['appr']]]},
+ {k:'d',n:'Dealer',c:'#0E9F6E',s:[['',['cariDl','rpemilik','tambahDl','upDl','bulkCust','kontak','pic','bigreg','tutup','transfer','rtrans','gantiInduk']]]},
+ {k:'h',n:'Upload Harian',c:'#F07A0C',s:[['',['upreg']]]},
+ {k:'md',n:'Master Data',c:'#6D3FD8',s:[['',['product','brandKlas','regmap','libur','dlMaster']]]},
+ {k:'kt',n:'KPI & Target',c:'#7C4DCE',s:[['',['kpiKhusus','editTarget','aturKpi','regBrand']]]},
+ {k:'ka',n:'Kebijakan & Aturan',c:'#B7791F',s:[['',['masterKeb','brandAmb','bulkM']]]},
+ {k:'tm',n:'Telemarketing',c:'#A04BC7',s:[['',['tmTugas','tmKpi']]]},
+ {k:'fo',n:'Form Order',c:'#0F8F96',s:[['',['bu']]]},
+ {k:'s',n:'Sistem',c:'#6F7B8E',s:[['',['sync','kelreg','peta','kual','kunci','pulih','sehat','backup','aktivitas','notif']]]}
+];
+const AFTER=[
+ {k:'ap',n:'Approval',c:'#E5354E',badge:3,s:[['',['appr']]]},
+ {k:'h',n:'Data Harian',c:'#F07A0C',s:[['SERING DIPAKAI',['upreg','sync','kelreg','peta']],['PENGECEKAN',['kual','kunci']],['HATI-HATI',['pulih']]]},
+ {k:'d',n:'Dealer',c:'#0E9F6E',s:[['SERING DIPAKAI',['cariDl','tambahDl','massDl']],['KEPEMILIKAN',['transfer','rtrans','rpemilik','bigreg','tutup']],['HATI-HATI',['gantiInduk']]]},
+ {k:'b',n:'Brand',c:'#C99A00',s:[['SEMUA SETELAN BRAND',['brandHub']],['TERKAIT',['regBrand']]]},
+ {k:'kt',n:'KPI & Target',c:'#7C4DCE',s:[['TARGET',['editTarget','regBrand']],['KPI',['aturKpi','kpiKhusus','tmKpi']]]},
+ {k:'md',n:'Master Data',c:'#6D3FD8',s:[['SERING DIPAKAI',['bulkHub','product','sehat','publish']],['WILAYAH & KALENDER',['regmap','libur']],['FORM ORDER & TELEMARKETING',['bu','tmTugas']]]},
+ {k:'u',n:'Pengguna & Akses',c:'#2B7BE0',s:[['',['akun','tambahUser','keamanan','export','kredit','telegram']]]},
+ {k:'s',n:'Sistem',c:'#6F7B8E',s:[['',['backup','aktivitas','notif']]]}
+];
+// asal tab lama utk label "pindahan"
+const OLD={};BEFORE.forEach(t=>t.s.forEach(s=>s[1].forEach(k=>OLD[k]=t.n)));
+OLD.massDl='Dealer (gabungan 4 panel)';OLD.brandHub='Master Data + Kebijakan + Dealer';OLD.bulkHub='Kebijakan + Master Data';OLD.publish='Kebijakan & Aturan';
+const NEWK=['massDl','brandHub','bulkHub','publish'];
+const BRANDK=['brandKlas','brandAmb','pic','regBrand','product','bulkM'];
+
+let mode='after',cur='ap',q='';
+const $=id=>document.getElementById(id);
+
+/* ================= RENDER ================= */
+function data(){return mode==='after'?AFTER:BEFORE}
+function hit(k){if(!q)return true;const p=P[k];return (p.n+' '+p.d+' '+(p.kw||'')).toLowerCase().includes(q)}
+function render(){
+ const D=data();
+ $('info').className='info '+(mode==='after'?'good':'bad');
+ $('info').innerHTML=mode==='after'
+  ?'<b>8 tab · per objek.</b> Brand punya rumah sendiri, 4 panel upload dealer jadi 1, download & upload master jadi 1 pintu (termasuk Master Dealer). Label <span class="tag mv">PINDAH</span> / <span class="tag new">GABUNGAN</span> cuma ada di mockup.'
+  :'<b>10 tab · per cara kerja.</b> Setelan brand tersebar di <b>4 tab</b> (lihat label <span class="tag br">BRAND</span>). Upload dealer ada 4 pintu. Bulk Master tidak punya Master Dealer.';
+ $('hint').innerHTML=mode==='after'?'Pencarian ikut membaca <b>kata kunci tersembunyi</b>. Coba ketik <a onclick="setQ(\'brand\')">brand</a> atau <a onclick="setQ(\'kontak\')">kontak</a>.':'Pencarian lama hanya membaca judul. Coba ketik <a onclick="setQ(\'brand\')">brand</a>.';
+ // tabs
+ $('tabs').innerHTML=D.map(t=>{
+  const n=q?t.s.reduce((a,s)=>a+s[1].filter(k=>matchMode(k)).length,0):0;
+  const on=t.k===cur&&!q;
+  return `<div class="tab ${on?'on':''} ${q&&!n?'dim':''}" data-k="${t.k}" style="${on?`background:${t.c}`:''}"><span class="dot" style="background:${on?'#fff':t.c}"></span>${t.n.toUpperCase()}${t.badge?`<em>${t.badge} baru</em>`:''}${q&&n?`<span class="cnt">${n}</span>`:''}</div>`}).join('');
+ // list
+ let html='';
+ if(q){
+  D.forEach(t=>{const ks=[...new Set(t.s.flatMap(s=>s[1]))].filter(matchMode);if(!ks.length)return;
+   html+=`<div class="sec" style="color:${t.c}">${t.n.toUpperCase()}</div><div class="card">${ks.map(item).join('')}</div>`});
+  if(!html)html='<div class="empty">Tidak ada panel cocok.<br>'+(mode==='before'?'Pencarian lama hanya membaca judul panel.':'')+'</div>';
+ }else{
+  const t=D.find(x=>x.k===cur)||D[0];
+  t.s.forEach(([title,ks])=>{if(title)html+=`<div class="sec ${title==='HATI-HATI'?'danger':''}">${title}</div>`;else html+='<div style="height:6px"></div>';html+=`<div class="card">${ks.map(item).join('')}</div>`});
+ }
+ $('list').innerHTML=html;
+ document.querySelectorAll('.mode button').forEach(b=>b.classList.toggle('on',b.dataset.m===mode));
+}
+function matchMode(k){if(!q)return true;const p=P[k];const s=mode==='after'?(p.n+' '+p.d+' '+(p.kw||'')):p.n;return s.toLowerCase().includes(q)}
+function item(k){
+ const p=P[k];let tags='';
+ if(p.sa)tags+='<span class="tag sa">SUPER ADMIN</span>';
+ if(mode==='before'&&BRANDK.includes(k))tags+='<span class="tag br">BRAND</span>';
+ let from='';
+ if(mode==='after'){
+  const t=AFTER.find(x=>x.s.some(s=>s[1].includes(k)));
+  if(NEWK.includes(k)){tags+='<span class="tag new">GABUNGAN</span>';from=`<span class="from">dari: ${OLD[k]}</span>`}
+  else if(t&&OLD[k]&&OLD[k]!==t.n){tags+='<span class="tag mv">PINDAH</span>';from=`<span class="from">dulu di: ${OLD[k]}</span>`}
+ }
+ const t=data().find(x=>x.s.some(s=>s[1].includes(k)));
+ return `<div class="it ${p.w?'warn':''}" data-p="${k}"><div class="ic" style="background:${t.c}22">${p.ic}</div><div class="tx"><b>${p.n}${tags}</b><small>${p.w?'HATI-HATI · ':''}${p.d}</small>${from}</div><div class="arw">›</div></div>`;
+}
+window.setQ=v=>{$('q').value=v;q=v;render()};
+
+/* ================= SHEETS ================= */
+function openSheet(h){$('sheet').innerHTML='<div class="grab"></div>'+h;$('sheet').classList.add('show');$('ov').classList.add('show')}
+function closeSheet(){$('sheet').classList.remove('show');$('ov').classList.remove('show')}
+$('ov').onclick=closeSheet;
+
+const BRAND_TABS={
+ klas:['DAFTAR & KLASIFIKASI',`<table><tr><th>BRAND</th><th>KELAS</th><th>STATUS</th></tr>
+  <tr><td><b>Samsung</b></td><td>A</td><td><span class="pill on1">AKTIF</span></td></tr>
+  <tr><td><b>Oppo</b></td><td>A</td><td><span class="pill on1">AKTIF</span></td></tr>
+  <tr><td><b>Vivo</b></td><td>A</td><td><span class="pill on1">AKTIF</span></td></tr>
+  <tr><td><b>Infinix</b></td><td>B</td><td><span class="pill on1">AKTIF</span></td></tr>
+  <tr><td><b>Advan</b></td><td>C</td><td><span class="pill off1">NONAKTIF</span></td></tr></table>`],
+ amb:['AMBANG STATUS',`<div class="note">Batas hari tanpa transaksi sebelum dealer jadi PASIF per brand.</div><table><tr><th>BRAND</th><th>AKTIF ≤</th><th>PASIF ></th></tr>
+  <tr><td><b>Samsung</b></td><td>30 hari</td><td>30 hari</td></tr><tr><td><b>Oppo</b></td><td>30 hari</td><td>30 hari</td></tr><tr><td><b>Infinix</b></td><td>45 hari</td><td>45 hari</td></tr></table>`],
+ wil:['WILAYAH & TARGET',`<div class="note blue">Target Big Region juga muncul di tab KPI & Target. Satu data, dua pintu masuk.</div><table><tr><th>BRAND</th><th>BIG REGION</th><th>TARGET</th></tr>
+  <tr><td><b>Samsung</b></td><td>Cirebon Raya</td><td>Rp 2,4 M</td></tr><tr><td><b>Samsung</b></td><td>Priangan Timur</td><td>Rp 1,8 M</td></tr><tr><td><b>Oppo</b></td><td>Cirebon Raya</td><td>Rp 2,1 M</td></tr></table>`],
+ pic:['PIC DEALER',`<table><tr><th>DEALER</th><th>BRAND</th><th>PIC</th></tr>
+  <tr><td><b>Sinar Cell</b></td><td>Samsung</td><td>Dimas P.</td></tr><tr><td><b>Sinar Cell</b></td><td>Oppo</td><td>Rina A.</td></tr><tr><td><b>Maju Jaya Ponsel</b></td><td>Vivo</td><td>Fajar N.</td></tr></table>`],
+ rules:['ATURAN PRODUK',`<div class="note">Aturan pengelompokan TYPE per brand (Product Rules).</div><table><tr><th>BRAND</th><th>KATA KUNCI</th><th>KELOMPOK</th></tr>
+  <tr><td><b>Samsung</b></td><td>GALAXY A</td><td>Entry</td></tr><tr><td><b>Samsung</b></td><td>GALAXY S</td><td>Flagship</td></tr><tr><td><b>Oppo</b></td><td>RENO</td><td>Mid-high</td></tr></table>`]
+};
+function brandSheet(cur){
+ openSheet(`<div class="sh"><div class="ic" style="background:#FFF4C2">🏷️</div><div><h2>Pengaturan Brand</h2><small>Semua setelan brand di satu tempat</small></div><button class="x" onclick="closeSheet()">✕</button></div>
+ <div class="stabs">${Object.entries(BRAND_TABS).map(([k,v])=>`<div class="stab ${k===cur?'on':''}" onclick="brandSheet('${k}')">${v[0]}</div>`).join('')}</div>
+ ${BRAND_TABS[cur][1]}<div class="btns"><button class="btn b1x">DOWNLOAD</button><button class="btn b2x">SIMPAN</button></div>`);
+}
+window.brandSheet=brandSheet;window.closeSheet=closeSheet;
+
+const MASS=[['all','Tambah + Edit Dealer','Satu file untuk dealer baru dan perubahan data. Maks 20.000 baris.'],['field','Edit Field Customer','Download data existing, edit field, upload ulang. NIK Sales tidak bisa diubah di sini.'],['kontak','Kontak Saja','PIC, nomor HP, alamat. Maks 500 dealer. Super Admin.']];
+function massSheet(sel){
+ openSheet(`<div class="sh"><div class="ic" style="background:#E3F8EC">📤</div><div><h2>Upload Massal Dealer</h2><small>Pilih jenis dulu, proses di belakang tetap sama</small></div><button class="x" onclick="closeSheet()">✕</button></div>
+ <div class="opts">${MASS.map(m=>`<div class="opt ${m[0]===sel?'on':''}" onclick="massSheet('${m[0]}')"><div class="rd"></div><div><b>${m[1]}</b><small>${m[2]}</small></div></div>`).join('')}</div>
+ <div class="note">Baris yang salah dilewati, download file DITOLAK untuk memperbaikinya.</div>
+ <div class="btns"><button class="btn b1x">DOWNLOAD TEMPLATE</button><button class="btn b2x">PERIKSA FILE</button></div>`);
+}
+window.massSheet=massSheet;
+const JENIS=['Master Dealer','Master Product','Product Rules','Master Sales','Master Promotor','Master Grade','Region Map','DOS Config','KPI Config','Target Input','Target Periode'];
+function bulkSheet(j){
+ j=j||'Master Dealer';
+ openSheet(`<div class="sh"><div class="ic" style="background:#EFE8FF">🗂️</div><div><h2>Download & Upload Master</h2><small>Admin: download · Super Admin: download + upload</small></div><button class="x" onclick="closeSheet()">✕</button></div>
+ <select onchange="bulkSheet(this.value)">${JENIS.map(x=>`<option ${x===j?'selected':''}>${x}</option>`).join('')}</select>
+ ${j==='Master Dealer'?'<div class="note blue">Master Dealer sekarang ada di sini. Upload-nya diteruskan ke proses <b>Upload Massal Dealer</b> yang sama, jadi tidak ada aturan ganda.</div>':'<div class="note">Key yang sudah ada di-update, key baru ditambahkan. Selalu pakai template terbaru.</div>'}
+ <div class="btns"><button class="btn b1x">DOWNLOAD DATA</button><button class="btn b2x">${j==='Master Dealer'?'BUKA UPLOAD DEALER':'PERIKSA FILE'}</button></div>`);
+}
+window.bulkSheet=bulkSheet;
+
+/* ================= EVENTS ================= */
+document.querySelectorAll('.mode button').forEach(b=>b.onclick=()=>{mode=b.dataset.m;cur=data()[0].k;render()});
+$('tabs').onclick=e=>{const t=e.target.closest('.tab');if(!t)return;cur=t.dataset.k;q='';$('q').value='';render()};
+$('q').oninput=e=>{q=e.target.value.trim().toLowerCase();render()};
+$('list').onclick=e=>{const it=e.target.closest('.it');if(!it)return;const k=it.dataset.p;
+ if(mode==='after'){if(k==='brandHub')return brandSheet('klas');if(k==='massDl')return massSheet('all');if(k==='bulkHub')return bulkSheet();}
+ openSheet(`<div class="sh"><div class="ic" style="background:#F1F4F8">${P[k].ic}</div><div><h2>${P[k].n}</h2><small>${P[k].d}</small></div><button class="x" onclick="closeSheet()">✕</button></div><div class="note">Isi panel tetap sama seperti sekarang, mockup ini hanya mengatur letak & pengelompokan.</div>`);
+};
+render();
+</script>
+</body>
+</html>
