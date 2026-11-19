@@ -134,11 +134,29 @@ function summary_(array $rows): array {
     return ['rows' => count($rows), 'qty' => $q, 'amount' => PortalCore::round($a), 'min' => js_or($d[0] ?? null, null), 'max' => js_or($d ? $d[count($d) - 1] : null, null)];
 }
 
+/** Naikkan memory_limit ke 2560M bila saat ini lebih kecil (tidak pernah menurunkan, -1 = tanpa batas dibiarkan). */
+function publish_memory_(string $want = '2560M'): void {
+    $bytes = function (string $v): int { $v = trim($v); if ($v === '-1') return -1; $n = (int) $v; $u = strtoupper(substr($v, -1)); return $u === 'G' ? $n << 30 : ($u === 'M' ? $n << 20 : ($u === 'K' ? $n << 10 : $n)); };
+    $cur = $bytes((string) ini_get('memory_limit'));
+    if ($cur !== -1 && $cur < $bytes($want)) @ini_set('memory_limit', $want);
+}
+
 /** Snapshot aktif sebelum publikasi (sama dengan prior di JS). */
 function publishPrior_(): ?array { return prop_get_('ACTIVE') ? snapshot_() : null; }
 
 function publish_(array $meta, $rawMap, $coverage, $actor, $reason, $soOverride = null, $partsOverride = null): array {
+    // Publikasi menghitung ulang seluruh histori, siapa pun pemanggilnya (impor, tambah user, edit dealer, ...).
+    // Samakan jatah memori dengan impor; sebelumnya hanya impor yang menaikkan, CRUD lain tertahan di 1536M api.php.
+    publish_memory_();
     $started = now_ms(); $prior = publishPrior_();
+    // Dari snapshot lama, publish_ hanya memakai id, parts, so, routing, meta.people, dan penunjuk mutasi stok.
+    // Simpan itu saja dan lepas cache snapshot penuh (±0,8 GB pada data besar) sebelum histori dihitung ulang.
+    if ($prior) {
+        $prior = ['id' => $prior['id'], 'parts' => $prior['parts'] ?? null, 'so' => $prior['so'] ?? null, 'routing' => $prior['routing'] ?? null,
+                  'meta' => ['people' => $prior['meta']['people'] ?? []],
+                  'stock' => array_merge(array_intersect_key($prior['stock'] ?? [], ['moveSnap' => 1, 'moveHash' => 1]), isset($prior['stock']['moves']) ? ['moves' => true] : [])];
+        snapshot_forget_();
+    }
     $parts = truthy($partsOverride) ? $partsOverride : ($prior['parts'] ?? null);
     $tx = []; $soRows = [];
     $so = truthy($soOverride) ? $soOverride : (truthy($prior['so'] ?? null) ? $prior['so'] : ['raw' => [], 'coverage' => []]);
@@ -198,9 +216,10 @@ function publish_(array $meta, $rawMap, $coverage, $actor, $reason, $soOverride 
     $rowCount = count($tx); unset($tx);
     if (now_ms() - $started > 240000) fail_('Publikasi mendekati batas waktu; data lama tetap aktif.');
     // DSM v5: mutasi stok (bagian terbesar snapshot) disimpan di tabel dsm_move, bukan di JSON.
+    // Isi identik dengan snapshot sebelumnya → baris lama dipakai ulang (tidak menulis ulang ratusan ribu baris).
     $id = newFileId_();
-    movesWrite_($id, $db['stock']['moves']);
-    unset($db['stock']['moves']); $db['stock']['moveSnap'] = $id;
+    $mv = movesStore_($id, $db['stock']['moves'], $prior);
+    unset($db['stock']['moves']); $db['stock']['moveSnap'] = $mv['snap']; $db['stock']['moveHash'] = $mv['hash'];
     $out = pubOut_($db); $notes = $db['notes']; $processed = $db['processed']; $partsMap = $db['parts']; unset($db);
     writeJsonId_($id, $out); unset($out);
     writeJsonId_($id . '-parts', ['parts' => $partsMap]); // peta partisi kecil untuk Pemulihan regional
@@ -209,7 +228,7 @@ function publish_(array $meta, $rawMap, $coverage, $actor, $reason, $soOverride 
     prop_set_('ACTIVE', $id);
     audit_(js_str($actor), 'PUBLISH', js_str($reason) . ' ' . $id);
     if ($prior) revokeChanged_($prior['meta']['people'], $meta['people']);
-    try { storage_prune_(); } catch (Throwable $e) { error_log('[dsm] prune gagal: ' . $e->getMessage()); }
+    storage_prune_later_(); // bersih-bersih setelah respons terkirim, bukan bagian waktu tunggu user
     return ['version' => $id, 'processed' => $processed, 'notes' => $notes, 'rows' => $rowCount];
 }
 

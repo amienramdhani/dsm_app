@@ -135,14 +135,58 @@ function movesWrite_(string $snap, array $moves): void {
     $own = !$pdo->inTransaction(); if ($own) $pdo->beginTransaction();
     try {
         $pdo->prepare('DELETE FROM dsm_move WHERE snap = ?')->execute([$snap]);
-        $seq = 0;
-        foreach (array_chunk($moves, 2000) as $chunk) {
+        $seq = 0; $size = 5000; $full = null; // 5000 baris × 8 kolom = 40.000 placeholder (< batas 65.535)
+        foreach (array_chunk($moves, $size) as $chunk) {
             $vals = [];
             foreach ($chunk as $m) array_push($vals, $snap, $seq++, (string) $m['date'], (string) ($m['region'] ?? ''), (string) $m['customer'], (string) $m['sku'], (int) $m['inQty'], (int) $m['outQty']);
-            $pdo->prepare('INSERT INTO dsm_move (snap, seq, tanggal, region, kode_customer, kode_produk, in_qty, out_qty) VALUES ' . implode(',', array_fill(0, count($chunk), '(?,?,?,?,?,?,?,?)')))->execute($vals);
+            $sql = 'INSERT INTO dsm_move (snap, seq, tanggal, region, kode_customer, kode_produk, in_qty, out_qty) VALUES ' . implode(',', array_fill(0, count($chunk), '(?,?,?,?,?,?,?,?)'));
+            // statement untuk potongan penuh disiapkan sekali saja, tidak di-prepare ulang tiap potongan
+            $st = count($chunk) === $size ? ($full ??= $pdo->prepare($sql)) : $pdo->prepare($sql);
+            $st->execute($vals);
         }
         if ($own) $pdo->commit();
     } catch (Throwable $e) { if ($own && $pdo->inTransaction()) $pdo->rollBack(); throw $e; }
+}
+
+/** Sidik jari isi mutasi stok (urutan + semua kolom). Sama persis = baris dsm_move yang sudah ada boleh dipakai ulang. */
+function movesHash_(array $moves): string {
+    $h = hash_init('sha256');
+    foreach ($moves as $m) hash_update($h, (string) $m['date'] . "\t" . (string) ($m['region'] ?? '') . "\t" . (string) $m['customer'] . "\t" . (string) $m['sku'] . "\t" . (int) $m['inQty'] . "\t" . (int) $m['outQty'] . "\n");
+    return count($moves) . ':' . hash_final($h);
+}
+function movesCount_(string $snap): int {
+    store_schema_(); $st = db_()->prepare('SELECT COUNT(*) FROM dsm_move WHERE snap = ?'); $st->execute([$snap]);
+    return (int) $st->fetchColumn();
+}
+
+/**
+ * Simpan mutasi stok untuk snapshot baru. Kalau isinya identik dengan snapshot sebelumnya (mis. publikasi karena
+ * tambah/edit user, dealer, target — tanpa perubahan transaksi), baris lama dipakai bersama: tidak ditulis ulang.
+ * Mengembalikan ['snap' => id baris dsm_move yang dipakai, 'hash' => sidik jari].
+ */
+function movesStore_(string $id, array $moves, ?array $prior): array {
+    $hash = movesHash_($moves);
+    $old = $prior ? movesSnap_($prior) : null;
+    if ($old !== null && ($prior['stock']['moveHash'] ?? null) === $hash && movesCount_($old) === count($moves)) return ['snap' => $old, 'hash' => $hash];
+    movesWrite_($id, $moves);
+    return ['snap' => $id, 'hash' => $hash];
+}
+
+/**
+ * Bersih-bersih storage dijalankan SETELAH respons terkirim ke browser (PHP-FPM), bukan di tengah request.
+ * Tetap memegang kunci publikasi supaya tidak bentrok dengan publikasi lain; kalau sedang ada publikasi, dilewati
+ * (akan dikerjakan oleh publikasi berikutnya).
+ */
+function storage_prune_later_(): void {
+    static $queued = false; if ($queued) return; $queued = true;
+    register_shutdown_function(function () {
+        if (function_exists('fastcgi_finish_request')) @fastcgi_finish_request();
+        try {
+            $pdo = db_();
+            if (!(int) $pdo->query("SELECT GET_LOCK('dsm_publish', 0)")->fetchColumn()) return;
+            try { storage_prune_(); } finally { $pdo->query("SELECT RELEASE_LOCK('dsm_publish')"); }
+        } catch (Throwable $e) { error_log('[dsm] prune gagal: ' . $e->getMessage()); }
+    });
 }
 
 /** Snapshot yang mutasinya tersimpan di SQL (bukan di dalam JSON). */
@@ -311,12 +355,15 @@ function storage_prune_(?int $graceMs = null): array {
     // snapshot aktif & sebelumnya: simpan penuh
     $full = [];
     foreach (['ACTIVE', 'PREVIOUS'] as $k) if (!empty($props[$k])) $full[$props[$k]] = 1;
+    // Mutasi stok bisa dipakai bersama beberapa snapshot (movesStore_): simpan baris milik moveSnap tiap snapshot penuh.
+    $moveKeep = $full; $moveSafe = true;
     foreach (array_keys($full) as $id) {
         try {
             $s = pubReadJsonRaw_($id); $markParts($s['parts'] ?? []);
             foreach ((array) ($s['raw'] ?? []) as $x) $mark($x); foreach ((array) ($s['so']['raw'] ?? []) as $x) $mark($x);
+            $ms = $s['stock']['moveSnap'] ?? null; if (is_string($ms) && $ms !== '') $moveKeep[$ms] = 1;
             unset($s);
-        } catch (Throwable $e) {}
+        } catch (Throwable $e) { $moveSafe = false; }
     }
     // 60 versi terakhir: cukup file pendamping peta partisi (dibuat dari snapshot penuh bila belum ada)
     $versions = array_slice(optionalTable_('Version_Log'), -60);
@@ -355,7 +402,8 @@ function storage_prune_(?int $graceMs = null): array {
         $pdo->exec('DELETE FROM dsm_st WHERE part_id IN (' . $in . ')'); $pdo->exec('DELETE FROM dsm_so WHERE part_id IN (' . $in . ')'); $pdo->exec('DELETE FROM dsm_part WHERE id IN (' . $in . ')');
         $parts += count($ch);
     }
-    $snaps = array_keys($full);
-    $pdo->prepare('DELETE FROM dsm_move WHERE snap NOT IN (' . implode(',', array_fill(0, max(1, count($snaps)), '?')) . ')')->execute($snaps ?: ['-']);
+    // Snapshot penuh gagal dibaca = tidak tahu mutasi mana yang dipakai; jangan hapus apa pun kali ini.
+    $snaps = array_map('strval', array_keys($moveKeep));
+    if ($moveSafe) $pdo->prepare('DELETE FROM dsm_move WHERE snap NOT IN (' . implode(',', array_fill(0, max(1, count($snaps)), '?')) . ')')->execute($snaps ?: ['-']);
     return ['files' => $deleted, 'mb' => round($bytes / 1048576, 1), 'parts' => $parts];
 }
