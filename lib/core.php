@@ -613,9 +613,15 @@ final class PortalCore {
         $col = js_collator('en_US');
         if ($col) foreach ($list as &$o) { $o['_d'] = $col->getSortKey(js_str($o['doc'])); $o['_n'] = $col->getSortKey(js_str($o['nik'])); }
         unset($o);
-        usort($list, $col
-            ? fn($a, $b) => strcmp($a['date'], $b['date']) ?: strcmp($a['_d'], $b['_d']) ?: strcmp($a['_n'], $b['_n'])
-            : fn($a, $b) => lc($a['date'], $b['date']) ?: lc($a['doc'], $b['doc']) ?: lc($a['nik'], $b['nik']));
+        if ($col) {
+            // Urutan sama persis dengan usort stabil + strcmp(date) ?: strcmp(_d) ?: strcmp(_n): array_multisort
+            // SORT_STRING membandingkan biner seperti strcmp, dan indeks asli sebagai penentu terakhir menjaga stabilitas.
+            // Dikerjakan di C, bukan jutaan panggilan closure.
+            $kd = []; $k1 = []; $k2 = []; $ix = [];
+            foreach ($list as $i => $o) { $kd[] = (string) $o['date']; $k1[] = (string) $o['_d']; $k2[] = (string) $o['_n']; $ix[] = $i; }
+            array_multisort($kd, SORT_STRING, $k1, SORT_STRING, $k2, SORT_STRING, $ix, SORT_NUMERIC, $list);
+            unset($kd, $k1, $k2, $ix);
+        } else usort($list, fn($a, $b) => lc($a['date'], $b['date']) ?: lc($a['doc'], $b['doc']) ?: lc($a['nik'], $b['nik']));
         foreach ($list as $o) if (!isset($first[$o['pair']])) $first[$o['pair']] = ['date' => $o['date'], 'nik' => $o['nik']];
         unset($list);
         if ($missing) $notes[] = 'Customer belum ada di master: ' . implode(', ', js_keys($missing)) . '. Transaksi tetap masuk total; lengkapi master.';

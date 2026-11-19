@@ -68,7 +68,8 @@ function writeJson_(string $name, $obj): string {
 }
 function writeJsonId_(string $id, $obj): void { file_put_contents(file_path_($id), js_stringify($obj), LOCK_EX); }
 function readJson_(string $id) {
-    static $memo = [];
+    // Memo di $GLOBALS (bukan static) supaya snapshot_forget_() bisa melepas memorinya.
+    $memo = &$GLOBALS['DSM_JSON_MEMO']; if (!is_array($memo)) $memo = [];
     if (array_key_exists($id, $memo)) return $memo[$id];
     $p = file_path_($id);
     if (!is_file($p)) fail_('File data tidak ditemukan: ' . $id);
@@ -271,20 +272,25 @@ function audit_(string $nik, string $action, $detail = ''): void {
 }
 
 function snapshot_(): array {
-    static $snap = null, $snapId = null;
+    // Cache di $GLOBALS (bukan static) supaya snapshot_forget_() bisa melepas memorinya; isi & perilaku sama.
+    $c = &$GLOBALS['DSM_SNAP_CACHE'];
     $id = prop_get_('ACTIVE');
     if (!$id) fail_('Belum ada data dipublikasikan.');
     $key = $id . '|' . (prop_get_('DEALER_CONTACT_STATE') ?? '');
-    if ($snap !== null && $snapId === $key) return function_exists('tmScopedSnapshot_') ? tmScopedSnapshot_($snap) : $snap;
+    if (is_array($c) && $c['key'] === $key) return function_exists('tmScopedSnapshot_') ? tmScopedSnapshot_($c['snap']) : $c['snap'];
     $s = readJson_($id);
     PortalCore::resetMemo($id);
     PortalCore::adaptMeta($s['meta']);
     applyDealerContacts_($s['meta']);
     $s['id'] = $id; $s['_vid'] = $id;
-    $snapId = $key;
-    $snap = $s;
-    return function_exists('tmScopedSnapshot_') ? tmScopedSnapshot_($snap) : $snap;
+    $c = ['key' => $key, 'snap' => $s];
+    return function_exists('tmScopedSnapshot_') ? tmScopedSnapshot_($s) : $s;
 }
+/**
+ * Lepas cache snapshot & JSON di memori (dibaca ulang dari disk bila diminta lagi). Dipakai publish_ supaya
+ * snapshot lama (ratusan MB pada data besar) tidak tertahan selama histori dihitung ulang.
+ */
+function snapshot_forget_(): void { $GLOBALS['DSM_SNAP_CACHE'] = null; $GLOBALS['DSM_JSON_MEMO'] = []; }
 
 function contactState_(): array {
     $id = prop_get_('DEALER_CONTACT_STATE');

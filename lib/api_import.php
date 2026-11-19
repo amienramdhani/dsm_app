@@ -10,7 +10,9 @@ require_once __DIR__ . '/sheetio.php';
 /** LockService.getScriptLock() → GET_LOCK MySQL (satu publikasi dalam satu waktu). */
 function with_lock_(callable $f) {
     $pdo = db_();
-    $got = (int) $pdo->query("SELECT GET_LOCK('dsm_publish', 15)")->fetchColumn();
+    // Tunggu maks 40 detik (di bawah timeout bawaan nginx 60 detik): saat beberapa admin menyimpan bersamaan,
+    // permintaan berikutnya cukup menunggu publikasi sebelumnya selesai, tidak langsung gagal seperti batas lama 15 detik.
+    $got = (int) $pdo->query("SELECT GET_LOCK('dsm_publish', 40)")->fetchColumn();
     if (!$got) fail_('Sistem sedang memproses publikasi lain. Coba lagi sebentar.');
     try { return $f(); } finally { $pdo->query("SELECT RELEASE_LOCK('dsm_publish')"); }
 }
