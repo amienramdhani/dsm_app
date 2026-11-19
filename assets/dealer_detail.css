@@ -1,0 +1,38 @@
+/* Popup detail dealer versi DESKTOP (dealer_detail.js). HP tidak terpengaruh. */
+@media (min-width:821px){
+ .modal.ddX{display:flex!important;flex-direction:column;overflow:hidden!important;background:#F7F9FB}
+ .modal.ddX .mhead{background:#fff;padding:13px 18px 4px;display:flex;flex-wrap:wrap;align-items:flex-start;gap:4px 10px;border-bottom:0}
+ .modal.ddX .mhead h3{font-size:16px;font-weight:900;color:#10394E;margin:0;flex:1}
+ .modal.ddX .mhead .x{order:2;width:30px;height:30px;border-radius:9px;border:0;background:#f2f5f8}
+ .modal.ddX .ddSub{order:3;flex-basis:100%;font-size:11.5px;color:#7b8a98}
+ .modal.ddX .ddSub .detailstatus{margin:0;font-size:11.5px;color:#7b8a98}
+ .modal.ddX .ddAct{display:flex;gap:8px;align-items:center;background:#fff;padding:8px 18px 10px;border-bottom:1px solid #eef2f6;flex:none}
+ .modal.ddX .ddB{height:36px;border-radius:10px;border:0;font-family:inherit;font-weight:800;font-size:11.5px;letter-spacing:.3px;padding:0 13px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap;text-decoration:none;box-shadow:none!important;margin:0!important}
+ .modal.ddX .ddB.p{background:#10394E!important;color:#fff!important}
+ .modal.ddX .ddB.o{background:#fff!important;color:#10394E!important;border:1px solid #D5DEE7!important}
+ .modal.ddX .ddB.wa{background:#E7F7EE!important;color:#12866A!important}
+ .modal.ddX .ddMore{margin-left:auto;position:relative}
+ .modal.ddX .ddB.m{width:36px;justify-content:center;padding:0;background:#fff!important;border:1px solid #D5DEE7!important;color:#46586a!important;font-size:16px}
+ .modal.ddX .ddMenu{position:absolute;right:0;top:42px;background:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(16,57,78,.22);padding:6px;width:240px;z-index:20}
+ .modal.ddX .ddMenu button{display:block;width:100%;text-align:left;border:0;background:none;padding:9px 10px;border-radius:8px;font:inherit;font-size:12px;font-weight:700;color:#B4332E;cursor:pointer}
+ .modal.ddX .ddMenu button:hover{background:#FFF4F3}
+ .modal.ddX .ddMenu small{display:block;font-weight:400;color:#9aa7b3;font-size:10.5px}
+ .modal.ddX .mbody{flex:1;overflow:auto;padding:0 18px 18px!important}
+ .modal.ddX .tm-dealer-actions,.modal.ddX .contactLinks{display:none!important}
+ .modal.ddX .v6tban.plain>button[data-v6t="form"]{display:none!important}
+ .modal.ddX .v6tban.plain:not(:has(.v6tform:not([hidden]))):not(:has(.hint)){display:none}
+ /* tab menempel */
+ .modal.ddX .dealerTabs{position:sticky;top:0;z-index:5;background:#F7F9FB;display:flex!important;gap:2px;margin:0 -18px 12px!important;padding:0 14px!important;border-bottom:1px solid #e6ecf2;flex-wrap:nowrap;overflow-x:auto}
+ .modal.ddX .dealerTabs .modalTab{flex:none!important;flex-direction:row!important;min-height:0!important;background:none!important;border:0!important;border-bottom:2.5px solid transparent!important;border-radius:0!important;box-shadow:none!important;color:#7b8a98!important;padding:11px 10px 10px!important;font-size:11px!important;font-weight:800;letter-spacing:.4px;text-transform:uppercase;margin:0!important;gap:6px}
+ .modal.ddX .dealerTabs .modalTab svg{width:15px;height:15px;color:currentColor!important}
+ .modal.ddX .dealerTabs .modalTab.active,.modal.ddX .dealerTabs .modalTab[aria-selected=true]{color:#10394E!important;border-bottom-color:#F07A0C!important;background:none!important}
+ /* kartu angka warna indikator */
+ #mask .modal.ddX #dealerSummary .kpis{display:grid!important;grid-template-columns:repeat(5,1fr);gap:8px;margin:0 0 12px}
+ #mask .modal.ddX #dealerSummary .kpis .kpi{border-radius:13px!important;border:0!important;box-shadow:0 1px 6px rgba(16,57,78,.07)!important;border-left:4px solid var(--ddc)!important;background:#fff!important}
+ #mask .modal.ddX #dealerSummary .kpis .kpi:nth-child(1){--ddc:#9A6400}.modal.ddX #dealerSummary .kpis .kpi:nth-child(2){--ddc:#1E5FB8}
+ #mask .modal.ddX #dealerSummary .kpis .kpi:nth-child(3){--ddc:#6D3FD8}.modal.ddX #dealerSummary .kpis .kpi:nth-child(4){--ddc:#C25A12}.modal.ddX #dealerSummary .kpis .kpi:nth-child(5){--ddc:#46586a}
+ #mask .modal.ddX #dealerSummary .kpis .kpi .kval,#mask .modal.ddX #dealerSummary .kpis .kpi strong{color:var(--ddc)!important}
+ /* brand tanpa transaksi */
+ .modal.ddX table.ddHideEmpty tr.ddEmpty{display:none}
+ .modal.ddX .ddAll{border:0;background:none;color:#1E5FB8;font:inherit;font-size:11.5px;font-weight:700;padding:6px 0;cursor:pointer}
+}

@@ -67,7 +67,7 @@ function renderStage(){
  const go=box.querySelector('#dtgGo');if(go)go.onclick=async()=>{
   const why=box.querySelector('#dtgReason').value.trim(),err=box.querySelector('#dtgErr');
   if(why.length<5){err.innerHTML='<div class="dtgMsg bad">Isi alasan minimal 5 karakter.</div>';return}
-  if(!confirm('Simpan '+s.total+' target SO dealer?'))return;
+  if(!await dsmConfirm('Simpan '+s.total+' target SO dealer?'))return;
   go.disabled=true;go.textContent='Menyimpan…';
   try{const c=await rpc('apiDealerTargetCommit',TOKEN,s.id,why);S.stage=null;S.msg={t:'ok',m:`Tersimpan: ${c.baru} baru, ${c.update} diperbarui, ${c.same} sama.`};await load(false,true)}
   catch(e){go.disabled=false;go.textContent='Simpan '+s.total+' target';err.innerHTML=`<div class="dtgMsg bad">${E(e.message||String(e))}</div>`}

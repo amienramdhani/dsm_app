@@ -25,7 +25,7 @@ try {
   if ($a === 'demo_users') { if (dsm_present()) out(['users' => []]); out(['users' => array_map(fn($r) => ['username' => $r['username'], 'name' => $r['name'], 'job' => $r['job']], q("SELECT username,name,job FROM claim_users WHERE active=1 ORDER BY id"))]); }
   $u = need_me();
   // Mode lihat: Super Admin yang "masuk sebagai" orang lain (Mode tes mati = produksi) hanya boleh melihat, tidak boleh mengubah apa pun.
-  if (!empty($u['impersonating']) && !test_mode() && in_array($a, ['upload', 'claim_save', 'claim_submit', 'claim_act', 'claim_resubmit', 'claim_cancel', 'followup_log', 'wa_save', 'sign_save', 'ba_sign', 'pc_submit', 'pc_act', 'pc_note', 'pc_report', 'pc_setoran', 'pc_close', 'notif_read', 'entitlement_save', 'entitlement_copy', 'contact_bulk', 'type_save', 'rules_save', 'aging_save', 'entity_add', 'entity_del', 'fuel_save', 'sa_user_save', 'sa_seed_uji', 'sa_uji_off', 'sa_testmode', 'sa_reset', 'backup_issue', 'backup_use', 'backup_revoke'], true))
+  if (!empty($u['impersonating']) && !test_mode() && in_array($a, ['upload', 'draft_note_add', 'entity_rename', 'claim_save', 'claim_submit', 'claim_act', 'claim_resubmit', 'claim_cancel', 'followup_log', 'wa_save', 'sign_save', 'ba_sign', 'pc_submit', 'pc_act', 'pc_note', 'pc_report', 'pc_setoran', 'pc_close', 'notif_read', 'entitlement_save', 'entitlement_copy', 'contact_bulk', 'type_save', 'rules_save', 'aging_save', 'entity_add', 'entity_del', 'fuel_save', 'sa_user_save', 'sa_seed_uji', 'sa_uji_off', 'sa_testmode', 'sa_reset', 'backup_issue', 'backup_use', 'backup_revoke'], true))
     fail('Mode lihat: Super Admin tidak bisa mengubah data atas nama orang lain. Klik "kembali" dulu.', 403);
 
   switch ($a) {
@@ -66,6 +66,8 @@ try {
     case 'claim_submit': out(claim_submit($u, (int) $in['id'], $in));
     case 'claim_get': out(claim_detail($u, (int) $in['id']));
     case 'claim_list': out(claim_list($u, $in));
+    case 'draft_list': out(draft_list($u, (int) ($in['limit'] ?? 50)));
+    case 'draft_note_add': out(draft_note_add($u, $in));
     case 'claim_act': out(claim_act($u, (int) $in['id'], $in));
     case 'claim_resubmit': out(claim_resubmit($u, (int) $in['id'], $in));
     case 'claim_cancel': claim_cancel($u, (int) $in['id']); out([]);
@@ -232,17 +234,17 @@ try {
       ins('claim_rules', $f); hist('user', (int) $u['id'], 'Aturan BA diperbarui (versi baru)', $u, jenc($f)); out([]);
     case 'aging_save': if (!has_role($u, 'SA') && !sa_free($u)) fail('Hanya Super Admin.', 403); set_setting('aging_days', ($in['aging_days'] ?? '') === '' ? null : (string) max(1, (int) $in['aging_days'])); out([]);
     // ---- super admin
-    case 'entity_list': { $used = []; foreach (q("SELECT DISTINCT entity FROM claim_users WHERE entity IS NOT NULL AND entity<>''") as $r) foreach (explode(',', $r['entity']) as $e) $used[trim($e)] = 1;
-      foreach (q("SELECT DISTINCT entity FROM claims WHERE entity IS NOT NULL") as $r) $used[$r['entity']] = 1;
-      out(['rows' => array_map(fn($e) => ['name' => $e, 'used' => isset($used[$e])], entity_options())]); }
+    case 'entity_list': { $us = entity_usage();
+      out(['rows' => array_map(fn($e) => ['name' => $e, 'users' => (int) ($us[$e]['users'] ?? 0), 'claims' => (int) ($us[$e]['claims'] ?? 0), 'used' => isset($us[$e])], entity_options())]); }
     case 'entity_add': need_role($u, 'SA'); $n = strtoupper(trim($in['name'] ?? ''));
       if (!preg_match('/^[A-Z0-9 .&-]{2,30}$/', $n)) fail('Nama badan usaha 2-30 karakter (huruf, angka, spasi, titik, &, -).');
       if (in_array($n, entity_options(), true)) fail('Badan usaha itu sudah ada.'); ins('claim_lookup', ['kind' => 'entity', 'val' => $n]);
       hist('user', (int) $u['id'], 'Badan usaha ditambahkan: ' . $n, $u); out(['ok' => 1]);
-    case 'entity_del': need_role($u, 'SA'); $n = trim($in['name'] ?? '');
-      foreach (q("SELECT entity FROM claim_users WHERE entity IS NOT NULL") as $r) if (in_array($n, array_map('trim', explode(',', $r['entity'])), true)) fail('Masih dipakai pengguna. Ubah dulu di Pengguna & peran.');
-      if (val("SELECT 1 FROM claims WHERE entity=?", [$n])) fail('Sudah dipakai klaim, tidak bisa dihapus.');
-      ex("DELETE FROM claim_lookup WHERE kind='entity' AND val=?", [$n]); out(['ok' => 1]);
+    case 'entity_rename': need_role($u, 'SA'); out(entity_change($u, (string) ($in['from'] ?? ''), (string) ($in['to'] ?? '')));
+    case 'entity_del': need_role($u, 'SA'); $n = trim($in['name'] ?? ''); $to = trim((string) ($in['to'] ?? ''));
+      if ($to !== '') { if ($to === $n || !in_array($to, entity_options(), true)) fail('Pilih badan usaha tujuan yang lain.'); out(entity_change($u, $n, $to)); }
+      if (isset(entity_usage()[$n])) fail('Masih dipakai. Pilih badan usaha tujuan untuk menggabungkan.');
+      ex("DELETE FROM claim_lookup WHERE kind='entity' AND val=?", [$n]); hist('user', (int) $u['id'], 'Badan usaha dihapus: ' . $n, $u); out(['ok' => 1]);
     case 'fuel_list': out(['rows' => q("SELECT f.*, u.name AS uname FROM claim_fuel_price f LEFT JOIN claim_users u ON u.id=f.created_by ORDER BY f.effective_from DESC, f.id DESC"), 'today' => date('Y-m-d')]);
     case 'fuel_save':
       need_role($u, 'SA'); $ef = $in['effective_from'] ?? ''; $pl = (int) ($in['pertalite'] ?? 0); $px = (int) ($in['pertamax'] ?? 0);

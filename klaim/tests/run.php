@@ -509,4 +509,63 @@ t('matikan demo lalu hapus permanen: data demo hilang, angka asli tetap identik'
   $n = demo_purge(); eq($n['klaim'] >= 1, true); eq((int) val("SELECT COUNT(*) FROM claims WHERE is_demo=1"), 0); eq(one("SELECT id FROM claims WHERE id=?", [$dc]), null);
   eq($snap() === $before, true, 'snapshot asli berubah setelah hapus');
 });
+echo "== Draf di Beranda & tambah nota cepat (2026-11-19) ==\n";
+t('draft_list: draf milik sendiri, ringkasan nota', function () use ($dewi) {
+  $p = bbm($dewi, 150000); $id = claim_save($dewi, $p);
+  $l = draft_list($dewi); $r = array_values(array_filter($l['rows'], fn($x) => $x['id'] === $id))[0] ?? null;
+  if (!$r) throw new Exception('draf tidak muncul'); eq($r['notes'], 1); eq($r['incomplete'], 0); eq($r['quick'], true); eq($r['types'][0]['kind'], 'bbm'); eq(count($r['thumbs']), 1);
+  eq(count(array_filter(draft_list(U('eko'))['rows'], fn($x) => $x['id'] === $id)), 0, 'draf orang lain tidak tampil'); });
+t('tambah nota BBM cepat = hasil claim_save (nominal klaim, liter, harga)', function () use ($dewi) {
+  $id = claim_save($dewi, bbm($dewi, 100000));
+  $r = draft_note_add($dewi, ['id' => $id, 'date' => date('Y-m-d'), 'nominal' => 175000, 'detail' => ['bbm' => 'Pertalite'], 'files' => [fakefile($dewi)]]);
+  $quick = one("SELECT nominal, nota_date, detail FROM claim_notes WHERE id=?", [$r['note_id']]);
+  $p = bbm($dewi, 175000); $id2 = claim_save($dewi, $p); $ref = one("SELECT nominal, nota_date, detail FROM claim_notes WHERE claim_id=? ORDER BY line_no LIMIT 1", [$id2]);
+  eq($quick, $ref, 'nota cepat'); eq($r['line'], 2); eq((int) get_claim($id)['total'], (int) $ref['nominal'] + (int) val("SELECT nominal FROM claim_notes WHERE claim_id=? AND line_no=1", [$id]));
+  eq(count(files_of('claim', $id, 'nota', $r['note_id'])), 1, 'foto tertaut'); });
+t('nota boleh belum lengkap saat simpan, ditolak saat kirim', function () use ($dewi) {
+  $id = claim_save($dewi, bbm($dewi, 120000));
+  draft_note_add($dewi, ['id' => $id, 'date' => '', 'nominal' => 0, 'detail' => [], 'files' => [fakefile($dewi)]]);
+  $r = array_values(array_filter(draft_list($dewi)['rows'], fn($x) => $x['id'] === $id))[0]; eq($r['incomplete'], 1); eq($r['notes'], 2);
+  throws(fn() => claim_submit($dewi, $id, []), 'Lengkapi'); });
+t('tambah nota lengkap lalu kirim: lolos', function () use ($dewi) {
+  $id = claim_save($dewi, bbm($dewi, 130000)); draft_note_add($dewi, ['id' => $id, 'date' => date('Y-m-d'), 'nominal' => 80000, 'detail' => ['bbm' => 'Pertamax'], 'files' => [fakefile($dewi)]]);
+  claim_submit($dewi, $id, []); eq(get_claim($id)['status'], 'WAIT'); });
+t('Tol cepat: gerbang dinormalkan seperti form; foto wajib', function () use ($dewi) {
+  $p = ['category' => 'Transportasi', 'type_id' => typeid('Tol'), 'brand' => 'Oppo', 'refnote' => 'T', 'location' => 'Bandung', 'account' => ['mode' => 'self'], 'meta' => [], 'notes' => [['nominal' => 55000, 'date' => date('Y-m-d'), 'detail' => ['asal' => 'GT A', 'tujuan' => 'GT B'], 'files' => [fakefile($dewi)]]]];
+  $id = claim_save($dewi, $p);
+  throws(fn() => draft_note_add($dewi, ['id' => $id, 'date' => date('Y-m-d'), 'nominal' => 1000, 'detail' => [], 'files' => []]), 'Foto');
+  $r = draft_note_add($dewi, ['id' => $id, 'date' => date('Y-m-d'), 'nominal' => 47500, 'detail' => ['asal' => '  gt   kalikangkung ', 'tujuan' => 'gt cikampek utama'], 'files' => [fakefile($dewi)]]);
+  $d = jdec(val("SELECT detail FROM claim_notes WHERE id=?", [$r['note_id']])); eq($d['asal'], 'Gt Kalikangkung'); eq($d['tujuan'], 'Gt Cikampek Utama'); eq((int) get_claim($id)['total'], 102500); });
+t('hak: orang lain / klaim terkirim / tanggal masa depan ditolak', function () use ($dewi) {
+  $id = claim_save($dewi, bbm($dewi, 140000));
+  throws(fn() => draft_note_add(U('eko'), ['id' => $id, 'nominal' => 1, 'files' => [fakefile(U('eko'))]]), 'tidak bisa');
+  throws(fn() => draft_note_add($dewi, ['id' => $id, 'date' => date('Y-m-d', time() + 86400 * 3), 'nominal' => 1, 'files' => [fakefile($dewi)]]), 'Tanggal');
+  throws(fn() => draft_note_add($dewi, ['id' => $id, 'nominal' => 1, 'files' => [fakefile(U('eko'))]]), 'Berkas');
+  claim_submit($dewi, $id, []); throws(fn() => draft_note_add($dewi, ['id' => $id, 'nominal' => 1, 'files' => [fakefile($dewi)]]), 'tidak bisa'); });
+t('Perdin tidak bisa tambah nota cepat', function () use ($dewi, $perdin) {
+  $id = claim_save($dewi, $perdin($dewi)); eq(array_values(array_filter(draft_list($dewi)['rows'], fn($x) => $x['id'] === $id))[0]['quick'], false);
+  throws(fn() => draft_note_add($dewi, ['id' => $id, 'nominal' => 1, 'files' => [fakefile($dewi)]]), 'form lengkap'); });
+t('api.php: tambah nota cepat diblok di Mode lihat', function () { if (!str_contains(file_get_contents(__DIR__ . '/../api.php'), "['upload', 'draft_note_add'")) throw new Exception('tidak ada'); });
+
+echo "== Badan usaha: ubah nama & gabung (2026-11-19) ==\n";
+t('ubah nama: daftar, pengguna, klaim ikut', function () use ($sa) {
+  ins('claim_lookup', ['kind' => 'entity', 'val' => 'MSIX']); ins('claim_lookup', ['kind' => 'entity', 'val' => 'PT. MSIX']);
+  $a = (int) val("SELECT id FROM claim_users WHERE username='eko'"); $b = (int) val("SELECT id FROM claim_users WHERE username='rudi'");
+  ex("UPDATE claim_users SET entity='MSIX,RISM' WHERE id=?", [$a]); ex("UPDATE claim_users SET entity='PT. MSIX,MSIX' WHERE id=?", [$b]);
+  $cid = (int) val("SELECT id FROM claims ORDER BY id LIMIT 1"); ex("UPDATE claims SET entity='MSIX' WHERE id=?", [$cid]);
+  $us = entity_usage(); eq($us['MSIX']['users'], 2); eq($us['MSIX']['claims'], 1);
+  $r = entity_change($sa, 'MSIX', 'msix  group'); eq($r['merged'], false); eq($r['users'], 2); eq($r['claims'], 1);
+  eq(val("SELECT entity FROM claim_users WHERE id=?", [$a]), 'MSIX GROUP,RISM'); eq(val("SELECT entity FROM claims WHERE id=?", [$cid]), 'MSIX GROUP');
+  eq(in_array('MSIX', entity_options(), true), false); eq(in_array('MSIX GROUP', entity_options(), true), true); });
+t('catatan transfer ikut diganti', function () use ($sa) {
+  $tid = ins('claim_transfers', ['ref_type' => 'claim', 'ref_id' => 1, 'transfer_no' => 'T-X', 'amount' => 1, 'user_id' => 1, 'entity' => 'MSIX GROUP', 'created_at' => now()]);
+  entity_change($sa, 'MSIX GROUP', 'MSIX G2'); eq(val("SELECT entity FROM claim_transfers WHERE id=?", [$tid]), 'MSIX G2'); entity_change($sa, 'MSIX G2', 'MSIX GROUP'); eq(val("SELECT entity FROM claim_transfers WHERE id=?", [$tid]), 'MSIX GROUP'); });
+t('ubah ke nama yang sudah ada = gabung, pengguna tidak dobel', function () use ($sa) {
+  $b = (int) val("SELECT id FROM claim_users WHERE username='rudi'"); $r = entity_change($sa, 'MSIX GROUP', 'PT. MSIX'); eq($r['merged'], true);
+  eq(val("SELECT entity FROM claim_users WHERE id=?", [$b]), 'PT. MSIX'); eq(in_array('MSIX GROUP', entity_options(), true), false);
+  eq((int) val("SELECT COUNT(*) FROM claim_lookup WHERE kind='entity' AND val='PT. MSIX'"), 1); });
+t('hapus yang dipakai tanpa tujuan ditolak; nama tidak valid ditolak', function () use ($sa) {
+  throws(fn() => entity_change($sa, 'PT. MSIX', 'x'), '2-30'); throws(fn() => entity_change($sa, 'TIDAK ADA', 'ABC'), 'tidak ditemukan'); });
+t('api.php: entity_del dengan tujuan memakai gabung; dipakai tanpa tujuan ditolak', function () { $s = file_get_contents(__DIR__ . '/../api.php'); if (!str_contains($s, "case 'entity_rename'") || !str_contains($s, 'Pilih badan usaha tujuan untuk menggabungkan')) throw new Exception('tidak ada'); });
+
 echo "\nHasil: $pass lolos, $failc gagal\n"; exit($failc ? 1 : 0);

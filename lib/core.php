@@ -407,7 +407,7 @@ final class PortalCore {
             // Aturan Status Dealer (Paket 2): satu sumber status, dari seluruh transaksi dealer. Tidak dipakai KPI.
             $ds = null;
             if (function_exists('dsDealer_')) { $ds = dsDealer_($db, $period, (string) $id); $status = $ds['status']; foreach ($bs as $b => $_) $bs[$b] = $ds['bs'][$b] ?? $bs[$b]; foreach ($ds['bs'] as $b => $v) if (!isset($bs[$b]) && in_array($b, $brands, true)) $bs[$b] = $v; }
-            $customers[] = ['id' => $id, 'nama' => js_or($c['nama'] ?? null, 'Master belum tersedia'), 'nik' => js_or($c['nik'] ?? null, $current[0]['nik'] ?? null), 'region' => $c['region'] ?? '', 'kota' => $c['kota'] ?? '', 'alamat' => $c['alamat'] ?? '', 'hp' => $c['hp'] ?? '', 'status' => $status, 'bs' => js_obj($bs), 'bsr' => js_obj($bsr), 'ds' => $ds ? ['pola' => $ds['pola'], 'aturan' => $ds['aturan'], 'order' => $ds['order'], 'bangkit' => $ds['bangkit'], 'bc' => js_obj($ds['bc'])] : null, 'last' => $last, 'jeda' => $last ? (int) floor($cutDays - iso_days($last)) : null, 'current' => self::metrics($current, $db, $period), 'previous' => self::metrics($old, $db, $pp), 'brands' => array_map(fn($b) => array_merge(['brand' => $b], self::metrics($current, $db, $period, $b)), $brands)];
+            $customers[] = ['id' => $id, 'nama' => js_or($c['nama'] ?? null, 'Master belum tersedia'), 'nik' => js_or($c['nik'] ?? null, $current[0]['nik'] ?? null), 'region' => $c['region'] ?? '', 'kota' => $c['kota'] ?? '', 'alamat' => $c['alamat'] ?? '', 'hp' => $c['hp'] ?? '', 'status' => $status, 'bs' => js_obj($bs), 'bsr' => js_obj($bsr), 'ds' => $ds ? ['pola' => $ds['pola'], 'gap' => $ds['gap'] ?? null, 'noo' => $ds['noo'] ?? false, 'order' => $ds['order'], 'bc' => js_obj($ds['bc'])] : null, 'last' => $last, 'jeda' => $last ? (int) floor($cutDays - iso_days($last)) : null, 'current' => self::metrics($current, $db, $period), 'previous' => self::metrics($old, $db, $pp), 'brands' => array_map(fn($b) => array_merge(['brand' => $b], self::metrics($current, $db, $period, $b)), $brands)];
         }
         $types = [];
         foreach ($rows as $r) { if (!$r['q']) continue; $k = jkey([$r['brand'], $r['type']]); if (!isset($types[$k])) $types[$k] = ['brand' => $r['brand'], 'type' => $r['type'], 'qty' => 0]; $types[$k]['qty'] += $r['q']; }
@@ -419,7 +419,7 @@ final class PortalCore {
             $before = self::metrics(self::sliceCmp($db, $cmp['period'], $ids, $cmp['cutoff'], $period), $db, $cmp['period']);
             $trend[] = ['period' => $p, 'qty' => $now['qty'], 'omzet' => $now['omzet'], 'previousQty' => $cmp['available'] ? $before['qty'] : null, 'growth' => $cmp['available'] && $before['qty'] != 0 ? ($now['qty'] - $before['qty']) / $before['qty'] * 100 : null, 'previousPeriod' => $cmp['period'], 'previousCutoff' => $cmp['cutoff'], 'closed' => $info['closed'] ?? false, 'cutoff' => $info['cutoff']];
         }
-        return ['period' => $period, 'coverage' => $coverage, 'previousPeriod' => $pp, 'previousCutoff' => $cut, 'previousAvailable' => self::comparisonPeriod($db, $period)['available'], 'total' => $total, 'previous' => self::metrics($previous, $db, $pp), 'brands' => $brandRows, 'daily' => $daily, 'weekly' => $weekly, 'customers' => $customers, 'types' => array_values($types), 'kpi' => truthy($region) ? self::kpi($db, $period, $ids, $region) : null, 'trend' => $trend, 'statusInfo' => function_exists('dsLocked_') ? (function () use ($db, $period) { $L = dsLocked_($db, $period); $cfg = dsConfig_(); return ['locked' => $L['locked'], 'at' => $L['at'] ?? null, 'months' => $L['months'], 'statuses' => dsStatuses_($cfg), 'min' => $cfg['min']]; })() : null];
+        return ['period' => $period, 'coverage' => $coverage, 'previousPeriod' => $pp, 'previousCutoff' => $cut, 'previousAvailable' => self::comparisonPeriod($db, $period)['available'], 'total' => $total, 'previous' => self::metrics($previous, $db, $pp), 'brands' => $brandRows, 'daily' => $daily, 'weekly' => $weekly, 'customers' => $customers, 'types' => array_values($types), 'kpi' => truthy($region) ? self::kpi($db, $period, $ids, $region) : null, 'trend' => $trend, 'statusInfo' => function_exists('dsLocked_') ? (function () use ($db, $period) { $L = dsLocked_($db, $period); $cfg = dsConfig_(); return ['locked' => $L['locked'], 'at' => $L['at'] ?? null, 'months' => $L['months'], 'statuses' => dsStatuses_($cfg), 'rule' => ['win' => $cfg['win'], 'act' => $cfg['act'], 'inact' => $cfg['inact'], 'since' => $cfg['since']]]; })() : null];
     }
 
     public static function groupedTransactions(array $rows, array $meta): array {
@@ -613,9 +613,15 @@ final class PortalCore {
         $col = js_collator('en_US');
         if ($col) foreach ($list as &$o) { $o['_d'] = $col->getSortKey(js_str($o['doc'])); $o['_n'] = $col->getSortKey(js_str($o['nik'])); }
         unset($o);
-        usort($list, $col
-            ? fn($a, $b) => strcmp($a['date'], $b['date']) ?: strcmp($a['_d'], $b['_d']) ?: strcmp($a['_n'], $b['_n'])
-            : fn($a, $b) => lc($a['date'], $b['date']) ?: lc($a['doc'], $b['doc']) ?: lc($a['nik'], $b['nik']));
+        if ($col) {
+            // Urutan sama persis dengan usort stabil + strcmp(date) ?: strcmp(_d) ?: strcmp(_n): array_multisort
+            // SORT_STRING membandingkan biner seperti strcmp, dan indeks asli sebagai penentu terakhir menjaga stabilitas.
+            // Dikerjakan di C, bukan jutaan panggilan closure.
+            $kd = []; $k1 = []; $k2 = []; $ix = [];
+            foreach ($list as $i => $o) { $kd[] = (string) $o['date']; $k1[] = (string) $o['_d']; $k2[] = (string) $o['_n']; $ix[] = $i; }
+            array_multisort($kd, SORT_STRING, $k1, SORT_STRING, $k2, SORT_STRING, $ix, SORT_NUMERIC, $list);
+            unset($kd, $k1, $k2, $ix);
+        } else usort($list, fn($a, $b) => lc($a['date'], $b['date']) ?: lc($a['doc'], $b['doc']) ?: lc($a['nik'], $b['nik']));
         foreach ($list as $o) if (!isset($first[$o['pair']])) $first[$o['pair']] = ['date' => $o['date'], 'nik' => $o['nik']];
         unset($list);
         if ($missing) $notes[] = 'Customer belum ada di master: ' . implode(', ', js_keys($missing)) . '. Transaksi tetap masuk total; lengkapi master.';

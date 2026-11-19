@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSM · Mockup Admin Aturan Status Dealer HP</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#eef2f7;color:#14202b;display:flex;flex-direction:column;align-items:center;gap:16px;padding:18px 10px 40px}
+.tog{display:flex;gap:4px;background:#fff;padding:5px;border-radius:12px;box-shadow:0 2px 10px #10394e14;flex-wrap:wrap;justify-content:center}
+.tog button{border:0;background:none;padding:8px 11px;border-radius:9px;font-weight:800;font-size:11px;color:#5b6b7a;cursor:pointer}
+.tog button.on{background:#10394E;color:#fff}
+.ph{width:390px;max-width:100%;background:#f4f7fb;border-radius:28px;overflow:hidden;box-shadow:0 10px 40px #10394e26}
+.hd{background:#fff;padding:12px 14px;border-bottom:1px solid #e6ecf2}
+.hd small{font-size:10px;color:#7b8a98;font-weight:700;letter-spacing:.4px}
+.hd h1{font-size:16px;color:#10394E;font-weight:900;display:flex;align-items:center;gap:6px;margin-top:2px}
+.sa{font-size:9px;background:#B4332E;color:#fff;padding:3px 6px;border-radius:6px;letter-spacing:.4px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:10px 12px 0;scrollbar-width:none}
+.tabs span{flex:none;font-size:10.5px;font-weight:800;padding:7px 10px;border-radius:9px;background:#fff;color:#5b6b7a;box-shadow:0 1px 3px #10394e14}
+.tabs span.on{background:#10394E;color:#fff}
+.pg{padding:12px 12px 20px}
+.card{background:#fff;border-radius:16px;box-shadow:0 2px 12px #10394e12;padding:12px;margin-bottom:10px}
+h3{font-size:11.5px;font-weight:800;letter-spacing:.5px;color:#10394E;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+h3 small{font-weight:600;color:#7b8a98;letter-spacing:0;font-size:10px}
+.lk{display:flex;gap:8px;align-items:center;background:#eef4f9;border-radius:11px;padding:9px 10px;font-size:11px;color:#2c4356;line-height:1.4}
+.lk b{color:#10394E}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fld label{display:block;font-size:10px;font-weight:800;color:#5b6b7a;letter-spacing:.3px;margin-bottom:4px}
+.inp{border:1px solid #dbe3ec;border-radius:10px;padding:8px 10px;font-size:12.5px;font-weight:700;background:#fff;display:flex;justify-content:space-between;align-items:center}
+.inp i{font-style:normal;color:#9aa7b3;font-weight:600;font-size:11px}
+.rule{display:grid;grid-template-columns:92px 1fr;gap:8px;align-items:center;padding:8px 0;border-top:1px solid #f0f3f6}
+.rule:first-of-type{border-top:0}
+.pill{font-size:10.5px;font-weight:900;color:#fff;text-align:center;padding:7px 4px;border-radius:9px;letter-spacing:.4px}
+.rule .t{font-size:11.5px;color:#2c3e4f;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.num{display:inline-flex;align-items:center;border:1px solid #dbe3ec;border-radius:8px;overflow:hidden;font-weight:900;font-size:12px}
+.num b{padding:4px 8px;background:#fff}.num s{text-decoration:none;padding:4px 7px;background:#f3f6f9;color:#5b6b7a;font-weight:900}
+.chk{display:flex;flex-direction:column;gap:7px;font-size:11.5px;color:#2c3e4f}
+.chk div{display:flex;gap:8px;align-items:flex-start}
+.box{width:17px;height:17px;border-radius:5px;background:#12866A;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;flex:none}
+.box.off{background:#fff;border:1.5px solid #c6d1dc}
+.bl{display:grid;grid-template-columns:1fr auto;gap:6px;align-items:center;font-size:11.5px;padding:7px 0;border-top:1px solid #f0f3f6;font-weight:700}
+.sw{width:34px;height:19px;border-radius:19px;background:#12866A;position:relative}.sw:after{content:'';position:absolute;right:2px;top:2px;width:15px;height:15px;border-radius:50%;background:#fff}
+.sw.off{background:#cfd8e1}.sw.off:after{right:auto;left:2px}
+.tag{font-size:9.5px;font-weight:800;padding:3px 6px;border-radius:6px;background:#eef1f4;color:#5b6b7a}
+.mx{overflow-x:auto;margin:0 -12px;padding:0 12px}
+table{border-collapse:collapse;font-size:10.5px;min-width:520px}
+th,td{padding:6px 6px;text-align:center;border-bottom:1px solid #f0f3f6;white-space:nowrap}
+th{font-size:9.5px;color:#5b6b7a;font-weight:800;letter-spacing:.3px;background:#f7f9fb}
+td:first-child,th:first-child{text-align:left;position:sticky;left:0;background:#fff;font-weight:800;z-index:1}
+th:first-child{background:#f7f9fb}
+.w{color:#12866A;font-weight:900}.n{color:#c0c9d2}
+.cari{border:1px solid #dbe3ec;border-radius:10px;padding:8px 10px;font-size:11.5px;color:#9aa7b3;margin-bottom:8px;background:#fff}
+.dp{display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;align-items:center;font-size:11.5px;padding:7px 0;border-top:1px solid #f0f3f6}
+.dp .d{width:9px;height:9px;border-radius:3px}
+.dp b{font-weight:900;text-align:right}
+.up{font-size:10px;font-weight:800;padding:2px 6px;border-radius:6px}
+.up.p{background:#e4f4e8;color:#2E7D32}.up.m{background:#fbe6e5;color:#B4332E}.up.z{background:#eef1f4;color:#5b6b7a}
+.bar{display:flex;gap:8px;padding:10px 12px 16px;background:#fff;border-top:1px solid #e6ecf2}
+.bar button{flex:1;border:0;border-radius:12px;padding:12px;font-weight:900;font-size:12px;letter-spacing:.4px}
+.b1{background:#eef1f4;color:#46586a}.b2{background:#10394E;color:#fff}
+.warn{background:#fff7e8;border:1px solid #ffe2ad;border-radius:11px;padding:9px 10px;font-size:11px;color:#6b4c00;line-height:1.45;margin-bottom:10px}
+.ii{width:16px;height:16px;border-radius:50%;background:#e8eef5;color:#5b6b7a;font-size:9.5px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;font-style:normal}
+.hide{display:none}
+</style></head><body>
+
+<div class="tog"><button class="on" data-t="1">1 · RUMUS STATUS</button><button data-t="2">2 · BRAND</button><button data-t="4">3 · CEK DAMPAK</button></div>
+
+<div class="ph">
+ <div class="hd"><small>ADMIN › PENGATURAN BRAND › AMBANG STATUS</small><h1>ATURAN STATUS DEALER <span class="sa">SUPER ADMIN</span></h1></div>
+ <div class="tabs" id="tb"><span class="on" data-t="1">RUMUS STATUS</span><span data-t="2">BRAND</span><span data-t="4">CEK DAMPAK</span></div>
+ <div class="pg">
+
+ <!-- 1 RUMUS -->
+ <div data-p="1">
+  <div class="lk">🔒<div>Status <b>dikunci tiap tanggal 1</b>. Perubahan aturan berlaku mulai kunci berikutnya (<b>1 Des 2026</b>), kecuali dipilih "hitung ulang bulan ini" di CEK DAMPAK.</div></div>
+  <div class="card" style="margin-top:10px">
+   <h3>DASAR HITUNG <i class="ii">i</i></h3>
+   <div class="g2">
+    <div class="fld"><label>DATA</label><div class="inp">ST qty <i>▾</i></div></div>
+    <div class="fld"><label>BASIS DATA MULAI</label><div class="inp">Jan 2026 <i>▾</i></div></div>
+    <div class="fld"><label>JENDELA</label><div class="inp">3 <i>bln closing</i></div></div>
+    <div class="fld"><label>DIHITUNG ORDER BILA</label><div class="inp">qty &gt; 0 <i>/bln</i></div></div>
+   </div>
+   <div class="chk" style="margin-top:10px">
+    <div><span class="box">✓</span>Banyak invoice dalam 1 bulan = 1 bulan order</div>
+    <div><span class="box">✓</span>Retur tidak dihitung</div>
+    <div><span class="box">✓</span>Bulan berjalan (MTD) hanya monitoring progres</div>
+   </div>
+  </div>
+  <div class="card">
+   <h3>ATURAN STATUS <small>dicek dari atas ke bawah</small></h3>
+   <div class="rule"><div class="pill" style="background:#2E9E45">ACTIVE</div><div class="t">Order min <span class="num"><s>−</s><b>2</b><s>+</s></span> dari 3 bulan</div></div>
+   <div class="rule"><div class="pill" style="background:#E89A00">PASSIVE</div><div class="t">Order <span class="num"><s>−</s><b>1</b><s>+</s></span> dari 3 bulan</div></div>
+   <div class="rule"><div class="pill" style="background:#E2570F">IDLE</div><div class="t">Tidak order <span class="num"><s>−</s><b>3</b><s>+</s></span> – <span class="num"><s>−</s><b>5</b><s>+</s></span> bln berturut</div></div>
+   <div class="rule"><div class="pill" style="background:#C62E2E">INACTIVE</div><div class="t">Tidak order ≥ <span class="num"><b>6</b></span> bln berturut <span class="tag">otomatis</span></div></div>
+   <div class="rule"><div class="pill" style="background:#1E7FD6">PROSPECT</div><div class="t">Belum pernah ambil brand ini sejak basis data (TOTAL: brand apa pun)</div></div>
+   
+  </div>
+ </div>
+
+ <!-- 2 BRAND -->
+ <div data-p="2" class="hide">
+  <div class="card">
+   <h3>BRAND DI "ALL BRAND" <small>6 dari 7 brand aktif</small></h3>
+   <div class="bl"><span>ITEL</span><span class="sw"></span></div>
+   <div class="bl"><span>MOTOROLA</span><span class="sw"></span></div>
+   <div class="bl"><span>MOTOPAD</span><span class="sw"></span></div>
+   <div class="bl"><span>REALME</span><span class="sw"></span></div>
+   <div class="bl"><span>SAMSUNG</span><span class="sw"></span></div>
+   <div class="bl"><span>VILLAON</span><span class="sw"></span></div>
+   <div class="bl" style="opacity:.6"><span>HONOR</span><span class="sw off"></span></div>
+  </div>
+  <div class="lk">ⓘ<div>Status dihitung per pasangan <b>dealer-brand</b>. Per brand: dealer yang belum pernah ambil brand itu di 2026 = <b>PROSPECT</b>. ALL BRAND = order brand mana pun yang dinyalakan. Status untuk <b>analisa</b>, tidak mempengaruhi KPI.</div></div>
+ </div>
+
+ <!-- 4 DAMPAK -->
+ <div data-p="4" class="hide">
+  <div class="card">
+   <h3>CEK DAMPAK SEBELUM SIMPAN <small>pola Jun–Agu · ALL BRAND</small></h3>
+   <div class="dp"><span class="d" style="background:#2E9E45"></span><span>ACTIVE</span><b>1.880</b><span class="up p">+80</span></div>
+   <div class="dp"><span class="d" style="background:#E89A00"></span><span>PASSIVE</span><b>774</b><span class="up p">+106</span></div>
+   <div class="dp"><span class="d" style="background:#E2570F"></span><span>IDLE</span><b>520</b><span class="up m">−148</span></div>
+   <div class="dp"><span class="d" style="background:#C62E2E"></span><span>INACTIVE</span><b>365</b><span class="up m">−307</span></div>
+   <div class="dp"><span class="d" style="background:#1E7FD6"></span><span>PROSPECT</span><b>300</b><span class="up p">+34</span></div>
+   
+   <div style="font-size:10px;color:#7b8a98;margin-top:8px">Selisih dibanding status yang terkunci sekarang. Ketuk baris = lihat contoh dealer yang pindah status.</div>
+  </div>
+  <div class="card">
+   <h3>BERLAKU MULAI</h3>
+   <div class="chk">
+    <div><span class="box">✓</span><div><b>Kunci berikutnya (1 Des 2026)</b> · status Nov tidak berubah</div></div>
+    <div><span class="box off"></span><div>Hitung ulang bulan ini juga <span class="tag" style="background:#fbe6e5;color:#B4332E">HATI-HATI</span></div></div>
+   </div>
+   <div class="fld" style="margin-top:10px"><label>ALASAN PERUBAHAN (WAJIB)</label><div class="inp" style="color:#9aa7b3;font-weight:600">Contoh: ikut briefing RGM klasifikasi ST…</div></div>
+   <div style="font-size:10px;color:#7b8a98;margin-top:8px">Riwayat perubahan aturan tersimpan (siapa, kapan, alasan).</div>
+  </div>
+ </div>
+
+ </div>
+ <div class="bar"><button class="b1">RESET</button><button class="b2">SIMPAN ATURAN</button></div>
+</div>
+
+<script>
+function go(t){document.querySelectorAll('[data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t==t));document.querySelectorAll('[data-p]').forEach(p=>p.classList.toggle('hide',p.dataset.p!=t));}
+document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>go(b.dataset.t));
+document.querySelectorAll('td.w,td.n').forEach(td=>td.onclick=()=>{const w=td.classList.toggle('w');td.classList.toggle('n',!w);td.textContent=w?'✓':'–';});
+</script>
+</body></html>

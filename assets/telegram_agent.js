@@ -79,9 +79,9 @@ function draw(v,st,code,msg){
    <div class="tgKv"><span>Akses data</span><b>${E(akses)}</b></div>
    <button class="tgBtn g" id="tgUnlink">Putuskan Telegram</button></div>
    <div class="tgC" style="background:rgba(255,248,236,.9)"><div class="tgT" style="font-size:12.5px">MAU PINDAH AKUN TELEGRAM?</div><div class="tgM">Putuskan dulu, lalu buat kode baru dari halaman ini.</div></div>
-   <div class="tgInfo">ⓘ <span>Otomatis terputus bila ${E(st.hari)} hari habis, akun dinonaktifkan, atau PIN diganti/direset.</span></div></div>`;
+   <div class="tgInfo">ⓘ <span>Berlaku ${E(st.hari)} hari sejak terakhir dipakai (maksimal ${E(st.maks||180)} hari sejak dihubungkan). Terputus otomatis bila akun dinonaktifkan atau PIN diganti/direset.</span></div></div>`;
   v.querySelector('#tgUnlink').onclick=async e=>{
-   if(!confirm('Putuskan Telegram dari akun DSM ini? Bot tidak bisa membaca data Anda sampai dihubungkan ulang.'))return;
+   if(!await dsmConfirm('Putuskan Telegram dari akun DSM ini? Bot tidak bisa membaca data Anda sampai dihubungkan ulang.'))return;
    e.target.disabled=true;
    try{const ns=await rpc('apiTgUnlink',TOKEN);draw(v,ns,null,{t:'ok',m:'Telegram sudah diputus.'});}catch(err){draw(v,st,null,{t:'bad',m:err.message||String(err)});}
   };
@@ -196,7 +196,7 @@ function adminPanel(v){
  const grp=r=>r.status.kode==='OFF'?'OFF':r.status.kode==='WARN'?'WARN':'OK';
  function life(r){
   if(r.status.kode==='OFF')return `<span class="tgPill OFF" style="margin:0;${/HABIS/.test(r.status.label)?'background:#eef2f5;color:#6b7c88':''}">${E(r.status.label==='HABIS'?'HABIS '+tglp(r.expiresMs).toUpperCase():r.status.label)}</span>`;
-  const left=Math.max(0,Math.ceil((r.expiresMs-Date.now())/86400000)),pct=Math.max(3,Math.min(100,left/30*100)),warn=r.status.kode==='WARN';
+  const left=Math.max(0,Math.ceil((r.expiresMs-Date.now())/86400000)),pct=Math.max(3,Math.min(100,left/60*100)),warn=r.status.kode==='WARN';
   return `<div class="tgLf"><small><span>${E(tglp(r.linkedMs))} → <b>${E(tglp(r.expiresMs))}</b></span><span style="${warn?'color:#9A6400;font-weight:800':''}">${left} hr</span></small><div class="tgTr"><i style="width:${pct.toFixed(0)}%;background:${warn?'#F0A400':'linear-gradient(90deg,#12866A,#2bb38f)'}"></i></div></div>`;
  }
  function listHtml(){
@@ -237,11 +237,11 @@ function adminPanel(v){
     <div class="tgNt">ⓘ <span>Bot hanya bisa <b>membaca</b>. Tidak dibuka: user/PIN, panel Super Admin, approval, upload ST/SO, edit dealer, koreksi, Klaim, config. Nomor telepon dealer disamarkan.</span></div></div>${side}</div></div>`;
   bindList();
   if(!isSa||!K)return;
-  root.querySelectorAll('[data-key-cut]').forEach(b=>b.onclick=async()=>{if(!confirm('Cabut BOT_KEY "'+b.dataset.keyNm+'"? Bot yang memakai key ini langsung berhenti bisa membaca data.'))return;b.disabled=true;const r=await act('apiAgentKeyRevoke',+b.dataset.keyCut);if(r){K=r;newKey=null;msg={t:'ok',m:'BOT_KEY dicabut.'};render();}});
+  root.querySelectorAll('[data-key-cut]').forEach(b=>b.onclick=async()=>{if(!await dsmConfirm('Cabut BOT_KEY "'+b.dataset.keyNm+'"? Bot yang memakai key ini langsung berhenti bisa membaca data.'))return;b.disabled=true;const r=await act('apiAgentKeyRevoke',+b.dataset.keyCut);if(r){K=r;newKey=null;msg={t:'ok',m:'BOT_KEY dicabut.'};render();}});
   root.querySelector('#tgKeyNew').onclick=async e=>{const lbl=root.querySelector('#tgKeyLbl').value.trim();if(!lbl){msg={t:'bad',m:'Isi label BOT_KEY dulu.'};render();return;}e.target.disabled=true;const r=await act('apiAgentKeyCreate',lbl);if(r){K=r.list;newKey=r.baru;msg=null;render();}};
   const kc=root.querySelector('#tgKeyCopy');if(kc)kc.onclick=async()=>{kc.textContent=(await copy(newKey.key))?'TERSALIN ✓':'SALIN MANUAL';};
   root.querySelector('#tgBotSave').onclick=async e=>{e.target.disabled=true;const r=await act('apiTgBotSave',root.querySelector('#tgBotName').value);if(r){K.bot=r.bot;msg={t:'ok',m:r.bot?'Username bot disimpan: @'+r.bot:'Username bot dikosongkan.'};render();}};
-  root.querySelector('#tgAll').onclick=async e=>{const why=root.querySelector('#tgAllWhy').value.trim();if(why.length<5){msg={t:'bad',m:'Alasan wajib diisi (minimal 5 huruf).'};render();return;}if(!confirm('PUTUSKAN SEMUA sambungan Telegram? Semua user harus hubungkan ulang.'))return;e.target.disabled=true;const r=await act('apiTgAdminUnlinkAll',why);if(r){L=r;msg={t:'ok',m:r.putus+' sambungan diputus.'};render();}};
+  root.querySelector('#tgAll').onclick=async e=>{const why=root.querySelector('#tgAllWhy').value.trim();if(why.length<5){msg={t:'bad',m:'Alasan wajib diisi (minimal 5 huruf).'};render();return;}if(!await dsmConfirm('PUTUSKAN SEMUA sambungan Telegram? Semua user harus hubungkan ulang.'))return;e.target.disabled=true;const r=await act('apiTgAdminUnlinkAll',why);if(r){L=r;msg={t:'ok',m:r.putus+' sambungan diputus.'};render();}};
  }
  function bindList(){
   const box=root.querySelector('#tgList');if(!box)return;
@@ -249,7 +249,7 @@ function adminPanel(v){
   sr.oninput=()=>{q=sr.value;lim=20;const pos=sr.selectionStart;box.innerHTML=listHtml();bindList();const n=box.querySelector('#tgSr');n.focus();try{n.setSelectionRange(pos,pos);}catch(_){}};
   box.querySelectorAll('[data-flt]').forEach(b=>b.onclick=()=>{flt=b.dataset.flt;lim=20;box.innerHTML=listHtml();bindList();});
   const m=box.querySelector('#tgMore');if(m)m.onclick=()=>{lim+=20;box.innerHTML=listHtml();bindList();};
-  box.querySelectorAll('[data-tg-cut]').forEach(b=>b.onclick=async()=>{if(!confirm('Putuskan Telegram milik '+b.dataset.tgNm+'?'))return;b.disabled=true;const r=await act('apiTgAdminUnlink',b.dataset.tgCut);if(r){L=r;msg={t:'ok',m:'Sambungan '+b.dataset.tgNm+' diputus.'};render();}});
+  box.querySelectorAll('[data-tg-cut]').forEach(b=>b.onclick=async()=>{if(!await dsmConfirm('Putuskan Telegram milik '+b.dataset.tgNm+'?'))return;b.disabled=true;const r=await act('apiTgAdminUnlink',b.dataset.tgCut);if(r){L=r;msg={t:'ok',m:'Sambungan '+b.dataset.tgNm+' diputus.'};render();}});
  }
  load();
 }

@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup · Klaim · Draf di Beranda pemohon</title>
+<style>
+:root{--bg:#E9F0F7;--card:#fff;--fg:#10394E;--mut:#5B7285;--line:#DCE5EC;--org1:#FFB020;--org2:#F07A0C;--blue:#1E5FB8;--green:#12866A;--red:#D2453F;--soft:#F5F8FB}
+*{box-sizing:border-box}body{margin:0;background:#dfe7ef;color:var(--fg);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.top{max-width:1000px;margin:0 auto;padding:16px 14px 4px}.top h1{font-size:16px;margin:0 0 4px}.top p{margin:0;color:var(--mut);font-size:12.5px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.tabs button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;font:600 12px inherit;color:var(--fg);cursor:pointer}
+.tabs button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.wrap{display:flex;gap:24px;justify-content:center;align-items:flex-start;padding:10px 14px 30px;flex-wrap:wrap}
+.phone{width:400px;height:840px;background:#F2F6FA;border-radius:30px;overflow:hidden;position:relative;box-shadow:0 18px 40px rgba(16,57,78,.18)}
+.scroll{height:100%;overflow:auto;padding-bottom:90px}
+.hero{background:#0B5CAD;color:#fff;padding:16px 16px 80px;position:relative}.hero small{font-size:11px;letter-spacing:.06em;opacity:.85}.hero h2{margin:2px 0 0;font-size:19px}
+.bell{position:absolute;right:14px;top:18px;width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.18);display:grid;place-items:center}
+.sec{padding:0 12px;position:relative;z-index:1}.budget{margin-top:-64px;background:#fff;border-radius:18px;padding:14px;box-shadow:0 8px 20px rgba(16,57,78,.08)}
+.bt{display:flex;align-items:center;gap:14px}.ring{width:64px;height:64px;border-radius:50%;border:7px solid #E3EAF1;display:grid;place-items:center;font-weight:800;font-size:13px}
+.bt .r{margin-left:auto;text-align:right}.bt .r small{color:var(--mut);font-size:11.5px;display:block}.bt .r b{font-size:20px}
+.bar{display:flex;justify-content:space-between;font-weight:700;font-size:12.5px;margin-top:10px}.track{height:7px;border-radius:7px;background:#E3EAF1;margin-top:4px}
+h3{margin:16px 0 8px;font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--mut);display:flex;align-items:center;gap:6px}
+h3 .cnt{background:#FFE7C7;color:#9A5400;border-radius:999px;padding:1px 7px;font-size:11px;letter-spacing:0}
+h3 a{margin-left:auto;color:var(--blue);text-transform:none;letter-spacing:0;font-weight:700;font-size:12px;text-decoration:none}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.tile{border-radius:14px;color:#fff;padding:9px 11px;display:flex;align-items:center;gap:9px;position:relative;overflow:hidden}
+.tile .ti{width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:14px;flex:none}.tile b{font-size:20px;line-height:1;min-width:16px}.tile .tx2{line-height:1.15}.tile span{font-weight:800;font-size:12.5px;display:block}.tile em{font-style:normal;font-size:10.5px;opacity:.9}
+.t1{background:#1F5FBF}.t2{background:#F07A0C}.t3{background:#14876A}.t4{background:#D2453F}
+.empty{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;text-align:center;color:var(--mut);font-size:12.5px}
+.dr{background:#fff;border:1px solid #F5D9B5;border-left:4px solid var(--org2);border-radius:14px;padding:10px 12px;margin-bottom:8px}
+.dr .h{display:flex;align-items:center;gap:8px}.ic{width:34px;height:34px;border-radius:10px;background:#FFF2E0;display:grid;place-items:center;font-size:17px;flex:none}
+.dr .h .tx{flex:1;min-width:0}.dr b{font-size:13.5px}.dr .m{color:var(--mut);font-size:11.5px}.dr .amt{font-weight:800;font-size:13.5px;white-space:nowrap}
+.thumbs{display:flex;gap:5px;margin:8px 0 0}.thumbs i{width:38px;height:38px;border-radius:8px;background:linear-gradient(135deg,#e8edf2,#cfd8e1);display:grid;place-items:center;font-style:normal;font-size:15px}
+.thumbs i.add{background:#fff;border:1.5px dashed #F0A75C;color:var(--org2);font-weight:800}
+.dr .a{display:flex;gap:6px;margin-top:8px}.dr .a button{flex:1;border-radius:10px;padding:8px;font:800 12px inherit;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--fg)}
+.dr .a button.p{background:linear-gradient(90deg,var(--org1),var(--org2));color:#fff;border:0}
+.old{color:#B25E00;font-weight:700}
+.nav{z-index:3;position:absolute;left:8px;right:8px;bottom:8px;background:#fff;border-radius:20px;display:flex;justify-content:space-around;padding:10px 4px 8px;box-shadow:0 -4px 16px rgba(16,57,78,.08);font-size:11px;font-weight:700;color:#3B5568}
+.nav div{text-align:center;width:20%}.nav .on{color:#B05D00}.nav .fab{margin-top:-30px}.nav .fab i{display:grid;place-items:center;width:46px;height:46px;margin:0 auto 2px;border-radius:14px;background:var(--org2);color:#fff;font-style:normal;font-size:22px}
+.badge{display:inline-block;background:var(--org2);color:#fff;border-radius:999px;font-size:9.5px;padding:0 5px;margin-left:2px}
+.sheet-bg{position:absolute;inset:0;background:rgba(16,57,78,.5);display:flex;align-items:flex-end;z-index:5}.sheet{background:#fff;border-radius:22px 22px 0 0;padding:16px;width:100%}
+.grip{width:40px;height:4px;border-radius:4px;background:var(--line);margin:0 auto 12px}.sheet h4{margin:0 0 2px;font-size:16px}.sheet .sub{color:var(--mut);font-size:12px;margin-bottom:10px}
+.opt{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:8px;font-weight:700}.opt span{color:var(--mut);font-weight:400;font-size:12px;display:block}
+.toast{position:absolute;left:50%;bottom:100px;transform:translateX(-50%);background:#10394E;color:#fff;border-radius:12px;padding:9px 14px;font-size:12.5px;font-weight:700;white-space:nowrap;z-index:6}
+.chips{display:flex;gap:6px;overflow:auto;margin-top:-60px;position:relative;z-index:1;padding:0 12px}.chip{flex:none;border:1px solid var(--line);background:#fff;border-radius:12px;padding:8px 11px;font-weight:700;font-size:12.5px}.chip.on{background:#10394E;color:#fff;border-color:#10394E}
+.srch{display:flex;gap:6px;margin-top:10px}.srch div{flex:1;background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 12px;color:#9AACBB;font-size:13px}.srch b{background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 12px;font-size:13px}
+.flt{margin-top:10px;background:linear-gradient(90deg,var(--org1),var(--org2));color:#fff;border-radius:14px;padding:12px;text-align:center;font-weight:800;box-shadow:0 8px 16px rgba(240,122,12,.3)}.flt i{font-style:normal;background:rgba(255,255,255,.3);border-radius:999px;padding:1px 8px;font-size:11.5px;margin-left:6px}
+.seg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:10px}.seg div{border:1px solid var(--line);background:#F7FAFC;border-radius:14px;padding:10px 4px;text-align:center;font-weight:800;font-size:12px;color:#3B5568}.seg div small{display:block;font-weight:600;font-size:10.5px;color:var(--mut)}
+.seg .on{background:linear-gradient(135deg,#1FA383,#12866A);color:#fff;border:0}.seg .on small{color:#E6FFF7}.seg .dft.on{background:linear-gradient(90deg,var(--org1),var(--org2))}.seg .dft.on small{color:#FFF3E2}
+.seg .dft{position:relative}.seg .dft em{position:absolute;top:-6px;right:-4px;background:var(--org2);color:#fff;border-radius:999px;font-style:normal;font-size:10px;padding:0 6px;border:2px solid #F2F6FA}
+.pv{display:flex;gap:8px;margin-bottom:10px}.pv i{width:64px;height:64px;border-radius:10px;background:linear-gradient(135deg,#e8edf2,#cfd8e1);display:grid;place-items:center;font-style:normal;font-size:24px}.pv i.add{background:#fff;border:1.5px dashed #F0A75C;color:var(--org2);font-size:20px;font-weight:800}
+.ff{display:flex;flex-direction:column;gap:4px;margin-bottom:9px}.ff label{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}.ff label em{font-style:normal;font-weight:600;text-transform:none;letter-spacing:0;color:#9AACBB}
+.ff .in{border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-height:42px;font-size:13.5px}.ff .in.ph{color:#9AACBB}.two2{display:flex;gap:8px}.two2 .ff{flex:1}
+.bt2{display:flex;gap:8px;margin-top:4px}.bt2 div{flex:1;text-align:center;border-radius:14px;padding:12px;font-weight:800;font-size:13.5px}.bt2 .g{border:1px solid var(--line)}.bt2 .o{background:linear-gradient(90deg,var(--org1),var(--org2));color:#fff}
+.hint{font-size:11.5px;color:var(--mut);background:#F5F8FB;border-radius:10px;padding:7px 9px;margin-bottom:10px}
+.chs{display:grid;grid-template-columns:1fr 1fr;gap:8px}.chs div{text-align:center;padding:11px 0;border:1px solid var(--line);border-radius:12px;font-weight:700;font-size:13px}.chs .on{background:#10394E;color:#fff;border-color:#10394E}
+.calc{font-size:11.5px;color:var(--green);font-weight:700;margin:-2px 0 9px}
+.side{width:430px;max-width:100%;font-size:13px}.side .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:10px}
+.side b.t{display:block;margin-bottom:4px;color:var(--blue)}.side ul{margin:4px 0 0;padding-left:18px}.side li{margin:3px 0}
+.rec{background:#FFF7E8;border-left:3px solid var(--org2)}
+</style></head><body>
+<div class="top"><h1>Mockup · DSM Klaim · Draf muncul di Beranda pemohon</h1>
+<p>Pemohon foto nota di jalan → simpan draf → nanti tambah nota lain & kirim sekaligus. Klik tab untuk tiap keadaan.</p>
+<div class="tabs" id="tabs"><button data-s="a" class="on">1 · Beranda dengan draf</button><button data-s="old">2 · Draf sudah lama</button><button data-s="add">3 · Tambah nota (BBM)</button><button data-s="tol">3b · Tambah nota (Tol)</button><button data-s="added">4 · Nota masuk</button><button data-s="none">5 · Tidak ada draf</button><button data-s="ks1">6 · Klaim saya</button><button data-s="ks2">7 · Klaim saya › Draft</button></div></div>
+<div class="wrap"><div class="phone"><div class="scroll" id="ph"></div><div id="ov"></div>
+<div class="nav"><div class="on">⌂<br>Beranda</div><div>▤<br>Klaim saya <span class="badge" id="nb">2</span></div><div class="fab"><i>⊕</i>Ajukan</div><div>▭<br>Petty cash</div><div>☰<br>Menu</div></div></div>
+<div class="side" id="side"></div></div>
+<script>
+const D0=[{ic:'⛽',k:'Transportasi · BBM',n:2,amt:'Rp 350.000',t:'Disimpan hari ini 10.12',th:['🧾','🧾']},{ic:'🍽️',k:'Entertain · Meeting',n:1,amt:'Rp 275.000',t:'Disimpan kemarin 19.40',th:['🧾']}];
+const dr=(d,old)=>`<div class="dr"><div class="h"><div class="ic">${d.ic}</div><div class="tx"><b>${d.k}</b><div class="m">${d.n} nota · ${old?'<span class="old">'+d.t+'</span>':d.t}</div></div><div class="amt">${d.amt}</div></div>
+<div class="thumbs">${d.th.map(x=>`<i>${x}</i>`).join('')}<i class="add">+</i></div>
+<div class="a"><button>📷 Tambah nota</button><button class="p">Lanjutkan &amp; kirim</button></div></div>`;
+const home=(ds,old)=>`<div class="hero"><small>PEMOHON</small><h2>Halo, Joko</h2><div class="bell">🔔</div></div>
+<div class="sec"><div class="budget"><div class="bt"><div class="ring">0%</div><div class="r"><small>Sisa budget bulan ini</small><b>Rp 3.500.000</b><small>dari Rp 3.500.000</small></div></div>
+<div class="bar"><span>⛽ Transportasi</span><span>Rp 2.000.000</span></div><div class="track"></div><div class="bar"><span>🎟️ Entertain</span><span>Rp 1.500.000</span></div><div class="track"></div></div>
+<div class="tiles"><div class="tile t1"><div class="ti">⏳</div><b>0</b><div class="tx2"><span>Diproses</span><em>sedang berjalan</em></div></div><div class="tile t2"><div class="ti">↩</div><b>0</b><div class="tx2"><span>Perlu revisi</span><em>butuh perbaikan</em></div></div><div class="tile t3"><div class="ti">✔</div><b>0</b><div class="tx2"><span>Selesai</span><em>sudah ditransfer</em></div></div><div class="tile t4"><div class="ti">⛔</div><b>0</b><div class="tx2"><span>Ditolak</span><em>final</em></div></div></div>
+${ds.length?`<h3>Draf belum dikirim <span class="cnt">${ds.length}</span><a>Lihat semua</a></h3>${ds.map(d=>dr(d,old)).join('')}`:''}<h3>Klaim terbaru</h3><div class="empty">Belum ada data</div></div>`;
+const ks=(sel)=>`<div class="hero"><small>PEMOHON</small><h2>Klaim saya</h2><div class="bell">🔔</div></div>
+<div class="chips"><span class="chip on">Diproses · 0</span><span class="chip">Perlu Revisi · 0</span><span class="chip">Selesai · 0</span><span class="chip">Ditolak · 0</span></div>
+<div class="sec"><div class="srch"><div>Cari nomor, nama, refnote</div><b>Cari</b></div><div class="flt">FILTER <i>0</i><i>0 hasil</i></div>
+<div class="seg"><div class="${sel==='d'?'on':''}">Daftar klaim<small>0 klaim</small></div><div class="${sel==='t'?'on':''}">Perlu tindakan saya<small>0 klaim</small></div><div class="dft ${sel==='f'?'on':''}">Draft<small>2 belum dikirim</small>${sel==='f'?'':'<em>2</em>'}</div></div>
+${sel==='f'?`<h3>Draf belum dikirim <span class="cnt">2</span></h3>${D0.map(d=>dr(d)).join('')}`:'<div class="empty" style="margin-top:10px">Belum ada klaim di tab ini.</div>'}</div>`;
+const sh=h=>`<div class="sheet-bg"><div class="sheet"><div class="grip"></div>${h}</div></div>`;
+const S={
+ a:{ds:D0,side:`<div class="card"><b class="t">Draf di Beranda</b><ul><li>Bagian <b>Draf belum dikirim</b> muncul di bawah kartu Diproses/Perlu revisi/Selesai/Ditolak (di atas Klaim terbaru), <b>hanya kalau ada draf</b>. Paling baru di atas, maks. 3 (sisanya "Lihat semua" → Klaim saya › Draft).</li><li>Tiap draf: kategori/jenis, jumlah nota, total sementara, kapan disimpan, foto nota kecil.</li><li><b>Tambah nota</b> = langsung kamera/galeri, tanpa buka form lengkap.</li><li><b>Lanjutkan &amp; kirim</b> = buka form draf seperti sekarang.</li><li>Draf <b>tidak</b> memotong budget dan tidak masuk hitungan kartu Diproses/Selesai (sama seperti sekarang).</li><li>Angka kecil di menu <b>Klaim saya</b> = jumlah draf.</li><li>4 kartu status dibuat <b>lebih pendek</b>: ikon, angka, dan label sebaris (±52px, dulu ±120px). Warna &amp; isi sama.</li></ul></div>`},
+ old:{ds:[{...D0[0],t:'Disimpan 6 hari lalu'},D0[1]],old:1,side:`<div class="card"><b class="t">Pengingat draf lama</b><ul><li>Draf yang lebih dari 3 hari ditandai oranye, supaya tidak lupa dikirim (nota bisa kedaluwarsa untuk periode budget).</li><li>Hanya penanda, tidak menghapus apa pun.</li></ul></div>`},
+ add:{ds:D0,ov:sh(`<h4>Tambah nota</h4><div class="sub">Transportasi · BBM · nota ke-3</div>
+<div class="pv"><i>🧾</i><i class="add">📷</i></div>
+<div class="two2"><div class="ff"><label>Tanggal nota</label><div class="in">19 Nov 2026</div></div><div class="ff"><label>Nominal nota (Rp) <em>boleh nanti</em></label><div class="in">150.000</div></div></div>
+<div class="ff"><label>Jenis BBM <em>boleh nanti</em></label><div class="chs"><div class="on">Pertalite</div><div>Pertamax</div></div></div><div class="calc">≈ 15,0 liter (dihitung otomatis seperti di form)</div>
+<div class="hint">Isian sama dengan nota di form jenis ini. Yang dikosongkan wajib diisi saat <b>Lanjutkan &amp; kirim</b>. Kamera terbuka otomatis; bisa tambah foto (nota 2 halaman).</div>
+<div class="bt2"><div class="g">BATAL</div><div class="o">SIMPAN KE DRAF</div></div>`),side:`<div class="card"><b class="t">Tambah nota cepat · BBM</b><ul><li>Isian <b>mengikuti jenis klaim draf</b>, sama dengan nota di form sekarang (tanpa isian keterangan bebas — form memang tidak punya).</li><li>BBM: tanggal, nominal, jenis BBM (liter dihitung otomatis), foto.</li><li>Ketuk Tambah nota → kamera terbuka → lembar ini.</li><li>Nominal &amp; isian lain <b>boleh kosong</b> dulu, wajib saat kirim. Foto wajib.</li></ul></div>`},
+ tol:{ds:[{ic:'🛣️',k:'Transportasi · Tol',n:1,amt:'Rp 47.500',t:'Disimpan hari ini 08.30',th:['🧾']},D0[1]],ov:sh(`<h4>Tambah nota</h4><div class="sub">Transportasi · Tol · nota ke-2</div>
+<div class="pv"><i>🧾</i><i class="add">📷</i></div>
+<div class="two2"><div class="ff"><label>Gerbang asal <em>boleh nanti</em></label><div class="in ph">Contoh: GT Kalikangkung</div></div><div class="ff"><label>Gerbang tujuan <em>boleh nanti</em></label><div class="in ph">Contoh: GT Cikampek Utama</div></div></div>
+<div class="two2"><div class="ff"><label>Tanggal nota</label><div class="in">19 Nov 2026</div></div><div class="ff"><label>Nominal (Rp) <em>boleh nanti</em></label><div class="in ph">0</div></div></div>
+<div class="hint">Struk tol atau screenshot riwayat e-toll yang memperlihatkan tanggal, gerbang, dan nominal. Foto kartu saja tidak sah. Yang dikosongkan wajib diisi saat <b>Lanjutkan &amp; kirim</b>.</div>
+<div class="bt2"><div class="g">BATAL</div><div class="o">SIMPAN KE DRAF</div></div>`),side:`<div class="card"><b class="t">Tambah nota cepat · Tol</b><ul><li>Gerbang asal &amp; tujuan dengan saran daftar gerbang yang sama seperti di form.</li><li>Petunjuk struk e-toll sama dengan form.</li><li>Jenis lain (umum): hanya tanggal, nominal, foto.</li></ul></div>`},
+ added:{ds:[{...D0[0],n:3,th:['🧾','🧾','🧾'],t:'Disimpan hari ini 14.05'},D0[1]],ov:'<div class="toast">✓ Nota ditambahkan ke draf BBM</div>',side:`<div class="card"><b class="t">Setelah foto</b><ul><li>Jumlah nota bertambah, foto kecil muncul, waktu simpan diperbarui.</li><li>Kalau nominal belum diisi, kartu draf menulis <b>“1 nota belum lengkap”</b> dan total sementara belum menghitungnya.</li></ul></div>`},
+ ks1:{page:()=>ks('d'),ds:D0,side:`<div class="card"><b class="t">Klaim saya · Draft jadi tombol ketiga</b><ul><li>Di bawah FILTER kini 3 tombol: <b>Daftar klaim</b>, <b>Perlu tindakan saya</b>, <b>Draft</b>.</li><li>Tombol Draft oranye saat dipilih, dengan angka draf. Kalau tidak ada draf: tetap tampil, angka 0, tanpa titik merah.</li><li>Chip <b>Draft · 0</b> di baris atas <b>dihapus</b> supaya tidak dobel (Diproses/Revisi/Selesai/Ditolak tetap).</li></ul></div>`},
+ ks2:{page:()=>ks('f'),ds:D0,side:`<div class="card"><b class="t">Klaim saya · Draft dipilih</b><ul><li>Isi daftar = kartu draf yang sama dengan di Beranda (Tambah nota / Lanjutkan &amp; kirim).</li><li>Semua draf tampil (di Beranda maks. 3).</li></ul></div>`},
+ none:{ds:[],side:`<div class="card"><b class="t">Tidak ada draf</b><ul><li>Bagian draf tidak tampil sama sekali — Beranda sama persis seperti sekarang.</li></ul></div>`}};
+const REC=`<div class="card rec"><b class="t">Perlu keputusan</b><ul><li><b>Tambah nota cepat</b> (tab 3): isian nota (nominal, gerbang, jenis BBM) boleh dikosongkan dulu, wajib saat kirim? Rekomendasi: <b>ya</b> (inti kebutuhan "foto dulu, isi nanti"). Butuh perubahan kecil di simpan draf.</li><li>Batas penanda draf lama: 3 hari?</li><li>Chip <b>Draft</b> di baris atas Klaim saya dihapus (pindah jadi tombol ketiga)?</li></ul></div>`;
+function show(k){document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.s===k));const s=S[k];document.getElementById('ph').innerHTML=s.page?s.page():home(s.ds,s.old);document.getElementById('ov').innerHTML=s.ov||'';document.getElementById('nb').style.display=s.ds.length?'':'none';document.getElementById('nb').textContent=s.ds.length;document.getElementById('side').innerHTML=s.side+REC}
+document.getElementById('tabs').onclick=e=>{const b=e.target.closest('button');if(b)show(b.dataset.s)};show('a');
+</script></body></html>

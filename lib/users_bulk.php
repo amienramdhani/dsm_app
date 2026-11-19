@@ -124,7 +124,7 @@ function apiCommitUsers($token, $id) {
             $result = [];
             foreach ($rows as $r) { $pin = randomPin_(); setPin_($r['nik'], $pin, true); $result[] = ['nik' => $r['nik'], 'nama' => $r['nama'], 'role' => $r['role'], 'region' => $r['region'], 'pin' => $pin]; }
             $meta = meta_(); validateConfigChange_($db, $meta);
-            publish_($meta, $db['raw'], $db['coverage'], $u['nik'], 'USER_BULK ' . count($rows));
+            publishLight_(fn() => publish_($meta, $db['raw'], $db['coverage'], $u['nik'], 'USER_BULK ' . count($rows)));
             prop_delete_('USER_STAGE_' . $id);
             audit_($u['nik'], 'USER_BULK', (string) count($rows));
             return ['created' => count($rows), 'skipped' => count($all) - count($rows), 'rows' => $result, 'download' => $u['role'] === 'SUPER ADMIN'];

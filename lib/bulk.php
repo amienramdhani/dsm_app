@@ -442,7 +442,7 @@ function apiCommitCustomerBulk($token, $id, $reason = null) {
             $objects = array_map(fn($r) => $map[text_($r[CUSTOMER_BULK_KEY] ?? null)] ?? $r, table_('Master_Customer'));
             putTable_('Master_Customer', $heads, array_map(fn($r) => array_map(fn($h) => $r[$h] ?? '', $heads), $objects));
             $meta = meta_(); validateConfigChange_($db, $meta);
-            publish_($meta, $db['raw'], $db['coverage'], $u['nik'], 'CUSTOMER_BULK ' . count($changes) . ' ' . $reason);
+            publishLight_(fn() => publish_($meta, $db['raw'], $db['coverage'], $u['nik'], 'CUSTOMER_BULK ' . count($changes) . ' ' . $reason));
             audit_($u['nik'], 'CUSTOMER_BULK', count($changes) . ' ' . $reason);
             prop_delete_('CUSTOMER_BULK_' . $id);
             return ['updated' => count($changes)];
@@ -595,7 +595,7 @@ function apiCommitMasterBulk($token, $id, $reason = null) {
             $out = []; foreach (js_keys($map) as $k) $out[] = array_map(fn($h) => $map[$k][$h] ?? '', $heads);
             putTable_($cfg['sheet'], $heads, $out);
             $meta = meta_(); validateConfigChange_($db, $meta);
-            publish_($meta, $db['raw'], $db['coverage'], $u['nik'], 'MASTER_BULK ' . $cfg['sheet'] . ' ' . count($s['rows']) . ' ' . $reason);
+            publishLight_(fn() => publish_($meta, $db['raw'], $db['coverage'], $u['nik'], 'MASTER_BULK ' . $cfg['sheet'] . ' ' . count($s['rows']) . ' ' . $reason));
             audit_($u['nik'], 'MASTER_BULK', $cfg['sheet'] . ' ' . count($s['rows']) . ' ' . $reason);
             prop_delete_('MASTER_BULK_' . $id);
             return ['updated' => count($s['rows'])];

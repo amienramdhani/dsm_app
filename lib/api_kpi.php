@@ -132,7 +132,7 @@ function kpiCommit_(array $u, array $db, array $sheets, string $label, string $r
     try {
         $fn();
         $meta = meta_(); validateConfigChange_($db, $meta);
-        publish_($meta, $db['raw'], $db['coverage'], $u['nik'], $label . ' · ' . $reason);
+        publishLight_(fn() => publish_($meta, $db['raw'], $db['coverage'], $u['nik'], $label . ' · ' . $reason));
     } catch (Throwable $e) {
         foreach ($sheets as $s) { if ($before[$s]) restoreGrid_($s, $before[$s]); else deleteSheet_($s); }
         throw $e;

@@ -134,11 +134,70 @@ function summary_(array $rows): array {
     return ['rows' => count($rows), 'qty' => $q, 'amount' => PortalCore::round($a), 'min' => js_or($d[0] ?? null, null), 'max' => js_or($d ? $d[count($d) - 1] : null, null)];
 }
 
+/** Naikkan memory_limit ke 2560M bila saat ini lebih kecil (tidak pernah menurunkan, -1 = tanpa batas dibiarkan). */
+function publish_memory_(string $want = '2560M'): void {
+    $bytes = function (string $v): int { $v = trim($v); if ($v === '-1') return -1; $n = (int) $v; $u = strtoupper(substr($v, -1)); return $u === 'G' ? $n << 30 : ($u === 'M' ? $n << 20 : ($u === 'K' ? $n << 10 : $n)); };
+    $cur = $bytes((string) ini_get('memory_limit'));
+    if ($cur !== -1 && $cur < $bytes($want)) @ini_set('memory_limit', $want);
+}
+
 /** Snapshot aktif sebelum publikasi (sama dengan prior di JS). */
 function publishPrior_(): ?array { return prop_get_('ACTIVE') ? snapshot_() : null; }
 
+/* ---------- SIMPAN CEPAT (2026-11-18, doc/ai/PETA-SIMPAN.md) ----------
+ * Simpan yang hanya mengubah KPI / target / akses / kontak tidak perlu membangun ulang transaksi.
+ * Jalur cepat dipakai HANYA bila: pemanggil mengizinkan (publishLight_), data ST/SO sama, dan "tanda atribusi" master
+ * (dealer, sales, produk, region, nikMerge, dll) sama persis dengan snapshot aktif. Selain itu tetap publikasi penuh. */
+function publishLight_(callable $f) { $o = $GLOBALS['DSM_PUBLISH_LIGHT'] ?? false; $GLOBALS['DSM_PUBLISH_LIGHT'] = true; try { return $f(); } finally { $GLOBALS['DSM_PUBLISH_LIGHT'] = $o; } }
+/** Tanda atribusi: isi master yang ikut membentuk angka transaksi/stok. KPI, target, akses admin, dan kontak dealer tidak ikut. */
+function publishAttrSig_(array $meta): string {
+    $m = $meta; foreach (['policies', 'targets', 'rgmPolicies', 'targetBig', 'warnings'] as $k) unset($m[$k]);
+    if (isset($m['customers']) && is_array($m['customers'])) foreach ($m['customers'] as $k => $c) if (is_array($c)) { unset($c['alamat'], $c['hp'], $c['pic'], $c['kota']); $m['customers'][$k] = $c; }
+    if (isset($m['people']) && is_array($m['people'])) foreach ($m['people'] as $k => $p) if (is_array($p)) { unset($p['adminRegions']); $m['people'][$k] = $p; }
+    return hash('sha256', json_encode(PortalCore::jsOrdered($m), JSON_UNESCAPED_UNICODE | JSON_PARTIAL_OUTPUT_ON_ERROR));
+}
+function publishFastOk_(?array $prior, array $meta, $rawMap, $coverage, $soOverride, $partsOverride): bool {
+    if (empty($GLOBALS['DSM_PUBLISH_LIGHT']) || !$prior || truthy($soOverride) || truthy($partsOverride) || prop_get_('PUBLISH_FAST_OFF')) return false;
+    if (empty($prior['stock']['moveSnap']) || empty($prior['parts'])) return false;
+    if (json_encode($rawMap ?? []) !== json_encode($prior['raw'] ?? [])) return false;
+    if (json_encode($coverage ?? []) !== json_encode($prior['coverage'] ?? [])) return false;
+    try { $raw = pubReadJsonRaw_((string) $prior['id']); } catch (Throwable $e) { return false; }
+    $ok = isset($raw['meta']) && publishAttrSig_($raw['meta']) === publishAttrSig_(json_decode(js_stringify(metaOut_($meta)), true));
+    unset($raw); return $ok;
+}
+/** Jalur cepat: salin snapshot aktif, ganti master saja. Data transaksi, stok, dan partisi memakai yang lama (tidak dibaca ulang). */
+function publishMetaOnly_(array $prior, array $meta, $actor, $reason): array {
+    $started = now_ms();
+    $s = pubReadJsonRaw_((string) $prior['id']);
+    $s['meta'] = json_decode(js_stringify(metaOut_($meta)), true);
+    $s['dosRules'] = dosRules_(); $s['processed'] = iso_now(); $s['version'] = SP_VERSION;
+    $id = newFileId_(); $processed = $s['processed']; $notes = $s['notes'] ?? [];
+    writeJsonId_($id, $s); unset($s);
+    try { $side = pubReadJsonRaw_($prior['id'] . '-parts'); writeJsonId_($id . '-parts', $side); unset($side); } catch (Throwable $e) { writeJsonId_($id . '-parts', ['parts' => $prior['parts'] ?? []]); }
+    prop_set_('PREVIOUS', $prior['id']);
+    if (sheet_exists_('Version_Log')) appendRow_('Version_Log', [$processed, $actor, $reason . ' [cepat]', $id]);
+    prop_set_('ACTIVE', $id);
+    audit_(js_str($actor), 'PUBLISH', js_str($reason) . ' ' . $id . ' (cepat ' . (now_ms() - $started) . ' ms)');
+    revokeChanged_($prior['meta']['people'], $meta['people']);
+    try { storage_prune_(); } catch (Throwable $e) { error_log('[dsm] prune gagal: ' . $e->getMessage()); }
+    return ['version' => $id, 'processed' => $processed, 'notes' => $notes, 'rows' => null, 'fast' => true];
+}
+
 function publish_(array $meta, $rawMap, $coverage, $actor, $reason, $soOverride = null, $partsOverride = null): array {
+    // Publikasi menghitung ulang seluruh histori, siapa pun pemanggilnya. Samakan jatah memori dengan impor.
+    publish_memory_();
     $started = now_ms(); $prior = publishPrior_();
+    if (publishFastOk_($prior, $meta, $rawMap, $coverage, $soOverride, $partsOverride)) return publishMetaOnly_($prior, $meta, $actor, $reason);
+    // Tahap 3: publikasi ulang dari master (data ST/SO sama) → masuk antrean, diproses pekerja di belakang layar.
+    if (function_exists('publishQueueDeferOk_') && publishQueueDeferOk_($prior, $rawMap, $coverage, $soOverride, $partsOverride)) return pqEnqueueMaster_($prior, $actor, $reason);
+    // Dari snapshot lama, jalur penuh hanya memakai id, parts, so, routing, meta.people, dan penunjuk mutasi stok.
+    // Simpan itu saja (SETELAH hook jalur cepat/antrean di atas, yang butuh $prior utuh) dan lepas cache snapshot penuh.
+    if ($prior) {
+        $prior = ['id' => $prior['id'], 'parts' => $prior['parts'] ?? null, 'so' => $prior['so'] ?? null, 'routing' => $prior['routing'] ?? null,
+                  'meta' => ['people' => $prior['meta']['people'] ?? []],
+                  'stock' => array_merge(array_intersect_key($prior['stock'] ?? [], ['moveSnap' => 1, 'moveHash' => 1]), isset($prior['stock']['moves']) ? ['moves' => true] : [])];
+        snapshot_forget_();
+    }
     $parts = truthy($partsOverride) ? $partsOverride : ($prior['parts'] ?? null);
     $tx = []; $soRows = [];
     $so = truthy($soOverride) ? $soOverride : (truthy($prior['so'] ?? null) ? $prior['so'] : ['raw' => [], 'coverage' => []]);
@@ -199,8 +258,9 @@ function publish_(array $meta, $rawMap, $coverage, $actor, $reason, $soOverride 
     if (now_ms() - $started > 240000) fail_('Publikasi mendekati batas waktu; data lama tetap aktif.');
     // DSM v5: mutasi stok (bagian terbesar snapshot) disimpan di tabel dsm_move, bukan di JSON.
     $id = newFileId_();
-    movesWrite_($id, $db['stock']['moves']);
-    unset($db['stock']['moves']); $db['stock']['moveSnap'] = $id;
+    // Isi identik dengan snapshot sebelumnya -> baris lama dipakai ulang (tidak menulis ulang ratusan ribu baris).
+    $mv = movesStore_($id, $db['stock']['moves'], $prior);
+    unset($db['stock']['moves']); $db['stock']['moveSnap'] = $mv['snap']; $db['stock']['moveHash'] = $mv['hash'];
     $out = pubOut_($db); $notes = $db['notes']; $processed = $db['processed']; $partsMap = $db['parts']; unset($db);
     writeJsonId_($id, $out); unset($out);
     writeJsonId_($id . '-parts', ['parts' => $partsMap]); // peta partisi kecil untuk Pemulihan regional
@@ -209,7 +269,7 @@ function publish_(array $meta, $rawMap, $coverage, $actor, $reason, $soOverride 
     prop_set_('ACTIVE', $id);
     audit_(js_str($actor), 'PUBLISH', js_str($reason) . ' ' . $id);
     if ($prior) revokeChanged_($prior['meta']['people'], $meta['people']);
-    try { storage_prune_(); } catch (Throwable $e) { error_log('[dsm] prune gagal: ' . $e->getMessage()); }
+    storage_prune_later_(); // bersih-bersih setelah respons terkirim, bukan bagian waktu tunggu user
     return ['version' => $id, 'processed' => $processed, 'notes' => $notes, 'rows' => $rowCount];
 }
 
@@ -441,6 +501,16 @@ function custMap_(array $meta): Closure {
     };
     $lastCu = $cu; $lastLog = $log;
     return $fn;
+}
+/** Semua kode yang custInduk_() memetakan ke induk yang sama dengan $code (kode itu sendiri, induk, alias, kode lama). */
+function custCodesFor_(array $meta, $code): array {
+    $code = text_($code); if ($code === '') return [];
+    $target = custInduk_($meta, $code); $out = [$code => 1, $target => 1];
+    $cand = [];
+    foreach ($meta['indukLog'] ?? [] as $x) { if (truthy($x['lama'] ?? null)) $cand[] = (string) $x['lama']; if (truthy($x['baru'] ?? null)) $cand[] = (string) $x['baru']; }
+    foreach ($meta['customers'] ?? [] as $id => $c) { $cand[] = (string) $id; foreach ($c['aliases'] ?? [] as $a) if (truthy($a)) $cand[] = (string) $a; }
+    foreach ($cand as $k) if (!isset($out[$k]) && custInduk_($meta, $k) === $target) $out[$k] = 1;
+    return array_map('strval', array_keys($out));
 }
 function custInduk_(array $meta, $code) { $code = text_($code); return $code !== '' ? custMap_($meta)($code) : $code; }
 function custResolveRows_(array $meta, ?array $rows): array {

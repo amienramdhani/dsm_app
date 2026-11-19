@@ -1,68 +1,41 @@
 <?php
 /**
- * ATURAN STATUS DEALER (Paket 2, 2026-11-17) — SATU fungsi sumber status untuk Dealer, Detail, Beranda, Analisa, export, agent.
+ * ATURAN STATUS DEALER (Paket 3, 2026-11-18: frekuensi order 3 bulan closing) — SATU fungsi sumber status
+ * untuk Dealer, Detail, Beranda, Analisa, export, agent.
  *
- * - Dasar hitung: SELL THRU (cubes), SELURUH transaksi dealer (tidak dibatasi siapa yang membuka).
- * - Status bulan P = pola 6 bulan selesai (P-6 … P-1). Tiap bulan: y = order (≥ N unit), h = di bawah min (1…N-1), n = tidak order (≤ 0).
- * - Aturan = daftar [pola 6 sel, status]; sel 'a' = bebas. Dicek dari atas, yang pertama cocok dipakai; tidak cocok → LAINNYA.
- * - Dihitung per dealer-brand DAN total (semua brand dijumlah per bulan).
- * - Dikunci: begitu bulan P-1 sudah ditutup (coverage closed), hasil disimpan ke storage/status/<P>.json dan tidak berubah lagi
- *   kecuali aturan diubah. Sebelum itu hasilnya "sementara" (dihitung langsung).
- * - Penanda bulan berjalan memakai aturan DA KPI (MIN_QTY_DA / TYPE_FILTER / TYPE_WAJIB / per promotor) — TIDAK mengubah status.
+ * - Dasar hitung: SELL THRU qty (cubes), SELURUH transaksi dealer, mulai bulan basis (default 2026-01).
+ * - 1 bulan dihitung order bila qty bersih bulan itu > 0 (banyak invoice = 1 bulan; retur tidak menambah bulan).
+ * - Status bulan P dari jendela W bulan closing (P-W … P-1, default 3):
+ *     ACTIVE   = order ≥ act bulan (default 2)
+ *     PASSIVE  = order 1 … act-1 bulan
+ *     IDLE     = tidak order W … inact-1 bulan berturut-turut (default 3–5)
+ *     INACTIVE = tidak order ≥ inact bulan berturut-turut (default 6)
+ *     PROSPECT = belum pernah order sejak bulan basis (per brand: belum pernah ambil brand itu; TOTAL: brand apa pun)
+ * - Dihitung per dealer-brand DAN total (brand yang dimatikan, mis. HONOR, tidak ikut total).
+ * - Dikunci: begitu bulan P-1 sudah ditutup, hasil disimpan ke storage/status/<P>.json. Bulan berjalan (MTD) hanya penanda progres.
  *
  * TIDAK dipakai oleh perhitungan KPI / achievement / insentif.
  */
 require_once __DIR__ . '/common.php';
 
-const DS_PROP = 'DEALER_STATUS_RULES';
-const DS_BASE = ['AKTIF', 'DI BAWAH MIN', 'BANGKIT', 'TURUN', 'IDLE', 'PASIF', 'NONAKTIF', 'LAINNYA'];
-const DS_NEVER = 'BELUM ORDER';
+const DS_PROP = 'DEALER_STATUS_RULES_V3';
+const DS_BASE = ['ACTIVE', 'PASSIVE', 'IDLE', 'INACTIVE'];
+const DS_NEVER = 'PROSPECT';
 
 function dsDefault_(): array {
-    return ['min' => 2, 'rules' => [
-        [['y', 'n', 'n', 'n', 'n', 'y'], 'BANGKIT'],
-        [['a', 'y', 'n', 'n', 'n', 'y'], 'BANGKIT'],
-        [['a', 'a', 'a', 'a', 'a', 'y'], 'AKTIF'],
-        [['a', 'a', 'a', 'a', 'a', 'h'], 'DI BAWAH MIN'],
-        [['a', 'a', 'y', 'y', 'n', 'n'], 'TURUN'],
-        [['a', 'a', 'a', 'a', 'y', 'n'], 'IDLE'],
-        [['a', 'a', 'a', 'a', 'h', 'n'], 'IDLE'],
-        [['n', 'n', 'n', 'n', 'n', 'n'], 'NONAKTIF'],
-        [['a', 'a', 'a', 'a', 'n', 'n'], 'PASIF'],
-    ], 'extra' => [], 'brands' => [], 'by' => '', 'at' => ''];
+    return ['win' => 3, 'act' => 2, 'inact' => 6, 'since' => '2026-01', 'off' => ['HONOR'], 'by' => '', 'at' => ''];
 }
 /** Validasi + rapikan konfigurasi. Gagal = fail_(). */
 function dsClean_(array $c): array {
-    $min = (int) ($c['min'] ?? 2); if ($min < 1 || $min > 50) fail_('Minimal unit harus 1–50.');
-    $extra = [];
-    foreach ((array) ($c['extra'] ?? []) as $s) { $s = js_upper(trim((string) $s)); if ($s === '') continue;
-        if (mb_strlen($s) > 12) fail_('Nama status maksimal 12 huruf: ' . $s);
-        if (!preg_match('/^[A-Z0-9 .\-]+$/', $s)) fail_('Nama status hanya huruf/angka: ' . $s);
-        if (!in_array($s, DS_BASE, true) && $s !== DS_NEVER) $extra[] = $s; }
-    $extra = array_values(array_unique($extra)); $names = array_merge(DS_BASE, $extra);
-    $rules = function ($rs, $where) use ($names) {
-        $o = [];
-        foreach ((array) $rs as $r) {
-            $p = array_values((array) ($r[0] ?? [])); $s = js_upper((string) ($r[1] ?? ''));
-            if (count($p) !== 6) fail_("Pola $where harus 6 bulan.");
-            foreach ($p as $v) if (!in_array($v, ['y', 'h', 'n', 'a'], true)) fail_("Isi pola $where tidak dikenal.");
-            if (!in_array($s, $names, true)) fail_("Status tidak dikenal di $where: $s");
-            $o[] = [$p, $s];
-        }
-        if (count($o) > 30) fail_('Maksimal 30 aturan.');
-        return $o;
-    };
-    $out = ['min' => $min, 'rules' => $rules($c['rules'] ?? [], 'aturan umum'), 'extra' => $extra, 'brands' => []];
-    if (!$out['rules']) fail_('Minimal satu aturan.');
-    foreach ((array) ($c['brands'] ?? []) as $b => $x) {
-        $b = js_upper(trim((string) $b)); if ($b === '') continue;
-        $bm = isset($x['min']) && $x['min'] !== '' && $x['min'] !== null ? (int) $x['min'] : null;
-        if ($bm !== null && ($bm < 1 || $bm > 50)) fail_("Minimal unit $b harus 1–50.");
-        $br = isset($x['rules']) && is_array($x['rules']) && $x['rules'] ? $rules($x['rules'], "brand $b") : null;
-        if ($bm === null && $br === null) continue;
-        $out['brands'][$b] = ['min' => $bm, 'rules' => $br];
-    }
-    return $out;
+    $d = dsDefault_();
+    $win = (int) ($c['win'] ?? $d['win']); if ($win < 1 || $win > 12) fail_('Jendela harus 1–12 bulan.');
+    $act = (int) ($c['act'] ?? $d['act']); if ($act < 1 || $act > $win) fail_("ACTIVE minimal 1–$win bulan order.");
+    $inact = (int) ($c['inact'] ?? $d['inact']); if ($inact <= $win || $inact > 36) fail_('INACTIVE harus lebih dari ' . $win . ' bulan (maks 36).');
+    $since = (string) ($c['since'] ?? $d['since']); if (!preg_match('/^20\d\d-(0[1-9]|1[0-2])$/', $since)) fail_('Bulan basis tidak valid (format YYYY-MM).');
+    $off = [];
+    foreach ((array) ($c['off'] ?? []) as $b) { $b = js_upper(trim((string) $b)); if ($b !== '') $off[] = $b; }
+    $off = array_values(array_unique($off)); sort($off, SORT_STRING);
+    return ['win' => $win, 'act' => $act, 'inact' => $inact, 'since' => $since, 'off' => $off];
 }
 function dsConfig_(): array {
     if (isset($GLOBALS['DSM_DSCFG'])) return $GLOBALS['DSM_DSCFG'];
@@ -71,52 +44,41 @@ function dsConfig_(): array {
     if (!is_array($c)) $c = $def; else { try { $c = dsClean_($c) + ['by' => $c['by'] ?? '', 'at' => $c['at'] ?? '']; } catch (Throwable $e) { $c = $def; } }
     return $GLOBALS['DSM_DSCFG'] = $c;
 }
-function dsHash_(array $c): string { return substr(sha1(json_encode([$c['min'], $c['rules'], $c['brands']])), 0, 12); }
-function dsStatuses_(array $c): array { return array_merge(DS_BASE, $c['extra'] ?? []); }
+function dsHash_(array $c): string { return substr(sha1('v3' . json_encode([$c['win'], $c['act'], $c['inact'], $c['since'], $c['off']])), 0, 12); }
+function dsStatuses_(array $c): array { return DS_BASE; }
 function dsMi_(string $p): int { return (int) substr($p, 0, 4) * 12 + (int) substr($p, 5, 2) - 1; }
 function dsPm_(int $i): string { return sprintf('%04d-%02d', intdiv($i, 12), $i % 12 + 1); }
-/** 6 bulan pola untuk periode P: P-6 … P-1 (lama → baru). */
-function dsMonths_(string $period): array { $m = dsMi_($period); $o = []; for ($i = 6; $i >= 1; $i--) $o[] = dsPm_($m - $i); return $o; }
-function dsCell_(float $q, int $min): string { return $q >= $min ? 'y' : ($q > 0 ? 'h' : 'n'); }
-/** [status, nomor aturan (1..), null bila LAINNYA] */
-function dsMatch_(array $rules, array $cells): array {
-    foreach ($rules as $i => [$p, $s]) { $ok = true; foreach ($p as $k => $v) if ($v !== 'a' && $v !== $cells[$k]) { $ok = false; break; } if ($ok) return [$s, $i + 1]; }
-    return ['LAINNYA', null];
-}
-function dsBrandRule_(array $c, string $brand): array {
-    $x = $c['brands'][js_upper($brand)] ?? null;
-    return [$x['min'] ?? $c['min'], $x['rules'] ?? $c['rules']];
+/** Bulan jendela untuk periode P: P-W … P-1 (lama → baru). */
+function dsMonths_(string $period, ?array $c = null): array { $c = $c ?? dsConfig_(); $m = dsMi_($period); $o = []; for ($i = $c['win']; $i >= 1; $i--) $o[] = dsPm_($m - $i); return $o; }
+/** Status dari deret qty per bulan (index 0 = bulan basis … terakhir = P-1). null = belum pernah order (PROSPECT). */
+function dsClassify_(array $qs, array $c): ?array {
+    $n = count($qs); $last = -1; for ($i = $n - 1; $i >= 0; $i--) if (($qs[$i] ?? 0) > 0) { $last = $i; break; }
+    if ($last < 0) return null;
+    $cells = ''; $cnt = 0;
+    for ($i = $n - $c['win']; $i < $n; $i++) { $y = $i >= 0 && ($qs[$i] ?? 0) > 0; $cells .= $y ? 'y' : ($i < 0 ? 'a' : 'n'); if ($y) $cnt++; }
+    $gap = $n - 1 - $last; // bulan tanpa order berturut-turut sampai P-1
+    $s = $cnt >= $c['act'] ? 'ACTIVE' : ($cnt >= 1 ? 'PASSIVE' : ($gap >= $c['inact'] ? 'INACTIVE' : 'IDLE'));
+    return [$s, $cells, $gap];
 }
 
 /**
  * Hitung status semua dealer untuk periode P dari data (tanpa kunci).
- * Hasil: ['period','months','hash','total'=>[cust=>[s,cells]], 'brand'=>[cust=>[brand=>[s,cells]]], 'last'=>[cust=>[brand=>'YYYY-MM']]]
+ * Hasil: ['period','months','hash','total'=>[cust=>[s,cells,gap]], 'brand'=>[cust=>[brand=>[s,cells,gap]]]]
  */
 function dsComputeRaw_(array $db, string $period, ?array $c = null): array {
-    $c = $c ?? dsConfig_(); $months = dsMonths_($period); $mi = array_flip($months);
+    $c = $c ?? dsConfig_(); $p0 = dsMi_($c['since']); $p1 = dsMi_($period); $n = max(0, $p1 - $p0); $off = array_flip($c['off']);
     $q = []; // q[cust][brand][idx]
-    foreach ($months as $i => $m) foreach ($db['cubes'][$m] ?? [] as $r) { $cu = (string) $r['customer']; $b = (string) $r['brand']; $q[$cu][$b][$i] = ($q[$cu][$b][$i] ?? 0) + $r['q']; }
-    // dealer-brand yang pernah order sebelum periode (data 'first' = order pertama sepanjang masa)
-    $ever = [];
-    foreach ($db['first'] ?? [] as $k => $f) {
-        $kk = json_decode($k, true); if (!is_array($kk) || count($kk) < 2) continue;
-        if (strcmp(substr((string) ($f['date'] ?? ''), 0, 7), $period) < 0) $ever[(string) $kk[0]][(string) $kk[1]] = true;
-    }
-    foreach ($q as $cu => $bs) foreach ($bs as $b => $_) $ever[$cu][$b] = true;
+    for ($i = 0; $i < $n; $i++) foreach ($db['cubes'][dsPm_($p0 + $i)] ?? [] as $r) { $cu = (string) $r['customer']; $b = (string) $r['brand']; $q[$cu][$b][$i] = ($q[$cu][$b][$i] ?? 0) + $r['q']; }
     $tot = []; $br = [];
-    foreach ($ever as $cu => $bs) {
-        $sum = [0, 0, 0, 0, 0, 0];
-        foreach ($bs as $b => $_) {
-            [$min, $rules] = dsBrandRule_($c, $b); $cells = [];
-            for ($i = 0; $i < 6; $i++) { $v = $q[$cu][$b][$i] ?? 0; $sum[$i] += $v; $cells[] = dsCell_($v, $min); }
-            [$s, $no] = dsMatch_($rules, $cells);
-            $br[$cu][$b] = [$s, implode('', $cells), $no];
+    foreach ($q as $cu => $bs) {
+        $sum = array_fill(0, $n, 0);
+        foreach ($bs as $b => $qs) {
+            $row = []; for ($i = 0; $i < $n; $i++) { $row[$i] = $qs[$i] ?? 0; if (!isset($off[js_upper($b)])) $sum[$i] += $row[$i]; }
+            if ($x = dsClassify_($row, $c)) $br[$cu][$b] = $x;
         }
-        $cells = array_map(fn($v) => dsCell_($v, $c['min']), $sum);
-        [$s, $no] = dsMatch_($c['rules'], $cells);
-        $tot[$cu] = [$s, implode('', $cells), $no];
+        if ($x = dsClassify_($sum, $c)) $tot[$cu] = $x;
     }
-    return ['period' => $period, 'months' => $months, 'hash' => dsHash_($c), 'total' => $tot, 'brand' => $br];
+    return ['period' => $period, 'months' => dsMonths_($period, $c), 'hash' => dsHash_($c), 'total' => $tot, 'brand' => $br];
 }
 
 /** Data dasar status = SELURUH transaksi (bukan potongan region / cakupan pembuka). */
@@ -204,10 +166,10 @@ function dsDealer_(array $db, string $period, string $cust): array {
     $bs = []; $bc = [];
     foreach (array_unique(array_merge(array_keys($L['brand'][$cust] ?? []), array_keys($C['brand'][$cust] ?? []))) as $b) {
         $lb = $L['brand'][$cust][$b] ?? null; $cb = $C['brand'][$cust][$b] ?? null;
-        $bs[$b] = $lb ? $lb[0] : ($cb && $cb['noo'] ? 'NOO' : DS_NEVER);
-        $bc[$b] = ['pola' => $lb[1] ?? 'nnnnnn', 'aturan' => $lb[2] ?? null, 'q' => $cb['q'] ?? 0, 'da' => $cb['da'] ?? false, 'noo' => $cb['noo'] ?? false, 'last' => $cb['last'] ?? ''];
+        $bs[$b] = $lb ? $lb[0] : DS_NEVER;
+        $bc[$b] = ['pola' => $lb[1] ?? str_repeat('n', count($L['months'])), 'gap' => $lb[2] ?? null, 'q' => $cb['q'] ?? 0, 'da' => $cb['da'] ?? false, 'noo' => $cb['noo'] ?? false, 'last' => $cb['last'] ?? ''];
     }
-    return ['status' => $status, 'pola' => $t[1] ?? 'nnnnnn', 'aturan' => $t[2] ?? null, 'order' => $cur, 'bangkit' => in_array($status, ['IDLE', 'PASIF', 'TURUN', 'NONAKTIF'], true) && $cur['q'] > 0,
+    return ['status' => $status, 'pola' => $t[1] ?? str_repeat('n', count($L['months'])), 'gap' => $t[2] ?? null, 'order' => $cur, 'noo' => !$t && $cur['q'] > 0, 'bangkit' => in_array($status, ['IDLE', 'INACTIVE'], true) && $cur['q'] > 0,
         'bs' => $bs, 'bc' => $bc, 'locked' => $L['locked'], 'months' => $L['months']];
 }
 /** Ringkasan untuk kumpulan dealer (halaman Dealer / Beranda). $brand = null → TOTAL. */
@@ -218,40 +180,58 @@ function dsSummary_(array $db, string $period, array $custIds, ?string $brand = 
     foreach ($custIds as $cu) {
         $cu = (string) $cu;
         if ($brand === null) { $s = $L['total'][$cu][0] ?? DS_NEVER; $q = $C['total'][$cu]['q'] ?? 0; $d = $C['total'][$cu]['nda'] ?? 0; }
-        else { if (!isset($L['brand'][$cu][$brand]) && !isset($C['brand'][$cu][$brand])) continue; $s = $L['brand'][$cu][$brand][0] ?? DS_NEVER; $q = $C['brand'][$cu][$brand]['q'] ?? 0; $d = !empty($C['brand'][$cu][$brand]['da']) ? 1 : 0; }
+        else { $s = $L['brand'][$cu][$brand][0] ?? DS_NEVER; $q = $C['brand'][$cu][$brand]['q'] ?? 0; $d = !empty($C['brand'][$cu][$brand]['da']) ? 1 : 0; }
         $by[$s] ??= ['n' => 0, 'order' => 0]; $by[$s]['n']++; if ($q > 0) { $by[$s]['order']++; $order++; }
-        $da += $d; if ($q > 0 && in_array($s, ['IDLE', 'PASIF', 'TURUN', 'NONAKTIF'], true)) $bangkit++;
+        $da += $d; if ($q > 0 && in_array($s, ['IDLE', 'INACTIVE'], true)) $bangkit++;
     }
     return ['period' => $period, 'brand' => $brand, 'by' => $by, 'order' => $order, 'da' => $da, 'bangkit' => $bangkit, 'locked' => $L['locked'], 'lockedAt' => $L['at'] ?? null, 'months' => $L['months']];
 }
 
 /* ---------- API Admin: Aturan Status Dealer (Super Admin) ---------- */
 function dsLatest_(array $db): string { $ks = array_keys($db['coverage'] ?? []); sort($ks, SORT_STRING); return $ks ? end($ks) : gmdate('Y-m'); }
-function dsCount_(array $raw, array $statuses): array {
+/** Kode dealer master yang ikut dihitung (bukan TUTUP, bukan sedang diajukan tutup). null = master tidak tersedia. */
+function dsEligible_(array $db): ?array {
+    $cs = $db['meta']['customers'] ?? null; if (!is_array($cs) || !$cs) return null;
+    $closed = (function_exists('dealerClosed_') ? dealerClosed_() : []) + (function_exists('dealerPendingClose_') ? dealerPendingClose_() : []);
+    $ids = []; foreach ($cs as $k => $x) { $id = (string) (is_array($x) ? ($x['id'] ?? $k) : $k); if (!isset($closed[$id])) $ids[$id] = 1; } return $ids;
+}
+/** Jumlah dealer master yang ikut dihitung (pembilang PROSPECT). */
+function dsDealerCount_(array $db): ?int { $e = dsEligible_($db); return $e === null ? null : count($e); }
+/**
+ * Hitungan per status. PROSPECT = dealer master yang ikut dihitung ($eligible) dan belum punya status (total / per brand).
+ * Dihitung langsung, bukan "jumlah master dikurangi yang berstatus", supaya dealer tutup / diajukan tutup yang pernah order
+ * tidak mengurangi PROSPECT dua kali. $eligible boleh int (cara lama) untuk kompatibilitas.
+ */
+function dsCount_(array $raw, array $statuses, $eligible = null): array {
     $t = array_fill_keys($statuses, 0); $b = [];
     foreach ($raw['total'] as $v) $t[$v[0]] = ($t[$v[0]] ?? 0) + 1;
     foreach ($raw['brand'] as $bs) foreach ($bs as $br => $v) { $b[$br] ??= array_fill_keys($statuses, 0); $b[$br][$v[0]] = ($b[$br][$v[0]] ?? 0) + 1; }
+    if (is_int($eligible)) { $t[DS_NEVER] = max(0, $eligible - array_sum($t)); foreach ($b as $br => $x) $b[$br][DS_NEVER] = max(0, $eligible - array_sum($x)); }
+    elseif (is_array($eligible)) {
+        $t[DS_NEVER] = 0; foreach ($eligible as $id => $_) if (!isset($raw['total'][$id])) $t[DS_NEVER]++;
+        foreach ($b as $br => $x) { $n = 0; foreach ($eligible as $id => $_) if (!isset($raw['brand'][$id][$br])) $n++; $b[$br][DS_NEVER] = $n; }
+    }
     ksort($b, SORT_STRING); return ['total' => $t, 'brand' => $b];
 }
 function apiDealerStatusRules($token) {
     brandGuard_($token); $db = dsBase_(snapshot_()); $p = dsLatest_($db); $L = dsLocked_($db, $p); $c = dsConfig_();
     $brands = []; foreach ($db['meta']['products'] ?? [] as $x) if (truthy($x['device'] ?? null)) $brands[js_upper((string) $x['brand'])] = true; ksort($brands, SORT_STRING);
     $da = []; foreach (array_keys($brands) as $b) { [$m, $t, $mu, $pp] = dsDaRule_($db, $p, $b); $da[$b] = ['min' => $m, 'types' => $t, 'must' => $mu, 'perProm' => $pp]; }
-    return ['config' => $c, 'default' => dsDefault_(), 'statuses' => dsStatuses_($c), 'base' => DS_BASE, 'period' => $p, 'months' => $L['months'], 'locked' => $L['locked'], 'at' => $L['at'] ?? null, 'brands' => array_keys($brands), 'da' => $da, 'count' => dsCount_($L, dsStatuses_($c))];
+    return ['config' => $c, 'default' => dsDefault_(), 'statuses' => DS_BASE, 'base' => DS_BASE, 'never' => DS_NEVER, 'period' => $p, 'months' => $L['months'], 'locked' => $L['locked'], 'at' => $L['at'] ?? null, 'brands' => array_keys($brands), 'da' => $da, 'count' => dsCount_($L, DS_BASE, dsDealerCount_($db))];
 }
 /** Dampak sebelum simpan: jumlah dealer per status (aturan sekarang vs usulan), dari data asli periode terbaru. */
 function apiDealerStatusImpact($token, $cfg) {
     brandGuard_($token); $db = dsBase_(snapshot_()); $p = dsLatest_($db);
     $new = dsClean_(is_array($cfg) ? $cfg : []); $old = dsConfig_();
-    $st = array_values(array_unique(array_merge(dsStatuses_($old), dsStatuses_($new))));
-    return ['period' => $p, 'months' => dsMonths_($p), 'before' => dsCount_(dsComputeRaw_($db, $p, $old), $st), 'after' => dsCount_(dsComputeRaw_($db, $p, $new), $st), 'statuses' => $st];
+    $st = array_merge(DS_BASE, [DS_NEVER]); $all = dsEligible_($db);
+    return ['period' => $p, 'months' => dsMonths_($p, $new), 'before' => dsCount_(dsComputeRaw_($db, $p, $old), DS_BASE, $all), 'after' => dsCount_(dsComputeRaw_($db, $p, $new), DS_BASE, $all), 'statuses' => $st];
 }
 function apiDealerStatusSave($token, $cfg, $reason = '') {
     $u = brandGuard_($token); $new = dsClean_(is_array($cfg) ? $cfg : []);
     $reason = trim((string) $reason); if (mb_strlen($reason) < 5) fail_('Isi alasan perubahan (minimal 5 huruf).');
     $old = dsConfig_(); $new['by'] = $u['nik'] ?? ''; $new['at'] = gmdate('c');
     prop_set_(DS_PROP, json_encode($new)); unset($GLOBALS['DSM_DSCFG']);
-    audit_($u['nik'] ?? '', 'ATURAN_STATUS_DEALER', json_encode(['alasan' => $reason, 'lama' => ['min' => $old['min'], 'rules' => $old['rules'], 'brands' => $old['brands'], 'extra' => $old['extra']]]));
+    audit_($u['nik'] ?? '', 'ATURAN_STATUS_DEALER', json_encode(['alasan' => $reason, 'lama' => array_intersect_key($old, dsDefault_()), 'baru' => $new]));
     $db = dsBase_(snapshot_()); dsUnlock_(dsLatest_($db));
     data_rev_bump_('DEALER_STATUS'); // cache jawaban Dealer/Beranda ikut berganti
     return ['ok' => true, 'config' => dsConfig_()];

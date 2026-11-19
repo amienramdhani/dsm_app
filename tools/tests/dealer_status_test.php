@@ -11,56 +11,54 @@ $pass = 0; $fail = 0;
 function t($n, $f) { global $pass, $fail; try { $f(); $pass++; echo "  ✓ $n\n"; } catch (Throwable $e) { $fail++; echo "  ✗ $n — " . $e->getMessage() . "\n"; } }
 function eq($a, $b, $m = '') { if ($a !== $b) throw new Exception($m . ' expected ' . json_encode($b) . ' got ' . json_encode($a)); }
 
-// Data: periode 2026-11; pola Mei–Okt. Baris per (dealer, brand, bulan, qty).
+// Data: periode 2026-11; jendela Agu–Okt; basis 2026-01.
 $P = '2026-11'; $rows = [];
 $add = function ($cu, $b, $m, $q, $type = 'T1', $day = '10') use (&$rows) { $rows[$m][] = ['customer' => $cu, 'brand' => $b, 'date' => "$m-$day", 'q' => $q, 'a' => 0, 'acc' => 0, 'docs' => ["$cu$m$b"], 'type' => $type, 'nik' => 'S1', 'aq' => 0]; };
-$M = ['2026-05', '2026-06', '2026-07', '2026-08', '2026-09', '2026-10'];
-// D1: order tiap bulan 2 unit -> AKTIF
-foreach ($M as $m) $add('D1', 'ITEL', $m, 2);
-// D2: Okt 1 unit -> DI BAWAH MIN
+$M = ['2026-01','2026-02','2026-03','2026-04','2026-05', '2026-06', '2026-07', '2026-08', '2026-09', '2026-10'];
+// D1: order Agu, Okt -> ACTIVE (2 dari 3)
+$add('D1', 'ITEL', '2026-08', 2); $add('D1', 'ITEL', '2026-10', 5);
+// D2: order Okt saja 1 unit -> PASSIVE
 $add('D2', 'ITEL', '2026-10', 1);
-// D3: Jul, Agu order, Sep-Okt kosong -> TURUN
-$add('D3', 'ITEL', '2026-07', 3); $add('D3', 'ITEL', '2026-08', 2);
-// D4: Mei order, Jul-Sep kosong, Okt order -> BANGKIT
-$add('D4', 'ITEL', '2026-05', 2); $add('D4', 'ITEL', '2026-10', 2);
-// D5: Sep order, Okt kosong -> IDLE
-$add('D5', 'ITEL', '2026-09', 2);
-// D6: Jun order saja -> PASIF
-$add('D6', 'ITEL', '2026-06', 2);
-// D7: order terakhir 2025 (sebelum jendela) -> NONAKTIF
-$first = ['["D7","ITEL"]' => ['date' => '2025-12-02', 'nik' => 'S1']];
-// D8: total vs per brand: Okt 1 ITEL + 1 TECNO -> per brand DI BAWAH MIN, total AKTIF (2 unit)
-$add('D8', 'ITEL', '2026-10', 1); $add('D8', 'TECNO', '2026-10', 1);
+// D3: terakhir order Jul (Agu-Okt kosong = 3 bln) -> IDLE
+$add('D3', 'ITEL', '2026-07', 3);
+// D4: terakhir order Mei (Jun-Okt = 5 bln) -> IDLE
+$add('D4', 'ITEL', '2026-05', 2);
+// D5: terakhir order Apr (6 bln) -> INACTIVE
+$add('D5', 'ITEL', '2026-04', 2);
+// D6: order 2025 saja -> PROSPECT (basis 2026)
+$add('D6', 'ITEL', '2025-12', 2);
+// D7: banyak invoice di 1 bulan = 1 bulan; Okt 3 baris -> PASSIVE
+$add('D7', 'ITEL', '2026-10', 1); $add('D7', 'ITEL', '2026-10', 1, 'T1', '20'); $add('D7', 'ITEL', '2026-10', 1, 'T1', '25');
+// D8: retur bikin qty bulan Sep = 0 -> bulan Sep tidak dihitung; Okt order -> PASSIVE
+$add('D8', 'ITEL', '2026-09', 2); $add('D8', 'ITEL', '2026-09', -2); $add('D8', 'ITEL', '2026-10', 1);
+// D10: ITEL Agu + TECNO Sep -> per brand PASSIVE, total ACTIVE
+$add('D10', 'ITEL', '2026-08', 1); $add('D10', 'TECNO', '2026-09', 1);
+// D11: HONOR saja (dimatikan) -> brand PASSIVE, total PROSPECT
+$add('D11', 'HONOR', '2026-10', 3);
 // bulan berjalan
-$add('D1', 'ITEL', $P, 3); $add('D5', 'ITEL', $P, 1); $add('D6', 'ITEL', $P, 2); $add('D9', 'ITEL', $P, 2); // D9 = NOO
-$add('D8', 'TECNO', $P, 2, 'T9');
+$add('D3', 'ITEL', $P, 2); $add('D9', 'ITEL', $P, 2); // D9 = NOO
+$add('D10', 'TECNO', $P, 2, 'T9'); $add('D5', 'ITEL', $P, 1);
+$first = [];
 foreach ($rows as $m => $rs) foreach ($rs as $r) { $k = jkey([$r['customer'], $r['brand']]); if (!isset($first[$k]) || strcmp($r['date'], $first[$k]['date']) < 0) $first[$k] = ['date' => $r['date'], 'nik' => 'S1']; }
 $cov = []; foreach (array_merge($M, [$P]) as $m) $cov[$m] = ['cutoff' => $m === $P ? "$m-16" : PortalCore::end($m), 'closed' => $m !== $P];
 $pol = fn($b, $min, $types = [], $must = []) => ['period' => $P, 'region' => 'R', 'group' => 'G', 'metric' => 'DA', 'brand' => $b, 'minDA' => $min, 'types' => $types, 'must' => $must, 'perProm' => 0];
 $db = ['_vid' => 'T1', 'cubes' => $rows, 'coverage' => $cov, 'first' => $first, 'meta' => ['policies' => [$pol('ITEL', 3), $pol('TECNO', 2, ['T9'])], 'products' => []]];
 
-echo "== Status terkunci (pola Mei–Okt) ==\n";
-$exp = ['D1' => 'AKTIF', 'D2' => 'DI BAWAH MIN', 'D3' => 'TURUN', 'D4' => 'BANGKIT', 'D5' => 'IDLE', 'D6' => 'PASIF', 'D7' => 'NONAKTIF'];
-foreach ($exp as $d => $s) t("$d = $s", fn() => eq(dsDealer_($db, $P, $d)['bs']['ITEL'], $s));
-t('D8 per brand ITEL = DI BAWAH MIN, total = AKTIF', function () use ($db, $P) { $x = dsDealer_($db, $P, 'D8'); eq($x['bs']['ITEL'], 'DI BAWAH MIN'); eq($x['status'], 'AKTIF'); });
-t('D9 belum pernah order sebelum Nov: total BELUM ORDER, brand NOO', function () use ($db, $P) { $x = dsDealer_($db, $P, 'D9'); eq($x['status'], 'BELUM ORDER'); eq($x['bs']['ITEL'], 'NOO'); });
-t('status total = status brand untuk dealer 1 brand', fn() => eq(dsDealer_($db, $P, 'D3')['status'], 'TURUN'));
-t('dealer tak dikenal = BELUM ORDER', fn() => eq(dsDealer_($db, $P, 'ZZ')['status'], 'BELUM ORDER'));
+echo "== Status terkunci (jendela Agu–Okt) ==\n";
+$exp = ['D1' => 'ACTIVE', 'D2' => 'PASSIVE', 'D3' => 'IDLE', 'D4' => 'IDLE', 'D5' => 'INACTIVE', 'D7' => 'PASSIVE', 'D8' => 'PASSIVE'];
+foreach ($exp as $d => $s) t("$d = $s", fn() => eq(dsDealer_($db, $P, $d)['bs']['ITEL'] ?? null, $s));
+t('D6 order hanya 2025 = PROSPECT', fn() => eq(dsDealer_($db, $P, 'D6')['status'], 'PROSPECT'));
+t('D10 per brand PASSIVE, total ACTIVE', function () use ($db, $P) { $x = dsDealer_($db, $P, 'D10'); eq($x['bs']['ITEL'], 'PASSIVE'); eq($x['bs']['TECNO'], 'PASSIVE'); eq($x['status'], 'ACTIVE'); });
+t('D11 HONOR dimatikan: brand PASSIVE, total PROSPECT', function () use ($db, $P) { $x = dsDealer_($db, $P, 'D11'); eq($x['bs']['HONOR'], 'PASSIVE'); eq($x['status'], 'PROSPECT'); });
+t('D9 belum pernah order: PROSPECT + NOO bulan ini', function () use ($db, $P) { $x = dsDealer_($db, $P, 'D9'); eq($x['status'], 'PROSPECT'); eq($x['noo'], true); eq($x['bs']['ITEL'], 'PROSPECT'); });
+t('dealer tak dikenal = PROSPECT', fn() => eq(dsDealer_($db, $P, 'ZZ')['status'], 'PROSPECT'));
+t('pola jendela D1 = yny', fn() => eq(dsDealer_($db, $P, 'D1')['pola'], 'yny'));
 
-echo "== Pengecualian brand & aturan sendiri ==\n";
-t('ITEL minimal 3 unit: D1 (2 unit/bulan) jadi DI BAWAH MIN', function () use ($db, $P) {
-  setCfg(['brands' => ['ITEL' => ['min' => 3]]] + dsDefault_());
-  $db2 = $db; $db2['_vid'] = 'T2'; eq(dsDealer_($db2, $P, 'D1')['bs']['ITEL'], 'DI BAWAH MIN'); eq(dsDealer_($db2, $P, 'D1')['status'], 'AKTIF', 'total tetap pakai min umum');
-  setCfg(dsDefault_());
-});
-t('status baru buatan sendiri + aturan', function () use ($db, $P) {
-  $c = dsDefault_(); $c['extra'] = ['SETIA']; array_unshift($c['rules'], [['y', 'y', 'y', 'y', 'y', 'y'], 'SETIA']);
-  setCfg($c); $db2 = $db; $db2['_vid'] = 'T3';
-  eq(dsDealer_($db2, $P, 'D1')['status'], 'SETIA'); setCfg(dsDefault_());
-});
-t('validasi: nama status terlalu panjang ditolak', function () { try { dsClean_(['min' => 2, 'rules' => dsDefault_()['rules'], 'extra' => ['NAMASANGATPANJANGSEKALI']]); throw new Exception('lolos'); } catch (Throwable $e) { if ($e->getMessage() === 'lolos') throw $e; } });
-t('validasi: status tak dikenal ditolak', function () { try { dsClean_(['min' => 2, 'rules' => [[['a','a','a','a','a','a'], 'XYZ']]]); throw new Exception('lolos'); } catch (Throwable $e) { if ($e->getMessage() === 'lolos') throw $e; } });
-t('tidak cocok aturan mana pun = LAINNYA', fn() => eq(dsMatch_([[['y','y','y','y','y','y'], 'AKTIF']], ['n','n','n','n','n','y'])[0], 'LAINNYA'));
+echo "== Ubah aturan ==\n";
+t('INACTIVE mulai 5 bulan: D4 jadi INACTIVE', function () use ($db, $P) { setCfg(['inact' => 5] + dsDefault_()); $db2 = $db; $db2['_vid'] = 'T2'; eq(dsDealer_($db2, $P, 'D4')['bs']['ITEL'], 'INACTIVE'); setCfg(dsDefault_()); });
+t('ACTIVE minimal 1 bulan: D2 jadi ACTIVE', function () use ($db, $P) { setCfg(['act' => 1] + dsDefault_()); $db2 = $db; $db2['_vid'] = 'T3'; eq(dsDealer_($db2, $P, 'D2')['bs']['ITEL'], 'ACTIVE'); setCfg(dsDefault_()); });
+t('validasi: INACTIVE tidak boleh ≤ jendela', function () { try { dsClean_(['inact' => 3] + dsDefault_()); throw new Exception('lolos'); } catch (Throwable $e) { if ($e->getMessage() === 'lolos') throw $e; } });
+t('validasi: ACTIVE tidak boleh > jendela', function () { try { dsClean_(['act' => 4] + dsDefault_()); throw new Exception('lolos'); } catch (Throwable $e) { if ($e->getMessage() === 'lolos') throw $e; } });
 
 echo "== Penanda bulan berjalan = DA KPI ==\n";
 foreach (['ITEL' => 3, 'TECNO' => 2] as $b => $min) t("jumlah dealer DA $b = PortalCore::metrics()", function () use ($db, $P, $b, $min) {
@@ -71,17 +69,41 @@ foreach (['ITEL' => 3, 'TECNO' => 2] as $b => $min) t("jumlah dealer DA $b = Por
   eq($mine, $kpi);
 });
 t('D5 1 unit Nov ITEL (min DA 3) = sudah order tapi belum DA', function () use ($db, $P) { $c = dsCurrent_($db, $P)['brand']['D5']['ITEL']; eq($c['q'], 1); eq($c['da'], false); });
-t('D6 PASIF order Nov = bangkit bulan ini', fn() => eq(dsDealer_($db, $P, 'D6')['bangkit'], true));
-t('ringkasan TOTAL', function () use ($db, $P) { $s = dsSummary_($db, $P, ['D1','D2','D3','D4','D5','D6','D7','D8','D9']); echo '    ', json_encode(array_map(fn($x) => $x['n'], array_filter($s['by'], fn($x) => $x['n']))), ' order=', $s['order'], ' bangkit=', $s['bangkit'], "\n"; eq($s['by']['AKTIF']['n'], 2); eq($s['order'], 5); eq($s['bangkit'], 2); });
+t('D3 IDLE order Nov = bangkit bulan ini', fn() => eq(dsDealer_($db, $P, 'D3')['bangkit'], true));
+t('ringkasan per brand TECNO: yang belum pernah ambil = PROSPECT', function () use ($db, $P) { $s = dsSummary_($db, $P, ['D1','D2','D10'], 'TECNO'); eq($s['by']['PROSPECT']['n'], 2); eq($s['by']['PASSIVE']['n'], 1); });
+t('ringkasan TOTAL', function () use ($db, $P) { $s = dsSummary_($db, $P, ['D1','D2','D3','D4','D5','D6','D7','D8','D9','D10','D11']); echo '    ', json_encode(array_map(fn($x) => $x['n'], array_filter($s['by'], fn($x) => $x['n']))), ' order=', $s['order'], ' bangkit=', $s['bangkit'], "\n"; eq($s['by']['ACTIVE']['n'], 2); eq($s['by']['PROSPECT']['n'], 3); eq($s['order'], 4); eq($s['bangkit'], 2); });
 
 echo "== Kunci bulanan ==\n";
 array_map('unlink', glob(storage_dir_('status') . '/*') ?: []); setCfg(dsDefault_()); $db['_vid'] = 'L1';
 t('bulan Okt ditutup -> hasil dikunci ke file', function () use ($db, $P) { $L = dsLocked_($db, $P); eq($L['locked'], true); eq(is_file(storage_dir_('status') . "/$P.json"), true); });
 t('data Okt berubah setelah dikunci -> status tidak berubah', function () use ($db, $P) {
-  $db2 = $db; $db2['_vid'] = 'T9'; $db2['cubes']['2026-10'] = []; eq(dsDealer_($db2, $P, 'D2')['bs']['ITEL'], 'DI BAWAH MIN');
+  $db2 = $db; $db2['_vid'] = 'T9'; $db2['cubes']['2026-10'] = []; eq(dsDealer_($db2, $P, 'D2')['bs']['ITEL'], 'PASSIVE');
 });
 t('bulan sebelumnya belum ditutup -> sementara, tidak ditulis', function () use ($db) {
   $db2 = $db; $db2['_vid'] = 'T8'; $db2['coverage']['2026-11']['closed'] = false; $db2['coverage']['2026-12'] = ['cutoff' => '2026-12-03', 'closed' => false];
   $L = dsLocked_($db2, '2026-12'); eq($L['locked'], false); eq(is_file(storage_dir_('status') . '/2026-12.json'), false);
 });
+echo "== PROSPECT: dealer tutup / diajukan tutup dikecualikan (2026-11-19) ==\n";
+t('PROSPECT dihitung langsung dari dealer yang ikut dihitung', function () {
+  // raw: X1 (ACTIVE, ITEL), X2 (IDLE, ITEL & TECNO). Master: X1, X2, X3, X4, X5. X2 & X5 dikecualikan (tutup / diajukan tutup).
+  $raw = ['total' => ['X1' => ['ACTIVE', 'yyy', 0], 'X2' => ['IDLE', 'ynn', 3]], 'brand' => ['X1' => ['ITEL' => ['ACTIVE', 'yyy', 0]], 'X2' => ['ITEL' => ['IDLE', 'ynn', 3], 'TECNO' => ['IDLE', 'ynn', 3]]]];
+  $elig = ['X1' => 1, 'X3' => 1, 'X4' => 1];
+  $c = dsCount_($raw, DS_BASE, $elig);
+  eq($c['total'][DS_NEVER], 2, 'PROSPECT total (X3, X4)');
+  eq($c['brand']['ITEL'][DS_NEVER], 2, 'PROSPECT ITEL (X3, X4)'); eq($c['brand']['TECNO'][DS_NEVER], 3, 'PROSPECT TECNO (X1, X3, X4)');
+  eq($c['total']['IDLE'], 1, 'status lain tetap dihitung apa adanya');
+  // cara lama (angka) tetap bisa dipakai
+  eq(dsCount_($raw, DS_BASE, 5)['total'][DS_NEVER], 3);
+});
+t('dealerPendingClose_: hanya baris terakhir PENGAJUAN', function () {
+  $GLOBALS['__dtRowsTest'] = [['id' => 'A', 'status' => 'PENGAJUAN'], ['id' => 'B', 'status' => 'PENGAJUAN'], ['id' => 'B', 'status' => 'DITOLAK'], ['id' => 'C', 'status' => 'TUTUP']];
+  $last = []; foreach ($GLOBALS['__dtRowsTest'] as $x) $last[$x['id']] = $x['status'];
+  eq(array_keys(array_filter($last, fn($st) => $st === 'PENGAJUAN')), ['A']);
+  if (!str_contains(file_get_contents(dirname(__DIR__, 2) . '/lib/dealer.php'), "foreach (dtRows_() as \$x) \$last[\$x['id']] = \$x['status']; } catch (Throwable \$e) {} return array_filter(\$last, fn(\$st) => \$st === 'PENGAJUAN')")) throw new Exception('implementasi berbeda dari yang diuji');
+});
+t('halaman Dealer (JS): diajukan tutup tidak masuk PROSPECT', function () {
+  $js = file_get_contents(dirname(__DIR__, 2) . '/assets/dealer_status.js');
+  if (!str_contains($js, "if (s === 'PROSPECT' && typeof V6TUTUP !== 'undefined' && V6TUTUP && V6TUTUP.pend && V6TUTUP.pend[c.id]) return null;")) throw new Exception('tidak ada');
+});
+
 echo "\nHasil: $pass lolos, $fail gagal\n"; exit($fail ? 1 : 0);

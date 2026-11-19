@@ -1,6 +1,6 @@
 # DSM Agent API — Dokumen untuk Tim IT
 
-Versi: 0.2 (2026-11-16) · Status: **sudah dikoding di branch dev, uji di server tes**
+Versi: 0.3 (2026-11-17) · Status: **sudah dikoding di branch dev, uji di server tes**
 Pemilik: Ary Hidayat (DSM) · Pengguna: bot Telegram tim IT (OpenClaw + GPT)
 
 ---
@@ -12,7 +12,7 @@ DSM membuka API **baca-saja** supaya bot Telegram bisa menjawab pertanyaan data 
 - Bot **tidak pernah** login pakai PIN/password user.
 - User menghubungkan akun Telegram-nya sendiri lewat **kode 6 digit** dari halaman **Telegram Agent** di DSM (klik nama di pojok kiri bawah).
 - Setiap pertanyaan dijawab **sesuai role user DSM tersebut** (Sales hanya lihat datanya sendiri, dst). Aturan hak akses sama persis dengan aplikasi web DSM.
-- Sambungan berlaku **30 hari tetap** sejak dihubungkan, lalu harus dihubungkan ulang.
+- Sambungan berlaku **60 hari sejak terakhir dipakai**: tiap user bertanya, masa berlaku otomatis mundur lagi jadi 60 hari. Batas maksimal **180 hari sejak dihubungkan**, berapa pun sering dipakai; setelah itu user harus menghubungkan ulang dengan kode baru. Tidak ada pengaturan tambahan di sisi bot.
 
 ```
 User Telegram ──chat──> Bot IT (OpenClaw + GPT)
@@ -71,12 +71,12 @@ Content-Type: application/json
 
 Jawaban sukses:
 ```json
-{"ok":true,"result":{"nama":"Rudi S.","role":"SUPERVISOR","cakupan":"Cirebon 2","berlaku_sampai":"2026-12-10","sisa_hari":30}}
+{"ok":true,"result":{"nama":"Rudi S.","role":"SUPERVISOR","cakupan":"Cirebon 2","berlaku_sampai":"2027-01-16","sisa_hari":60}}
 ```
 
 4. Selanjutnya setiap pertanyaan cukup memakai `X-Telegram-User-Id` yang sama.
 
-Pemutusan sambungan terjadi otomatis bila: 30 hari habis, user memutus sendiri dari halaman Telegram Agent, Admin memutus dari panel Sambungan Telegram, akun dinonaktifkan, atau PIN user diganti/direset.
+Pemutusan sambungan terjadi otomatis bila: 60 hari tidak dipakai atau batas 180 hari tercapai, user memutus sendiri dari halaman Telegram Agent, Admin memutus dari panel Sambungan Telegram, akun dinonaktifkan, atau PIN user diganti/direset.
 
 ---
 
@@ -89,7 +89,7 @@ Sukses:
 
 Gagal:
 ```json
-{"ok":false,"code":"LINK_EXPIRED","message":"Sesi 30 hari sudah habis. Hubungkan ulang dari DSM: klik nama Anda > Telegram Agent."}
+{"ok":false,"code":"LINK_EXPIRED","message":"Sambungan sudah habis (lama tidak dipakai atau mencapai batas 180 hari). Hubungkan ulang dari DSM: klik nama Anda > Telegram Agent."}
 ```
 
 `message` sudah berbahasa Indonesia dan boleh langsung diteruskan ke user.
@@ -98,7 +98,7 @@ Gagal:
 |---|---|---|---|
 | 401 | `BAD_KEY` | BOT_KEY salah/dicabut | Hubungi admin DSM, jangan diteruskan ke user |
 | 403 | `NOT_LINKED` | Telegram ID belum terhubung | Minta user buka DSM > nama > Telegram Agent |
-| 403 | `LINK_EXPIRED` | Lewat 30 hari | Minta hubungkan ulang |
+| 403 | `LINK_EXPIRED` | 60 hari tidak dipakai, atau lewat batas 180 hari | Minta hubungkan ulang |
 | 403 | `LINK_REVOKED` | Diputus user/Admin, akun nonaktif, atau PIN diganti | Minta hubungkan ulang |
 | 400 | `BAD_CODE` | Kode salah/kedaluwarsa/sudah dipakai | Minta kode baru |
 | 403 | `FORBIDDEN` | Data di luar hak akses role user | Teruskan pesan apa adanya |

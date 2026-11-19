@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSM · Mockup Popup Detail Dealer</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#eef2f7;color:#14202b;padding:16px 10px 50px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.note{max-width:1000px;font-size:12.5px;color:#46586a;line-height:1.55;background:#fff;border-radius:12px;padding:12px 14px;box-shadow:0 2px 10px #10394e10}
+.note b{color:#10394E}.note ul{margin:6px 0 0 18px}
+.stage{display:flex;gap:22px;flex-wrap:wrap;justify-content:center;align-items:flex-start}
+.cap{font-size:11px;font-weight:800;color:#7b8a98;letter-spacing:.5px;margin-bottom:6px;text-align:center}
+.desk{width:900px;max-width:100%;height:820px;border-radius:16px;background:#8f9aa6;position:relative;overflow:hidden;box-shadow:0 10px 40px #10394e26;display:flex;align-items:center;justify-content:center}
+.phone{width:390px;max-width:100%;height:820px;border-radius:30px;background:#8f9aa6;position:relative;overflow:hidden;box-shadow:0 10px 40px #10394e26}
+.m{background:#f7f9fb;border-radius:18px;width:820px;max-width:96%;height:780px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 18px 50px rgba(16,57,78,.3)}
+.phone .m{position:absolute;left:0;right:0;bottom:0;width:100%;max-width:100%;height:94%;border-radius:22px 22px 0 0}
+.grab{width:36px;height:4px;border-radius:4px;background:#d5dde5;margin:6px auto 0;display:none}.phone .grab{display:block}
+/* header */
+.hd{background:#fff;padding:11px 14px 0;border-bottom:1px solid #eef2f6}
+.t1{display:flex;align-items:flex-start;gap:10px}
+.t1 h2{font-size:15px;font-weight:900;color:#10394E;line-height:1.25}
+.t1 small{display:block;font-size:11px;color:#7b8a98;margin-top:2px}
+.x{margin-left:auto;width:28px;height:28px;border-radius:9px;border:0;background:#f2f5f8;color:#5b6b7a;font-size:14px;flex:none}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:7px 0 9px}
+.ch{font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px;letter-spacing:.3px}
+.act{display:flex;gap:7px;margin-bottom:10px}
+.b{height:36px;border-radius:10px;border:0;font:inherit;font-weight:800;font-size:11.5px;letter-spacing:.3px;padding:0 12px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap}
+.b.p{background:#10394E;color:#fff}
+.b.o{background:#fff;color:#10394E;border:1px solid #D5DEE7}
+.b.wa{background:#E7F7EE;color:#12866A}
+.b.more{width:36px;justify-content:center;padding:0;background:#fff;border:1px solid #D5DEE7;color:#46586a;margin-left:auto;position:relative}
+.phone .act .b.p{flex:1;justify-content:center}.phone .act .b.o,.phone .act .b.wa{width:40px;justify-content:center;padding:0}.phone .act .b span{display:none}.phone .act .b.more{margin-left:0}
+.menu{position:absolute;right:0;top:40px;background:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(16,57,78,.22);padding:6px;width:210px;z-index:3;text-align:left}
+.menu div{padding:9px 10px;border-radius:8px;font-size:12px;font-weight:600;color:#2c3e4f}
+.menu div.r{color:#B4332E}.menu small{display:block;font-weight:400;color:#9aa7b3;font-size:10.5px}
+.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;margin:0 -14px;padding:0 10px}
+.tabs span{flex:none;font-size:11px;font-weight:800;letter-spacing:.4px;color:#7b8a98;padding:9px 10px 10px;border-bottom:2.5px solid transparent;cursor:pointer}
+.tabs span.on{color:#10394E;border-color:#F07A0C}
+/* body */
+.bd{flex:1;overflow:auto;padding:12px 14px 16px}
+.k{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px}
+.phone .k{grid-template-columns:1fr 1fr}
+.kc{background:#fff;border-radius:13px;padding:9px 10px;display:flex;gap:8px;box-shadow:0 1px 6px rgba(16,57,78,.06);min-width:0}
+.kc .bar{width:4px;border-radius:4px;background:var(--c);flex:none}
+.kc small{display:block;font-size:9.8px;font-weight:800;color:#7b8a98;letter-spacing:.4px}
+.kc b{display:block;font-size:17px;font-weight:900;color:var(--c);line-height:1.2;margin-top:2px}
+.kc em{font-style:normal;font-size:10px;color:#7b8a98;display:block}
+.phone .kc.w{grid-column:1/-1}
+.card{background:#fff;border-radius:14px;padding:11px 12px;box-shadow:0 1px 6px rgba(16,57,78,.06);margin-bottom:10px}
+.h{font-size:11px;font-weight:800;letter-spacing:.5px;color:#10394E;margin-bottom:7px;display:flex;justify-content:space-between;gap:8px}
+.h small{font-weight:600;color:#9aa7b3;letter-spacing:0;font-size:10.5px}
+.addr{display:flex;gap:8px;font-size:12px;color:#2c3e4f;line-height:1.45}
+.addr i{font-style:normal;color:#9aa7b3}
+.pic{display:grid;grid-template-columns:70px 1fr auto;gap:8px;font-size:11.5px;padding:6px 0;border-top:1px solid #f0f3f6;align-items:center}
+.pic:first-of-type{border-top:0}.pic b{font-weight:800}.pic small{color:#7b8a98;font-size:10.5px;display:block}
+.tb{width:100%;border-collapse:collapse;font-size:11.5px}
+.tb th{font-size:9.8px;font-weight:800;letter-spacing:.4px;padding:6px 6px;text-align:right;border-bottom:2px solid}
+.tb th:first-child,.tb td:first-child{text-align:left;position:sticky;left:0;background:#fff}
+.tb td{padding:7px 6px;text-align:right;border-bottom:1px solid #f0f3f6;white-space:nowrap}
+.tb td.z{color:#c0c9d2}
+.st{color:#1E5FB8;border-color:#1E5FB8!important}.om{color:#9A6400;border-color:#9A6400!important}.noo{color:#6D3FD8;border-color:#6D3FD8!important}.so{color:#C25A12;border-color:#C25A12!important}
+.tw{overflow-x:auto}
+.more{font-size:11px;font-weight:700;color:#1E5FB8;margin-top:8px;cursor:pointer}
+.tot td{font-weight:900;border-top:2px solid #e6ecf2}
+</style></head><body>
+<div class="note"><b>Popup detail dealer — versi rapi.</b>
+<ul><li><b>Header</b>: nama + kode + kota, chip status (DA bulan ini, status pola 3 bulan, pemilik), tab menempel di atas (garis oren = aktif), bukan tombol-tombol kecil.</li>
+<li><b>Aksi</b>: <b>+ CATAT ORDER</b> (utama), Telepon, WhatsApp sejajar ukuran sama. <b>Tandai dealer tutup</b> dipindah ke menu ⋯ (merah, jarang dipakai &amp; berbahaya) — tidak lagi tombol merah besar.</li>
+<li><b>Kartu angka</b>: warna indikator (Omzet cokelat, Unit biru, NOO ungu, SO oranye), 2 kolom di HP.</li>
+<li><b>Tabel per brand</b>: brand tanpa transaksi bulan ini disembunyikan → "Tampilkan 4 brand tanpa transaksi". Baris TOTAL di bawah. Kolom pertama menempel saat digeser.</li>
+<li>Isi tab lain (Status, Histori, Stok, Transaksi, Kontak) tetap seperti sekarang; hanya kerangka &amp; ringkasan yang dirapikan.</li></ul></div>
+<div class="stage">
+ <div><div class="cap">DESKTOP</div><div class="desk"><div id="dk"></div></div></div>
+ <div><div class="cap">HP</div><div class="phone"><div id="hp"></div></div></div>
+</div>
+<script>
+let more=false,all=false;
+const B=[['ITEL',575,848775000,0,1386],['REALME',80,248000000,0,0],['MOTOPAD',0,0,0,0],['MOTOROLA',0,0,0,0],['SAMSUNG',0,0,0,0],['TECNO',0,0,0,0]];
+const rp=n=>n?'Rp '+n.toLocaleString('id-ID'):'–', nm=n=>n?n.toLocaleString('id-ID'):'–';
+function M(){
+ const rows=B.filter(r=>all||r[1]||r[2]||r[4]);const hid=B.length-B.filter(r=>r[1]||r[2]||r[4]).length;
+ return `<div class="m"><div class="grab"></div><div class="hd">
+  <div class="t1"><div><h2>CV MANDIRI JAYA MAKMUR</h2><small>1203-0045 · Jakarta Utara · lokasi JABODETABEK</small></div><button class="x">✕</button></div>
+  <div class="chips"><span class="ch" style="background:#E5F4F1;color:#0E7C6B">✓ DA SEP</span><span class="ch" style="background:#E4F4E8;color:#237A36">ACTIVE · pola Jun–Agu</span><span class="ch" style="background:#EEF1F4;color:#46586a">Terakhir order 7 Sep</span></div>
+  <div class="act"><button class="b p">＋ CATAT ORDER</button><button class="b o">☎<span> TELEPON</span></button><button class="b wa">◉<span> WHATSAPP</span></button><button class="b more" data-more>⋯${more?`<div class="menu"><div>✎ Edit kontak dealer</div><div>⇄ Transfer dealer</div><div class="r">⛔ Tandai dealer tutup<small>Perlu alasan · tidak bisa dibatalkan sendiri</small></div></div>`:''}</button></div>
+  <div class="tabs"><span class="on">RINGKASAN</span><span>STATUS</span><span>HISTORI</span><span>STOK</span><span>TRANSAKSI</span><span>KONTAK</span></div></div>
+ <div class="bd">
+  <div class="k">
+   <div class="kc w" style="--c:#9A6400"><div class="bar"></div><div><small>OMZET SEP</small><b>Rp 1,1 M</b><em>September 2026</em></div></div>
+   <div class="kc" style="--c:#1E5FB8"><div class="bar"></div><div><small>UNIT ST</small><b>655</b><em>semua brand</em></div></div>
+   <div class="kc" style="--c:#6D3FD8"><div class="bar"></div><div><small>NOO</small><b>0</b><em>September</em></div></div>
+   <div class="kc" style="--c:#C25A12"><div class="bar"></div><div><small>SELL OUT</small><b>1.386</b><em>s.d. 29 Sep</em></div></div>
+   <div class="kc" style="--c:#46586a"><div class="bar"></div><div><small>JEDA</small><b>23 hari</b><em>dari cutoff</em></div></div>
+  </div>
+  <div class="card"><div class="h">PER BRAND · SEPTEMBER <small>geser →</small></div><div class="tw"><table class="tb">
+   <tr><th style="border-color:#e6ecf2;color:#46586a">BRAND</th><th class="st">SELL THRU</th><th class="om">OMZET</th><th class="noo">NOO</th><th class="so">SELL OUT</th></tr>
+   ${rows.map(r=>`<tr><td><b>${r[0]}</b></td><td class="${r[1]?'':'z'}">${nm(r[1])}</td><td class="${r[2]?'':'z'}">${rp(r[2])}</td><td class="${r[3]?'':'z'}">${nm(r[3])}</td><td class="${r[4]?'':'z'}">${nm(r[4])}</td></tr>`).join('')}
+   <tr class="tot"><td>TOTAL</td><td>655</td><td>Rp 1.096.775.000</td><td>0</td><td>1.386</td></tr></table></div>
+   ${hid?`<div class="more" data-all>${all?'Sembunyikan brand tanpa transaksi':'Tampilkan '+hid+' brand tanpa transaksi'}</div>`:''}</div>
+  <div class="card"><div class="h">ALAMAT</div><div class="addr"><i>📍</i><div>JL. RUKO KELAPA GADING KIRANA, JAKARTA</div></div></div>
+  <div class="card"><div class="h">PIC PER BRAND <small>lokasi fisik tetap JABODETABEK</small></div>
+   <div class="pic"><b>REALME</b><div>GROSS NAS<small>GROSS NAS · GROSS NAS</small></div><small>sejak 1 Des 2025</small></div>
+   <div class="pic"><b>ITEL</b><div>Toyo Prasetyo<small>JABODETABEK · Jakarta Utara</small></div><small>master</small></div></div>
+ </div></div>`;
+}
+function draw(){dk.innerHTML=M();hp.innerHTML=M();}
+document.addEventListener('click',e=>{if(e.target.closest('[data-more]')){more=!more;draw();}else if(e.target.closest('[data-all]')){all=!all;draw();}});
+draw();
+</script>
+</body></html>

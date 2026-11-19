@@ -22,7 +22,9 @@ function js_norm($v) {
         if (!is_finite($v)) return null; // JSON.stringify(NaN/Infinity) => null
         return $v;
     }
-    if (is_array($v)) { foreach ($v as $k => $x) $v[$k] = js_norm($x); return $v; }
+    // Hanya float/array/objek yang bisa berubah; nilai lain (string, int, bool, null) dilewati tanpa panggilan
+    // rekursif — hasil identik, jauh lebih cepat untuk data besar (jutaan elemen).
+    if (is_array($v)) { foreach ($v as $k => $x) if (is_float($x) || is_array($x) || $x instanceof stdClass) $v[$k] = js_norm($x); return $v; }
     if ($v instanceof stdClass) { $o = new stdClass(); foreach ($v as $k => $x) $o->$k = js_norm($x); return $o; }
     return $v;
 }
@@ -36,7 +38,13 @@ function js_stringify($v): string {
 }
 
 /** PortalCore.key(parts) = JSON.stringify(parts). */
-function jkey(array $parts): string { return js_stringify(array_values($parts)); }
+function jkey(array $parts): string {
+    // Jalan pintas: bagian kunci yang semuanya string/int/bool/null tidak diubah js_norm, jadi json_encode langsung
+    // dengan flag yang sama persis memberi string identik. Selain itu (float, array, objek) lewat js_stringify.
+    foreach ($parts as $x) if (!(is_string($x) || is_int($x) || $x === null || is_bool($x))) return js_stringify(array_values($parts));
+    $s = json_encode(array_values($parts), (JS_JSON_FLAGS & ~JSON_PRESERVE_ZERO_FRACTION) | JSON_PARTIAL_OUTPUT_ON_ERROR);
+    return $s === false ? 'null' : $s;
+}
 
 function js_parse(string $s) { return json_decode($s, true); }
 
@@ -46,6 +54,7 @@ function js_parse(string $s) { return json_decode($s, true); }
 
 /** String(x) versi JS untuk angka/boolean/null. */
 function js_str($v): string {
+    if (is_string($v)) return $v; // jalur paling sering; hasil sama dengan (string) $v di akhir fungsi
     if ($v === null) return 'null';
     if ($v === true) return 'true';
     if ($v === false) return 'false';
@@ -64,12 +73,21 @@ function js_str($v): string {
 const JS_WS = "\x{0009}\x{000A}\x{000B}\x{000C}\x{000D}\x{0020}\x{00A0}\x{1680}\x{2000}-\x{200A}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}\x{FEFF}";
 
 function js_trim(string $s): string {
+    // Jalan pintas: kosong, atau diawali & diakhiri byte ASCII tercetak non-spasi (0x21–0x7E). Byte seperti itu tidak
+    // mungkin bagian dari karakter JS_WS, dan trim() cadangan juga tidak mengubahnya → hasil identik tanpa regex.
+    if ($s === '') return '';
+    $a = ord($s[0]); $z = ord($s[strlen($s) - 1]);
+    if ($a > 0x20 && $a < 0x7F && $z > 0x20 && $z < 0x7F) return $s;
     $r = preg_replace('/^[' . JS_WS . ']+|[' . JS_WS . ']+$/u', '', $s);
     return $r === null ? trim($s) : $r;
 }
 
 /** PortalCore.text */
-function text_($v): string { return js_trim($v === null ? '' : js_str($v)); }
+function text_($v): string {
+    // Jalan pintas sama dengan js_trim untuk string yang tidak perlu di-trim (kasus terbanyak), tanpa 2 panggilan fungsi.
+    if (is_string($v) && $v !== '') { $a = ord($v[0]); $z = ord($v[strlen($v) - 1]); if ($a > 0x20 && $a < 0x7F && $z > 0x20 && $z < 0x7F) return $v; }
+    return js_trim($v === null ? '' : js_str($v));
+}
 
 function js_upper(string $s): string { return mb_strtoupper($s, 'UTF-8'); }
 function js_lower(string $s): string { return mb_strtolower($s, 'UTF-8'); }

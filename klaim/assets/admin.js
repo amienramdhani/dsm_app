@@ -328,11 +328,37 @@ async function saHarga() {
 
 async function saBu() {
   const j = await api('entity_list');
+  const use = r => r.users || r.claims ? `Dipakai ${r.users} pengguna · ${r.claims} klaim` : 'Belum dipakai';
   shell(hero('Badan usaha', 'X04', { back: true }) + `<div class="sec"><div class="note blue">Daftar ini muncul sebagai pilihan Admin saat menyetujui klaim. Badan usaha yang sudah melekat pada pengguna otomatis ikut tampil.</div>
    <div class="card" style="margin-top:10px"><b>Tambah badan usaha</b>${fld('Nama (mis. TOP, SMI, CSN)', '<input id="bun" autocapitalize="characters" placeholder="NAMA BADAN USAHA">')}<button class="btn" id="buok">TAMBAH</button></div>
-   <h3 style="margin-top:14px">Daftar (${j.rows.length})</h3>${j.rows.map(r => `<div class="li"><div style="flex:1"><b>${esc(r.name)}</b><div class="mut">${r.used ? 'Sedang dipakai' : 'Belum dipakai'}</div></div>${r.used ? '' : `<span data-bud="${esc(r.name)}" style="color:#D2453F;cursor:pointer;font-weight:700">Hapus</span>`}</div>`).join('')}</div>`);
+   <h3 style="margin-top:14px">Daftar (${j.rows.length})</h3>${j.rows.map((r, i) => `<div class="li"><div style="flex:1"><b>${esc(r.name)}</b><div class="mut">${use(r)}</div></div><div class="buacts"><span class="bua e" data-bue="${i}">Ubah</span><span class="bua d" data-bux="${i}">Hapus</span></div></div>`).join('')}</div>`);
+  const reload = async m => { S.L = await api('lookups'); toast(m); saBu(); };
+  const imp = r => `<div class="buimp"><div><b>${r.users}</b><span>pengguna</span></div><div><b>${r.claims}</b><span>klaim</span></div></div>`;
+  const flow = (a, b) => `<div class="buflow"><div>${esc(a)}</div><span>→</span><div class="to">${esc(b)}</div></div>`;
   $('#buok').onclick = () => guard(async () => { await api('entity_add', { name: $('#bun').value }); S.L = await api('lookups'); toast('Badan usaha ditambahkan'); saBu(); });
-  $$('[data-bud]').forEach(e => e.onclick = () => confirm('Hapus ' + e.dataset.bud + '?') && guard(async () => { await api('entity_del', { name: e.dataset.bud }); S.L = await api('lookups'); saBu(); }));
+  // Ubah nama (nama yang sudah ada = gabung)
+  $$('[data-bue]').forEach(e => e.onclick = () => { const r = j.rows[+e.dataset.bue];
+    sheet(`<h3 class="qh">Ubah badan usaha</h3><div class="mut" style="margin:-4px 0 8px">${esc(r.name)}</div>${fld('Nama baru', `<input id="bur" autocapitalize="characters" value="${esc(r.name)}">`)}<div id="buinfo"></div>
+      <div class="two" style="margin-top:6px"><button class="btn g" id="bucx">BATAL</button><button class="btn" id="buok2">SIMPAN</button></div>`, (el, close) => {
+      const info = () => { const v = $('#bur', el).value.trim().toUpperCase().replace(/\s+/g, ' '); const ex = j.rows.find(x => x.name === v && x.name !== r.name); const b = $('#buok2', el);
+        if (ex) { $('#buinfo', el).innerHTML = `<div class="note red"><b>${esc(v)} sudah ada.</b> Menyimpan akan <b>menggabungkan</b> ${esc(r.name)} ke ${esc(v)}, lalu ${esc(r.name)} hilang dari daftar.</div>${flow(r.name + ' · ' + r.users + ' pengguna · ' + r.claims + ' klaim', v + ' · ' + ex.users + ' pengguna · ' + ex.claims + ' klaim')}`; b.textContent = 'GABUNGKAN'; b.className = 'btn r2'; }
+        else { $('#buinfo', el).innerHTML = r.users || r.claims ? `${imp(r)}<div class="note">Semua pengguna dan klaim (termasuk yang sudah selesai) memakai nama baru. Perubahan dicatat di riwayat.</div>` : ''; b.textContent = 'SIMPAN'; b.className = 'btn'; } };
+      $('#bur', el).oninput = info; info(); $('#bucx', el).onclick = close;
+      $('#buok2', el).onclick = () => guard(async () => { const x = await api('entity_rename', { from: r.name, to: $('#bur', el).value }); close();
+        reload(x.merged ? `✓ ${r.name} digabung · ${x.users} pengguna · ${x.claims} klaim` : `✓ Nama diganti · ${x.users} pengguna · ${x.claims} klaim`); });
+    }); });
+  // Hapus (yang dipakai = gabung ke badan usaha lain)
+  $$('[data-bux]').forEach(e => e.onclick = () => { const r = j.rows[+e.dataset.bux]; const used = r.users || r.claims; const others = j.rows.filter(x => x.name !== r.name);
+    if (!used) return sheet(`<h3 class="qh">Hapus badan usaha?</h3><div class="mut" style="margin:-4px 0 12px">${esc(r.name)} · belum dipakai pengguna maupun klaim</div><div class="two"><button class="btn g" id="bucx">BATAL</button><button class="btn r2" id="budel">HAPUS</button></div>`,
+      (el, close) => { $('#bucx', el).onclick = close; $('#budel', el).onclick = () => guard(async () => { await api('entity_del', { name: r.name }); close(); reload('✓ ' + r.name + ' dihapus'); }); });
+    if (!others.length) return toast('Tidak ada badan usaha lain sebagai tujuan.', true);
+    sheet(`<h3 class="qh">Hapus badan usaha</h3><div class="mut" style="margin:-4px 0 8px">${esc(r.name)} masih dipakai — pindahkan dulu ke badan usaha lain</div>${imp(r)}
+      ${fld('Pindahkan ke', `<select id="buto">${others.map(x => `<option>${esc(x.name)}</option>`).join('')}</select>`)}<div id="buf"></div>
+      <div class="two" style="margin-top:6px"><button class="btn g" id="bucx">BATAL</button><button class="btn r2" id="budel">GABUNG &amp; HAPUS</button></div>`, (el, close) => {
+      const upd = () => { const t = $('#buto', el).value; $('#buf', el).innerHTML = flow(r.name, t) + `<div class="note red">${r.users} pengguna dan ${r.claims} klaim dipindah ke <b>${esc(t)}</b>, lalu <b>${esc(r.name)} dihapus</b>. Pengguna yang sudah punya ${esc(t)} tidak jadi dobel.</div>`; };
+      $('#buto', el).onchange = upd; upd(); $('#bucx', el).onclick = close;
+      $('#budel', el).onclick = () => guard(async () => { const t = $('#buto', el).value; const x = await api('entity_del', { name: r.name, to: t }); close(); reload(`✓ ${r.name} digabung ke ${t} · ${x.users} pengguna · ${x.claims} klaim`); });
+    }); });
 }
 
 /* ---------- Kalender pengajuan (semua peran) ---------- */

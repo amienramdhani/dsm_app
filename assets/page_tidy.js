@@ -16,7 +16,7 @@
   var page = function () { try { return typeof PAGE !== 'undefined' ? PAGE : ''; } catch (e) { return ''; } };
 
   /* ---------------------------------------------------------------- DEALER */
-  var STC = { 'AKTIF': '#12A86B', 'DI BAWAH MIN': '#F2C230', 'BANGKIT': '#22B0C4', 'TURUN': '#E8883A', 'IDLE': '#F2B04E', 'PASIF': '#E5534B', 'NONAKTIF': '#9AA3AE', 'LAINNYA': '#B7C0CC', 'BELUM ORDER': '#D5DCE6' };
+  var STC = { 'AKTIF': '#12A86B', 'DI BAWAH MIN': '#F2C230', 'BANGKIT': '#22B0C4', 'TURUN': '#E8883A', 'IDLE': '#F2B04E', 'PASIF': '#E5534B', 'NONAKTIF': '#9AA3AE', 'LAINNYA': '#B7C0CC', 'BELUM ORDER': '#D5DCE6', 'ACTIVE': '#2E9E45', 'PASSIVE': '#E89A00', 'INACTIVE': '#C62E2E', 'PROSPECT': '#1E7FD6' };
   function stColor(s) { if (STC[s]) return STC[s]; try { var c = dsCol(s); return c && c[1] ? c[1] : '#9AA3AE'; } catch (e) { return '#9AA3AE'; } }
 
   function kpiCard(c, lab, val, sub, extra) {
@@ -36,7 +36,6 @@
     var h = '<div class="ptK4" id="ptK4">' + card1;
     h += noo ? kpiCard('#6D3FD8', esc(($q('.klab', noo) || {}).textContent || 'NOO'), ($q('.kval', noo) || {}).innerHTML || '', esc(($q('.ksub', noo) || {}).textContent || '')) : '';
     var bk = bkBoxes.map(function (b) { var s = b.dataset.dsbk; return '<a href="#" class="ptBk' + (b.classList.contains('on') ? ' on' : '') + '" data-dsbk="' + esc(s) + '">' + esc(s) + ' <b>' + n_(($q('b', b) || {}).textContent) + '</b></a>'; }).join(' · ');
-    h += kpiCard('#0E7C8C', 'BANGKIT BULAN INI <span class="dsI" data-dsi="bangkit">i</span>', String(bkTot), 'dari ' + bk);
     h += so ? kpiCard('#C25A12', esc(($q('.klab', so) || {}).textContent || 'SELL OUT'), ($q('.kval', so) || {}).innerHTML || '', esc(($q('.ksub', so) || {}).textContent || '')) : '';
     h += '</div>';
     var holder = document.createElement('div'); holder.innerHTML = h; var row = holder.firstChild;

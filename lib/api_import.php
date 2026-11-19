@@ -8,12 +8,17 @@ require_once __DIR__ . '/publish.php';
 require_once __DIR__ . '/sheetio.php';
 
 /** LockService.getScriptLock() → GET_LOCK MySQL (satu publikasi dalam satu waktu). */
-function with_lock_(callable $f) {
-    $pdo = db_();
-    $got = (int) $pdo->query("SELECT GET_LOCK('dsm_publish', 15)")->fetchColumn();
-    if (!$got) fail_('Sistem sedang memproses publikasi lain. Coba lagi sebentar.');
-    try { return $f(); } finally { $pdo->query("SELECT RELEASE_LOCK('dsm_publish')"); }
+/** Kunci tulis. Default 'dsm_publish' (semua yang bisa memicu publikasi). Simpan kecil yang tidak menyentuh master/transaksi
+ *  memakai kunci sendiri (mis. 'dsm_tm', 'dsm_contact', 'dsm_tutup') supaya tidak ikut antre di belakang publikasi Admin. */
+function with_lock_(callable $f, string $name = 'dsm_publish') {
+    $pdo = db_(); $name = preg_replace('/[^a-z_]/', '', $name) ?: 'dsm_publish';
+    // Kunci publikasi menunggu maks 40 dtk (di bawah timeout nginx 60 dtk): beberapa admin menyimpan bersamaan cukup antre.
+    // Kunci kecil bernama tetap 15 dtk.
+    $got = (int) $pdo->query("SELECT GET_LOCK('" . $name . "', " . ($name === 'dsm_publish' ? 40 : 15) . ")")->fetchColumn();
+    if (!$got) fail_($name === 'dsm_publish' ? 'Sistem sedang memproses publikasi lain. Coba lagi sebentar.' : 'Data sedang disimpan pengguna lain. Coba lagi sebentar.');
+    try { return $f(); } finally { $pdo->query("SELECT RELEASE_LOCK('" . $name . "')"); }
 }
+function with_lock_named_(string $name, callable $f) { return with_lock_($f, $name); }
 
 class RejectError extends AppError {
     public array $data = [];
@@ -166,12 +171,25 @@ function stageRegionImport_(array $form, string $kind): array {
 function publishRegionImport_($token, $id): array {
     @ini_set('memory_limit', '2560M'); // publikasi data besar (±145 ribu baris) butuh ±1,7 GB
     $u = adminGuard_($token);
-    return with_lock_(function () use ($token, $id, $u) {
-        adminGuard_($token);
+    // Tahap 3: pratinjau diperiksa sekarang, proses beratnya masuk antrean (layar langsung kembali).
+    if (function_exists('pqOn_') && pqOn_()) {
+        $pointer = prop_get_('REGION_STAGE_' . js_str($id)); if (!$pointer) fail_('Pratinjau tidak tersedia.');
+        $s = readJson_($pointer); $old = snapshot_(); $meta = meta_();
+        if ($s['actor'] !== $u['nik'] || $s['base'] !== $old['id'] || $s['config'] !== configHash_($meta) || now_ms() - $s['created'] > 3600000) fail_('Pratinjau kedaluwarsa atau data berubah; periksa ulang.');
+        foreach ($s['months'] as $m) assertPeriodOpen_($m);
+        foreach (pqQueue_() as $x) if (($x['kind'] ?? '') === 'import' && ($x['stage'] ?? '') !== $id) fail_('Upload sebelumnya masih di antrean publikasi. Tunggu selesai (lihat Admin › Publikasi Data), lalu periksa ulang file ini.');
+        return pqEnqueueImport_($u, (string) $id, $s['kind'] . ' ' . $s['period'] . ' ' . implode(', ', $s['regions']) . (!empty($s['brands']) ? ' [' . implode(', ', $s['brands']) . ']' : ''));
+    }
+    return publishRegionImportRun_($u, (string) $id, false);
+}
+/** Inti upload ST/SO. $queued = dijalankan pekerja antrean: pemeriksaan "data berubah" dilonggarkan karena publikasi lain boleh terjadi sejak pratinjau. */
+function publishRegionImportRun_(array $u, string $id, bool $queued): array {
+    @ini_set('memory_limit', '2560M');
+    return with_lock_(function () use ($id, $u, $queued) {
         $pointer = prop_get_('REGION_STAGE_' . js_str($id));
         if (!$pointer) fail_('Pratinjau tidak tersedia.');
         $s = readJson_($pointer); $old = snapshot_(); $meta = meta_();
-        if ($s['actor'] !== $u['nik'] || $s['base'] !== $old['id'] || $s['config'] !== configHash_($meta) || now_ms() - $s['created'] > 3600000) fail_('Pratinjau kedaluwarsa atau data berubah; periksa ulang.');
+        if (!$queued && ($s['actor'] !== $u['nik'] || $s['base'] !== $old['id'] || $s['config'] !== configHash_($meta) || now_ms() - $s['created'] > 3600000)) fail_('Pratinjau kedaluwarsa atau data berubah; periksa ulang.');
         foreach ($s['months'] as $m) assertPeriodOpen_($m);
         $scope = !empty($s['brands']) ? ' [' . implode(', ', $s['brands']) . ']' : '';
         checkpoint_($u['nik'], 'Impor ' . $s['kind'] . (!empty($s['multi']) ? ' multi-bulan ' . $s['months'][0] . '..' . end($s['months']) : '') . ' ' . implode(', ', $s['regions']) . $scope);
@@ -205,7 +223,7 @@ function apiPublishConfig($token) {
         guard_($token, true);
         checkpoint_($u['nik'], 'Publikasi konfigurasi');
         $old = snapshot_(); validateConfigChange_($old, meta_());
-        return publish_(meta_(), $old['raw'], $old['coverage'], $u['nik'], 'Publikasi konfigurasi');
+        return publishLight_(fn() => publish_(meta_(), $old['raw'], $old['coverage'], $u['nik'], 'Publikasi konfigurasi'));
     });
 }
 function apiRegionImportTemplate($token, $kind = null) {
@@ -318,7 +336,7 @@ function apiSaveUser($token, $input) {
             putTable_('Admin_Access', ['NIK', 'WILAYAH'], $rows);
             if (!$old) { $pin = randomPin_(); setPin_($nik, $pin, true); }
             $meta = meta_(); validateConfigChange_($db, $meta);
-            publish_($meta, $db['raw'], $db['coverage'], $u['nik'], 'User ' . $nik);
+            publishLight_(fn() => publish_($meta, $db['raw'], $db['coverage'], $u['nik'], 'User ' . $nik));
             audit_($u['nik'], 'SAVE_USER', $nik . ' ' . $role);
             return ['nik' => $nik, 'pin' => $pin];
         } catch (Throwable $e) {

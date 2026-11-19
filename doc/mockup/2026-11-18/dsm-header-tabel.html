@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSM · Mockup Header Tabel</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#eef2f7;color:#14202b;padding:16px 10px 50px;display:flex;flex-direction:column;align-items:center;gap:16px}
+.note{max-width:900px;font-size:12.5px;color:#46586a;line-height:1.55;background:#fff;border-radius:12px;padding:12px 14px;box-shadow:0 2px 10px #10394e10}
+.note b{color:#10394E}
+.opt{width:900px;max-width:100%;background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(16,57,78,.07);padding:14px 16px}
+.ot{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.ot span{background:#10394E;color:#fff;border-radius:7px;font-weight:900;font-size:11px;padding:3px 8px}
+.ot b{font-size:13px;color:#10394E}.ot em{font-style:normal;font-size:10.5px;font-weight:800;color:#12866A;background:#E4F4E8;padding:2px 7px;border-radius:6px;margin-left:4px}
+.ot small{font-size:11px;color:#7b8a98;margin-left:auto}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+td{padding:8px 10px;border-bottom:1px solid #f0f3f6;text-align:right;white-space:nowrap}
+td:first-child,th:first-child{text-align:left}
+th{text-align:right;white-space:nowrap}
+tr.tot td{font-weight:900;border-top:1px solid #e3e9ef;border-bottom:0}
+.z{color:#c0c9d2}
+/* lama */
+.old th{background:linear-gradient(#f4f8fc,#e3eef8);color:#0b4d8c;font-weight:800;font-size:11.5px;padding:9px 10px;border-bottom:3px solid #1765b5;text-align:left}
+.old td{text-align:left}
+/* A */
+.a th{background:#F4F7FA;color:#6b7b8a;font-size:10px;font-weight:800;letter-spacing:.5px;padding:8px 10px;border-bottom:1px solid #e3e9ef}
+/* B */
+.b th{background:#fff;color:#6b7b8a;font-size:10px;font-weight:800;letter-spacing:.5px;padding:8px 10px;border-bottom:1px solid #e3e9ef}
+.b th i{display:inline-block;width:7px;height:7px;border-radius:2px;margin-right:5px;vertical-align:1px}
+.b th.st{color:#1E5FB8}.b th.om{color:#9A6400}.b th.noo{color:#6D3FD8}.b th.so{color:#C25A12}
+/* C */
+.c th{background:var(--hb,#10394E);color:var(--hc,#fff);font-size:10px;font-weight:800;letter-spacing:.5px;padding:8px 10px}
+.c th:first-child{border-radius:9px 0 0 9px}.c th:last-child{border-radius:0 9px 9px 0}
+</style></head><body>
+<div class="note"><b>Header tabel</b> — pilih satu, nanti dipakai di <b>semua tabel DSM</b> (desktop &amp; HP, termasuk popup dealer). Semua opsi: huruf kapital kecil 10px, angka rata kanan, tanpa gradasi &amp; tanpa garis biru tebal, baris TOTAL tebal di bawah.</div>
+<div id="x"></div>
+<script>
+const R=[['ITEL',575,'Rp 848.775.000','–','1.386'],['REALME',80,'Rp 248.000.000','–','–'],['TOTAL',655,'Rp 1.096.775.000','0','1.386']];
+const body=()=>R.map((r,i)=>`<tr class="${i===R.length-1?'tot':''}">${r.map(c=>`<td class="${c==='–'?'z':''}">${c}</td>`).join('')}</tr>`).join('');
+const O=[['LAMA','Tampilan sekarang','','old',`<th>BRAND</th><th>SELLTHRU</th><th>OMZET</th><th>NOO</th><th>SELL OUT</th>`],
+['A','Abu muda polos','Paling netral, cocok untuk tabel panjang','a',`<th>BRAND</th><th>SELL THRU</th><th>OMZET</th><th>NOO</th><th>SELL OUT</th>`],
+['B','Putih + warna indikator','Kolom ST/Omzet/NOO/SO langsung kebaca dari warnanya','b',`<th>BRAND</th><th class="st"><i style="background:#1E5FB8"></i>SELL THRU</th><th class="om"><i style="background:#9A6400"></i>OMZET</th><th class="noo"><i style="background:#6D3FD8"></i>NOO</th><th class="so"><i style="background:#C25A12"></i>SELL OUT</th>`],
+['C','Pita gelap','Paling tegas, tapi berat kalau tabelnya banyak','c',`<th>BRAND</th><th>SELL THRU</th><th>OMZET</th><th>NOO</th><th>SELL OUT</th>`]];
+const C=[['#10394E','Petrol (sekarang C)'],['#1E3A5F','Navy'],['#334155','Slate'],['#0E5A63','Teal tua'],['#1E5FB8','Biru DSM'],['#2B2F36','Arang'],['#5B3A1E','Cokelat tua'],['#3B2E6E','Ungu tua']];
+document.body.insertAdjacentHTML('beforeend',`<div class="opt"><div class="ot"><span>C</span><b>Pita gelap · pilihan warna</b><small>angka di pojok = kode warna</small></div>${C.map((c,i)=>`<div style="margin-bottom:12px"><div style="font-size:11px;font-weight:800;color:#46586a;margin-bottom:5px">C${i+1} · ${c[1]} <span style="color:#9aa7b3;font-weight:600">${c[0]}</span></div><table class="c" style="--hb:${c[0]}"><tr><th>BRAND</th><th>SELL THRU</th><th>OMZET</th><th>NOO</th><th>SELL OUT</th></tr>${body()}</table></div>`).join('')}</div>`);
+const D=[['#64748B','#fff','Slate lembut'],['#5A7A99','#fff','Biru debu'],['#5F8A8B','#fff','Teal lembut'],['#7A869A','#fff','Abu biru'],['#DCE6F0','#10394E','Biru pucat'],['#E3EAF0','#334155','Abu pucat'],['#DDEBE9','#0E5A63','Teal pucat'],['#E8E4F3','#3B2E6E','Lavender pucat']];
+document.body.insertAdjacentHTML('beforeend',`<div class="opt"><div class="ot"><span>D</span><b>Lebih lembut</b><small>D1–D4 pita sedang · D5–D8 pita pucat teks gelap</small></div>${D.map((c,i)=>`<div style="margin-bottom:12px"><div style="font-size:11px;font-weight:800;color:#46586a;margin-bottom:5px">D${i+1} · ${c[2]} <span style="color:#9aa7b3;font-weight:600">${c[0]}</span></div><table class="c" style="--hb:${c[0]};--hc:${c[1]}"><tr><th>BRAND</th><th>SELL THRU</th><th>OMZET</th><th>NOO</th><th>SELL OUT</th></tr>${body()}</table></div>`).join('')}</div>`);
+x.innerHTML=O.map(o=>`<div class="opt" style="margin-bottom:14px"><div class="ot"><span>${o[0]}</span><b>${o[1]}</b>${o[0]==='B'?'<em>REKOMENDASI</em>':''}<small>${o[2]}</small></div><table class="${o[3]}"><tr>${o[4]}</tr>${body()}</table></div>`).join('');
+</script></body></html>

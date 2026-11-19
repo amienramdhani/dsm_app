@@ -134,7 +134,7 @@ function apiTMAdmin($token) {
 }
 function apiTMProfileSave($token, $nik, $input) {
     $u=guard_($token,true);demoAssertWritable_($token);tmTarget_(snapshot_(),$nik);$input=(array)$input;
-    return with_lock_(function()use($u,$nik,$input){
+    return with_lock_named_('dsm_tm', function()use($u,$nik,$input){
         $p=tmProfile_($nik);if((int)($input['revision']??-1)!==(int)$p['revision'])fail_('Pengaturan berubah. Muat ulang dahulu.');
         $admin=text_($input['adminPic']??'');$a=person_(snapshot_(),$admin);if(!$a||!in_array($a['role'],['ADMIN','SUPER ADMIN'],true))fail_('Pilih satu Admin PIC.');
         $days=(int)($input['staleDays']??7);if($days<1||$days>365)fail_('Batas FU harus 1–365 hari.');
@@ -144,7 +144,7 @@ function apiTMProfileSave($token, $nik, $input) {
 }
 function apiTMAssignmentSave($token, $nik, $input) {
     $u=tmGuardManage_($token,$nik);$input=(array)$input;
-    return with_lock_(function()use($u,$nik,$input){
+    return with_lock_named_('dsm_tm', function()use($u,$nik,$input){
         $db=snapshot_();$profile=tmProfile_($nik);if((int)($input['revision']??-1)!==(int)$profile['revision'])fail_('Penugasan berubah. Muat ulang dahulu.');
         $mode=$input['mode']??'SELECTED';if(!in_array($mode,['ALL','SELECTED','MIXED'],true))fail_('Mode penugasan tidak valid.');
         $sales=array_values(array_unique(array_map('text_', (array)($input['sales']??[]))));
@@ -197,7 +197,7 @@ function apiTMKpiSettings($token, $nik, $period) {
 }
 function apiTMKpiSave($token, $nik, $period, $input) {
     $u=tmGuardManage_($token,$nik);PortalCore::month($period);assertPeriodOpen_($period);$input=(array)$input;
-    return with_lock_(function()use($u,$nik,$period,$input){
+    return with_lock_named_('dsm_tm', function()use($u,$nik,$period,$input){
         $cfg=tmConfig_($nik,$period);if((int)($input['revision']??-1)!==$cfg['revision'])fail_('KPI berubah. Muat ulang dahulu.');
         $ind=(array)($input['indicators']??[]);if(!$ind||count($ind)>100)fail_('Isi 1–100 indikator.');$out=[];$keys=[];$weights=[];
         $products=snapshot_()['meta']['products'];$knownBrands=array_unique(array_column($products,'brand'));$knownTypes=array_unique(array_filter(array_column($products,'type')));
@@ -330,7 +330,7 @@ function apiTMRank($token,$period,$brand=null,$scope='PEER') {
 function tmBusinesses_(): array { $r=tmQuery_('SELECT * FROM _tm_business ORDER BY name');foreach($r as &$x){$x['active']=(bool)$x['active'];$x['revision']=(int)$x['revision'];$x['logo']=$x['logo']?json_decode($x['logo'],true):null;}unset($x);return $r; }
 function apiTMBusinessSave($token,$input) {
     $u=adminGuard_($token);demoAssertWritable_($token);$input=(array)$input;$id=text_($input['id']??'')?:uuid_();$name=text_($input['name']??'');if(!$name||strlen($name)>180)fail_('Isi nama badan usaha (maksimal 180 karakter).');
-    return with_lock_(function()use($u,$input,$id,$name){$old=tmQuery_('SELECT * FROM _tm_business WHERE id=?',[$id])[0]??null;if((int)($input['revision']??0)!==(int)($old['revision']??0))fail_('Badan usaha berubah, muat ulang.');$logo=$input['logo']??null;
+    return with_lock_named_('dsm_tm', function()use($u,$input,$id,$name){$old=tmQuery_('SELECT * FROM _tm_business WHERE id=?',[$id])[0]??null;if((int)($input['revision']??0)!==(int)($old['revision']??0))fail_('Badan usaha berubah, muat ulang.');$logo=$input['logo']??null;
         if($logo){$data=$logo['data']??'';if(!preg_match('/^data:image\/jpeg;base64,([A-Za-z0-9+\/=]+)$/',$data,$m))fail_('Logo harus JPEG.');$raw=base64_decode($m[1],true);$info=$raw===false?false:@getimagesizefromstring($raw);if(!$info||$info[2]!==IMAGETYPE_JPEG||strlen($raw)>1048576||$info[0]>1600||$info[1]>1600)fail_('Logo tidak valid atau terlalu besar.');$logo=['data'=>$data,'width'=>$info[0],'height'=>$info[1]];}
         tmExec_('INSERT INTO _tm_business (id,name,logo,active,revision) VALUES (?,?,?,?,1) ON DUPLICATE KEY UPDATE name=VALUES(name),logo=VALUES(logo),active=VALUES(active),revision=revision+1',[$id,$name,$logo?tmJson_($logo):null,empty($input['active'])?0:1]);data_rev_bump_('Telemarketing');audit_($u['nik'],'TM_BUSINESS',$id.' '.$name);return tmBusinesses_();});
 }
@@ -429,11 +429,11 @@ function apiTMDailyReport($token) {
 }
 function apiTMFollowUpSave($token,$input) {
     demoAssertWritable_($token);$u=guard_($token);if($u['role']!=='TELEMARKETING')fail_('FU dicatat oleh Telemarketing.');$input=(array)$input;
-    return with_lock_(function()use($u,$input){$dealer=text_($input['dealer']??'');$brand=js_upper(text_($input['brand']??''));if(!tmHasDealer_(tmLivePairs_($u['nik']),$dealer,$brand))fail_('Dealer dan brand di luar penugasan.');$date=tmDate_(text_($input['date']??''));if($date>tmToday_())fail_('Tanggal FU tidak boleh di masa depan.');$next=text_($input['next']??'');if($next&&tmDate_($next)<$date)fail_('Tanggal FU berikutnya harus sesudah atau sama dengan tanggal FU.');$method=text_($input['method']??'');$result=text_($input['result']??'');$note=text_($input['note']??'');if(!in_array($method,['WhatsApp','Telepon','Kunjungan','Lainnya'],true)||!$result||mb_strlen($result)>180||mb_strlen($note)>4000)fail_('Isi metode dan hasil FU.');$id=uuid_();tmExec_('INSERT INTO _tm_fu (id,nik,dealer,brand,date,next_date,data,created_at) VALUES (?,?,?,?,?,?,?,?)',[$id,$u['nik'],$dealer,$brand,$date,$next,tmJson_(['method'=>$method,'result'=>$result,'note'=>$note]),iso_now()]);data_rev_bump_('Telemarketing');audit_($u['nik'],'TM_FU',$dealer.' '.$brand.' '.$result);return ['id'=>$id];});
+    return with_lock_named_('dsm_tm', function()use($u,$input){$dealer=text_($input['dealer']??'');$brand=js_upper(text_($input['brand']??''));if(!tmHasDealer_(tmLivePairs_($u['nik']),$dealer,$brand))fail_('Dealer dan brand di luar penugasan.');$date=tmDate_(text_($input['date']??''));if($date>tmToday_())fail_('Tanggal FU tidak boleh di masa depan.');$next=text_($input['next']??'');if($next&&tmDate_($next)<$date)fail_('Tanggal FU berikutnya harus sesudah atau sama dengan tanggal FU.');$method=text_($input['method']??'');$result=text_($input['result']??'');$note=text_($input['note']??'');if(!in_array($method,['WhatsApp','Telepon','Kunjungan','Lainnya'],true)||!$result||mb_strlen($result)>180||mb_strlen($note)>4000)fail_('Isi metode dan hasil FU.');$id=uuid_();tmExec_('INSERT INTO _tm_fu (id,nik,dealer,brand,date,next_date,data,created_at) VALUES (?,?,?,?,?,?,?,?)',[$id,$u['nik'],$dealer,$brand,$date,$next,tmJson_(['method'=>$method,'result'=>$result,'note'=>$note]),iso_now()]);data_rev_bump_('Telemarketing');audit_($u['nik'],'TM_FU',$dealer.' '.$brand.' '.$result);return ['id'=>$id];});
 }
 function apiTMOrderSave($token,$input) {
     demoAssertWritable_($token);$u=guard_($token);if(!in_array($u['role'],['TELEMARKETING','SALES','ASM','RGM','ADMIN','SUPER ADMIN'],true))fail_('Akses form order ditolak.');$input=(array)$input;
-    return with_lock_(function()use($u,$input){$db=snapshot_();$id=text_($input['id']??'')?:uuid_();$old=tmQuery_('SELECT * FROM _tm_order WHERE id=?',[$id])[0]??null;if($old&&$old['nik']!==$u['nik'])fail_('Order milik akun lain.');if((int)($input['revision']??0)!==(int)($old['revision']??0))fail_('Order berubah. Buka ulang order.');
+    return with_lock_named_('dsm_tm', function()use($u,$input){$db=snapshot_();$id=text_($input['id']??'')?:uuid_();$old=tmQuery_('SELECT * FROM _tm_order WHERE id=?',[$id])[0]??null;if($old&&$old['nik']!==$u['nik'])fail_('Order milik akun lain.');if((int)($input['revision']??0)!==(int)($old['revision']??0))fail_('Order berubah. Buka ulang order.');
         $mode=$input['dealerMode']??'master';$dealer=$mode==='master'?text_($input['dealer']??''):'';if(!in_array($mode,['master','manual'],true))fail_('Mode dealer tidak valid.');
         if($mode==='master'){$allowed=$u['role']==='TELEMARKETING'?array_unique(array_column(tmLivePairs_($u['nik']),'dealer')):array_column(apiOrderBoot($token)['dealers'],'id');if(!in_array($dealer,$allowed,true))fail_('Dealer di luar penugasan.');}
         $business=tmQuery_('SELECT * FROM _tm_business WHERE id=? AND active=1',[text_($input['businessId']??'')])[0]??null;if(!$business)fail_('Pilih badan usaha aktif.');
@@ -511,7 +511,7 @@ function apiTMKpiCopy($token,$fromNik,$period,$targets=null,$mode=null,$withTarg
     $u=tmGuardManage_($token,$fromNik);PortalCore::month($period);assertPeriodOpen_($period);$reason=text_($reason);if(strlen($reason)<5)fail_('Isi alasan minimal 5 karakter.');
     $targets=array_values(array_unique(array_filter(array_map('text_',(array)$targets))));if(!$targets||count($targets)>100)fail_('Pilih 1–100 Telemarketing tujuan.');
     $mode=$mode==='OVERWRITE'?'OVERWRITE':'SKIP';
-    return with_lock_(function()use($u,$fromNik,$period,$targets,$mode,$withTarget,$reason){
+    return with_lock_named_('dsm_tm', function()use($u,$fromNik,$period,$targets,$mode,$withTarget,$reason){
         $src=tmConfig_($fromNik,$period);if(!$src['indicators'])fail_('KPI sumber masih kosong.');$done=[];$skipped=[];
         foreach($targets as $nik){
             if($nik===$fromNik)continue;tmTarget_(snapshot_(),$nik);if(!tmCanManage_($u,$nik)){$skipped[]=['nik'=>$nik,'why'=>'Di luar kewenangan'];continue;}

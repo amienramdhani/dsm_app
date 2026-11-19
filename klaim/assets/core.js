@@ -105,7 +105,7 @@ function shell(inner, opt = {}) {
   const mode = curMode(); const nav = MODES[mode].nav; const hash = location.hash || '#/home';
   const hp = hash.split('?')[0]; let cur = nav.findIndex(n => n[2] === hp);
   if (cur < 0 && hp === '#/realisasi') cur = nav.findIndex(n => n[2] === '#/monitor');
-  const nb = { '#/home': 0, '#/revisi': S.counts.revisi_admin || 0, '#/pc': 0, '#/ba': S.counts['ba_' + ({ admin: 'ADMIN', hos: 'HOS', fm: 'FM' }[mode] || '')] || 0 };
+  const nb = { '#/mine': mode === 'pemohon' ? S.counts.mine_draft || 0 : 0, '#/home': 0, '#/revisi': S.counts.revisi_admin || 0, '#/pc': 0, '#/ba': S.counts['ba_' + ({ admin: 'ADMIN', hos: 'HOS', fm: 'FM' }[mode] || '')] || 0 };
   const bell = `<div class="ib" data-go="#/notif">🔔${S.counts.notif ? `<i>${S.counts.notif}</i>` : ''}</div>`;
   const modes = availModes();
   const mb = modes.length > 1 ? `<div class="modebar">${modes.map(m => `<span class="${m === mode ? 'a' : ''}" data-mode="${m}">${MODES[m].n}</span>`).join('')}</div>` : '';
@@ -196,7 +196,7 @@ function kcard(cls, ic, n, l, s, go) { return `<div class="k ${cls}" data-go="${
 R.home = async () => {
   await loadMe(); const mode = curMode(); const c = S.counts;
   const name = esc(S.me.name.split(' ')[0]);
-  let glass = '', alert = '', cards = '', list = '', sub = MODES[mode].n.toUpperCase();
+  let glass = '', alert = '', cards = '', list = '', drafts = '', sub = MODES[mode].n.toUpperCase();
   const listLoad = async f => { const j = await api('claim_list', f); return j.rows; };
   if (mode === 'pemohon') {
     const b = await api('budget'); const tot = Object.values(b.budget).reduce((a, x) => ({ budget: a.budget + (x.enabled && !x.none ? x.budget : 0), av: a.av + (x.enabled && !x.none ? x.available : 0), over: a.over + (x.none ? 0 : x.over) }), { budget: 0, av: 0, over: 0 });
@@ -207,6 +207,7 @@ R.home = async () => {
     else if (c.mine_revisi) alert = `<div class="alert" data-go="#/mine?tab=revisi"><div>↩️</div><div><b>${c.mine_revisi} klaim perlu revisi</b><span>Perbaiki agar kembali berjalan</span></div><div class="go">BUKA</div></div>`;
     cards = kcard('g2', '⏳', c.mine_proses, 'Diproses', 'sedang berjalan', '#/mine?tab=proses') + kcard('g1', '↩️', c.mine_revisi, 'Perlu revisi', 'butuh perbaikan', '#/mine?tab=revisi') + kcard('g3', '✅', c.mine_selesai, 'Selesai', 'sudah ditransfer', '#/mine?tab=selesai') + kcard('g4', '⛔', c.mine_ditolak, 'Ditolak', 'final', '#/mine?tab=ditolak');
     list = (await listLoad({ view: 'mine', tab: 'proses', limit: 4 })).map(claimLi).join('');
+    if (typeof draftSec === 'function') drafts = draftSec(await api('draft_list', { limit: 3 }), 3); // draf di bawah kartu status (mockup 2026-11-19)
   } else if (['admin', 'audit', 'hos', 'fm', 'ft'].includes(mode)) {
     const st = { admin: 'ADMIN', audit: 'AUDIT', hos: 'HOS', fm: 'FM', ft: 'FT' }[mode]; const q = c['queue_' + st] || 0; const lama = c['lama_' + st] || 0;
     const ttl = { ADMIN: 'Menunggu pemeriksaan Anda', AUDIT: 'Menunggu keputusan BA Anda', HOS: 'Menunggu persetujuan Anda', FM: 'Menunggu persetujuan Anda', FT: 'Siap ditransfer' }[st];
@@ -226,7 +227,7 @@ R.home = async () => {
     cards = kcard('g2', '👥', '', 'Pengguna & peran', 'X01', '#/sa/users') + kcard('g1', '🔑', '', 'Kode cadangan', 'X02', '#/sa/codes') + kcard('g3', '⚙️', '', 'Pengaturan', 'N hari, mode tes', '#/sa/settings') + kcard('g4', '⛽', '', 'Harga BBM', 'Pertalite & Pertamax', '#/sa/harga') + kcard('g1', '🏢', '', 'Badan usaha', 'daftar pilihan Admin', '#/sa/bu') + kcard('g5', '🎭', '', 'Ganti peran', 'uji sebagai orang lain', '#/sa/switch');
   }
   const h = `<div class="hero"><div class="hrow"><div><small>${sub}</small><h2>Halo, ${name}</h2></div><div class="ib" data-go="#/notif">🔔${c.notif ? `<i>${c.notif}</i>` : ''}</div></div></div>`;
-  shell(`${h}${availModes().length > 1 ? `<div class="modebar" style="position:relative;z-index:2;margin-top:-52px;margin-bottom:46px">${availModes().map(m => `<span class="${m === mode ? 'a' : ''}" data-mode="${m}">${MODES[m].n}</span>`).join('')}</div>` : ''}${glass}${alert}<div class="kc">${cards}</div><div class="sec"><h3>${mode === 'pemohon' ? 'Klaim terbaru' : 'Antrean teratas'}</h3>${list || emptyBox('Belum ada data')}</div>${mode === 'pemohon' ? '<div style="height:12px"></div>' : ''}`, { hero: false });
+  shell(`${h}${availModes().length > 1 ? `<div class="modebar" style="position:relative;z-index:2;margin-top:-52px;margin-bottom:46px">${availModes().map(m => `<span class="${m === mode ? 'a' : ''}" data-mode="${m}">${MODES[m].n}</span>`).join('')}</div>` : ''}${glass}${alert}<div class="kc kcs">${cards}</div>${drafts}<div class="sec"><h3>${mode === 'pemohon' ? 'Klaim terbaru' : 'Antrean teratas'}</h3>${list || emptyBox('Belum ada data')}</div>${mode === 'pemohon' ? '<div style="height:12px"></div>' : ''}`, { hero: false });
 };
 
 /* ---------- daftar + filter (G03) ---------- */
@@ -235,15 +236,17 @@ async function listScreen(title, base, opt = {}) {
   const f = { ...base, ...(opt.keep ? LF[opt.key] || {} : {}) }; LF[opt.key || title] = f;
   const active = ['q', 'category', 'status', 'region', 'claimant_id', 'from', 'to'].filter(k => f[k]);
   const j = await api('claim_list', { ...f, limit: 50 });
+  const dl = opt.draftBtn && f.dft && typeof draftSec === 'function' ? await api('draft_list', { limit: 200 }) : null;
   let oth = null; if (opt.todoFilter) { try { oth = (await api('claim_list', { ...f, todo: f.todo ? 0 : (opt.todoMine ? 'mine' : 1), limit: 1 })).total; } catch (e) { oth = null; } }
   const tabs = opt.tabs && !f.todo ? `<div class="tabs">${opt.tabs.map(t => `<span class="${t[0] === f.tab ? 'a' : ''}" data-tab="${t[0]}">${t[1]}${S.counts['mine_' + t[0]] != null ? ' · ' + S.counts['mine_' + t[0]] : ''}</span>`).join('')}</div>` : '';
   const inner = `${tabs}<div class="sec"><div class="two" style="grid-template-columns:1fr auto;gap:8px"><input id="lq" placeholder="Cari nomor, nama, refnote" value="${esc(f.q || '')}"><button class="btn g sm" id="lqb">Cari</button></div>
-    <button class="fbtn" id="lfb" style="margin-top:8px">FILTER <em>${active.length}</em> <em>${j.total} hasil</em></button>${opt.todoFilter ? `<div class="tgl2" style="margin-top:8px"><div data-td="0" class="${f.todo ? '' : 'on'}">${opt.todoMine ? 'Daftar klaim' : 'Semua klaim'}<small>${f.todo ? (oth ?? '') : j.total} klaim</small></div><div data-td="1" class="${f.todo ? 'on' : ''}">Perlu tindakan saya<small>${f.todo ? j.total : (oth ?? '')} klaim</small></div></div>` : ''}${active.length ? `<div class="chips">${active.map(k => `<span class="chip" data-clr="${k}">${k === 'claimant_id' ? 'Pemohon' : k === 'todo' ? 'Perlu tindakan saya' : k} ✕</span>`).join('')}</div>` : ''}</div>
-    <div class="sec">${opt.top || ''}${j.rows.length ? j.rows.map(claimLi).join('') : emptyBox(opt.empty || 'Tidak ada klaim.')}</div>`;
+    <button class="fbtn" id="lfb" style="margin-top:8px">FILTER <em>${active.length}</em> <em>${j.total} hasil</em></button>${opt.todoFilter ? `<div class="tgl2" style="margin-top:8px"><div data-td="0" class="${f.todo || f.dft ? '' : 'on'}">${opt.todoMine ? 'Daftar klaim' : 'Semua klaim'}<small>${f.todo ? (oth ?? '') : j.total} klaim</small></div><div data-td="1" class="${f.todo ? 'on' : ''}">Perlu tindakan saya<small>${f.todo ? j.total : (oth ?? '')} klaim</small></div>${opt.draftBtn ? `<div data-dft="1" class="dftb${f.dft ? ' on' : ''}">Draft<small>${dl ? dl.total : (S.counts.mine_draft || 0)} belum dikirim</small>${!f.dft && S.counts.mine_draft ? `<em>${S.counts.mine_draft}</em>` : ''}</div>` : ''}</div>` : ''}${active.length ? `<div class="chips">${active.map(k => `<span class="chip" data-clr="${k}">${k === 'claimant_id' ? 'Pemohon' : k === 'todo' ? 'Perlu tindakan saya' : k} ✕</span>`).join('')}</div>` : ''}</div>
+    ${f.dft ? (dl && dl.rows.length ? draftSec(dl, 0) : `<div class="sec">${emptyBox('Tidak ada draf. Draf muncul saat Anda menyimpan klaim tanpa mengirim.')}</div>`) : `<div class="sec">${opt.top || ''}${j.rows.length ? j.rows.map(claimLi).join('') : emptyBox(opt.empty || 'Tidak ada klaim.')}</div>`}`;
   shell(hero(title, opt.sub || MODES[curMode()].n.toUpperCase(), { back: opt.back }) + inner, { hero: false });
   const reload = nf => { LF[opt.key || title] = { ...f, ...nf }; listScreen(title, LF[opt.key || title], opt); };
   $('#lqb').onclick = () => reload({ q: $('#lq').value }); $('#lq').onkeydown = e => { if (e.key === 'Enter') reload({ q: $('#lq').value }); };
-  $$('[data-td]').forEach(t => t.onclick = () => reload({ todo: +t.dataset.td ? (opt.todoMine ? 'mine' : 1) : '' }));
+  $$('[data-td]').forEach(t => t.onclick = () => reload({ dft: '', todo: +t.dataset.td ? (opt.todoMine ? 'mine' : 1) : '' }));
+  $$('[data-dft]').forEach(t => t.onclick = () => reload({ dft: 1, todo: '' }));
   $$('[data-tab]').forEach(t => t.onclick = () => reload({ tab: t.dataset.tab })); $$('[data-clr]').forEach(t => t.onclick = () => reload({ [t.dataset.clr]: '' }));
   $('#lfb').onclick = () => { sheet(`<h3>Filter</h3><div class="fld"><label>Kategori</label><select id="fc"><option value="">Semua</option>${['Transportasi', 'Entertain', 'Perdin', 'Operasional'].map(c => `<option ${f.category === c ? 'selected' : ''}>${c}</option>`).join('')}</select></div>
     ${opt.statusFilter ? `<div class="fld"><label>Status</label><select id="fs"><option value="">Semua</option>${[['WAIT', 'Menunggu'], ['REV', 'Perlu Revisi'], ['DONE', 'Selesai'], ['REJECTED', 'Ditolak']].map(s => `<option value="${s[0]}" ${f.status === s[0] ? 'selected' : ''}>${s[1]}</option>`).join('')}</select></div>` : ''}
@@ -256,7 +259,7 @@ async function listScreen(title, base, opt = {}) {
     $('#fok', el).onclick = () => { const p = S.L.people.find(x => x.name === $('#fp', el).value); close(); reload({ category: $('#fc', el).value, status: $('#fs', el)?.value || '', claimant_id: p ? p.id : '', region: $('#fr', el).value, from: $('#ff', el).value, to: $('#ft', el).value }); };
   }); };
 }
-R.mine = async () => listScreen('Klaim saya', { view: 'mine', tab: QP.get('tab') || 'proses' }, { key: 'mine', sub: 'PEMOHON', todoFilter: true, todoMine: true, tabs: [['proses', 'Diproses'], ['revisi', 'Perlu Revisi'], ['selesai', 'Selesai'], ['ditolak', 'Ditolak'], ['draft', 'Draft']], empty: 'Belum ada klaim di tab ini.' });
+R.mine = async () => { const t = QP.get('tab') || 'proses'; return listScreen('Klaim saya', t === 'draft' ? { view: 'mine', tab: 'proses', dft: 1 } : { view: 'mine', tab: t }, { key: 'mine', sub: 'PEMOHON', todoFilter: true, todoMine: true, draftBtn: true, tabs: [['proses', 'Diproses'], ['revisi', 'Perlu Revisi'], ['selesai', 'Selesai'], ['ditolak', 'Ditolak']], empty: 'Belum ada klaim di tab ini.' }); };
 R.queue = async (st) => listScreen('Antrean ' + (STAGE[st] || st), { view: 'queue', stage: st }, { key: 'q' + st, empty: 'Antrean kosong. Semua sudah ditangani.' });
 R.revisi = async () => listScreen('Revisi di Admin', { view: 'revisi_admin' }, { key: 'rev', sub: 'ADMIN', empty: 'Tidak ada revisi di Admin.' });
 R.proses = async () => listScreen('Diproses', { view: 'proses' }, { key: 'proses', statusFilter: true, todoFilter: true });

@@ -4,14 +4,15 @@
  *
  * - BOT_KEY: disimpan sebagai hash (hash_ + PEPPER), bisa dicabut.
  * - Kode hubungkan 6 digit: berlaku 5 menit, sekali pakai, disimpan sebagai hash.
- * - Sambungan Telegram -> NIK: berlaku TETAP 30 hari (tidak geser), semua role.
+ * - Sambungan Telegram -> NIK: berlaku 60 hari sejak terakhir dipakai (geser otomatis tiap dipakai), maksimal 180 hari sejak dihubungkan, semua role.
  *   Putus otomatis bila akun nonaktif atau VERSI akun berubah (ganti/reset PIN).
  * - Pemanggilan fungsi baca DSM memakai sesi internal sekali-pakai (flag agent=1),
  *   jadi filter role sama persis dengan aplikasi web. Sesi dihapus setelah request.
  *   Sesi ini TIDAK didaftarkan sebagai perangkat (tidak mengusir perangkat web user).
  */
 
-const AGENT_LINK_DAYS = 30;
+const AGENT_LINK_DAYS = 60;   // masa nganggur: putus bila tidak dipakai sekian hari
+const AGENT_MAX_DAYS = 180;   // batas maksimal sejak dihubungkan, berapa pun sering dipakai
 const AGENT_CODE_MS = 300000;          // 5 menit
 const AGENT_RATE_TG = 30;              // request / menit per Telegram ID
 const AGENT_RATE_KEY = 300;            // request / menit per BOT_KEY
@@ -147,11 +148,19 @@ function agentLinkActive_(string $tgId): array {
     $l = $st->fetch(PDO::FETCH_ASSOC);
     if (!$l) agentFail_(403, 'NOT_LINKED', 'Akun Telegram ini belum terhubung. Buka DSM, klik nama Anda di pojok kiri bawah (di HP: menu Lainnya), pilih Telegram Agent, lalu kirim kodenya ke bot.');
     if ((int) $l['revoked_ms'] > 0) agentFail_(403, 'LINK_REVOKED', 'Sambungan DSM sudah diputus. Hubungkan ulang dari DSM: klik nama Anda > Telegram Agent.');
-    if ((int) $l['expires_ms'] < now_ms()) agentFail_(403, 'LINK_EXPIRED', 'Sesi 30 hari sudah habis. Hubungkan ulang dari DSM: klik nama Anda > Telegram Agent.');
+    if ((int) $l['expires_ms'] < now_ms()) agentFail_(403, 'LINK_EXPIRED', 'Sambungan sudah habis (lama tidak dipakai atau mencapai batas 180 hari). Hubungkan ulang dari DSM: klik nama Anda > Telegram Agent.');
     $a = account_((string) $l['nik']);
     $reason = !$a ? 'akun tidak ditemukan' : (!PortalCore::active($a['AKTIF']) ? 'akun nonaktif' : ((int) num_($a['VERSI']) !== (int) $l['versi'] ? 'PIN diganti/direset' : ''));
     if ($reason !== '') { agentLinkRevoke_($tgId, 'SISTEM', $reason); agentFail_(403, 'LINK_REVOKED', 'Sambungan DSM terputus (' . $reason . '). Hubungkan ulang dari DSM: klik nama Anda > Telegram Agent.'); }
-    db_()->prepare('UPDATE dsm_tg_link SET last_used_ms=? WHERE telegram_id=?')->execute([now_ms(), $tgId]);
+    // Geser masa berlaku tiap dipakai: sekarang + 60 hari, tapi tidak melewati (waktu hubung + 180 hari).
+    // Ditulis hanya bila maju > 1 hari supaya database tidak ditulis di setiap request.
+    $now = now_ms(); $newExp = min($now + AGENT_LINK_DAYS * 86400000, (int) $l['linked_ms'] + AGENT_MAX_DAYS * 86400000);
+    if ($newExp > (int) $l['expires_ms'] + 86400000) {
+        db_()->prepare('UPDATE dsm_tg_link SET last_used_ms=?, expires_ms=? WHERE telegram_id=?')->execute([$now, $newExp, $tgId]);
+        $l['expires_ms'] = $newExp;
+    } else {
+        db_()->prepare('UPDATE dsm_tg_link SET last_used_ms=? WHERE telegram_id=?')->execute([$now, $tgId]);
+    }
     $l['_account'] = $a;
     return $l;
 }
@@ -236,7 +245,7 @@ function apiTgState($token) {
     $u = agentUser_($token); agentSchema_();
     $st = db_()->prepare('SELECT * FROM dsm_tg_link WHERE nik=? AND revoked_ms=0 AND expires_ms>? ORDER BY linked_ms DESC LIMIT 1');
     $st->execute([$u['nik'], now_ms()]); $l = $st->fetch(PDO::FETCH_ASSOC);
-    $base = ['role' => $u['role'], 'cakupan' => agentScopeLabel_($u), 'hari' => AGENT_LINK_DAYS, 'bot' => agentBotName_()];
+    $base = ['role' => $u['role'], 'cakupan' => agentScopeLabel_($u), 'hari' => AGENT_LINK_DAYS, 'maks' => AGENT_MAX_DAYS, 'bot' => agentBotName_()];
     if (!$l) return $base + ['linked' => false];
     // Sambungan dengan VERSI lama (PIN sudah diganti) dianggap tidak tersambung.
     $a = account_((string) $u['nik']);

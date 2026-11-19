@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSM · Mockup Standar Panel Admin & Tabel Halaman</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#eef2f7;color:#14202b;padding:16px 10px 50px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.tog{display:flex;gap:4px;background:#fff;padding:5px;border-radius:12px;box-shadow:0 2px 10px #10394e14;flex-wrap:wrap;justify-content:center}
+.tog button{border:0;background:none;padding:8px 11px;border-radius:9px;font-weight:800;font-size:11px;color:#5b6b7a;cursor:pointer}
+.tog button.on{background:#10394E;color:#fff}
+.note{max-width:1000px;font-size:12.5px;color:#46586a;line-height:1.55;background:#fff;border-radius:12px;padding:12px 14px;box-shadow:0 2px 10px #10394e10}
+.note b{color:#10394E}.note ul{margin:6px 0 0 18px}
+.stage{display:flex;gap:22px;flex-wrap:wrap;justify-content:center;align-items:flex-start}
+.cap{font-size:11px;font-weight:800;color:#7b8a98;letter-spacing:.5px;margin-bottom:6px;text-align:center}
+.desk{width:860px;max-width:100%;min-height:560px;border-radius:16px;background:#f4f7fb;box-shadow:0 10px 40px #10394e26;padding:16px;overflow:hidden}
+.phone{width:390px;max-width:100%;height:780px;border-radius:30px;background:#f4f7fb;box-shadow:0 10px 40px #10394e26;overflow:hidden;position:relative;display:flex;flex-direction:column}
+.ph{background:#fff;padding:11px 14px;border-bottom:1px solid #e6ecf2;font-weight:900;color:#10394E;font-size:15px;display:flex;align-items:center;gap:8px}
+.ph small{font-size:10px;color:#7b8a98;font-weight:700;display:block;letter-spacing:.4px}
+.pb{padding:12px;overflow:auto;flex:1}
+/* panel standar */
+.pnl{background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(16,57,78,.07);margin-bottom:12px;overflow:hidden}
+.pnlh{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid #eef2f6}
+.pnlh .ic{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex:none}
+.pnlh b{font-size:13.5px;color:#10394E;display:block}.pnlh small{font-size:11px;color:#7b8a98}
+.pnlh .ii{margin-left:auto;width:22px;height:22px;border-radius:50%;background:#eef2f6;color:#5b6b7a;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
+.pnlb{padding:12px 14px}
+.row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:9px 0;border-top:1px solid #f0f3f6;font-size:12px}
+.row:first-child{border-top:0}
+.row b{font-size:12.5px;display:block}.row small{font-size:10.5px;color:#7b8a98}
+.pill{font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px}
+.lk{background:#FBE6E5;color:#B4332E}.op{background:#E4F4E8;color:#237A36}
+.btn{height:36px;border-radius:10px;border:0;font:inherit;font-weight:800;font-size:11.5px;letter-spacing:.3px;padding:0 13px;cursor:pointer;white-space:nowrap}
+.bp{background:#10394E;color:#fff}.bo{background:#fff;color:#10394E;border:1px solid #D5DEE7}.bd{background:#fff;color:#B4332E;border:1px solid #F2C4C1}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.in{height:36px;border:1px solid #D5DEE7;border-radius:10px;padding:0 11px;font:inherit;font-size:12.5px;width:100%}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lab{font-size:10.5px;font-weight:800;color:#46586a;letter-spacing:.35px;margin-bottom:3px;display:block}
+.danger{border:1px solid #F2C4C1}.danger .pnlh{background:#FFF6F5}
+.hh{font-size:9.5px;font-weight:900;background:#B4332E;color:#fff;padding:3px 6px;border-radius:6px;letter-spacing:.4px;margin-left:6px}
+/* lama */
+.old{background:#fff;border:1px solid #dce6ec;border-radius:6px;font-family:Arial;color:#153d50;margin-bottom:12px}
+.old h3{font-size:14px;padding:12px 14px;border-bottom:1px solid #e6ecf2}
+.old .b{padding:12px 14px;font-size:12px;line-height:1.5}
+.old input,.old select{font:10.5px monospace;border:1px solid #dce7ed;border-radius:3px;padding:3px 6px}
+.old .c{background:#0b5cad;color:#fff;border:0;border-radius:9px;padding:6px 10px;font-size:10.5px;font-weight:700;margin:4px 4px 0 0}
+.old table{border-collapse:collapse;width:100%;margin-top:8px;font-size:11.5px}.old th{background:#edf4f7;text-align:left;padding:7px;border-bottom:1px solid #c5d7e1}.old td{padding:7px;border-bottom:1px solid #eee}
+/* tabel HP */
+.fbtn{width:100%;height:40px;border:0;border-radius:11px;background:#F07A0C;color:#fff;font:inherit;font-weight:900;font-size:12px;letter-spacing:.5px;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px}
+.fbtn em{font-style:normal;background:#fff;color:#C25A12;border-radius:6px;padding:1px 6px;font-size:10.5px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.chip{font-size:10.5px;font-weight:700;padding:4px 9px;border-radius:999px;background:#fff;border:1px solid #DDE5ED;color:#46586a}
+.sum{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}
+.sum div{background:#fff;border-radius:11px;padding:7px 9px;box-shadow:0 1px 5px rgba(16,57,78,.06)}
+.sum small{font-size:9.5px;font-weight:800;color:#7b8a98;letter-spacing:.4px;display:block}.sum b{font-size:14px;font-weight:900}
+.jump{display:flex;gap:5px;margin-bottom:6px;overflow-x:auto;scrollbar-width:none}
+.jump span{flex:none;font-size:10px;font-weight:800;padding:5px 9px;border-radius:8px;background:#fff;border:1px solid #DDE5ED;color:#46586a;letter-spacing:.3px}
+.jump span.on{background:#10394E;color:#fff;border-color:#10394E}
+.jump .pad{margin-left:auto;background:#EEF4F9;border-color:#EEF4F9;color:#1E5FB8}
+.tw{background:#fff;border-radius:13px;box-shadow:0 1px 6px rgba(16,57,78,.07);overflow:auto}
+.tb{border-collapse:collapse;font-size:11px;min-width:560px;width:100%}
+.tb th{font-size:9.3px;font-weight:800;letter-spacing:.35px;padding:6px 7px;text-align:right;white-space:nowrap;color:#46586a;background:#F7F9FB;border-bottom:1px solid #e6ecf2}
+.tb th.g{text-align:center;font-size:9px;color:#fff;padding:4px}
+.tb td{padding:5px 7px;text-align:right;border-bottom:1px solid #f0f3f6;white-space:nowrap}
+.tb th:first-child,.tb td:first-child{text-align:left;position:sticky;left:0;background:#fff;z-index:1;box-shadow:1px 0 0 #eef2f6;max-width:132px;overflow:hidden;text-overflow:ellipsis}
+.tb th:first-child{background:#F7F9FB}
+.tb td small{display:block;color:#9aa7b3;font-size:9.5px}
+.up{color:#12866A;font-weight:800}.dn{color:#B4332E;font-weight:800}
+.gr{display:inline-block;font-size:9.5px;font-weight:800;padding:1px 5px;border-radius:5px}
+.gu{background:#E4F4E8;color:#237A36}.gd{background:#FBE6E5;color:#B4332E}
+.rank{display:grid;grid-template-columns:26px 1fr auto;gap:8px;align-items:center;background:#fff;border-radius:12px;padding:8px 10px;margin-bottom:6px;box-shadow:0 1px 5px rgba(16,57,78,.06)}
+.rank .n{width:26px;height:26px;border-radius:8px;background:#EEF4F9;color:#10394E;font-weight:900;font-size:12px;display:flex;align-items:center;justify-content:center}
+.rank .n.t{background:#FFF4D6;color:#9A6400}
+.rank b{font-size:12.5px;display:block}.rank small{font-size:10.5px;color:#7b8a98}
+.rank .v{text-align:right}.rank .v b{font-size:14px;font-weight:900}
+.mb{height:4px;background:#edf1f5;border-radius:4px;margin-top:4px;overflow:hidden}.mb i{display:block;height:100%;border-radius:4px}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:20px 20px 0 0;box-shadow:0 -10px 30px rgba(16,57,78,.18);padding:8px 14px 16px}
+.sheet .grab{width:36px;height:4px;border-radius:4px;background:#d5dde5;margin:0 auto 8px}
+.sheet .kv{display:grid;grid-template-columns:1fr auto;font-size:12px;padding:6px 0;border-top:1px solid #f0f3f6}
+.hide{display:none!important}
+</style></head><body>
+<div class="tog" id="tg"><button class="on" data-v="admin">PANEL ADMIN</button><button data-v="trx">TABEL TRANSAKSI</button><button data-v="rank">PERINGKAT</button><button data-v="lama">⟲ TAMPILAN LAMA</button></div>
+<div class="note" id="nt"></div>
+<div class="stage">
+ <div id="dW"><div class="cap">DESKTOP</div><div class="desk" id="dk"></div></div>
+ <div><div class="cap">HP</div><div class="phone" id="hp"></div></div>
+</div>
+<script>
+let V='admin',SH=false;
+const NOTE={admin:'<b>Standar panel Admin</b> (±61 panel): header panel = ikon berwarna sesuai grup + judul + keterangan 1 baris + ⓘ (keterangan panjang pindah ke ⓘ). Isi berupa <b>baris setelan</b> (nama, keterangan kecil, status/aksi di kanan) bukan paragraf + tombol biru kecil. Kolom isian &amp; tombol sama dengan standar form (38px / 36px). Panel berbahaya: garis &amp; header merah muda + label <b>HATI-HATI</b>, tombol aksi merah garis.',
+ trx:'<b>Tabel halaman di HP</b> (Transaksi, Koreksi, Transfer, Target SO, Tim) pakai pola tabel HP yang sudah disetujui: tombol FILTER oren + chip aktif, ringkasan 3 angka, <b>chip loncat per kelompok kolom</b>, kolom pertama menempel, mode <b>PADAT</b> default, ketuk baris → rincian dari bawah. Tetap tabel (tidak jadi tumpukan kartu). Desktop tidak diubah.',
+ rank:'<b>Peringkat di HP</b>: daftar ringkas bernomor (Top 3 disorot kuning), nilai &amp; batang tipis capaian, chip growth vs LMTD. Ketuk = rincian. Desktop tidak diubah.',
+ lama:'Pembanding tampilan lama: panel dengan paragraf panjang, input huruf mesin ketik 10px, tombol biru kecil berderet, tabel polos.'};
+const P=(ic,bg,t,s,body,danger)=>`<div class="pnl${danger?' danger':''}"><div class="pnlh"><div class="ic" style="background:${bg}">${ic}</div><div><b>${t}${danger?'<span class="hh">HATI-HATI</span>':''}</b><small>${s}</small></div><span class="ii">i</span></div><div class="pnlb">${body}</div></div>`;
+function admin(desk){return `${P('🔒','#FDF3DC','Kunci Periode','Bulan yang dikunci tidak bisa diubah datanya',`
+ <div class="row"><div><b>Oktober 2026</b><small>dikunci Ary · 3 Nov</small></div><span class="pill lk">TERKUNCI</span></div>
+ <div class="row"><div><b>November 2026</b><small>bulan berjalan</small></div><button class="btn bo">KUNCI</button></div>
+ <div class="row"><div><b>September 2026</b><small>dikunci Ary · 2 Okt</small></div><span class="pill lk">TERKUNCI</span></div>`)}
+ ${P('⬇️','#E8F1FB','Hak Export','Siapa boleh download data mentah',`<div class="g2"><label><span class="lab">USER</span><input class="in" placeholder="Ketik nama / NIK…"></label><label><span class="lab">JENIS DATA</span><select class="in"><option>Transaksi RAW</option></select></label></div><div class="bar"><button class="btn bp">BERI AKSES</button><button class="btn bo">LIHAT DAFTAR (12)</button></div>`)}
+ ${P('⚠️','#FBE6E5','Pemulihan Regional','Kembalikan data region ke versi sebelumnya',`<div class="g2"><label><span class="lab">REGION</span><select class="in"><option>JAWA BARAT</option></select></label><label><span class="lab">VERSI</span><select class="in"><option>18 Nov 20:12 · Upload ST</option></select></label></div><div class="bar"><button class="btn bd">PULIHKAN…</button></div>`,1)}`;}
+function trx(){const R=[['CV MANDIRI JAYA','1203-0045',575,'Rp 848 jt',12,'gu','+18%'],['TOKO SINAR HP','1101-0221',140,'Rp 210 jt',4,'gd','−9%'],['AGRES.ID','1203-0012',96,'Rp 151 jt',0,'gu','+4%'],['MEGA CELL','1305-0007',61,'Rp 92 jt',2,'gd','−22%'],['DUTA PONSEL','1102-0310',44,'Rp 66 jt',0,'gu','+31%'],['RAJA GADGET','1203-0101',38,'Rp 55 jt',1,'gd','−3%'],['BINTANG CELL','1305-0042',30,'Rp 44 jt',0,'gu','+12%'],['SURYA PHONE','1101-0099',27,'Rp 40 jt',0,'gd','−6%']];
+ return `<div class="ph"><div><small>PANTAU</small>TRANSAKSI</div></div><div class="pb">
+ <button class="fbtn">FILTER <em>2</em><span style="font-weight:600;opacity:.85">· 1.284 transaksi</span></button>
+ <div class="chips"><span class="chip">Region: JABAR ✕</span><span class="chip">Brand: ITEL ✕</span></div>
+ <div class="sum"><div><small>UNIT ST</small><b style="color:#1E5FB8">1.011</b></div><div><small>OMZET</small><b style="color:#9A6400">Rp 1,5 M</b></div><div><small>DEALER</small><b style="color:#0E7C6B">84</b></div></div>
+ <div class="jump"><span class="on">DEALER</span><span>SELL THRU</span><span>OMZET</span><span>GROWTH</span><span class="pad">PADAT ✓</span></div>
+ <div class="tw"><table class="tb"><tr><th>DEALER</th><th>UNIT</th><th>OMZET</th><th>NOO</th><th>GROWTH</th><th>TERAKHIR</th></tr>
+ ${R.map(r=>`<tr data-sh><td><b>${r[0]}</b><small>${r[1]}</small></td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]||'–'}</td><td><span class="gr ${r[5]}">${r[6]}</span></td><td>7 Sep</td></tr>`).join('')}</table></div></div>
+ ${SH?`<div class="sheet"><div class="grab"></div><b style="font-size:14px;color:#10394E">CV MANDIRI JAYA</b><div style="font-size:11px;color:#7b8a98;margin-bottom:6px">1203-0045 · Jakarta Utara</div><div class="kv"><span>Unit ST</span><b>575</b></div><div class="kv"><span>Omzet</span><b>Rp 848.775.000</b></div><div class="kv"><span>Growth vs LMTD</span><b class="up">+18% · +88 unit dari 487</b></div><div class="kv"><span>Sales</span><b>Toyo Prasetyo</b></div><button class="btn bp" style="width:100%;margin-top:10px">BUKA DETAIL DEALER</button></div>`:''}`;}
+function rank(){const R=[['Toyo Prasetyo','JABODETABEK',112,'gu','+14%'],['Dedi Kurniawan','JABAR TIMUR',104,'gu','+6%'],['Rudi Hartono','JATIM',99,'gd','−2%'],['Ika Maharani','JABAR BARAT',93,'gu','+9%'],['Bagas Pratama','JATENG',88,'gd','−11%'],['Sari Wulandari','SULAWESI',81,'gu','+3%']];
+ return `<div class="ph"><div><small>ANALISA</small>PERINGKAT</div></div><div class="pb"><button class="fbtn">FILTER <em>1</em><span style="font-weight:600;opacity:.85">· 46 sales</span></button>
+ <div class="jump"><span class="on">SKOR KPI</span><span>% ACH ST</span><span>OMZET</span><span>GROWTH</span></div>
+ ${R.map((r,i)=>`<div class="rank"><div class="n${i<3?' t':''}">${i+1}</div><div><b>${r[0]}</b><small>${r[1]} · <span class="gr ${r[3]}">${r[4]}</span></small><div class="mb"><i style="width:${Math.min(100,r[2])}%;background:${r[2]>=100?'#12866A':r[2]>=85?'#E89A00':'#B4332E'}"></i></div></div><div class="v"><b style="color:${r[2]>=100?'#12866A':r[2]>=85?'#9A6400':'#B4332E'}">${r[2]}%</b><small>skor</small></div></div>`).join('')}</div>`;}
+function lama(){return `<div class="old"><h3>Kunci periode</h3><div class="b">Bulan yang dikunci tidak dapat diubah. Super Admin dapat membuka kembali dengan alasan. Gunakan fitur ini setelah data bulan tersebut final dan sudah direview oleh tim terkait.<br><select><option>2026-11</option></select> <input placeholder="alasan"> <button class="c">Kunci</button><button class="c">Buka</button><table><tr><th>Periode</th><th>Status</th><th>Oleh</th></tr><tr><td>2026-10</td><td>TRUE</td><td>Ary</td></tr><tr><td>2026-09</td><td>TRUE</td><td>Ary</td></tr></table></div></div>`;}
+function draw(){nt.innerHTML=NOTE[V];document.querySelectorAll('#tg button').forEach(b=>b.classList.toggle('on',b.dataset.v===V));
+ dW.classList.toggle('hide',V==='trx'||V==='rank');
+ dk.innerHTML=V==='admin'?`<div style="max-width:620px">${admin(1)}</div>`:lama();
+ hp.innerHTML=V==='admin'?`<div class="ph"><div><small>ADMIN › DATA HARIAN</small>PENGATURAN</div></div><div class="pb">${admin()}</div>`:V==='trx'?trx():V==='rank'?rank():`<div class="pb">${lama()}</div>`;}
+document.addEventListener('click',e=>{const b=e.target.closest('#tg button');if(b){V=b.dataset.v;SH=false;draw();return;}if(e.target.closest('[data-sh]')){SH=!SH;draw();}else if(SH&&!e.target.closest('.sheet')){SH=false;draw();}});
+draw();
+</script></body></html>

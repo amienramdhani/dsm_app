@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSM · Mockup Panel Publikasi Data</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#eef2f7;color:#14202b;padding:16px 10px 40px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.tog{display:flex;gap:4px;background:#fff;padding:5px;border-radius:12px;box-shadow:0 2px 10px #10394e14;flex-wrap:wrap;justify-content:center}
+.tog button{border:0;background:none;padding:8px 11px;border-radius:9px;font-weight:800;font-size:11px;color:#5b6b7a;cursor:pointer}
+.tog button.on{background:#10394E;color:#fff}
+.note{max-width:720px;font-size:12.5px;color:#46586a;line-height:1.5;background:#fff;border-radius:12px;padding:11px 14px;box-shadow:0 2px 10px #10394e10}
+.note b{color:#10394E}
+.stage{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;align-items:flex-start}
+.ph{width:390px;max-width:100%;background:#f4f7fb;border-radius:28px;overflow:hidden;box-shadow:0 10px 40px #10394e26}
+.dk{width:980px;max-width:100%;background:#f4f7fb;border-radius:16px;overflow:hidden;box-shadow:0 10px 40px #10394e26;display:grid;grid-template-columns:200px 1fr}
+.side{background:#fff;border-right:1px solid #e6ecf2;padding:14px 10px;font-size:12px}
+.side b{display:block;font-size:10px;color:#7b8a98;letter-spacing:.5px;margin:10px 6px 6px}
+.side div{padding:8px 10px;border-radius:9px;color:#46586a;font-weight:600;margin-bottom:2px}
+.side div.on{background:#10394E;color:#fff}
+.hd{background:#fff;padding:12px 14px;border-bottom:1px solid #e6ecf2;display:flex;align-items:center;gap:10px}
+.logo{font-weight:900;color:#10394E;font-size:15px;letter-spacing:1px}.logo span{color:#F07A0C}
+.hd small{font-size:10px;color:#7b8a98;font-weight:700;letter-spacing:.4px}
+.hd h1{font-size:15px;color:#10394E;font-weight:900}
+.ban{display:flex;gap:9px;align-items:center;padding:9px 12px;font-size:11.5px;font-weight:600;line-height:1.4}
+.ban.run{background:#E8F1FB;color:#1E5FB8;border-bottom:1px solid #cfe0f5}
+.ban.hold{background:#FFF4E0;color:#8A5A00;border-bottom:1px solid #ffe2ad}
+.ban.err{background:#FBE6E5;color:#A3201B;border-bottom:1px solid #f3c6c3}
+.ban .sp{width:14px;height:14px;border-radius:50%;border:2px solid #1E5FB8;border-top-color:transparent;animation:r 1s linear infinite;flex:none}
+@keyframes r{to{transform:rotate(360deg)}}
+.pg{padding:12px}
+.dk .pg{padding:16px 18px;display:grid;grid-template-columns:1.1fr 1fr;gap:12px;align-items:start}
+.card{background:#fff;border-radius:16px;box-shadow:0 2px 12px #10394e12;padding:12px;margin-bottom:10px}
+.dk .card{margin:0}
+.h3{font-size:11.5px;font-weight:800;letter-spacing:.5px;color:#10394E;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.h3 small{font-weight:600;color:#7b8a98;letter-spacing:0;font-size:10.5px}
+.sa{font-size:9px;background:#B4332E;color:#fff;padding:3px 6px;border-radius:6px;letter-spacing:.4px}
+.st{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.st div{background:#f6f8fa;border-radius:11px;padding:9px 10px}
+.st small{display:block;font-size:9.8px;font-weight:800;color:#7b8a98;letter-spacing:.4px}
+.st b{font-size:13px;color:#14202b;display:block;margin-top:3px}
+.st em{font-style:normal;font-size:10.5px;color:#5b6b7a}
+.ok{color:#12866A!important}
+.q{display:grid;grid-template-columns:28px 1fr auto;gap:9px;align-items:center;padding:8px 0;border-top:1px solid #f0f3f6;font-size:11.5px}
+.q:first-of-type{border-top:0}
+.q .ic{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;background:#eef4f9}
+.q b{display:block;font-size:12px}.q small{color:#7b8a98;font-size:10.5px}
+.q .t{font-size:10px;font-weight:800;padding:3px 7px;border-radius:7px;background:#eef1f4;color:#5b6b7a;white-space:nowrap}
+.q .t.b{background:#FCEBDC;color:#C24F0C}.q .t.c{background:#E4F4E8;color:#237A36}
+.empty{font-size:11.5px;color:#7b8a98;padding:10px 0;text-align:center}
+.prog{margin-top:6px}
+.prog .bar{height:9px;background:#edf1f5;border-radius:9px;overflow:hidden}.prog .bar i{display:block;height:100%;width:62%;background:#1E5FB8;border-radius:9px}
+.steps{display:flex;justify-content:space-between;font-size:10px;color:#7b8a98;margin-top:6px;font-weight:700}
+.steps .d{color:#12866A}.steps .n{color:#1E5FB8}
+.btn{width:100%;border:0;border-radius:12px;padding:13px;font-weight:900;font-size:12.5px;letter-spacing:.4px;background:#10394E;color:#fff;cursor:pointer;margin-top:8px}
+.btn:disabled{background:#cfd8e1;color:#7b8a98;cursor:default}
+.btn.sec{background:#eef1f4;color:#46586a}
+.hold{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+.hold b{font-size:12.5px;display:block}.hold small{font-size:10.5px;color:#7b8a98;line-height:1.4;display:block;margin-top:2px}
+.sw{width:42px;height:24px;border-radius:24px;background:#cfd8e1;position:relative;cursor:pointer}.sw:after{content:'';position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.15s}
+.sw.on{background:#F0A400}.sw.on:after{left:21px}
+.hist{display:grid;grid-template-columns:auto 1fr auto;gap:9px;align-items:center;font-size:11px;padding:7px 0;border-top:1px solid #f0f3f6}
+.hist:first-of-type{border-top:0}
+.hist i{width:8px;height:8px;border-radius:50%}
+.hist small{color:#7b8a98;font-size:10px;display:block}
+.hist em{font-style:normal;font-size:10px;font-weight:800;color:#5b6b7a}
+.warn{font-size:11px;color:#8A5A00;background:#FFF7E8;border:1px solid #ffe2ad;border-radius:10px;padding:8px 10px;margin-top:8px;line-height:1.45}
+.hide{display:none!important}
+.top{white-space:nowrap;overflow:hidden;background:#fff;display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:2px solid #3B5BDB;font-size:12px;font-weight:700;color:#3c4d5d;grid-column:1/-1}
+.top .mn{background:#1E5FB8;color:#fff;padding:7px 12px;border-radius:9px}
+.top .sp2{flex:1}.top>span{flex:none}
+.chipY{background:#FFF4D6;color:#8A5A00;border:1px solid #F5D98A;border-radius:9px;padding:7px 10px;font-size:10.5px;font-weight:800;letter-spacing:.3px}
+.pub{display:inline-flex;align-items:center;gap:7px;background:#10394E;color:#fff;border-radius:9px;padding:6px 6px 6px 10px;font-size:10.5px;font-weight:800;letter-spacing:.3px;cursor:pointer;box-shadow:0 2px 8px #10394e33}
+.pub em{font-style:normal;background:#F0A400;color:#fff;border-radius:6px;padding:3px 7px}
+.pub.hold em{background:#8A5A00}.pub.err{background:#B4332E}.pub.err em{background:#fff;color:#B4332E}
+.pub.run{background:#1E5FB8}.pub.run .sp{border-color:#fff;border-top-color:transparent}
+.pubm{display:flex;align-items:center;gap:6px;margin-left:auto}
+.pop{position:absolute;right:14px;top:52px;width:300px;background:#fff;border-radius:14px;box-shadow:0 10px 30px #10394e33;padding:12px;z-index:5;font-size:11.5px}
+.pop b{font-size:12px;color:#10394E}
+</style></head><body>
+
+<div class="tog" id="tg">
+ <button class="on" data-s="idle">NORMAL</button><button data-s="pending">ADA ANTREAN</button><button data-s="run">SEDANG PROSES</button><button data-s="hold">TAHAN PUBLIKASI</button><button data-s="err">GAGAL</button>
+</div>
+<div class="note"><b>Tambahan:</b> tombol <b>PUBLIKASIKAN</b> muncul di bar atas <b>khusus Super Admin</b> saat ada perubahan menunggu (di HP: di header). Klik = popup ringkas daftar perubahan + tombol PUBLIKASIKAN SEKARANG. Admin biasa tidak melihat tombol ini.<br><br>Panel baru <b>Admin › Data &amp; Upload › Publikasi Data</b>. Ganti kondisi lewat tombol di atas. Simpan berat masuk <b>antrean</b> dan diproses otomatis ≤1 menit (cron). <b>PUBLIKASIKAN SEKARANG</b> buat langsung tanpa nunggu. Saklar <b>Tahan publikasi</b> (Super Admin) buat edit banyak sekaligus lalu publikasi sekali. Banner biru/kuning/merah di atas tampil di <b>semua halaman untuk Admin &amp; Super Admin</b>; user lain tidak lihat banner (data lama tetap tampil normal).</div>
+
+<div class="stage">
+ <div class="ph" id="hp"></div>
+ <div class="dk" id="dk"></div>
+</div>
+
+<script>
+let S='idle',POP=false;
+function pubBtn(hp){
+ if(S==='idle')return '';
+ if(S==='run')return `<span class="pub run"><span class="sp"></span>${hp?'':'MEMPERBARUI DATA…'}<em>62%</em></span>`;
+ const cls=S==='hold'?'hold':S==='err'?'err':'';
+ const lab=S==='err'?'PUBLIKASI GAGAL':S==='hold'?'DITAHAN':'PUBLIKASIKAN';
+ return `<span class="pub ${cls}" data-pop>${hp?(S==='err'?'⚠':'⇪'):'⇪ '+lab}<em>${S==='err'?'ULANG':'3'}</em></span>`;
+}
+function pop(){ if(!POP||S==='idle'||S==='run')return '';
+ return `<div class="pop"><b>${S==='err'?'Publikasi gagal 20:53':'3 perubahan menunggu'}</b><div style="color:#7b8a98;font-size:10.5px;margin:3px 0 6px">${S==='hold'?'Ditahan sejak 20:30':'Diproses otomatis ≤1 menit'}</div>${Q.map(q=>`<div style="padding:5px 0;border-top:1px solid #f0f3f6">${q[0]} ${q[1]} <span style="color:#7b8a98">· ${q[3]}</span></div>`).join('')}<button class="btn">PUBLIKASIKAN SEKARANG</button><div style="text-align:center;margin-top:7px;font-size:10.5px;color:#1E5FB8;font-weight:700">Buka Publikasi Data ›</div></div>`; }
+const Q=[['🔁','Transfer dealer','12 dealer · ASM Robby → Toyo','Ary · 20:41','b'],['🗺️','Region Map','JAWA BARAT: tambah sub region','Ary · 20:44','b'],['🏪','Tambah dealer','3 dealer baru','Admin Jabar · 20:47','b']];
+const H=[['#12866A','Upload ST November','Ary · 20:12','2 mnt 41 dtk'],['#12866A','Atur KPI · bobot DA','Admin · 19:55','cepat · 3 dtk'],['#12866A','Edit kontak dealer','Telemarketing · 19:40','cepat · 2 dtk'],['#B4332E','Transfer dealer (gagal, data lama tetap aktif)','Ary · 18:02','batas waktu']];
+function banner(){
+ if(S==='run')return `<div class="ban run"><span class="sp"></span><div>Data sedang diperbarui (mulai 20:51 · 3 perubahan). Data lama tetap tampil sampai selesai.</div></div>`;
+ if(S==='hold')return `<div class="ban hold">⏸<div><b>Publikasi ditahan</b> oleh Ary sejak 20:30 · 3 perubahan menunggu. Sales masih melihat data lama.</div></div>`;
+ if(S==='err')return `<div class="ban err">⚠<div><b>Publikasi gagal</b> 20:53 · data lama tetap aktif. Buka Publikasi Data untuk detail.</div></div>`;
+ return '';
+}
+function body(desk){
+ const pend=S==='pending'||S==='hold'||S==='err'||S==='run';
+ const status=`<div class="card"><div class="h3">STATUS DATA <small>diperbarui otomatis</small></div><div class="st">
+   <div><small>DATA AKTIF</small><b class="${S==='err'?'':'ok'}">${S==='err'?'Versi 20:12':'✓ Terbaru'}</b><em>dipublikasi 20:12</em></div>
+   <div><small>ANTREAN</small><b>${pend?'3 perubahan':'Kosong'}</b><em>${S==='hold'?'ditahan':S==='run'?'sedang diproses':pend?'diproses ≤1 menit':'—'}</em></div>
+   <div><small>PUBLIKASI TERAKHIR</small><b>2 mnt 41 dtk</b><em>Upload ST November</em></div>
+   <div><small>MODE</small><b style="color:${S==='hold'?'#8A5A00':'#12866A'}">${S==='hold'?'⏸ Ditahan':'Otomatis'}</b><em>${S==='hold'?'sejak 20:30':'cron tiap menit'}</em></div></div>
+   ${S==='run'?`<div class="prog"><div class="bar"><i></i></div><div class="steps"><span class="d">✓ Baca data</span><span class="n">● Hitung ulang</span><span>Simpan</span><span>Panaskan</span></div></div>`:''}
+   ${S==='err'?`<div class="warn"><b>Gagal:</b> proses melewati batas waktu saat hitung ulang. 3 perubahan masih di antrean, akan dicoba lagi otomatis. Bisa juga tekan PUBLIKASIKAN SEKARANG.</div>`:''}
+   <button class="btn" ${pend&&S!=='run'?'':'disabled'}>${S==='run'?'SEDANG DIPROSES…':S==='hold'?'PUBLIKASIKAN SEKARANG (3)':'PUBLIKASIKAN SEKARANG'+(pend?' (3)':'')}</button></div>`;
+ const queue=`<div class="card"><div class="h3">PERUBAHAN MENUNGGU <small>${pend?'digabung jadi 1 publikasi':''}</small></div>
+   ${pend?Q.map(q=>`<div class="q"><div class="ic">${q[0]}</div><div><b>${q[1]}</b><small>${q[2]} · ${q[3]}</small></div><span class="t ${q[4]}">BERAT</span></div>`).join(''):'<div class="empty">Tidak ada perubahan yang menunggu.<br>Simpan ringan (KPI, target, kontak, PIN) langsung tampil tanpa antre.</div>'}</div>`;
+ const hold=`<div class="card"><div class="h3">TAHAN PUBLIKASI <span class="sa">SUPER ADMIN</span></div>
+   <div class="hold"><div><b>Tahan publikasi otomatis</b><small>Nyalakan saat mau edit banyak sekaligus (transfer, region, dealer). Matikan = semua perubahan dipublikasi sekali jalan.</small></div><div class="sw ${S==='hold'?'on':''}" id="sw"></div></div>
+   ${S==='hold'?`<div class="warn">Selama ditahan, sales &amp; atasan masih melihat data lama. Ditahan lebih dari <b>2 jam</b> → otomatis dilepas supaya tidak lupa.</div>`:''}</div>`;
+ const hist=`<div class="card"><div class="h3">RIWAYAT PUBLIKASI <small>10 terakhir</small></div>${H.map(h=>`<div class="hist"><i style="background:${h[0]}"></i><div>${h[1]}<small>${h[2]}</small></div><em>${h[3]}</em></div>`).join('')}</div>`;
+ return desk?`<div>${status}<div style="height:12px"></div>${hold}</div><div>${queue}<div style="height:12px"></div>${hist}</div>`:status+queue+hold+hist;
+}
+function draw(){
+ hp.innerHTML=`<div class="hd" style="position:relative"><div class="logo">D<span>S</span>M</div><div><small>ADMIN › DATA &amp; UPLOAD</small><h1>PUBLIKASI DATA</h1></div><div class="pubm">${pubBtn(true)}</div>${pop()}</div>${banner()}<div class="pg">${body(false)}</div>`;
+ dk.innerHTML=`<div class="top" style="position:relative"><span class="logo">D<span>S</span>M</span><span>⌂ Beranda</span><span class="mn">Semua Menu ▾</span><span>Admin</span><span class="sp2"></span>${pubBtn(false)}<span class="chipY">⚠ ST BELUM LENGKAP · 1 REGION</span><span style="border:1px solid #e3e9ef;border-radius:9px;padding:7px 10px;font-size:10.5px">SEPTEMBER 2026 ▾</span>${pop()}</div><div class="side"><div class="logo" style="padding:4px 8px 6px">D<span>S</span>M</div><b>ADMIN</b><div>Pengguna &amp; Akses</div><div>Dealer</div><div>Brand</div><div>KPI &amp; Target</div><div>Master Data</div><div class="on">Data &amp; Upload</div><div>Sistem</div></div>
+  <div>${banner()}<div class="hd"><div><small>ADMIN › DATA &amp; UPLOAD</small><h1>PUBLIKASI DATA</h1></div></div><div class="pg">${body(true)}</div></div>`;
+ document.querySelectorAll('[data-pop]').forEach(x=>x.onclick=()=>{POP=!POP;draw();});
+ document.querySelectorAll('#sw').forEach(x=>x.onclick=()=>{S=S==='hold'?'pending':'hold';sync();});
+}
+function sync(){document.querySelectorAll('#tg button').forEach(b=>b.classList.toggle('on',b.dataset.s===S));draw();}
+document.querySelectorAll('#tg button').forEach(b=>b.onclick=()=>{S=b.dataset.s;POP=S!=='idle'&&S!=='run';sync();});
+draw();
+</script>
+</body></html>

@@ -44,6 +44,8 @@ function mcCanEdit_(array $u, array $db, $nik): bool {
     $p = null; foreach ($db['meta']['people'] as $x) if ($x['nik'] === $nik) { $p = $x; break; }
     return (bool) ($p && canManageUser_($u, $p));
 }
+/** Dealer yang sedang DIAJUKAN tutup (baris terakhir per dealer berstatus PENGAJUAN). Dikecualikan dari hitungan PROSPECT (keputusan user 2026-11-19). */
+function dealerPendingClose_(): array { $last = []; try { foreach (dtRows_() as $x) $last[$x['id']] = $x['status']; } catch (Throwable $e) {} return array_filter($last, fn($st) => $st === 'PENGAJUAN'); }
 function dealerClosed_(): array { $s = []; try { foreach (dtRows_() as $x) if ($x['status'] === 'TUTUP') $s[$x['id']] = $x['date']; } catch (Throwable $e) {} return $s; }
 function findRow_(array $rows, callable $f): ?array { foreach ($rows as $r) if ($f($r)) return $r; return null; }
 
@@ -195,7 +197,7 @@ function apiDealerSave($token, $uniq, $input, $reason) {
             if ($pairs) { indukRewrite_($g, $pairs, $db); $log[] = 'ganti induk ' . $lama . ' → ' . $baru . ' (' . $pairs[0]['toko'] . ' toko)'; indukLogAppend_($pairs, $u['nik'], $reason); }
             mcPut_($g);
             $meta = meta_(); validateConfigChange_($db, $meta);
-            publish_($meta, $db['raw'], $db['coverage'], $u['nik'], 'EDIT DEALER ' . $uniq . ' · ' . $reason);
+            $pub = fn() => publish_($meta, $db['raw'], $db['coverage'], $u['nik'], 'EDIT DEALER ' . $uniq . ' · ' . $reason); $pairs ? $pub() : publishLight_($pub); // ganti induk = publikasi penuh
         } catch (Throwable $err) { sheets_restore_($before); throw $err; }
         audit_($u['nik'], $pairs ? 'INDUK_GANTI' : 'DEALER_EDIT', $uniq . ' (' . ($pairs ? $baru : $lama) . ') · ' . implode('; ', $log) . ' · ' . $reason);
         return ['ok' => true, 'log' => $log];

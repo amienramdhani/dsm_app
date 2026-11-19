@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSM · Mockup Status Dealer HP</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#eef2f7;color:#14202b;display:flex;flex-direction:column;align-items:center;gap:18px;padding:18px 10px 40px}
+.tog{display:flex;gap:6px;background:#fff;padding:5px;border-radius:12px;box-shadow:0 2px 10px #10394e14}
+.tog button{border:0;background:none;padding:9px 14px;border-radius:9px;font-weight:700;font-size:12px;letter-spacing:.3px;color:#5b6b7a;cursor:pointer}
+.tog button.on{background:#10394E;color:#fff}
+.note{max-width:390px;font-size:12.5px;color:#46586a;line-height:1.5;background:#fff;border-radius:12px;padding:12px 14px;box-shadow:0 2px 10px #10394e10}
+.note b{color:#10394E}
+.ph{width:390px;max-width:100%;background:#f4f7fb;border-radius:28px;overflow:hidden;box-shadow:0 10px 40px #10394e26;position:relative}
+.hd{background:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #e6ecf2}
+.logo{font-weight:900;color:#10394E;font-size:15px;letter-spacing:1px}.logo span{color:#F07A0C}
+.hd small{font-size:10.5px;color:#7b8a98;display:block}.hd b{font-size:12.5px}
+.dot{width:7px;height:7px;border-radius:50%;background:#12866A;display:inline-block;margin-right:5px}
+.pg{padding:12px 12px 90px}
+.ttl{font-size:17px;font-weight:800;color:#10394E;letter-spacing:.3px}
+.sub{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}
+.chip{font-size:10.5px;font-weight:700;padding:4px 8px;border-radius:999px;background:#fff;border:1px solid #dfe6ee;color:#3c4d5d}
+.chip.lk{background:#10394E;color:#fff;border:0}
+.br{display:flex;gap:6px;overflow-x:auto;margin:0 -12px 12px;padding:0 12px;scrollbar-width:none}
+.br::-webkit-scrollbar{display:none}
+.br span{flex:none;font-size:11.5px;font-weight:800;padding:7px 12px;border-radius:10px;background:#fff;color:#4b5b6a;box-shadow:0 1px 3px #10394e14}
+.br span.on{background:#10394E;color:#fff}
+.card{background:#fff;border-radius:16px;box-shadow:0 2px 12px #10394e12;padding:12px;margin-bottom:10px}
+.sec{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.sec h3{font-size:11.5px;font-weight:800;letter-spacing:.5px;color:#10394E}
+.ii{width:17px;height:17px;border-radius:50%;background:#e8eef5;color:#5b6b7a;font-size:10px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;margin-left:4px;font-style:normal}
+.sec small{font-size:10.5px;color:#7b8a98}
+/* order strip */
+.os{display:flex;align-items:center;gap:12px}
+.os .big{font-size:28px;font-weight:900;color:#0E7C6B;line-height:1}
+.os .lbl{font-size:10.5px;font-weight:800;color:#0E7C6B;letter-spacing:.4px}
+.os .r{margin-left:auto;text-align:right;font-size:10.5px;color:#5b6b7a;line-height:1.4}
+.os .r b{color:#14202b;font-size:13px}
+.pb{height:7px;background:#edf1f5;border-radius:9px;overflow:hidden;margin-top:9px}.pb i{display:block;height:100%;background:#0E7C6B;border-radius:9px}
+.da{display:inline-flex;margin-top:7px;font-size:10px;font-weight:700;color:#0E7C6B;background:#e5f4f1;padding:3px 7px;border-radius:7px}
+/* composition bar */
+.cb{display:flex;height:12px;border-radius:7px;overflow:hidden;gap:2px;margin:2px 0 10px}
+.cb i{display:block;height:100%}
+/* rows (A) */
+.row{display:grid;grid-template-columns:26px 1fr auto;align-items:center;gap:9px;padding:8px 6px;border-radius:11px;cursor:pointer;transition:.15s}
+.row+.row{border-top:1px solid #f0f3f6}
+.row .ic{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+.row .nm{font-size:12px;font-weight:800;letter-spacing:.3px}
+.row .mb{height:4px;background:#edf1f5;border-radius:4px;margin-top:5px;overflow:hidden}.row .mb i{display:block;height:100%;background:#0E7C6B}
+.row .so{font-size:10px;color:#6b7b8a;margin-top:3px}
+.row .n{text-align:right}.row .n b{font-size:16px;font-weight:900;display:block;line-height:1.1}.row .n small{font-size:10px;color:#7b8a98}
+.row.on{box-shadow:0 0 0 2px var(--c) inset;background:var(--bg)}
+.rows.dim .row:not(.on){opacity:.4}
+/* tiles (B) */
+.tg{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.tl{display:flex;gap:8px;align-items:stretch;padding:8px;border-radius:12px;background:#f8fafc;cursor:pointer;transition:.15s}
+.tl .bar{width:5px;border-radius:5px;background:var(--c)}
+.tl .nm{font-size:10.5px;font-weight:800;letter-spacing:.3px;color:#4b5b6a}
+.tl b{font-size:18px;font-weight:900;display:block;line-height:1.15;color:var(--c)}
+.tl small{font-size:9.8px;color:#7b8a98}
+.tl.on{background:var(--c)}.tl.on *{color:#fff!important}.tl.on .bar{background:#fff}
+.tg.dim .tl:not(.on){opacity:.4}
+/* bangkit */
+.bk{display:flex;gap:6px;flex-wrap:wrap}
+.bk span{font-size:11px;font-weight:700;padding:5px 9px;border-radius:999px;background:var(--bg);color:var(--c)}
+.bk span b{font-weight:900}
+.fl{margin-top:8px;font-size:10.5px;color:#46586a;background:#fff7e8;border:1px solid #ffe2ad;border-radius:10px;padding:7px 9px;display:none}
+.fl.show{display:block}
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mini .card{margin:0}
+.mini b{font-size:20px;font-weight:900;display:block}
+.nav{position:absolute;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:9px 4px 14px;border-top:1px solid #e6ecf2;font-size:9.5px;font-weight:700;color:#7b8a98}
+.nav span{text-align:center}.nav span.on{color:#10394E}
+.nav span.k{background:#F07A0C;color:#fff;padding:6px 10px;border-radius:10px;margin-top:-4px}
+.hide{display:none}
+</style></head><body>
+
+<div class="tog"><button class="on" data-v="A">OPSI A · DAFTAR</button><button data-v="B">OPSI B · KISI 2 KOLOM</button></div>
+
+<div class="note" id="noteA"><b>Opsi A (rekomendasi gue):</b> STATUS POLA 3 BULAN dalam 1 kartu daftar. Ketuk chip brand: PROSPECT = belum pernah ambil brand itu di 2026. Label NOO ada di kartu DA. Ada bar komposisi di atas, tiap baris punya jumlah + % dari total + batang tipis "sudah order SEP". Satu layar muat semua. Ketuk baris = saring daftar dealer di bawah, baris lain meredup.</div>
+<div class="note hide" id="noteB"><b>Opsi B:</b> 5 status, tetap kisi 2 kolom tapi slim (setengah tinggi kartu sekarang), warna per status di garis kiri. Ketuk = warna penuh + saring. Lebih mirip gaya kartu KPI B2.</div>
+
+<div class="ph">
+ <div class="hd"><div class="logo">D<span>S</span>M</div><div><small><i class="dot"></i>Data lengkap s.d.</small><b>30 Sep 2026</b></div></div>
+ <div class="pg">
+  <div class="ttl">DEALER</div>
+  <div class="sub"><span class="chip lk">🔒 STATUS DIKUNCI 1 SEP</span><span class="chip">MTD 1–30 Sep</span><span class="chip">vs LMTD 1–30 Agu</span></div>
+  <div class="br"><span class="on" data-b="T">TOTAL</span><span data-b="ITEL">ITEL</span><span>MOTOPAD</span><span>MOTOROLA</span><span>REALME</span><span>SAMSUNG</span><span>VILLAON</span></div>
+
+  <div class="card">
+   <div class="sec"><h3>ORDER BULAN INI</h3><small>3.839 dealer</small></div>
+   <div class="os"><div><div class="lbl">✓ DA BULAN INI (SEP)</div><div class="big">945</div></div>
+    <div class="r">belum order<br><b>2.894</b></div></div>
+   <div class="pb"><i style="width:24.6%"></i></div>
+   <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="da">DA KPI semua brand: 1.081 pasangan dealer-brand <i class="ii">i</i></span><span class="da" style="color:#6D3FD8;background:#efe9fc">NOO SEP: 16 dealer · dari PROSPECT</span></div>
+  </div>
+
+  <div class="card">
+   <div class="sec"><h3>STATUS POLA 3 BULAN · JUN–AGU<i class="ii">i</i></h3><small>ketuk untuk saring</small></div>
+   <div class="cb" id="cb"></div>
+   <div id="vA" class="rows"></div>
+   <div id="vB" class="tg hide"></div>
+   <div class="fl" id="fl"></div>
+   <div class="so hide" id="pn" style="font-size:10.5px;color:#6D3FD8;margin-top:8px"></div>
+   <div class="so" style="font-size:10.5px;color:#7b8a98;margin-top:8px">Basis ST qty 2026 · retur tidak dihitung · untuk analisa, tidak mempengaruhi KPI</div>
+  </div>
+
+  <div class="card hide">
+   <div class="sec"><h3>BANGKIT BULAN INI · 152 DEALER<i class="ii">i</i></h3><small>status sebelumnya</small></div>
+   <div class="bk">
+    <span style="--c:#9A6400;--bg:#fdf3dc">IDLE <b>98</b></span>
+    <span style="--c:#B4332E;--bg:#fbe6e5">PASIF <b>30</b></span>
+    <span style="--c:#C25A12;--bg:#fcebdc">TURUN <b>17</b></span>
+    <span style="--c:#5b6b7a;--bg:#eef1f4">NONAKTIF <b>7</b></span>
+   </div>
+  </div>
+
+  <div class="mini">
+   <div class="card"><div class="sec"><h3>NOO PER BRAND</h3></div><b style="color:#6D3FD8">111</b></div>
+   <div class="card"><div class="sec"><h3>SELL OUT</h3></div><b style="color:#C25A12">22.201</b></div>
+  </div>
+ </div>
+ <div class="nav"><span>BERANDA</span><span class="on">DEALER</span><span>BRAND</span><span>TRANSAKSI</span><span class="k">KLAIM</span><span>LAINNYA</span></div>
+</div>
+
+<script>
+const S=[
+ ['ACTIVE','●',1880,761,'#2E9E45','#e4f4e8','Order minimal 2 dari 3 bulan closing terakhir'],
+ ['PASSIVE','◐',774,115,'#E89A00','#fdf3dc','Order hanya 1 dari 3 bulan closing terakhir'],
+ ['IDLE','II',520,41,'#E2570F','#fcebdc','Tidak order 3–5 bulan berturut-turut'],
+ ['INACTIVE','○',365,12,'#C62E2E','#fbe6e5','Tidak order ≥ 6 bulan berturut-turut'],
+ ['PROSPECT','+',300,16,'#1E7FD6','#e3eef9','Belum pernah order di 2026'],
+];
+const T=S.reduce((a,s)=>a+s[2],0),f=n=>n.toLocaleString('id-ID');
+cb.innerHTML=S.map(s=>`<i style="width:${s[2]/T*100}%;background:${s[4]}"></i>`).join('');
+vA.innerHTML=S.map((s,i)=>`<div class="row" data-i="${i}" style="--c:${s[4]};--bg:${s[5]}"><div class="ic" style="background:${s[5]};color:${s[4]}">${s[1]}</div><div><div class="nm" style="color:${s[4]}">${s[0]}</div><div class="mb"><i style="width:${s[3]/s[2]*100}%"></i></div><div class="so">${i==4?'<b style="color:#6D3FD8">NOO</b> ':''}✓ ${f(s[3])} sudah order SEP · ${Math.round(s[3]/s[2]*100)}%</div></div><div class="n"><b>${f(s[2])}</b><small>${(s[2]/T*100).toFixed(1)}%</small></div></div>`).join('');
+vB.innerHTML=S.map((s,i)=>`<div class="tl" data-i="${i}" style="--c:${s[4]}"><div class="bar"></div><div><div class="nm">${s[0]}</div><b>${f(s[2])}</b><small>✓ ${f(s[3])} order SEP</small></div></div>`).join('');
+let sel=null;
+const P0=S[4][2];document.querySelectorAll('.br span').forEach(b=>b.onclick=()=>{document.querySelectorAll('.br span').forEach(x=>x.classList.toggle('on',x===b));const t=b.textContent==='TOTAL';const v=t?P0:2310;document.querySelectorAll('[data-i="4"] .n b,[data-i="4"] b').forEach(x=>x.textContent=v.toLocaleString('id-ID'));pn.classList.toggle('hide',t);pn.innerHTML='PROSPECT '+b.textContent+' = dealer yang belum pernah ambil '+b.textContent+' di 2026 (angka dummy).';});
+document.querySelectorAll('[data-i]').forEach(el=>el.onclick=()=>{const i=+el.dataset.i;sel=sel===i?null:i;
+ document.querySelectorAll('[data-i]').forEach(x=>x.classList.toggle('on',+x.dataset.i===sel));
+ vA.classList.toggle('dim',sel!==null);vB.classList.toggle('dim',sel!==null);
+ fl.classList.toggle('show',sel!==null);
+ if(sel!==null){const s=S[sel];fl.innerHTML=`<b>${s[0]}</b> · ${s[6]}. Daftar di bawah disaring: ${f(s[2])} dealer → <b>Tampilkan</b>`;}});
+document.querySelectorAll('.tog button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tog button').forEach(x=>x.classList.toggle('on',x===b));const a=b.dataset.v==='A';vA.classList.toggle('hide',!a);vB.classList.toggle('hide',a);noteA.classList.toggle('hide',!a);noteB.classList.toggle('hide',a);});
+</script>
+</body></html>

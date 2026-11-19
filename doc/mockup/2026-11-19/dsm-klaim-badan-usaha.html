@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup · Klaim · Ubah & hapus badan usaha</title>
+<style>
+:root{--bg:#E9F0F7;--card:#fff;--fg:#10394E;--mut:#5B7285;--line:#DCE5EC;--org1:#FFB020;--org2:#F07A0C;--blue:#1E5FB8;--red:#D2453F;--soft:#F5F8FB}
+*{box-sizing:border-box}body{margin:0;background:#dfe7ef;color:var(--fg);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.top{max-width:1000px;margin:0 auto;padding:16px 14px 4px}.top h1{font-size:16px;margin:0 0 4px}.top p{margin:0;color:var(--mut);font-size:12.5px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.tabs button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;font:600 12px inherit;color:var(--fg);cursor:pointer}
+.tabs button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.wrap{display:flex;gap:24px;justify-content:center;align-items:flex-start;padding:10px 14px 30px;flex-wrap:wrap}
+.phone{width:400px;height:820px;background:#F2F6FA;border-radius:30px;overflow:hidden;position:relative;box-shadow:0 18px 40px rgba(16,57,78,.18)}
+.scroll{height:100%;overflow:auto}
+.hero{padding:16px 16px 74px;color:#fff;background:#0B5CAD;position:relative}.hero .back{font-weight:700;font-size:13px}.hero .code{font-size:11px;opacity:.85;margin-top:8px}.hero h2{margin:2px 0 0;font-size:19px}
+.bell{position:absolute;right:14px;top:30px;width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.18);display:grid;place-items:center}
+.sec{padding:14px 14px 0;margin-top:-58px;position:relative;z-index:1}
+.note{border-left:3px solid var(--org2);background:#FFF7E8;color:#6B4A00;padding:8px 10px;border-radius:8px;font-size:12px;margin:8px 0}
+.note.blue{border-color:var(--blue);background:#EEF5FF;color:#14437F}.note.red{border-color:var(--red);background:#FDEEEE;color:#8A1F1A}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;box-shadow:0 4px 12px rgba(16,57,78,.05);margin-top:8px}
+.fld{display:flex;flex-direction:column;gap:4px;margin:6px 0 10px}.fld label{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
+.in{border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-height:44px;font-size:13.5px}.in.ph{color:#9AACBB}.in.sel{display:flex;justify-content:space-between}
+.btn{border:0;border-radius:14px;padding:13px;font-weight:800;font-size:14px;color:#fff;background:linear-gradient(90deg,var(--org1),var(--org2));box-shadow:0 8px 16px rgba(240,122,12,.3);width:100%;text-align:center}
+.btn.g{background:#fff;color:var(--fg);border:1px solid var(--line);box-shadow:none}.btn.red{background:var(--red);box-shadow:0 8px 16px rgba(210,69,63,.25)}
+h3{margin:14px 0 8px;font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--mut)}
+.li{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 10px 10px 12px;margin-bottom:8px}
+.li b{font-size:14px}.mut{color:var(--mut);font-size:12px;display:block}
+.acts{display:flex;gap:6px}.act{border-radius:10px;padding:6px 10px;font-weight:800;font-size:12px;border:1px solid}
+.act.e{color:var(--blue);border-color:#CFE0F5;background:#F3F8FF}.act.d{color:var(--red);border-color:#F3D3D1;background:#FFF6F5}
+.sheet-bg{position:absolute;inset:0;background:rgba(16,57,78,.5);display:flex;align-items:flex-end;z-index:5}
+.sheet{background:#fff;border-radius:22px 22px 0 0;padding:16px;width:100%}.grip{width:40px;height:4px;border-radius:4px;background:var(--line);margin:0 auto 12px}
+.sheet h4{margin:0 0 2px;font-size:16px}.sheet .sub{color:var(--mut);font-size:12px;margin-bottom:8px}
+.imp{display:flex;gap:8px;margin:8px 0}.imp div{flex:1;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:8px 10px}.imp b{display:block;font-size:18px}.imp span{font-size:11px;color:var(--mut)}
+.row2{display:flex;gap:8px;margin-top:6px}.row2 .btn{flex:1}
+.flow{display:flex;align-items:center;gap:8px;margin:8px 0;font-weight:800}.pill{flex:1;text-align:center;border:1px solid var(--line);border-radius:12px;padding:9px 6px;background:var(--soft)}
+.pill.to{border-color:#BFD6F3;background:#EEF5FF;color:var(--blue)}.ar{color:var(--mut)}
+.toast{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);background:#10394E;color:#fff;border-radius:12px;padding:9px 14px;font-size:12.5px;font-weight:700;white-space:nowrap;z-index:6}
+.side{width:430px;max-width:100%;font-size:13px}.side .c{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:10px}.side b.t{display:block;margin-bottom:4px;color:var(--blue)}
+.side ul{margin:4px 0 0;padding-left:18px}.side li{margin:3px 0}
+</style></head><body>
+<div class="top"><h1>Mockup · DSM Klaim · Badan usaha (X04) — ubah &amp; hapus</h1>
+<p>Halaman sama dengan sekarang; yang baru tombol <b>Ubah</b>/<b>Hapus</b> di tiap baris dan lembar bawah. Klik tab untuk tiap keadaan.</p>
+<div class="tabs" id="tabs"><button data-s="list" class="on">1 · Daftar</button><button data-s="edit">2 · Ubah nama</button><button data-s="editmerge">3 · Ubah ke nama yang sudah ada</button><button data-s="delfree">4 · Hapus (belum dipakai)</button><button data-s="merge">5 · Hapus (dipakai) → gabung</button><button data-s="done">6 · Selesai</button></div></div>
+<div class="wrap"><div class="phone"><div class="scroll" id="ph"></div><div id="ov"></div></div><div class="side" id="side"></div></div>
+<script>
+const L=[{n:'CV. TOP',u:0,k:0},{n:'MSI',u:3,k:48},{n:'PT. MSI',u:5,k:212},{n:'RISM',u:4,k:96}];
+const page=rows=>`<div class="hero"><div class="back">← Kembali</div><div class="code">X04</div><h2>Badan usaha</h2><div class="bell">🔔</div></div>
+<div class="sec"><div class="note blue">Daftar ini muncul sebagai pilihan Admin saat menyetujui klaim. Badan usaha yang sudah melekat pada pengguna otomatis ikut tampil.</div>
+<div class="card"><b>Tambah badan usaha</b><div class="fld"><label>Nama (mis. TOP, SMI, CSN)</label><div class="in ph">NAMA BADAN USAHA</div></div><div class="btn">TAMBAH</div></div>
+<h3>Daftar (${rows.length})</h3>${rows.map(r=>`<div class="li"><div style="flex:1"><b>${r.n}</b><span class="mut">${r.u||r.k?`Dipakai ${r.u} pengguna · ${r.k} klaim`:'Belum dipakai'}</span></div><div class="acts"><span class="act e">Ubah</span><span class="act d">Hapus</span></div></div>`).join('')}<div style="height:20px"></div></div>`;
+const sh=h=>`<div class="sheet-bg"><div class="sheet"><div class="grip"></div>${h}</div></div>`;
+const S={
+ list:{side:`<b class="t">Daftar</b><ul><li>Setiap baris punya <b>Ubah</b> dan <b>Hapus</b> (dulu hanya Hapus untuk yang belum dipakai).</li><li>"Sedang dipakai" diganti angka: <b>Dipakai 3 pengguna · 48 klaim</b>, supaya dampak terlihat dulu.</li><li>Hanya Super Admin (sama seperti sekarang).</li></ul>`},
+ edit:{ov:sh(`<h4>Ubah badan usaha</h4><div class="sub">MSI</div><div class="fld"><label>Nama baru</label><div class="in">MSI GROUP</div></div>
+  <div class="imp"><div><b>3</b><span>pengguna ikut berganti</span></div><div><b>48</b><span>klaim ikut berganti</span></div></div>
+  <div class="note">Semua pengguna dan klaim (termasuk yang sudah selesai) memakai nama baru. Perubahan dicatat di riwayat.</div>
+  <div class="row2"><div class="btn g">BATAL</div><div class="btn">SIMPAN</div></div>`),side:`<b class="t">Ubah nama</b><ul><li>Nama otomatis huruf besar, seperti saat tambah.</li><li>Dampak ditampilkan dulu: jumlah pengguna &amp; klaim yang ikut berganti.</li><li>Sesuai keputusan: <b>klaim lama ikut diganti</b> → laporan tetap satu kelompok.</li><li>Tercatat di log (siapa, kapan, nama lama → baru).</li></ul>`},
+ editmerge:{ov:sh(`<h4>Ubah badan usaha</h4><div class="sub">MSI</div><div class="fld"><label>Nama baru</label><div class="in">PT. MSI</div></div>
+  <div class="note red"><b>PT. MSI sudah ada.</b> Menyimpan akan <b>menggabungkan</b> MSI ke PT. MSI, lalu MSI hilang dari daftar.</div>
+  <div class="flow"><div class="pill">MSI<span class="mut">3 pengguna · 48 klaim</span></div><div class="ar">→</div><div class="pill to">PT. MSI<span class="mut">5 pengguna · 212 klaim</span></div></div>
+  <div class="row2"><div class="btn g">BATAL</div><div class="btn red">GABUNGKAN</div></div>`),side:`<b class="t">Nama sama dengan yang sudah ada</b><ul><li>Tidak ditolak, tapi berubah jadi <b>gabung</b>: peringatan merah, tombol <b>GABUNGKAN</b>.</li><li>Contoh nyata di data sekarang: <b>MSI</b> dan <b>PT. MSI</b>.</li></ul>`},
+ delfree:{ov:sh(`<h4>Hapus badan usaha?</h4><div class="sub">CV. TOP · belum dipakai pengguna maupun klaim</div><div class="row2" style="margin-top:12px"><div class="btn g">BATAL</div><div class="btn red">HAPUS</div></div>`),side:`<b class="t">Hapus yang belum dipakai</b><ul><li>Sama seperti sekarang, tapi konfirmasi pakai lembar bawah (bukan kotak OK/Cancel browser).</li></ul>`},
+ merge:{ov:sh(`<h4>Hapus badan usaha</h4><div class="sub">MSI masih dipakai — pindahkan dulu ke badan usaha lain</div>
+  <div class="imp"><div><b>3</b><span>pengguna</span></div><div><b>48</b><span>klaim</span></div></div>
+  <div class="fld"><label>Pindahkan ke</label><div class="in sel"><span>PT. MSI</span><span>▾</span></div></div>
+  <div class="flow"><div class="pill">MSI</div><div class="ar">→</div><div class="pill to">PT. MSI</div></div>
+  <div class="note red">3 pengguna dan 48 klaim dipindah ke <b>PT. MSI</b>, lalu <b>MSI dihapus</b>. Pengguna yang sudah punya PT. MSI tidak jadi dobel.</div>
+  <div class="row2"><div class="btn g">BATAL</div><div class="btn red">GABUNG &amp; HAPUS</div></div>`),side:`<b class="t">Hapus yang masih dipakai = gabung</b><ul><li>Wajib pilih tujuan; pilihannya badan usaha lain saja.</li><li>Pengguna dengan beberapa badan usaha: MSI diganti tujuan, tanpa dobel.</li><li>Klaim semua status pindah ke tujuan.</li><li>Satu proses: kalau gagal di tengah, tidak ada yang berubah.</li></ul>`},
+ done:{ov:'<div class="toast">✓ MSI digabung ke PT. MSI · 3 pengguna · 48 klaim</div>',rows:[L[0],{n:'PT. MSI',u:8,k:260},L[3]],side:`<b class="t">Setelah gabung</b><ul><li>MSI hilang dari daftar; PT. MSI menampilkan jumlah gabungan.</li><li>Notifikasi kecil di bawah, seperti saat tambah badan usaha.</li></ul>`}};
+function show(k){document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.s===k));const s=S[k];document.getElementById('ph').innerHTML=page(s.rows||L);document.getElementById('ov').innerHTML=s.ov||'';document.getElementById('side').innerHTML='<div class="c">'+s.side+'</div><div class="c"><b class="t">Catatan</b><ul><li>Angka pengguna/klaim di mockup hanya contoh.</li><li>Untuk Admin di layar setuju klaim: daftar pilihan badan usaha ikut berubah otomatis.</li></ul></div>'}
+document.getElementById('tabs').onclick=e=>{const b=e.target.closest('button');if(b)show(b.dataset.s)};show('list');
+</script></body></html>

@@ -181,6 +181,66 @@ function claim_save(array $u, array $in): int {
   foreach (['odo_awal', 'odo_akhir', 'doc', 'maps'] as $slot) if (array_key_exists($slot, $in['files'] ?? [])) sync_files($u, $id, null, $in['files'][$slot], $slot);
   return $id;
 }
+/* ---------- draf di Beranda & tambah nota cepat (2026-11-19, mockup doc/mockup/2026-11-19/dsm-klaim-draf-beranda.html) ---------- */
+/** Jenis yang notanya dibentuk otomatis / khusus: tidak bisa tambah nota cepat. */
+function draft_quick_ok(array $c): bool {
+  foreach (claim_parts($c) as $p) if (in_array($p['kind'], ['perdin', 'makan'], true) || $p['type']['name'] === 'Reimburse petty cash') return false;
+  return true;
+}
+/** Draf milik user (yang ia buat), terbaru dulu, dengan ringkasan nota untuk kartu draf. */
+function draft_list(array $u, int $limit = 50): array {
+  $rows = q("SELECT * FROM claims WHERE status='DRAFT' AND created_by=? ORDER BY COALESCE(updated_at, created_at) DESC, id DESC LIMIT " . max(1, min(200, $limit)), [$u['id']]);
+  $total = (int) val("SELECT COUNT(*) FROM claims WHERE status='DRAFT' AND created_by=?", [$u['id']]);
+  $out = [];
+  foreach ($rows as $c) {
+    $parts = claim_parts($c); $notes = q("SELECT id, nominal, nota_date, detail FROM claim_notes WHERE claim_id=? ORDER BY line_no", [$c['id']]);
+    $files = q("SELECT id, mime, note_id FROM claim_files WHERE ref_type='claim' AND ref_id=? AND slot='nota' ORDER BY id", [$c['id']]);
+    $withFile = []; foreach ($files as $f) if ($f['note_id'] !== null) $withFile[(int) $f['note_id']] = 1;
+    $inc = 0; foreach ($notes as $n) if ((int) $n['nominal'] <= 0 || !$n['nota_date'] || !isset($withFile[(int) $n['id']])) $inc++;
+    $out[] = ['id' => (int) $c['id'], 'category' => $c['category'], 'type' => claim_type_label($c),
+      'types' => array_map(fn($p) => ['id' => (int) $p['type']['id'], 'name' => $p['type']['name'], 'kind' => $p['kind']], $parts),
+      'total' => (int) $c['total'], 'notes' => count($notes), 'incomplete' => $inc,
+      'thumbs' => array_map(fn($f) => ['id' => (int) $f['id'], 'mime' => $f['mime']], array_slice($files, 0, 4)),
+      'updated_at' => $c['updated_at'] ?: $c['created_at'], 'quick' => draft_quick_ok($c)];
+  }
+  return ['rows' => $out, 'total' => $total];
+}
+/**
+ * Tambah satu nota ke draf tanpa membuka form. Isian sama dengan nota di form (tanggal, nominal, foto; Tol: gerbang; BBM: jenis BBM),
+ * diolah persis seperti claim_save (bbm_notes, norm_gate, sync_files). Isian boleh kosong (wajib saat kirim, lewat claim_check); foto wajib.
+ */
+function draft_note_add(array $u, array $in): array {
+  $id = (int) ($in['id'] ?? 0); $c = get_claim($id);
+  if ($c['status'] !== 'DRAFT' || !owner_can_edit($u, $c)) fail('Draf ini tidak bisa diubah.', 403);
+  if (!draft_quick_ok($c)) fail('Jenis klaim ini diisi lewat form lengkap.', 422);
+  $files = array_values(array_filter(array_map('intval', (array) ($in['files'] ?? []))));
+  if (!$files) fail('Foto nota wajib.', 422);
+  $date = trim((string) ($in['date'] ?? ''));
+  if ($date !== '' && (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) || $date > date('Y-m-d'))) fail('Tanggal nota tidak valid.', 422);
+  $parts = claim_parts($c); $multi = count($parts) > 1; $part = $parts[0];
+  $d = [];
+  if ($multi) {
+    $tid = (int) ($in['type_id'] ?? 0); $part = null; foreach ($parts as $p) if ((int) $p['type']['id'] === $tid) $part = $p;
+    if (!$part) fail('Pilih jenis nota.', 422); $d['type_id'] = $tid;
+  }
+  $det = is_array($in['detail'] ?? null) ? $in['detail'] : [];
+  if ($part['kind'] === 'tol') { $d['asal'] = norm_gate((string) ($det['asal'] ?? '')); $d['tujuan'] = norm_gate((string) ($det['tujuan'] ?? '')); }
+  if ($part['kind'] === 'bbm' && in_array($det['bbm'] ?? '', BBM_JENIS, true)) $d['bbm'] = $det['bbm'];
+  $n = ['nominal' => max(0, (int) ($in['nominal'] ?? 0)), 'date' => $date, 'detail' => $d];
+  if ($part['kind'] === 'bbm') $n = bbm_notes([$n])[0];
+  db()->beginTransaction();
+  try {
+    $line = (int) val("SELECT COALESCE(MAX(line_no), 0) FROM claim_notes WHERE claim_id=?", [$id]) + 1;
+    $nid = ins('claim_notes', ['claim_id' => $id, 'line_no' => $line, 'nominal' => max(0, (int) $n['nominal']), 'nota_date' => $date !== '' ? $date : null, 'detail' => jenc($n['detail'])]);
+    sync_files($u, $id, $nid, $files, 'nota');
+    if (!demo_ctx()) foreach (['asal', 'tujuan'] as $g) if (!empty($d[$g]) && !val("SELECT 1 FROM claim_gate WHERE name=?", [$d[$g]])) ins('claim_gate', ['name' => $d[$g]]);
+    $total = (int) val("SELECT COALESCE(SUM(CASE WHEN nominal > 0 THEN nominal ELSE 0 END), 0) FROM claim_notes WHERE claim_id=?", [$id]);
+    ex("UPDATE claims SET total=?, updated_at=? WHERE id=?", [$total, now(), $id]);
+    hist('claim', $id, 'Nota ditambahkan dari Beranda', $u, null, null, 'Nota ' . $line);
+    db()->commit();
+  } catch (Throwable $e) { if (db()->inTransaction()) db()->rollBack(); throw $e; }
+  return ['id' => $id, 'note_id' => $nid, 'line' => $line];
+}
 function sync_files(array $u, int $claimId, ?int $noteId, array $ids, string $slot): void {
   $ids = array_map('intval', $ids);
   $cur = q("SELECT id FROM claim_files WHERE ref_type='claim' AND ref_id=? AND slot=? AND " . ($noteId === null ? 'note_id IS NULL' : 'note_id=' . (int) $noteId), [$claimId, $slot]);

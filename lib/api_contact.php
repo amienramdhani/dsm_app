@@ -17,7 +17,7 @@ function contactPlain_($v): string { return preg_replace('/\D/', '', $v); }
 function contactHpOk_(string $hp): bool { return (bool) preg_match('/^[+0-9 ()-]{8,25}$/D', $hp); }
 
 function apiDealerContact($token, $id = null) {
-    $db = snapshot_(); $u = guard_($token, false, false, $db); $c = $db['meta']['customers'][js_str($id)] ?? null;
+    $db = snapshot_meta_(); /* cukup meta (orang & dealer), tanpa memuat transaksi */ $u = guard_($token, false, false, $db); $c = $db['meta']['customers'][js_str($id)] ?? null;
     if (!$c || !(contactCanSubmit_($u, $c) || in_array($c['nik'], PortalCore::scope($db['meta']['people'], $u['nik']), true) || contactCanReview_($db, $u, $c))) fail_('Dealer di luar cakupan.');
     $state = contactState_();
     $rq = array_values(array_filter($state['requests'], fn($r) => $r['dealer'] === $id && ($r['actor'] === $u['nik'] || contactCanReview_($db, $u, $c))));
@@ -25,7 +25,7 @@ function apiDealerContact($token, $id = null) {
 }
 function apiSubmitDealerContact($token, $input = null) {
     demoAssertWritable_($token); $input = is_array($input) ? $input : [];
-    return with_lock_(function () use ($token, $input) {
+    return with_lock_named_('dsm_contact', function () use ($token, $input) {
         demoAssertWritable_($token);
         $db = snapshot_(); $u = guard_($token, false, false, $db); $c = $db['meta']['customers'][js_str($input['dealer'] ?? null)] ?? null;
         if (!contactCanSubmit_($u, $c)) fail_('Hanya Sales pemegang dealer yang dapat mengajukan.');
@@ -60,7 +60,7 @@ function apiReviewDealerContacts($token, $ids = null, $decision = null, $reason 
     if (!in_array($decision, ['APPROVED', 'REJECTED'], true)) fail_('Keputusan tidak valid.');
     $reason = text_($reason);
     if ($decision === 'REJECTED' && (mb_strlen($reason) < 5 || mb_strlen($reason) > 500)) fail_('Alasan penolakan wajib 5–500 karakter.');
-    return with_lock_(function () use ($token, $ids, $decision, $reason) {
+    return with_lock_named_('dsm_contact', function () use ($token, $ids, $decision, $reason) {
         $db = snapshot_(); $u = adminGuard_($token, $db); $state = contactState_(); $ix = [];
         foreach ($ids as $id) {
             $k = null; foreach ($state['requests'] as $i => $r) if ($r['id'] === $id) { $k = $i; break; }
@@ -95,7 +95,7 @@ function adminContactRecord_(array $db, array $u, $c, array $after, string $reas
 }
 function apiSaveDealerContact($token, $input = null) {
     $input = is_array($input) ? $input : [];
-    return with_lock_(function () use ($token, $input) {
+    return with_lock_named_('dsm_contact', function () use ($token, $input) {
         $db = snapshot_(); $u = adminGuard_($token, $db); $c = $db['meta']['customers'][js_str($input['dealer'] ?? null)] ?? null;
         if (!contactCanReview_($db, $u, $c)) fail_('Dealer di luar wilayah tugas.');
         if (($input['revision'] ?? null) !== contactRevision_($db, $c)) fail_('Kontak/pemegang dealer berubah. Buka ulang detail dealer.');
@@ -155,7 +155,7 @@ function apiStageContactBulk($form) {
 function apiCommitContactBulk($token, $id = null, $reason = null) {
     $reason = text_($reason);
     if (mb_strlen($reason) < 5 || mb_strlen($reason) > 500) fail_('Isi alasan 5–500 karakter.');
-    return with_lock_(function () use ($token, $id, $reason) {
+    return with_lock_named_('dsm_contact', function () use ($token, $id, $reason) {
         $db = snapshot_(); $u = guard_($token, true, false, $db); $ptr = prop_get_('CONTACT_BULK_' . js_str($id));
         if (!$ptr) fail_('Pratinjau tidak tersedia/sudah dipakai.');
         $stage = readJson_($ptr);

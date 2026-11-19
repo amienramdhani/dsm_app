@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSM · Mockup Standar Form (modal)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#eef2f7;color:#14202b;padding:16px 10px 50px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.tog{display:flex;gap:4px;background:#fff;padding:5px;border-radius:12px;box-shadow:0 2px 10px #10394e14;flex-wrap:wrap;justify-content:center}
+.tog button{border:0;background:none;padding:8px 11px;border-radius:9px;font-weight:800;font-size:11px;color:#5b6b7a;cursor:pointer}
+.tog button.on{background:#10394E;color:#fff}
+.note{max-width:900px;font-size:12.5px;color:#46586a;line-height:1.55;background:#fff;border-radius:12px;padding:12px 14px;box-shadow:0 2px 10px #10394e10}
+.note b{color:#10394E}.note ul{margin:6px 0 0 18px}
+.stage{display:flex;gap:22px;flex-wrap:wrap;justify-content:center;align-items:flex-start}
+.cap{font-size:11px;font-weight:800;color:#7b8a98;letter-spacing:.5px;margin-bottom:6px;text-align:center}
+/* layar */
+.desk{width:760px;max-width:100%;height:720px;border-radius:16px;background:#cfd6de;position:relative;overflow:hidden;box-shadow:0 10px 40px #10394e26;display:flex;align-items:center;justify-content:center}
+.phone{width:390px;max-width:100%;height:760px;border-radius:30px;background:#cfd6de;position:relative;overflow:hidden;box-shadow:0 10px 40px #10394e26}
+.dim{position:absolute;inset:0;background:rgba(16,32,46,.38)}
+/* ===== STANDAR FORM BARU ===== */
+.mdl{position:relative;background:#fff;border-radius:18px;box-shadow:0 18px 50px rgba(16,57,78,.28);width:540px;max-width:94%;max-height:680px;display:flex;flex-direction:column;overflow:hidden}
+.phone .mdl{position:absolute;left:0;right:0;bottom:0;width:100%;max-width:100%;border-radius:22px 22px 0 0;max-height:90%}
+.grab{width:36px;height:4px;border-radius:4px;background:#d5dde5;margin:6px auto 0;display:none}.phone .grab{display:block}
+.mh{display:flex;align-items:center;gap:10px;padding:11px 14px 9px;border-bottom:1px solid #eef2f6}
+.mh .ic{width:32px;height:32px;border-radius:9px;background:#E8F1FB;color:#1E5FB8;display:flex;align-items:center;justify-content:center;font-size:17px;flex:none}
+.mh h2{font-size:14.5px;font-weight:800;color:#10394E;line-height:1.25}
+.mh small{display:block;font-size:11px;color:#7b8a98;margin-top:1px}
+.mh .x{margin-left:auto;width:28px;height:28px;border-radius:9px;border:0;background:#f2f5f8;color:#5b6b7a;font-size:15px;cursor:pointer;flex:none}
+.mb{padding:10px 14px 2px;overflow:auto}
+.f{margin-bottom:9px}
+.f label{display:flex;justify-content:space-between;align-items:baseline;font-size:11px;font-weight:800;color:#46586a;letter-spacing:.35px;margin-bottom:3px;text-transform:uppercase}
+.f label i{font-style:normal;color:#D2453F}
+.f label span{font-weight:600;text-transform:none;letter-spacing:0;color:#9aa7b3;font-size:10.5px}
+.in{width:100%;height:38px;border:1px solid #D5DEE7;border-radius:10px;padding:0 11px;font-size:13px;font-weight:500;font-family:inherit;color:#14202b;background:#fff;outline:none;transition:.15s}
+textarea.in{height:auto;min-height:58px;padding:8px 11px;line-height:1.45;resize:vertical}
+.in::placeholder{color:#a8b4bf;font-weight:400}
+.in:focus{border-color:#2E6E9E;box-shadow:0 0 0 3px rgba(46,110,158,.15)}
+.in.err{border-color:#D2453F;box-shadow:0 0 0 3px rgba(210,69,63,.12)}
+.hint{font-size:10.5px;color:#7b8a98;margin-top:3px;line-height:1.4}
+.hint.e{color:#D2453F;font-weight:600}
+.old{font-size:10.5px;color:#7b8a98;margin-top:3px}.old b{color:#46586a;font-weight:600}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.phone .g2{gap:8px}
+.info{display:flex;gap:7px;background:#F3F7FB;border-radius:9px;padding:6px 10px;font-size:11px;color:#46586a;line-height:1.4;margin:0 0 9px}
+.info b{color:#10394E}
+.sec{font-size:10.5px;font-weight:800;color:#9aa7b3;letter-spacing:.6px;margin:4px 0 9px;padding-top:4px;border-top:1px dashed #e6ecf2}
+.sel{appearance:none;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237b8a98' stroke-width='3'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center;padding-right:34px}
+.mf{display:flex;gap:8px;justify-content:flex-end;padding:9px 14px 11px;border-top:1px solid #eef2f6;background:#fff}
+.phone .mf{padding-bottom:16px}
+.b{height:40px;border-radius:11px;border:0;padding:0 14px;font-weight:800;font-size:12.5px;font-family:inherit;white-space:nowrap;letter-spacing:.4px;cursor:pointer}
+.b.g{background:#F2F5F8;color:#46586a}
+.b.p{background:#10394E;color:#fff;min-width:150px}
+.b.p:disabled{background:#cfd8e1;color:#7b8a98}
+.phone .mf .b{flex:1}
+.cnt{float:right;font-size:10px;color:#9aa7b3;font-weight:600}
+/* ===== TAMPILAN LAMA (pembanding) ===== */
+.old-m{background:#fff;border-radius:14px;width:720px;max-width:96%;padding:0 0 16px;font-family:Arial,sans-serif;color:#153d50}
+.old-m h3{font-size:14px;padding:16px 18px;border-bottom:1px solid #e6ecf2;display:flex;justify-content:space-between}
+.old-m .bd{padding:14px 18px;font-size:12px}
+.old-m label{display:block;margin:10px 0 3px;font-size:12px}
+.old-m input{width:100%;height:22px;border:1px solid #dce7ed;border-radius:10px;font:10.5px monospace;padding:0 8px}
+.old-m textarea{width:100%;height:80px;border:2px solid #999;border-radius:6px;font-size:13px;padding:4px}
+.old-m .btn{background:#0b5cad;color:#fff;border:0;border-radius:9px;padding:7px 10px;font-size:10px;font-weight:700;margin-top:8px}
+.phone .old-m{position:absolute;inset:auto 0 0 0;width:100%;max-width:100%;border-radius:18px 18px 0 0}
+.hide{display:none!important}
+</style></head><body>
+
+<div class="tog" id="tg">
+ <button class="on" data-f="kontak">EDIT KONTAK DEALER</button><button data-f="dealer">TAMBAH DEALER</button><button data-f="pic">SET PIC BRAND</button><button data-f="export">EXPORT</button><button data-f="lama">⟲ TAMPILAN LAMA</button>
+</div>
+<div class="note"><b>Standar form baru</b> (berlaku untuk SEMUA form pop-up DSM, ±28 form: edit kontak, tambah dealer, PIC brand, export, user, transfer, gabung akun, PIN, dll). Diterapkan lewat satu gaya bersama, jadi isi &amp; proses form tidak berubah.
+<ul><li><b>Header</b>: ikon + judul + keterangan (mis. nama &amp; kode dealer yang sedang diedit) + tombol ✕.</li>
+<li><b>Kolom</b> tinggi sama 42px, sudut membulat, font sama (tidak ada lagi input mini huruf mesin ketik / textarea abu tebal), label KAPITAL kecil, tanda <b style="color:#D2453F">*</b> untuk wajib, placeholder contoh, isi lama ditampilkan di bawah kolom.</li>
+<li><b>Fokus</b> kolom: garis biru + bayangan halus. Salah isi: garis merah + pesan di bawah kolom (bukan pop-up alert).</li>
+<li><b>Tombol</b> di kaki form yang menempel: BATAL (abu) + SIMPAN (petrol, kanan). Tombol simpan mati sampai kolom wajib terisi.</li>
+<li><b>Rapat</b>: kolom 38px, jarak antar kolom kecil, kolom pendek tetap berdampingan juga di HP (Nama PIC + No HP, Kota + Sub Region), keterangan dipersingkat.</li><li><b>HP</b>: form muncul dari bawah (bottom sheet), tombol penuh lebar. <b>Desktop</b>: lebar maks 540px (tidak melebar 1000px seperti sekarang), kolom pendek berdampingan.</li></ul></div>
+
+<div class="stage">
+ <div><div class="cap">DESKTOP</div><div class="desk"><div class="dim"></div><div id="dk"></div></div></div>
+ <div><div class="cap">HP</div><div class="phone"><div class="dim"></div><div id="hp"></div></div></div>
+</div>
+
+<script>
+let F='kontak';
+const head=(ic,t,s)=>`<div class="grab"></div><div class="mh"><div class="ic">${ic}</div><div><h2>${t}</h2><small>${s}</small></div><button class="x">✕</button></div>`;
+const foot=(lab,dis)=>`<div class="mf"><button class="b g">BATAL</button><button class="b p" ${dis?'disabled':''}>${lab}</button></div>`;
+const fld=(l,inp,{req,opt,hint,old,err,cnt}={})=>`<div class="f"><label><span style="color:#46586a;font-weight:800;text-transform:uppercase;letter-spacing:.35px;font-size:11px">${l}${req?' <i>*</i>':''}</span>${opt?'<span>opsional</span>':cnt?'<span>'+cnt+'</span>':''}</label>${inp}${err?`<div class="hint e">${err}</div>`:hint?`<div class="hint">${hint}</div>`:''}${old?`<div class="old">Sebelumnya: <b>${old}</b></div>`:''}</div>`;
+const FORMS={
+ kontak:()=>`<div class="mdl">${head('📇','Edit Kontak Dealer','AGRES.ID · 1203-0045 · Jakarta Utara')}<div class="mb">
+   <div class="info">ⓘ<div>Langsung tersimpan (<b>Admin</b>). Kosong = data lama tetap.</div></div>
+   <div class="g2">${fld('Nama PIC','<input class="in" placeholder="Contoh: Budi">',{opt:1})}${fld('Nomor HP','<input class="in" value="0852-9692-1123">',{req:1,hint:'8–15 digit'})}</div>
+   ${fld('Alamat','<textarea class="in" rows="2">AGRES.ID JL. GUNUNG SAHARI RAYA 1, LT 2 MANGGA DUA</textarea>',{req:1})}
+   ${fld('Alasan perubahan','<textarea class="in err" rows="2" placeholder="Contoh: nomor PIC lama sudah tidak aktif"></textarea>',{req:1,cnt:'0 / 500',err:'Isi alasan minimal 5 karakter.'})}
+  </div>${foot('SIMPAN',true)}</div>`,
+ dealer:()=>`<div class="mdl">${head('🏪','Tambah Dealer','Dealer baru masuk antrean publikasi')}<div class="mb">
+   <div class="g2">${fld('Kode Customer','<input class="in" placeholder="Contoh: 1203-0099">',{req:1})}${fld('ID Dealer','<input class="in" placeholder="opsional">',{opt:1})}</div>
+   ${fld('Nama Induk Customer','<input class="in" placeholder="Nama toko sesuai faktur">',{req:1})}
+   <div class="g2">${fld('Kota','<input class="in" placeholder="Contoh: Cirebon">')}${fld('Sub Region','<select class="in sel"><option>JABAR TIMUR</option></select>')}</div>
+   ${fld('No. HP','<input class="in" placeholder="08xx-xxxx-xxxx">')}
+   ${fld('Alamat','<textarea class="in" rows="2" placeholder="Jalan, nomor, kecamatan"></textarea>')}
+   <div class="sec">PEMEGANG DEALER</div>
+   ${fld('Dipantau oleh Sales','<input class="in" placeholder="Ketik nama atau NIK sales…" value="Dedi Kurniawan · 20210045">',{req:1,hint:'Ketik untuk mencari · hanya bisa pilih dari daftar. Region mengikuti portofolio sales.'})}
+  </div>${foot('TAMBAH DEALER')}</div>`,
+ pic:()=>`<div class="mdl">${head('👤','Set / Transfer PIC Brand','AGRES.ID · 1203-0045 · Brand ITEL')}<div class="mb">
+   <div class="info">ⓘ<div>PIC sekarang: <b>Rudi Hartono — 20190012</b><br>Lokasi fisik dealer tidak berubah.</div></div>
+   ${fld('PIC Sales baru','<input class="in" placeholder="Ketik nama atau NIK…" value="Dedi Kurniawan · 20210045 · JABAR TIMUR">',{req:1,hint:'Ketik untuk mencari · hanya bisa pilih dari daftar.'})}
+   <div class="g2">${fld('Berlaku mulai','<input class="in" type="date" value="2026-12-01">',{req:1})}${fld('Cakupan','<select class="in sel"><option>Brand ITEL saja</option></select>')}</div>
+   ${fld('Alasan','<textarea class="in" rows="2" placeholder="Contoh: penataan ulang area ASM"></textarea>',{req:1})}
+  </div>${foot('SIMPAN PIC')}</div>`,
+ export:()=>`<div class="mdl">${head('⬇️','Export Daftar Dealer','Sesuai filter yang aktif di halaman')}<div class="mb">
+   <div class="g2">${fld('Format','<select class="in sel"><option>Excel (.xlsx)</option><option>CSV</option></select>')}${fld('Periode','<select class="in sel"><option>November 2026</option></select>')}</div>
+   ${fld('Kolom','<select class="in sel"><option>Standar (14 kolom)</option><option>Lengkap</option></select>',{hint:'Lengkap = tambah kontak, status per brand, dan stok.'})}
+   <div class="info">ⓘ<div><b>3.839 dealer</b> akan diexport. Butuh ±10 detik.</div></div>
+  </div>${foot('DOWNLOAD')}</div>`,
+ lama:()=>`<div class="old-m"><h3>Edit kontak dealer <span>×</span></h3><div class="bd"><label>Nama PIC</label><input><label>Nomor HP</label><input value="0852-9692-1123 (HEAD"><label>Alamat</label><textarea>AGRES.ID JL. GUNUNG SAHARI RAYA 1, LT 2 MANGGA DUA</textarea><label>Alasan perubahan</label><textarea></textarea><p style="margin-top:8px">Disimpan langsung sesuai kewenangan Admin. Kolom kosong mempertahankan data lama. Pengajuan Sales yang bertabrakan perlu diperiksa ulang.</p><button class="btn">Simpan perubahan</button></div></div>`
+};
+function draw(){dk.innerHTML=FORMS[F]();hp.innerHTML=FORMS[F]();document.querySelectorAll('#tg button').forEach(b=>b.classList.toggle('on',b.dataset.f===F));}
+document.querySelectorAll('#tg button').forEach(b=>b.onclick=()=>{F=b.dataset.f;draw();});
+draw();
+</script>
+</body></html>

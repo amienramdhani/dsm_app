@@ -68,7 +68,8 @@ function writeJson_(string $name, $obj): string {
 }
 function writeJsonId_(string $id, $obj): void { file_put_contents(file_path_($id), js_stringify($obj), LOCK_EX); }
 function readJson_(string $id) {
-    static $memo = [];
+    // Memo di $GLOBALS (bukan static) supaya snapshot_forget_() bisa melepas memorinya.
+    $memo = &$GLOBALS['DSM_JSON_MEMO']; if (!is_array($memo)) $memo = [];
     if (array_key_exists($id, $memo)) return $memo[$id];
     $p = file_path_($id);
     if (!is_file($p)) fail_('File data tidak ditemukan: ' . $id);
@@ -271,19 +272,98 @@ function audit_(string $nik, string $action, $detail = ''): void {
 }
 
 function snapshot_(): array {
-    static $snap = null, $snapId = null;
+    // Cache di $GLOBALS (bukan static) supaya snapshot_forget_() bisa melepas memorinya; isi & perilaku sama.
+    $c = &$GLOBALS['DSM_SNAP_CACHE'];
     $id = prop_get_('ACTIVE');
     if (!$id) fail_('Belum ada data dipublikasikan.');
     $key = $id . '|' . (prop_get_('DEALER_CONTACT_STATE') ?? '');
-    if ($snap !== null && $snapId === $key) return function_exists('tmScopedSnapshot_') ? tmScopedSnapshot_($snap) : $snap;
+    if (is_array($c) && $c['key'] === $key) return function_exists('tmScopedSnapshot_') ? tmScopedSnapshot_($c['snap']) : $c['snap'];
     $s = readJson_($id);
     PortalCore::resetMemo($id);
     PortalCore::adaptMeta($s['meta']);
     applyDealerContacts_($s['meta']);
     $s['id'] = $id; $s['_vid'] = $id;
-    $snapId = $key;
-    $snap = $s;
-    return function_exists('tmScopedSnapshot_') ? tmScopedSnapshot_($snap) : $snap;
+    $c = ['key' => $key, 'snap' => $s];
+    return function_exists('tmScopedSnapshot_') ? tmScopedSnapshot_($s) : $s;
+}
+/**
+ * Lepas cache snapshot & JSON di memori (dibaca ulang dari disk bila diminta lagi). Dipakai publish_ supaya
+ * snapshot lama (ratusan MB pada data besar) tidak tertahan selama histori dihitung ulang.
+ */
+function snapshot_forget_(): void { $GLOBALS['DSM_SNAP_CACHE'] = null; $GLOBALS['DSM_JSON_MEMO'] = []; $GLOBALS['DSM_PEOPLE_CACHE'] = null; $GLOBALS['DSM_META_CACHE'] = null; }
+
+/**
+ * Daftar orang (meta.people) snapshot aktif TANPA memuat snapshot penuh. Dipakai guard_() dan tmBeginRequest_(), yang
+ * berjalan di SETIAP request (termasuk yang jawabannya dari cache) dan hanya butuh NIK/role/atasan.
+ * Isi = $snap['meta']['people'] hasil snapshot_() (sudah adaptMeta), disimpan di file kecil <ACTIVE>-people.
+ * Nama file terikat id snapshot → otomatis berganti setiap publikasi. File rusak/hilang → dibuat ulang dari snapshot penuh.
+ */
+function snapshot_people_(): array {
+    $id = prop_get_('ACTIVE');
+    if (!$id) fail_('Belum ada data dipublikasikan.');
+    $sc = $GLOBALS['DSM_SNAP_CACHE'] ?? null; // snapshot penuh sudah dimuat di request ini → pakai itu
+    if (is_array($sc) && str_starts_with((string) $sc['key'], $id . '|')) return $sc['snap']['meta']['people'];
+    $c = $GLOBALS['DSM_PEOPLE_CACHE'] ?? null;
+    if (is_array($c) && $c['id'] === $id) return $c['people'];
+    $people = null; $side = $id . '-people';
+    if (!empty($GLOBALS['DSM_PEOPLE_LIGHT_OFF']) || prop_get_('PEOPLE_LIGHT_OFF')) { snapshot_(); return $GLOBALS['DSM_SNAP_CACHE']['snap']['meta']['people']; } // darurat: properti PEOPLE_LIGHT_OFF = 1
+    if ($side !== null && preg_match('/^[A-Za-z0-9_.-]{1,200}$/', $side)) {
+        $p = file_path_($side);
+        if (is_file($p)) {
+            $v = json_decode((string) @file_get_contents($p), true, 512, JSON_BIGINT_AS_STRING);
+            if (is_array($v) && ($v['id'] ?? null) === $id && is_array($v['people'] ?? null)) $people = $v['people'];
+        }
+    }
+    if ($people === null) {
+        snapshot_(); $people = $GLOBALS['DSM_SNAP_CACHE']['snap']['meta']['people'];
+        if ($side !== null) {
+            try { // tulis ke file sementara lalu rename: pembaca lain tidak pernah melihat file setengah jadi
+                $p = file_path_($side); $tmp = $p . '.tmp' . getmypid();
+                if (@file_put_contents($tmp, json_encode(['id' => $id, 'people' => $people], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)) !== false) @rename($tmp, $p);
+            } catch (Throwable $e) { /* hanya optimasi */ }
+        }
+    }
+    $GLOBALS['DSM_PEOPLE_CACHE'] = ['id' => $id, 'people' => $people];
+    return $people;
+}
+
+/**
+ * Snapshot "ringan": hanya meta (orang, dealer, produk, target, KPI, dst.) TANPA transaksi/kubus/stok.
+ * Untuk fungsi yang tidak butuh transaksi (mis. apiDealerContact). File <ACTIVE>-meta dibuat sekali dari snapshot penuh,
+ * lalu tiap request menerapkan langkah yang sama dengan snapshot_(): adaptMeta + kontak dealer terbaru.
+ * Telemarketing (meta di-scope) dan properti META_LIGHT_OFF = 1 -> memakai snapshot_() seperti biasa.
+ */
+function snapshot_meta_(): array {
+    if (!empty($GLOBALS['DSM_TM_CONTEXT']) || !empty($GLOBALS['DSM_META_LIGHT_OFF']) || prop_get_('META_LIGHT_OFF')) return snapshot_();
+    $id = prop_get_('ACTIVE');
+    if (!$id) fail_('Belum ada data dipublikasikan.');
+    $key = $id . '|' . (prop_get_('DEALER_CONTACT_STATE') ?? '');
+    $sc = $GLOBALS['DSM_SNAP_CACHE'] ?? null; // snapshot penuh sudah dimuat di request ini -> pakai itu
+    if (is_array($sc) && $sc['key'] === $key) return $sc['snap'];
+    $c = $GLOBALS['DSM_META_CACHE'] ?? null;
+    if (is_array($c) && $c['key'] === $key) return $c['snap'];
+    $meta = null; $side = $id . '-meta';
+    if (preg_match('/^[A-Za-z0-9_.-]{1,200}$/', $side)) {
+        $p = file_path_($side);
+        if (is_file($p)) {
+            $v = json_decode((string) @file_get_contents($p), true, 512, JSON_BIGINT_AS_STRING);
+            if (is_array($v) && ($v['id'] ?? null) === $id && is_array($v['meta'] ?? null)) $meta = $v['meta'];
+        }
+        if ($meta === null) {
+            $raw = readJson_($id); $meta = $raw['meta']; unset($raw); // meta MENTAH (sebelum adaptMeta/kontak), sama dengan isi file snapshot
+            try {
+                $p = file_path_($side); $tmp = $p . '.tmp' . getmypid();
+                if (@file_put_contents($tmp, json_encode(['id' => $id, 'meta' => $meta], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION)) !== false) @rename($tmp, $p);
+            } catch (Throwable $e) { /* hanya optimasi */ }
+        }
+    }
+    if ($meta === null) return snapshot_();
+    PortalCore::resetMemo($id);
+    PortalCore::adaptMeta($meta);
+    applyDealerContacts_($meta);
+    $s = ['meta' => $meta, 'id' => $id, '_vid' => $id, '_metaOnly' => true];
+    $GLOBALS['DSM_META_CACHE'] = ['key' => $key, 'snap' => $s];
+    return $s;
 }
 
 function contactState_(): array {

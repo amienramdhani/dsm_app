@@ -35,7 +35,10 @@ function apiTransactions($token, $period = null, $selection = null, $customer = 
     if (substr($from, 0, 7) !== $period || substr($to, 0, 7) !== $period || $from > $to || $to > $cut) fail_('Rentang tanggal harus dalam bulan pilihan, urut, dan tidak melewati cutoff.');
     if (!isset($db['raw'][$period]) || !truthy($db['raw'][$period])) return ['rows' => [], 'total' => 0, 'page' => 0, 'pageSize' => $size, 'sourceRows' => 0, 'totals' => ['qty' => 0, 'amount' => 0], 'from' => $from, 'to' => $to];
     $set = js_set($ids); $sel = isset($db['selectedRegions']) && $db['selectedRegions'] !== null && $db['selectedRegions'] !== false ? $db['selectedRegions'] : null;
-    $raw = js_filter(txEffRaw_($db['meta'], dataRows_((string) $db['raw'][$period])), fn($t) => in_set($set, $t['nik'] ?? null) && (!truthy($t['region'] ?? null) || $sel === null || in_array($t['region'], $sel, true)) && (!truthy($customer) || ($t['customer'] ?? null) === $customer || custInduk_($db['meta'], $t['customer'] ?? '') === custInduk_($db['meta'], $customer)) && $t['date'] >= $from && $t['date'] <= $to);
+    // Satu dealer (popup): ambil baris dealer itu saja dari database, bukan seluruh bulan. Saringan di bawah tetap sama.
+    // Darurat / pembanding: properti TX_FAST_OFF = 1.
+    $src = (truthy($customer) && !prop_get_('TX_FAST_OFF')) ? dataRowsCustomer_((string) $db['raw'][$period], custCodesFor_($db['meta'], $customer)) : dataRows_((string) $db['raw'][$period]);
+    $raw = js_filter(txEffRaw_($db['meta'], $src), fn($t) => in_set($set, $t['nik'] ?? null) && (!truthy($t['region'] ?? null) || $sel === null || in_array($t['region'], $sel, true)) && (!truthy($customer) || ($t['customer'] ?? null) === $customer || custInduk_($db['meta'], $t['customer'] ?? '') === custInduk_($db['meta'], $customer)) && $t['date'] >= $from && $t['date'] <= $to);
     $all = PortalCore::groupedTransactions($raw, $db['meta']); $n = pageIdx_($page, count($all), $size);
     $all = sortRecords_($all, $sort, [fn($r) => $r['date'], fn($r) => $r['sj'], fn($r) => $r['nama'], fn($r) => $r['brand'], fn($r) => $r['type'], fn($r) => $r['qty'], fn($r) => $r['amount']]);
     $q = 0; $a = 0; foreach ($raw as $t) { $q += $t['qty']; $a += $t['amount']; } $dq = 0; foreach ($all as $g) $dq += (float) ($g['deviceQty'] ?? 0);
@@ -277,12 +280,16 @@ function dealerHistoryData_($token, $selection, $brand, $from, $to, $query, $fil
         $E[$k] = array_merge(['id' => $id, 'nama' => js_or($db['meta']['customers'][$id]['nama'] ?? null, $id . ' (belum di master)')], $owner, ['rgm' => dealerRgmName_($db, $owner['salesNik'] ?? '')], ['stCalc' => $zero, 'soCalc' => $zero, 'omzetCalc' => $zero, 'brandCalc' => $bc]);
         return $k;
     };
-    foreach ($db['meta']['customers'] as $c) if (in_set($set, $c['nik'] ?? null)) $get($c['id'], $c['nik']);
+    // Popup satu dealer (filters.customer): dealer lain dibuang di akhir, jadi lewati sejak awal (hasil sama, tanpa menghitung semua dealer).
+    // Darurat: properti HISTORY_FAST_OFF = 1 -> hitung semua dealer seperti dulu.
+    $fc = (is_array($filters) && truthy($filters['customer'] ?? null) && !prop_get_('HISTORY_FAST_OFF')) ? (string) $filters['customer'] : null;
+    foreach ($db['meta']['customers'] as $c) if (in_set($set, $c['nik'] ?? null) && ($fc === null || (string) $c['id'] === $fc)) $get($c['id'], $c['nik']);
     $calcMonths = [];
     foreach ($calcPeriods as $i => $p) {
         $stSourceCut = $cutOf('ST', $p); $soSourceCut = $cutOf('SO', $p);
         $stW = historyWindow_($p, $stSourceCut, $dateMode, $refStDay); $soW = historyWindow_($p, $soSourceCut, $dateMode, $refSoDay);
         if ($stW['ready']) foreach (PortalCore::slice($db, $p, $ids, $stW['to']) as $t) {
+            if ($fc !== null && (string) $t['customer'] !== $fc) continue;
             if (!($t['date'] >= $stW['from'] && (!truthy($t['region'] ?? null) || in_array($t['region'], $selected, true)) && in_array($t['brand'], $brands, true))) continue;
             $k = $get($t['customer'], $t['nik']); $match = in_array($t['brand'], $selectedBrands, true);
             if (truthy($t['q'] ?? null)) { $E[$k]['brandCalc'][$t['brand']]['st'][$i] += $t['q']; if ($match) $E[$k]['stCalc'][$i] += $t['q']; }
@@ -290,7 +297,7 @@ function dealerHistoryData_($token, $selection, $brand, $from, $to, $query, $fil
             $E[$k]['brandCalc'][$t['brand']]['omzet'][$i] = PortalCore::round($E[$k]['brandCalc'][$t['brand']]['omzet'][$i] + $a);
             if ($match) $E[$k]['omzetCalc'][$i] = PortalCore::round($E[$k]['omzetCalc'][$i] + $a);
         }
-        if ($soW['ready']) foreach (stockMoves_($db, (string) $soW['from'], (string) $soW['to'], ['out' => true]) as $t) {
+        if ($soW['ready']) foreach (stockMoves_($db, (string) $soW['from'], (string) $soW['to'], $fc !== null ? ['out' => true, 'customer' => $fc] : ['out' => true]) as $t) {
             if (!(substr($t['date'], 0, 7) === $p && $t['date'] >= $soW['from'] && $t['date'] <= $soW['to'] && (!truthy($t['region'] ?? null) || in_array($t['region'], $selected, true)) && StockCore::canSee($db, $ids, $t['customer']))) continue;
             $product = $db['meta']['products'][$t['sku']] ?? null;
             if ($product && truthy($product['device'] ?? null) && in_array($product['brand'], $brands, true) && truthy($t['outQty'] ?? null)) {
@@ -468,7 +475,7 @@ function apiExportDealerExcel($token, $selection = null, $from = null, $to = nul
             if ($product && truthy($product['device'] ?? null) && in_array($product['brand'], $brands, true)) { $k = $get($t['customer']); $E[$k]['metrics'][$product['brand']]['so'] += $t['outQty']; }
         }
     }
-    $valid = function_exists('dsStatuses_') ? array_merge(dsStatuses_(dsConfig_()), ['BELUM ORDER']) : ['AKTIF', 'BELUM MINIMUM DA', 'DA BULAN LALU', 'IDLE', 'PASIF', 'BELUM ORDER']; $legacy = text_($f['status'] ?? null);
+    $valid = function_exists('dsStatuses_') ? array_merge(dsStatuses_(dsConfig_()), [DS_NEVER, 'BELUM ORDER', 'NOO', 'TUTUP']) : ['AKTIF', 'BELUM MINIMUM DA', 'DA BULAN LALU', 'IDLE', 'PASIF', 'BELUM ORDER']; $legacy = text_($f['status'] ?? null);
     $sl = []; $stIn = $f['statuses'] ?? null;
     if (is_array($stIn) && array_is_list($stIn)) $sl = $stIn; elseif ($legacy !== '' && $legacy !== 'ALL') $sl = [$legacy];
     $statuses = []; foreach ($sl as $x) { $t = text_($x); if ($t !== '') $statuses[] = $t; } $statuses = array_values(array_unique($statuses));

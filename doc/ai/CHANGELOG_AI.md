@@ -35,6 +35,102 @@ Pending:
 
 # History
 
+## 2026-11-19 - Status dealer: dealer yang sedang DIAJUKAN tutup tidak dihitung PROSPECT
+- Keputusan user: "nonaktif" = pengajuan tutup yang belum disetujui (master dealer tidak punya penanda nonaktif lain; TUTUP sudah dikecualikan).
+- lib/dealer.php dealerPendingClose_() (baris terakhir per dealer di Dealer_Tutup = PENGAJUAN). lib/dealer_status.php dsEligible_() = master minus TUTUP minus diajukan tutup; dsCount_ menghitung PROSPECT langsung dari dealer yang ikut dihitung (dulu: master dikurangi jumlah berstatus -> dealer tutup yang pernah order mengurangi dua kali). Dipakai Admin › Aturan Status (pratinjau dampak).
+- assets/dealer_status.js stOf: dealer diajukan tutup yang statusnya PROSPECT (total / per brand) tidak dihitung; status lain (mis. ACTIVE) tetap dihitung.
+- Tes: tools/tests/dealer_status_test.php 29 lolos (+3); stOf dicek di Node (6 kasus).
+- Belum: daftar dealer per chip filter lama (dsm.js) masih memakai c.status apa adanya.
+
+## 2026-11-19 - Klaim: kartu status pendek untuk semua peran
+- klaim/assets/core.js: Beranda semua peran memakai .kc.kcs (±46 px). app.css: kartu tanpa angka (mis. Semua klaim, menu Super Admin) label langsung setelah ikon. Diuji Playwright: admin, fm, rgm, sa.
+
+## 2026-11-19 - Klaim: draf di Beranda & Klaim saya, tambah nota cepat, kartu status pendek, ubah/hapus badan usaha (BELUM TERUJI di DSM asli)
+- Mockup disetujui: doc/mockup/2026-11-19/dsm-klaim-draf-beranda.html, dsm-klaim-badan-usaha.html.
+- Server (klaim/lib/claims.php): draft_list (draf milik pembuat, ringkasan nota/foto/belum lengkap), draft_note_add (satu nota ke draf; diolah seperti claim_save: bbm_notes, norm_gate, sync_files, claim_gate; isian boleh kosong, foto wajib, tanggal tidak boleh masa depan; Perdin/Uang makan/Reimburse PC tidak bisa). Validasi lengkap tetap saat kirim (claim_check, tidak diubah).
+- Server (klaim/lib/core.php): entity_usage, entity_change (ganti nama / gabung di claim_lookup, claim_users (daftar koma, tanpa dobel), claims, claim_pc, claim_transfers; satu transaksi; dicatat di riwayat). klaim/api.php: draft_list, draft_note_add, entity_rename, entity_list (jumlah pengguna/klaim), entity_del (+ tujuan = gabung). draft_note_add & entity_rename diblok di Mode lihat.
+- Tampilan: klaim/assets/draft.js (baru; kartu draf + lembar Tambah nota, isian ikut jenis: Tol gerbang, BBM jenis + hitung liter). core.js: draf di bawah kartu status Beranda pemohon (maks 3), kartu status pemohon lebih pendek (.kcs ±46px), angka draf di menu Klaim saya, Klaim saya: Draft jadi tombol ketiga di bawah FILTER (chip Draft dihapus; #/mine?tab=draft tetap jalan). admin.js saBu: Ubah/Hapus per baris, gabung. app.css ditambah di akhir.
+- Catatan: nama fungsi pickFiles sempat bentrok dengan form.js -> diganti draftPick sebelum commit (form edit diuji tetap bisa tambah foto).
+- Tes: klaim/tests/run.php 129 lolos (116 lama + 13 baru: draf & badan usaha). UI diuji Playwright di mode mandiri SQLite (dewi & sa): Beranda, tambah nota Tol & BBM, Klaim saya › Draft, form edit draf, ubah/gabung/hapus badan usaha.
+
+## 2026-11-19 - Panaskan cache otomatis setelah publikasi (BELUM TERUJI di DSM asli)
+- lib/warm.php (baru, dimuat api.php): warmNote_ mencatat apiDashboard/apiDOS yang bisa di-cache (akun + argumen) ke tabel dsm_warm (dibuat otomatis). warmRun_ dipanggil pekerja antrean (lib/publish_queue.php pqWork_) SETELAH ada publikasi: kombinasi 3 hari terakhir (maks 200, paling sering dulu) dihitung atas nama akun itu dengan sesi sekali pakai bertanda 'warm' (ditolak api.php seperti sesi bot), disimpan ke cache (format CS: untuk Dashboard), sesi dihapus.
+- Rem: batas waktu (cron CLI 8 menit, lewat web 60 dtk), berhenti bila ada antrean publikasi / snapshot berganti (hasil lama tidak disimpan), yang sudah ada di cache dilewati, Telemarketing / nonaktif / wajib ganti PIN dilewati. Darurat: properti WARM_OFF = 1. Catatan > 14 hari dihapus.
+- lib/rescache.php: dsm_cache_key_ menyimpan NIK untuk warmNote_ (sekali pakai).
+- Tes tools/tests/warm_test.php (13): isi cache byte-sama dengan jawaban api.php atas nama akun yang benar, sesi selalu terhapus (juga saat error), semua rem.
+- Butuh cron publish_worker.php (IT) agar andal; tanpa cron hanya ±60 dtk setelah publikasi lewat web.
+
+## 2026-11-19 - Simpan kontak tidak membuang cache Dashboard + transaksi satu dealer (BELUM TERUJI di DSM asli)
+- Cache apiDashboard: kontak dealer keluar dari kunci cache (lib/rescache.php DSM_CONTACT_PATCH = ['apiDashboard'], hasil audit: hp/alamat hanya di objek ber-id dealer di 3 tempat). Isi cache diawali "CS:<status kontak saat dihitung>"; status berbeda -> kontak terbaru (override) ditempel ke objek {id, hp/alamat/pic}, disimpan ulang. Darurat: properti CONTACT_PATCH_OFF = 1. api.php: baca/tulis cache memakai format ini. Fungsi cache lain TIDAK diubah.
+- Tes tools/tests/contact_patch_test.php (11): hasil tempel byte-sama dengan hitung ulang (652 KB, ±9 ms), {} tetap {}, alur status sama/berubah.
+- apiTransactions dengan dealer (popup): baris diambil per kode dealer dari dsm_st (lib/store.php dataRowsCustomer_; lib/publish.php custCodesFor_ = kode itu + induk + alias + kode lama/rantai), saringan lama tetap dipakai. Darurat/pembanding: properti TX_FAST_OFF = 1.
+- Tes tools/tests/tx_customer_test.php (4): 189 kode, baris identik urutan & isi. BELUM teruji: txEffRaw_ (koreksi transaksi / kredit tetap ke penjual) pada subset dealer -> user bandingkan TX_FAST_OFF nyala/mati pada dealer yang punya koreksi.
+
+## 2026-11-19 - Snapshot ringan (meta saja) untuk apiDealerContact (BELUM TERUJI di DSM asli)
+- Probe popup: apiDealerContact 1,7 dtk untuk 0 KB = hampir seluruhnya memuat snapshot penuh.
+- lib/data.php snapshot_meta_(): meta snapshot aktif dari file kecil <ACTIVE>-meta (meta MENTAH, dibuat sekali; tiap request tetap adaptMeta + kontak dealer terbaru, sama dengan snapshot_()). Bila snapshot penuh sudah dimuat di request itu -> dipakai. Telemarketing -> snapshot_() (meta di-scope). Darurat: properti META_LIGHT_OFF = 1.
+- lib/api_contact.php apiDealerContact memakai snapshot_meta_(). lib/store.php: <ACTIVE/PREVIOUS>-meta tidak dihapus prune.
+- Tes tools/tests/meta_light_test.php (9 lolos): 35 kombinasi role x dealer identik (termasuk revision & pesan tolak), kontak berubah tanpa publikasi, publikasi baru, file rusak, sakelar, Telemarketing.
+- Catatan: bug sempat masuk saat menyisipkan komentar // di baris satu-baris (guard ikut jadi komentar) -> ketahuan oleh tes sebelum commit. Di file satu-baris pakai /* */.
+- Berikutnya (belum): apiTransactions satu dealer baca baris dealer itu saja (kode alias/induk harus ikut) + sakelar pembanding.
+
+## 2026-11-19 - Detail dealer lebih cepat: histori satu dealer + pengamat loading (BELUM TERUJI di DSM asli)
+- Probe user (popup detail dealer): apiDealerHistory 4,7-6,4 dtk, apiDealerHistorySummary 5,1 dtk; pengamat DOM dsm.js:832 total 20,8 dtk (539x, maks 2,2 dtk).
+- lib/api_menu.php dealerHistoryData_: bila filters.customer diisi (popup satu dealer), dealer lain dilewati sejak awal (daftar customer, cube ST, dan stockMoves_ memakai filter customer SQL ber-indeks). Dulu menghitung SEMUA dealer cakupan lalu membuang di akhir; hasil seharusnya identik. Darurat: properti HISTORY_FAST_OFF = 1. BELUM dijalankan (butuh DB lengkap) -> user bandingkan angka popup dengan sakelar nyala/mati.
+- assets/dsm.js baris 832 (pengamat tanda "Memuat…"): document.querySelector('.v6loading,.v6skel') dulu dijalankan di SETIAP perubahan DOM (±5 ms per cek di halaman ±300 rb elemen). Sekarang dicek sekali tiap v6MarkLoading jalan (tanda hanya dibuat fungsi itu, satu-satunya pemanggil = pengamat ini). Uji browser tiruan: 300 sisipan di halaman besar 7.190 ms -> 38 ms; 6 langkah siklus tanda loading/skeleton identik dengan versi lama.
+
+## 2026-11-19 - Biaya tetap per request: guard_ tanpa snapshot penuh (BELUM TERUJI di server)
+- Sebab: api.php memanggil tmBeginRequest_() SEBELUM cek cache -> guard_() tanpa $db -> snapshot_() membaca & decode snapshot penuh di SETIAP request, termasuk jawaban dari cache (probe: apiPublishStatus 0 KB tetap ±0,5 dtk).
+- lib/data.php: snapshot_people_() = meta.people snapshot aktif (sudah adaptMeta) dari file kecil <ACTIVE>-people (dibuat sekali dari snapshot penuh, tulis tmp+rename, salah id/rusak -> dibuat ulang). Bila snapshot penuh sudah dimuat di request itu, dipakai langsung. snapshot_forget_ ikut mengosongkan.
+- lib/auth.php guard_(): tanpa $db memakai snapshot_people_() (sebelumnya snapshot_()). Dengan $db tidak berubah.
+- lib/store.php storage_prune_: <ACTIVE>-people & <PREVIOUS>-people tidak dihapus.
+- Darurat: properti PEOPLE_LIGHT_OFF = 1 -> kembali memuat snapshot penuh.
+- Tes tools/tests/guard_light_test.php (11 lolos): 56 kombinasi role/Demo/admin/wajib ganti PIN/akun hilang = hasil & pesan identik; snapshot uji 47 MB: guard_ 389 ms -> 10 ms per request. Telemarketing tetap memuat snapshot di tmBeginRequest_ (perlu untuk scoping).
+
+## 2026-11-19 - Cache hasil: kapasitas lebih besar + buang yang paling lama tidak dipakai (BELUM TERUJI di server)
+- Ukur ?probe=1 (server): apiDOS 4,65 dtk dingin -> 0,86-1,0 dtk dari cache; apiExec 4,6 dtk; apiDashboard 0,8 dtk tapi 5,3 MB; fungsi kecil (apiPublishStatus 0 KB) tetap ±0,5 dtk = biaya tetap per request (dugaan: muat snapshot, belum dicek).
+- lib/rescache.php: batas 300 file (dipangkas ke 200) -> 3000 file DAN 1024 MB (ubah lewat DSM_CACHE_MAX_FILES / DSM_CACHE_MAX_MB di config.local.php), dipangkas ke 80%. Cache yang dibaca di-touch, jadi pemangkasan membuang yang paling lama TIDAK DIPAKAI (dulu: paling lama dibuat).
+- Kunci cache tetap per NIK: Admin membuka semua menu TIDAK memanaskan cache user lain.
+- Tes: tools/tests/rescache_prune_test.php (8 lolos).
+- DITAHAN: (A) pengamat DOM dsm.js:832 (probe 685 ms di DOS) tidak terulang di browser tiruan (±20 ms); dua versi perbaikan tidak lebih cepat -> butuh profil asli. (B) kontak dealer keluar dari kunci cache: apiDashboard ikut mengirim hp/alamat dealer -> nomor lama tampil sampai publikasi berikutnya; perlu cara lain (mis. terapkan kontak saat cache dibaca).
+- Belum: panaskan cache otomatis per akun aktif setelah publikasi.
+
+## 2026-11-19 - Fix form_kit: simpan form pop-up gagal diam-diam (BELUM TERUJI di DSM asli)
+- Gejala: Simpan Perubahan di Edit kontak dealer (dan form pop-up lain) tidak menyimpan, tanpa pesan error. Sebab: form_kit.js memindahkan tombol simpan ke kaki pop-up, sedangkan handler lama memakai e.target.querySelector('button') lalu b.disabled=true -> null -> TypeError sebelum request terkirim. Bug masuk di ad1be2b (form_kit, 2026-11-18), ada juga di 141a887.
+- Perbaikan: assets/form_kit.js saja. form.querySelector/querySelectorAll dilengkapi agar tombol yang dipindah tetap ditemukan di urutan DOM aslinya (penanda posisi). Isi form dan proses simpan tidak diubah.
+- Tes: harness Playwright memakai adminContactForm asli + form_kit.js asli: sebelum fix rpc tidak terpanggil (TypeError), sesudah fix apiSaveDealerContact terpanggil dengan data benar. Urutan pencarian tombol dicek di 3 susunan form.
+- Form lain berpola sama BELUM dites satu per satu (dealerEditor, userEditor, contactForm, v6BrEdit, v6DealerBrandEdit, v6DealerBrandCutover, panel upload). Wajib uji: simpan kontak dealer, Tambah dealer, Edit user, Ajukan perubahan kontak.
+
+## 2026-11-19 - Gabung perubahan IT: publikasi lebih ringan (BELUM TERUJI di DSM asli / MySQL)
+- Sumber: file IT (basis lama, sebelum Tahap 1-3 dan Paket 3) digabung SELEKTIF, bukan ditimpa.
+- Diambil utuh: lib/js.php (jalan pintas js_norm/jkey/js_str/js_trim/text_), lib/data.php (memo di $GLOBALS + snapshot_forget_()), lib/store.php (movesHash_/movesCount_/movesStore_ pakai ulang baris dsm_move bila isi sama, chunk insert 5.000, storage_prune_later_, penjaga moveSafe di prune).
+- lib/core.php: HANYA blok sort NOO jadi array_multisort (versi IT masih field Status Dealer lama, tidak dipakai).
+- lib/api_import.php: HANYA tunggu kunci 'dsm_publish' 15 -> 40 dtk; kunci bernama tetap 15 dtk. with_lock_named_/antrean Tahap 3 dipertahankan.
+- lib/publish.php: publish_memory_() (naik ke 2560M), penciutan $prior + snapshot_forget_() DIPASANG SETELAH hook jalur cepat/antrean (keduanya butuh $prior utuh), movesStore_ menggantikan movesWrite_, prune jalan setelah respons (storage_prune_later_) pada jalur penuh. publishMetaOnly_ tetap prune sinkron.
+- Tes: php -l semua file; publish_fast_test (9), dealer_status_test (26); fuzz js.php 200 ribu iterasi + sort NOO 300 set acak = hasil sama dengan versi lama; tools/tests/moves_store_test.php (8, SQLite tiruan).
+- BELUM diuji: MySQL asli (prune dengan dsm_move dipakai bersama, publikasi dua kali beruntun), penghematan memori snapshot_forget_() (pemanggil seperti apiSaveUser masih memegang $db, hematnya belum tentu sebesar klaim), RAM server untuk 2560M paralel.
+
+## 2026-11-18 - Detail dealer desktop, konfirmasi DSM, header tabel Teal, BANGKIT dibuang (BELUM TERUJI di DSM asli)
+- assets/dealer_detail.js/.css, assets/table_head.css baru; form_kit.js/.css (dsmConfirm, keterangan header); confirm() → await dsmConfirm() di 37 tempat (dsm.js, dealer_status.js, publish_queue.js, dealer_target.js, dealer_transfer_direct.js, portfolio_transfer.js, telegram_agent.js).
+- dealer_status.js & page_tidy.js: BANGKIT dibuang. lib/core.php: ds.noo & ds.gap dikirim ke halaman. lib/publish_queue.php: pqWarm_.
+
+## 2026-11-18 - Simpan cepat Tahap 3: antrean publikasi (BELUM TERUJI di DSM asli)
+- lib/publish_queue.php + tools/publish_worker.php baru; lib/publish.php (tunda ke antrean), lib/api_import.php (upload via antrean), api.php (require + 3 API).
+- assets/publish_queue.js/.css baru, dimuat di index.php; assets/dsm.js (panel Admin), assets/admin_revision.js (grup Data Harian).
+- Mockup disetujui: doc/mockup/2026-11-18/dsm-publikasi-data.html.
+
+## 2026-11-18 - Simpan cepat Tahap 1+2 (BELUM TERUJI di DSM asli)
+- lib/api_import.php: kunci simpan bisa diberi nama; lib/api_telemarketing.php, api_contact.php, api_tutup.php pakai kunci sendiri.
+- lib/publish.php: jalur publikasi cepat (ganti master saja) untuk KPI/target/user/kontak bila atribusi tidak berubah; lib/store.php prune menjaga mutasi stok yang masih dipakai.
+- lib/api_kpi.php, dealer.php, bulk.php, users_bulk.php, api_import.php: simpan dibungkus publishLight_().
+- tools/tests/publish_fast_test.php baru (9 lolos).
+
+## 2026-11-18 - Status dealer Paket 3: frekuensi order 3 bulan closing (BELUM TERUJI di DSM asli)
+- lib/dealer_status.php: mesin pola 6 bulan diganti aturan frekuensi (ACTIVE/PASSIVE/IDLE/INACTIVE/PROSPECT), konfigurasi baru DEALER_STATUS_RULES_V3 (win, act, inact, since, off). Ringkasan per brand menghitung PROSPECT.
+- assets/dealer_status.js + .css: tampilan HP Opsi A (kartu DA bulan ini + daftar status + label NOO); panel Admin › Pengaturan Brand › Ambang Status ditulis ulang (RUMUS STATUS / BRAND / CEK DAMPAK). Desktop tetap kartu lama (page_tidy).
+- lib/core.php (statusInfo.rule), lib/api_menu.php (filter status), lib/api_analisa.php + assets/dsm.js + assets/page_tidy.js: nama status baru dikenali.
+- tools/tests/dealer_status_test.php ditulis ulang: 26 lolos.
+
 ## 2026-11-05 - Fitur Presentasi DSM tahap 1 (BELUM TERUJI di DSM asli)
 - Menu baru "Presentasi" (ASM, RGM, Head of Sales, COO/CCO/BOD, Admin, Super Admin; Admin ikut atas rekomendasi, perlu dikonfirmasi user). Grup ANALISA di drawer Lainnya.
 - File baru: `assets/presentasi.js`, `assets/presentasi.css`. Perubahan kecil: `index.php` (titles, route render, ikon, tag script/link, grup drawer), `assets/telemarketing/tm.js` (`tmMenuAllowed`).
@@ -840,3 +936,13 @@ Validation:
 ## 2026-11-17 — Header halaman desktop + peringatan ST di bar atas
 - Banner biru solid per halaman, penanda peringatan ST di bar atas (Admin/Super Admin), jalur halaman saat scroll, bar Cakupan & Periode bisa dibuka/tutup, garis biru permanen, bayangan bar freeze.
 - File: assets/page_header.js/.css (baru), assets/topnav.js/.css, index.php, mockup header di doc/mockup/2026-11-17/.
+
+## 2026-11-17 — Admin 1b: penggabungan panel
+- Pengaturan Brand (sub-tab), Upload Massal Dealer (1 pintu, 3 jenis), Download & Upload Master (1 dropdown, ada Master Dealer). Isi panel lama dipindah, proses backend tidak diubah.
+- Region per brand pindah ke Pengaturan Brand › WILAYAH & TARGET; tab KPI & Target punya tautan pintas.
+- File: assets/admin_revision.js/.css, assets/searchable.js (versi ?v=20261117b), doc/ai/HANDOFF.md.
+
+- 2026-11-17 Agent API: masa sambungan 60 hari sejak dipakai + batas 180 hari (lib/agent.php, assets/telegram_agent.js teks), log alasan BAD_KEY, dokumen IT v0.3.
+## 2026-11-17 — Alat ukur performa (diagnosa "page not responding")
+- `assets/perf_probe.js` (dimuat paling awal di `index.php`), MATI bawaan. Nyalakan dengan membuka DSM + `?probe=1`, matikan `?probe=0`. Kotak kecil di kiri bawah menampilkan lama tiap panggilan server (fungsi, ms, KB) dan kerja browser per file skrip (pengamat DOM, rAF, setTimeout), plus jumlah long task.
+- Tujuan: cari penyebab DSM sering "not responding" di Dealer dan DOS (belum terbukti penyebabnya; di halaman uji data tiruan tidak ada putaran tak berujung).

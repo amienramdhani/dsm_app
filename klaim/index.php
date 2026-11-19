@@ -17,5 +17,6 @@
 <script src="assets/form.js?v=<?= filemtime(__DIR__ . '/assets/form.js') ?>"></script>
 <script src="assets/screens.js?v=<?= filemtime(__DIR__ . '/assets/screens.js') ?>"></script>
 <script src="assets/admin.js?v=<?= filemtime(__DIR__ . '/assets/admin.js') ?>"></script>
+<script src="assets/draft.js?v=<?= filemtime(__DIR__ . '/assets/draft.js') ?>"></script>
 </body>
 </html>

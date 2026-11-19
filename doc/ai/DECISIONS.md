@@ -200,3 +200,5 @@ Rincian lengkap: `doc/ai/BRIEF_2026-11-16_PAKET_REVISI.md`. Mockup: `doc/mockup/
 - Dealer tutup tidak dihitung di ringkasan status (tampil DEALER TUTUP).
 - Status dikunci saat bulan sebelumnya sudah ditutup (data ST lengkap s.d. akhir bulan, atau periode dikunci); sebelum itu tampil "sementara".
 - Periode lampau yang sudah dikunci tidak ikut berubah saat aturan diubah.
+
+- 2026-11-17 (user, ubah keputusan 11-10): sambungan Telegram berlaku 60 hari sejak terakhir dipakai (geser otomatis tiap dipakai, ditulis hanya bila maju > 1 hari), batas maksimal 180 hari sejak dihubungkan, semua role sama (Admin/Super Admin juga). Alasan: IT dan atasan tidak mau user sering hubungkan ulang; batas 180 hari menutup risiko HP hilang. Pemutusan lain (PIN diganti, akun nonaktif, putuskan manual) tetap. Tanpa kedaluwarsa DITOLAK.

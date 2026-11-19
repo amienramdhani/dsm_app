@@ -7,11 +7,11 @@ const T=(re,kw,o)=>Object.assign({re,kw},o||{});
 const GROUPS=[
  ['ap','Approval','#E5354E','✅','Persetujuan menunggu',[['',[T(/^approval/i,'setuju persetujuan approve')]]]],
  ['h','Data Harian','#F07A0C','📊','Upload & kelengkapan data',[
-  ['SERING DIPAKAI',[T(/upload regional/i,'sell thru sell out harian st so upload'),T(/status sync/i,'sinkron sync'),T(/kelengkapan data per region/i,'lengkap region belum upload'),T(/peta kelengkapan/i,'kalender lengkap tanggal')]],
+  ['SERING DIPAKAI',[T(/upload regional/i,'sell thru sell out harian st so upload'),T(/^publikasi data/i,'publikasi antrean publish tahan cron perbarui'),T(/status sync/i,'sinkron sync'),T(/kelengkapan data per region/i,'lengkap region belum upload'),T(/peta kelengkapan/i,'kalender lengkap tanggal')]],
   ['PENGECEKAN',[T(/catatan kualitas/i,'kualitas error janggal'),T(/kunci periode/i,'lock bulan final tutup periode')]],
   ['HATI-HATI',[T(/pemulihan regional/i,'restore rollback kembalikan',{w:1})]]]],
  ['d','Dealer','#0E9F6E','🏪','Data & kepemilikan dealer',[
-  ['SERING DIPAKAI',[T(/cari & edit dealer/i,'customer toko kontak sales edit'),T(/^tambah dealer/i,'customer baru noo'),T(/upload dealer/i,'customer massal tambah edit upload'),T(/bulk edit customer/i,'dealer massal field'),T(/update kontak/i,'kontak telepon alamat pic massal hp')]],
+  ['SERING DIPAKAI',[T(/cari & edit dealer/i,'customer toko kontak sales edit'),T(/^tambah dealer/i,'customer baru noo'),T(/^upload massal dealer/i,'customer massal tambah edit upload bulk dealer field kontak telepon alamat pic hp'),T(/upload dealer/i,'customer massal tambah edit upload'),T(/bulk edit customer/i,'dealer massal field'),T(/update kontak/i,'kontak telepon alamat pic massal hp')]],
   ['KEPEMILIKAN',[T(/transfer dealer/i,'pindah sales brand kepemilikan'),T(/riwayat transfer/i,'history log transfer'),T(/riwayat pemilik/i,'history sales pemilik'),T(/big region per dealer/i,'wilayah region'),T(/dealer tutup/i,'nonaktif tutup')]],
   ['HATI-HATI',[T(/ganti kode induk/i,'hapus delete kode induk',{w:1})]]]],
  ['b','Brand','#B98900','🏷️','Semua setelan brand',[
@@ -21,7 +21,7 @@ const GROUPS=[
   ['TARGET',[T(/edit target/i,'target bulan sales'),T(/region per brand/i,'brand target region big region wilayah')]],
   ['KPI',[T(/atur kpi/i,'bobot indikator brand kpi'),T(/kpi khusus/i,'type indikator khusus'),T(/kpi telemarketing/i,'telemarketing tm target')]]]],
  ['md','Master Data','#6D3FD8','🗂️','Produk, wilayah, publikasi',[
-  ['SERING DIPAKAI',[T(/bulk master/i,'massal upload download master'),T(/download data master/i,'download working file master'),T(/master product/i,'type barang produk brand'),T(/cek kesehatan/i,'health error master'),T(/^master & kebijakan/i,'publish kebijakan terbitkan publikasi',{name:'Publikasi Master'})]],
+  ['SERING DIPAKAI',[T(/^download & upload master/i,'massal upload download bulk master dealer customer product sales target kpi region'),T(/bulk master/i,'massal upload download master'),T(/download data master/i,'download working file master'),T(/master product/i,'type barang produk brand'),T(/cek kesehatan/i,'health error master'),T(/^master & kebijakan/i,'publish kebijakan terbitkan publikasi',{name:'Publikasi Master'})]],
   ['WILAYAH & KALENDER',[T(/region map/i,'wilayah peta region'),T(/hari libur/i,'kalender libur cuti')]],
   ['FORM ORDER & TELEMARKETING',[T(/badan usaha/i,'order pt cv form order'),T(/penugasan telemarketing/i,'telemarketing follow up telepon')]]]],
  ['u','Pengguna & Akses','#2B7BE0','👤','Akun, PIN, izin',[['',[T(/akun pengguna/i,'user login pin role'),T(/tambah user/i,'user massal'),T(/keamanan akun/i,'security pin 2fa sesi'),T(/hak export/i,'download izin export'),T(/kredit tetap ke penjual/i,'kredit sales penjual'),T(/sambungan telegram|telegram/i,'bot notif telegram')]]]],
@@ -39,9 +39,49 @@ function placeFor(name){let pos=0;for(const g of GROUPS)for(let si=0;si<g[5].len
 const UI=()=>{try{return(window.dsmUi&&window.dsmUi.prefs)||{pins:[],recent:[]}}catch(e){return{pins:[],recent:[]}}};
 const saveUi=patch=>{try{if(window.dsmUi&&window.dsmUi.save)return window.dsmUi.save(patch)}catch(e){}return Promise.resolve()};
 function ago(t){const m=Math.round((Date.now()-t)/60000);if(m<1)return'baru';if(m<60)return m+' mnt';const h=Math.round(m/60);if(h<24)return h+' jam';const d=Math.round(h/24);return d===1?'kemarin':d+' hari'}
+/* ---------- 1b: penggabungan panel. Isi panel lama DIPINDAH (bukan ditulis ulang), jadi tombol, form, dan proses backend tetap yang lama. ---------- */
+const MERGES=[
+ {name:'Upload Massal Dealer',ic:'📤',hint:'Pilih jenis dulu, proses di belakang tetap sama',kind:'radio',subs:[['all','Tambah + Edit Dealer',/^upload dealer/i,'Satu file untuk dealer baru dan perubahan data. Maks 20.000 baris.'],['field','Edit Field Customer',/^bulk edit customer/i,'Download data existing, edit field, upload ulang. NIK Sales tidak bisa diubah di sini.'],['kontak','Kontak Saja',/^update kontak/i,'PIC, nomor HP, alamat. Maks 500 dealer. Khusus Super Admin.']]},
+ {name:'Download & Upload Master',ic:'🗂️',hint:'Admin: download · Super Admin: download + upload',kind:'master'}
+];
+function mergeAdminPanels(list){
+ const kids=()=>[...list.querySelectorAll(':scope>details.adminFeature')];
+ const find=re=>kids().find(d=>re.test(d.dataset.feature||''));
+ const hideEl=el=>{el.classList.add('dsmMrgHideSel');el.style.setProperty('display','none','important')};
+ const take=d=>{const c=d.querySelector(':scope>.adminFeatureContent');if(c){c.classList.remove('adminFeatureContent');c.classList.add('dsmMrgPanel')}return c};
+ const mk=(cfg,at)=>{const h=document.createElement('details');h.className='adminFeature dsmMrgHost';h.dataset.feature=cfg.name;h.innerHTML=`<summary><i class="admIc">${cfg.ic}</i><span>${esc(cfg.name)}<small>${esc(cfg.hint)}</small></span></summary>`;const c=document.createElement('div');c.className='panel adminFeatureContent dsmMrg';h.append(c);at.before(h);return{h,c}};
+ for(const cfg of MERGES){
+  if(cfg.kind==='master'){
+   const dl=find(/^download data master/i),up=find(/^bulk master/i),first=dl||up;if(!first)continue;
+   const srcSel=(dl&&dl.querySelector('#v6mdType'))||(up&&up.querySelector('#masterBulkType'));if(!srcSel)continue;
+   const{h,c}=mk(cfg,first);const hasUp=!!up;
+   const opts=[['DEALER','Master Dealer']].concat([...srcSel.options].map(o=>[o.value,o.textContent]));
+   c.innerHTML=`<div class="dsmMrgType"><label>JENIS MASTER<select class="fi" id="dsmMrgType">${opts.map(o=>`<option value="${esc(o[0])}">${esc(o[1])}</option>`).join('')}</select></label></div><div class="dsmMrgNote blue" data-m="dealer"><b>Master Dealer</b> ada di sini. Upload-nya diteruskan ke proses <b>Upload Massal Dealer</b> yang sama, jadi tidak ada aturan ganda.<div class="dsmMrgBtns"><button type="button" class="chip" data-mb="dl">DOWNLOAD DATA DEALER</button><button type="button" class="chip primary" data-mb="up">BUKA UPLOAD MASSAL DEALER</button></div></div><div class="dsmMrgBlk" data-m="dl"><div class="dsmMrgLbl">DOWNLOAD</div></div>${hasUp?'<div class="dsmMrgBlk" data-m="up"><div class="dsmMrgLbl">UPLOAD · SUPER ADMIN</div></div>':'<div class="dsmMrgNote" data-m="noup">Upload master khusus Super Admin. Admin bisa download saja.</div>'}`;
+   const bd=c.querySelector('[data-m="dl"]'),bu=c.querySelector('[data-m="up"]');
+   if(dl){const p=take(dl);if(p){bd.append(p);const s=p.querySelector('#v6mdType');if(s)hideEl(s);p.querySelectorAll(':scope>.pb>p.hint').forEach(x=>x.remove())}dl.remove()}else bd.remove();
+   if(up){const p=take(up);if(p){bu.append(p);const s=p.querySelector('#masterBulkType');if(s)hideEl(s.closest('label')||s)}up.remove()}
+   const sel=c.querySelector('#dsmMrgType');
+   const apply=()=>{const v=sel.value,dealer=v==='DEALER';c.querySelectorAll('[data-m]').forEach(x=>{const m=x.dataset.m;x.hidden=dealer?m!=='dealer':m==='dealer'});if(!dealer){const a=document.getElementById('v6mdType'),b=document.getElementById('masterBulkType');[a,b].forEach(s=>{if(s){s.value=v;s.dispatchEvent(new Event('change',{bubbles:true}))}})}};
+   sel.onchange=apply;apply();
+   c.addEventListener('click',e=>{const b=e.target.closest('[data-mb]');if(!b)return;if(b.dataset.mb==='dl'){const x=document.getElementById('v6duAll');if(x)x.click();else alert('Buka Upload Massal Dealer untuk download data dealer.')}else{const w=list.closest('.admWrap'),t=kids().find(d=>d.dataset.feature==='Upload Massal Dealer');if(w&&w._dsmGoPanel&&t){w._dsmGoPanel(t);t._sub&&t._sub('all')}}});
+   continue}
+  const found=cfg.subs.map(s=>({s,d:find(s[2])})).filter(x=>x.d);if(!found.length)continue;
+  const{h,c}=mk(cfg,found[0].d);
+  const nav=document.createElement('div');nav.className=cfg.kind==='radio'?'dsmMrgOpts':'dsmMrgTabs';c.append(nav);
+  const secs={};found.forEach(({s,d})=>{const sec=document.createElement('section');sec.className='dsmMrgSec';sec.dataset.sub=s[0];const p=take(d);if(p)sec.append(p);c.append(sec);secs[s[0]]=sec;d.remove()});
+  const ids=found.map(x=>x.s[0]);
+  nav.innerHTML=found.map(({s})=>cfg.kind==='radio'?`<button type="button" class="dsmMrgOpt" data-sub="${s[0]}"><i></i><span><b>${esc(s[1])}</b><small>${esc(s[3]||'')}</small></span></button>`:`<button type="button" class="dsmMrgTab" data-sub="${s[0]}">${esc(s[1])}</button>`).join('');
+  if(ids.length<2)nav.hidden=true;
+  const pick=id=>{if(!secs[id])return;h.dataset.sub=id;nav.querySelectorAll('[data-sub]').forEach(b=>b.classList.toggle('on',b.dataset.sub===id));Object.keys(secs).forEach(k=>secs[k].hidden=k!==id)};
+  nav.onclick=e=>{const b=e.target.closest('[data-sub]');if(b)pick(b.dataset.sub)};
+  h._sub=pick;h._subs=ids;pick(ids[0]);
+ }
+ if(!window._dsmMrgGo){window._dsmMrgGo=1;document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-v6hgo]');if(!t)return;const key=String(t.dataset.v6hgo||'').toLowerCase();document.querySelectorAll('.dsmMrgHost').forEach(h=>{h.querySelectorAll('.dsmMrgSec').forEach(sec=>{if([...sec.querySelectorAll('h3')].some(x=>x.textContent.toLowerCase().includes(key))&&h._sub)h._sub(sec.dataset.sub)})})},true)}
+}
 function enhanceAdminGroups(wrap){
  if(!wrap||wrap.dataset.dsmRev==='2')return;const nav=wrap.querySelector('.admTabs'),list=wrap.querySelector('.admList'),finder=wrap.querySelector('#adminFeatureSearch');if(!nav||!list||!finder)return;
- wrap.dataset.dsmRev='2';wrap.classList.add('dsmAdm8');nav.classList.add('dsmAdminTabs');list.classList.add('dsmFocusMode');const items=[...list.querySelectorAll(':scope>.adminFeature')];
+ wrap.dataset.dsmRev='2';wrap.classList.add('dsmAdm8');nav.classList.add('dsmAdminTabs');list.classList.add('dsmFocusMode');try{mergeAdminPanels(list)}catch(e){console.warn('[DSM] gabung panel Admin',e)}
+ const items=[...list.querySelectorAll(':scope>.adminFeature')];
  const byName={};
  items.forEach(d=>{const name=d.dataset.feature||d.querySelector('summary')?.innerText||'',pl=placeFor(name),g=G(pl.g);byName[name]=d;
   d.dataset.dsmGroup=pl.g;d.dataset.tab=pl.g;d.dataset.dsmSec=String(pl.s);d.dataset.dsmPos=String(pl.pos);d.dataset.dsmColor=g[2];
@@ -61,8 +101,8 @@ function enhanceAdminGroups(wrap){
    if(sec&&sec[0]){const h=document.createElement('div');h.className='dsmSecHd'+(/HATI-HATI/.test(sec[0])?' warn':'');h.dataset.dsmGroup=d.dataset.dsmGroup;h.textContent=sec[0];list.appendChild(h);heads.push(h)}}
   list.appendChild(d)});
  /* tautan pintas (seksi yang isinya link, mis. Brand › TERKAIT) */
- GROUPS.forEach(g=>g[5].forEach(sec=>sec[1].filter(t=>t.link).forEach(t=>{const target=items.find(d=>(d.dataset.feature||'').toLowerCase().includes(t.link));if(!target)return;
-  const h=document.createElement('div');h.className='dsmSecHd';h.dataset.dsmGroup=g[0];h.textContent=sec[0];const a=document.createElement('button');a.type='button';a.className='dsmLink';a.dataset.dsmGroup=g[0];a.innerHTML=`<span><b>${esc(t.label)}</b><small>${esc(t.sub)}</small></span><i>›</i>`;a.onclick=()=>goPanel(target);
+ GROUPS.forEach(g=>g[5].forEach(sec=>sec[1].filter(t=>t.link).forEach(t=>{const target=items.find(d=>(d.dataset.feature||'').toLowerCase().includes(t.link));if(!target||(t.pick&&!(target._subs||[]).includes(t.pick)))return;
+  const h=document.createElement('div');h.className='dsmSecHd';h.dataset.dsmGroup=g[0];h.textContent=sec[0];const a=document.createElement('button');a.type='button';a.className='dsmLink';a.dataset.dsmGroup=g[0];a.innerHTML=`<span><b>${esc(t.label)}</b><small>${esc(t.sub)}</small></span><i>›</i>`;a.onclick=()=>{goPanel(target);if(t.pick&&target._sub)target._sub(t.pick)};
   const lastOfG=[...list.children].filter(x=>x.dataset.dsmGroup===g[0]).pop();(lastOfG||list.lastChild).after(h);h.after(a);heads.push(h,a)})));
  const home=document.createElement('div');home.className='dsmHome';list.prepend(home);
  const newNav=nav.cloneNode(false);nav.replaceWith(newNav);const newFinder=finder.cloneNode(true);finder.replaceWith(newFinder);newFinder.placeholder='Cari panel… brand, target, kontak';const countEl=wrap.querySelector('#adminFeatureCount');

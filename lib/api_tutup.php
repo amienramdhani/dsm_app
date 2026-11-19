@@ -91,7 +91,7 @@ function dtActive_($id) {
 }
 function apiDealerTutupAjukan($token, $id, $tanggal, $alasan = null) {
     $c = dtCtx_($token); $meta = $c['meta'];
-    return with_lock_(function () use ($c, $meta, $id, $tanggal, $alasan) {
+    return with_lock_named_('dsm_tutup', function () use ($c, $meta, $id, $tanggal, $alasan) {
         $id = dtFind_($meta, $id); if (!$id || !($c['inScope'])($id)) fail_('Dealer tidak ditemukan dalam cakupan Anda.');
         $d = PortalCore::iso($tanggal); $today = jkt_date('Y-m-d');
         if (!truthy($d)) fail_('Tanggal tutup tidak valid.'); if ($d > $today) fail_('Tanggal tutup tidak boleh di masa depan.');

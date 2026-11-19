@@ -225,6 +225,42 @@ function brand_options(): array {
   if (!$d) return $own;
   $d = array_values(array_filter($d, fn($b) => strcasecmp($b, 'LAINNYA') !== 0)); $d[] = 'Lainnya'; return $d;
 }
+/** Pemakaian badan usaha: jumlah pengguna (daftar entity berisi nama itu) & klaim. */
+function entity_usage(): array {
+  $o = [];
+  foreach (q("SELECT entity FROM claim_users WHERE entity IS NOT NULL AND entity<>''") as $r) foreach (array_unique(array_filter(array_map('trim', explode(',', $r['entity'])))) as $e) $o[$e]['users'] = ($o[$e]['users'] ?? 0) + 1;
+  foreach (q("SELECT entity, COUNT(*) AS n FROM claims WHERE entity IS NOT NULL AND entity<>'' GROUP BY entity") as $r) $o[$r['entity']]['claims'] = (int) $r['n'];
+  return $o;
+}
+/**
+ * Ganti nama badan usaha $from -> $to di SEMUA tempat (daftar, pengguna, klaim, petty cash, transfer). Bila $to sudah ada = gabung.
+ * Satu transaksi: gagal di tengah -> tidak ada yang berubah. Klaim lama ikut diganti (keputusan user 2026-11-19).
+ */
+function entity_change(array $u, string $from, string $to): array {
+  $from = trim($from); $to = strtoupper(trim(preg_replace('/\s+/', ' ', $to)));
+  if (!in_array($from, entity_options(), true)) fail('Badan usaha tidak ditemukan.', 404);
+  if (!preg_match('/^[A-Z0-9 .&-]{2,30}$/', $to)) fail('Nama badan usaha 2-30 karakter (huruf, angka, spasi, titik, &, -).');
+  if ($to === $from) return ['users' => 0, 'claims' => 0, 'merged' => false];
+  $merge = in_array($to, entity_options(), true);
+  $nu = 0; $nc = 0;
+  db()->beginTransaction();
+  try {
+    foreach (q("SELECT id, entity FROM claim_users WHERE entity IS NOT NULL AND entity<>''") as $r) {
+      $l = array_values(array_filter(array_map('trim', explode(',', $r['entity'])), fn($x) => $x !== ''));
+      if (!in_array($from, $l, true)) continue;
+      $n = []; foreach ($l as $x) { $x = $x === $from ? $to : $x; if (!in_array($x, $n, true)) $n[] = $x; }
+      ex("UPDATE claim_users SET entity=? WHERE id=?", [implode(',', $n), $r['id']]); $nu++;
+    }
+    $nc = ex("UPDATE claims SET entity=? WHERE entity=?", [$to, $from]);
+    ex("UPDATE claim_pc SET entity=? WHERE entity=?", [$to, $from]);
+    ex("UPDATE claim_transfers SET entity=? WHERE entity=?", [$to, $from]);
+    ex("DELETE FROM claim_lookup WHERE kind='entity' AND val=?", [$from]);
+    if (!val("SELECT 1 FROM claim_lookup WHERE kind='entity' AND val=?", [$to])) ins('claim_lookup', ['kind' => 'entity', 'val' => $to]);
+    hist('user', (int) $u['id'], ($merge ? 'Badan usaha digabung: ' : 'Badan usaha diganti nama: ') . $from . ' → ' . $to, $u, null, null, $nu . ' pengguna · ' . $nc . ' klaim');
+    db()->commit();
+  } catch (Throwable $e) { if (db()->inTransaction()) db()->rollBack(); throw $e; }
+  return ['users' => $nu, 'claims' => $nc, 'merged' => $merge];
+}
 function entity_options(): array {
   $o = []; foreach (q("SELECT val AS entity FROM claim_lookup WHERE kind='entity'") as $r) $o[trim($r['entity'])] = 1;
   foreach (q("SELECT DISTINCT entity FROM claim_users WHERE entity IS NOT NULL AND entity<>''") as $r) foreach (explode(',', $r['entity']) as $e) { $e = trim($e); if ($e !== '') $o[$e] = 1; }

@@ -218,3 +218,29 @@ details.rf-sc summary{font-size:10.5px;font-weight:800;letter-spacing:.6px;color
 .kacc .ac>div:nth-child(2){min-width:0}.kacc .ac b{font-size:12px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.kacc .ac small{font-size:9.5px;color:#7C8899}
 .kacc .ac small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.kacc .ac em{margin-left:auto;flex:none;font-size:12px;font-style:normal;font-size:10px;font-weight:800;color:#0B5CAD}
 .kdanger{margin-top:14px;text-align:center;background:#fff;border:1.5px solid #F2C7C3;color:#B42318;border-radius:14px;padding:13px;font-weight:800;font-size:12.5px;cursor:pointer}
+
+/* ===== Draf di Beranda & Klaim saya + tambah nota cepat (2026-11-19, mockup dsm-klaim-draf-beranda.html) ===== */
+.kc.kcs{gap:8px}
+.kc.kcs .k{display:grid;grid-template-columns:auto auto 1fr;grid-template-rows:auto auto;column-gap:9px;align-items:center;padding:9px 11px;border-radius:14px;box-shadow:0 6px 12px rgba(16,57,78,.12)}
+.kc.kcs .k .ic,.kc.kcs .k .n{grid-row:1 / span 2}.kc.kcs .k .n{font-size:20px;margin:0;min-width:14px}
+.kc.kcs .k .l{grid-column:3;font-size:12.5px;line-height:1.15;align-self:end}.kc.kcs .k .s{grid-column:3;font-size:10.5px;line-height:1.15;align-self:start}
+.drt{display:flex;align-items:center;gap:6px;margin-top:14px}.drt .cnt{background:#FFE7C7;color:#9A5400;border-radius:999px;padding:1px 7px;font-size:11px;letter-spacing:0}
+.drt a{margin-left:auto;color:var(--blue);text-transform:none;letter-spacing:0;font-weight:700;font-size:12px;cursor:pointer}
+.drf{background:var(--card);border:1px solid #F5D9B5;border-left:4px solid var(--org2);border-radius:14px;padding:10px 12px;margin-bottom:8px}
+.drf .drh{display:flex;align-items:center;gap:8px;cursor:pointer}.drf .dic{width:34px;height:34px;border-radius:10px;background:#FFF2E0;display:grid;place-items:center;font-size:17px;flex:none}
+.drf .dtx{flex:1;min-width:0}.drf .dtx b{font-size:13.5px;display:block}.drf .dtx span{color:var(--mut);font-size:11.5px}.drf .dtx em{font-style:normal;color:#B25E00;font-weight:700}.drf .dtx i{font-style:normal}.drf .dtx i.o{color:#B25E00;font-weight:700}
+.drf .dam{font-weight:800;font-size:13.5px;white-space:nowrap}.drf .thumbs{margin-top:8px;gap:6px}.drf .th{width:42px;height:42px;border-radius:9px;font-size:11px}
+.drf .dra{display:flex;gap:6px;margin-top:8px}.drf .dra button{flex:1;border-radius:10px;padding:9px;font:800 12.5px inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--fg)}
+.drf .dra button.p{background:linear-gradient(90deg,var(--org1),var(--org2));color:#fff;border:0}
+.drf.old{border-left-color:#B25E00}
+.tgl2 .dftb{position:relative}.tgl2 .dftb.on{background:linear-gradient(90deg,var(--org1),var(--org2));box-shadow:0 4px 12px rgba(240,122,12,.3);color:#fff;border-color:transparent}
+.tgl2 .dftb em{position:absolute;top:-6px;right:-4px;background:var(--org2);color:#fff;border-radius:999px;font-style:normal;font-size:10px;padding:0 6px;border:2px solid var(--bg)}
+.qchips{display:flex;flex-wrap:wrap;gap:8px}.qchips.two2{display:grid;grid-template-columns:1fr 1fr}.qchips .chip{text-align:center;padding:11px 12px;border-radius:12px;cursor:pointer}
+.qh{font-size:16px;text-transform:none;letter-spacing:0;color:var(--fg);margin:0 0 6px}
+/* Badan usaha: ubah & hapus/gabung (2026-11-19, mockup dsm-klaim-badan-usaha.html) */
+.buacts{display:flex;gap:6px;flex:none}.bua{border-radius:10px;padding:6px 10px;font-weight:800;font-size:12px;border:1px solid;cursor:pointer}
+.bua.e{color:var(--blue);border-color:#CFE0F5;background:#F3F8FF}.bua.d{color:var(--red);border-color:#F3D3D1;background:#FFF6F5}
+.buimp{display:flex;gap:8px;margin:8px 0}.buimp div{flex:1;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:8px 10px}.buimp b{display:block;font-size:18px}.buimp span{font-size:11px;color:var(--mut)}
+.buflow{display:flex;align-items:center;gap:8px;margin:8px 0;font-weight:800;font-size:12.5px}.buflow div{flex:1;text-align:center;border:1px solid var(--line);border-radius:12px;padding:9px 6px;background:var(--soft)}
+.buflow div.to{border-color:#BFD6F3;background:#EEF5FF;color:var(--blue)}.buflow span{color:var(--mut)}
+.kc.kcs .k .n:empty{display:none}.kc.kcs .k:has(.n:empty) .l,.kc.kcs .k:has(.n:empty) .s{grid-column:2 / span 2}

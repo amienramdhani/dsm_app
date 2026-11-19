@@ -360,12 +360,13 @@ function apiLogin($nik, $pin, $deviceId = null, $deviceName = null) {
 function guard_($token, bool $admin = false, bool $allowChange = false, ?array $db = null): array {
     $auth = authSession_($token); $s = $auth['s']; $a = $auth['a'];
     if (!$allowChange && PortalCore::active($a['WAJIB_GANTI'])) fail_('PIN: Ganti PIN sementara terlebih dahulu.');
-    $db = $db ?? snapshot_();
-    $actor = PortalCore::person($db['meta']['people'], $s['nik']);
+    // Hanya daftar orang yang dibutuhkan; tanpa $db jangan muat snapshot penuh (mahal, dan guard_ jalan di tiap request).
+    $people = $db !== null ? $db['meta']['people'] : snapshot_people_();
+    $actor = PortalCore::person($people, $s['nik']);
     if (!$actor || $actor['nik'] === '-') fail_('Akun tidak ditemukan.');
     if (!empty($s['demoNik'])) {
         if ($admin) fail_('Mode Demo hanya-baca. Kembali ke akun Super Admin untuk membuka administrasi.');
-        $target = PortalCore::person($db['meta']['people'], $s['demoNik']); $ta = $target ? account_($target['nik']) : null;
+        $target = PortalCore::person($people, $s['demoNik']); $ta = $target ? account_($target['nik']) : null;
         if (!demoTargetAllowed_($target) || !$ta || !PortalCore::active($ta['AKTIF'])) fail_('Akun Demo tidak lagi tersedia. Kembali ke Super Admin.');
         return array_merge($target, ['demo' => true, 'demoActor' => ['nik' => $actor['nik'], 'nama' => $actor['nama'], 'role' => $actor['role']]]);
     }
