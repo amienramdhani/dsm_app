@@ -100,7 +100,7 @@ function apiDealerDetail($token, $period = null, $selection = null, $customer = 
     return ['id' => $customer, 'nama' => js_or($known['nama'] ?? null, $customer . ' (belum di master)'), 'alamat' => js_or($known['alamat'] ?? null, ''), 'kota' => js_or($known['kota'] ?? null, ''), 'region' => js_or($known['region'] ?? null, ''), 'hp' => js_or($known['hp'] ?? null, ''),
         'last' => $last, 'jeda' => $last ? (int) floor(iso_days($db['coverage'][$period]['cutoff']) - iso_days($last)) : null,
         'status' => function_exists('dsDealer_') ? dsDealer_($db, $period, (string) $customer)['status'] : ($current['qty'] >= 2 ? 'AKTIF' : ($current['qty'] > 0 ? 'BELUM MINIMUM DA' : ($hasPrev ? 'DA BULAN LALU' : 'BELUM ORDER'))),
-        'ds' => function_exists('dsDealer_') ? (function () use ($db, $period, $customer) { $d = dsDealer_($db, $period, (string) $customer); $d['bs'] = js_obj($d['bs']); $d['bc'] = js_obj($d['bc']); return $d; })() : null,
+        'ds' => function_exists('dsDealer_') ? (function () use ($db, $period, $customer) { $d = dsDealer_($db, $period, (string) $customer); $d['bs'] = js_obj($d['bs']); $d['bc'] = js_obj($d['bc']); if (function_exists('dsP12_')) { $x = dsP12_($db, $period, (string) $customer); $x['brand'] = js_obj($x['brand']); $d['p12'] = $x; } return $d; })() : null,
         'current' => $current, 'picByBrand'=>$picByBrand,
         'brands' => array_map(fn($brand) => array_merge(['brand' => $brand], PortalCore::metrics($rows, $db, $period, $brand), ['sellout' => StockCore::monthly($db, $period, $ids, $customer, $brand)['qty']]), $brands)];
 }

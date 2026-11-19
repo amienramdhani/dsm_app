@@ -106,4 +106,28 @@ t('halaman Dealer (JS): diajukan tutup tidak masuk PROSPECT', function () {
   if (!str_contains($js, "if (s === 'PROSPECT' && typeof V6TUTUP !== 'undefined' && V6TUTUP && V6TUTUP.pend && V6TUTUP.pend[c.id]) return null;")) throw new Exception('tidak ada');
 });
 
+echo "== File kunci format lama (sebelum Paket 3) dihitung ulang (2026-11-19) ==\n";
+t('dsLockOk_: hanya status versi sekarang', function () {
+  eq(dsLockOk_(['total' => ['A' => ['ACTIVE', 'yyy', 0]], 'brand' => ['A' => ['ITEL' => ['IDLE', 'nny', 2]]]]), true);
+  eq(dsLockOk_(['total' => ['A' => ['AKTIF', 'yyy', 0]], 'brand' => []]), false, 'label lama total');
+  eq(dsLockOk_(['total' => ['A' => ['ACTIVE', 'yyy', 0]], 'brand' => ['A' => ['ITEL' => ['TURUN', 'yyn', 1]]]]), false, 'label lama per brand');
+  eq(dsLockOk_(['total' => [], 'brand' => []]), true, 'kosong boleh'); eq(dsLockOk_([]), false, 'rusak');
+});
+t('periode lampau dengan file kunci label lama: memakai rumus sekarang', function () use ($P, $rows) {
+  $db = ['id' => 'SNAP-OLD', 'cubes' => $rows, 'coverage' => ['2026-09' => ['closed' => true], '2026-10' => ['closed' => true], '2026-11' => ['closed' => false]]];
+  $Pp = '2026-10'; $f = storage_dir_('status') . '/' . $Pp . '.json';
+  file_put_contents($f, json_encode(['total' => ['D1' => ['AKTIF', 'yyy', 0]], 'brand' => ['D1' => ['ITEL' => ['TURUN', 'yyn', 1]]], 'months' => [], 'hash' => 'lama']));
+  $L = dsLocked_($db, $Pp);
+  foreach ($L['total'] as $v) if (!in_array($v[0], DS_BASE, true)) throw new Exception('masih label lama: ' . $v[0]);
+  $j = json_decode(file_get_contents($f), true); eq(dsLockOk_($j), true, 'file ditulis ulang dengan format baru');
+  @unlink($f);
+});
+
+echo "\n== Pola 12 bulan (tab STATUS HP) ==\n";
+t('P12 bulan = Nov 2025..Okt 2026', fn() => eq(implode(',', [dsP12_($db, $P, 'D1')['months'][0], dsP12_($db, $P, 'D1')['months'][11]]), '2025-11,2026-10'));
+t('P12 D10 total & per brand', function () use ($db, $P) { $x = dsP12_($db, $P, 'D10'); eq($x['total'], 'bbnnnnnnnyyn'); eq($x['brand']['ITEL'], 'bbnnnnnnnynn'); eq($x['brand']['TECNO'], 'bbnnnnnnnnyn'); });
+t('P12 D8 retur Sep (net 0) bukan order', fn() => eq(dsP12_($db, $P, 'D8')['brand']['ITEL'], 'bbnnnnnnnnny'));
+t('P12 D11 brand dimatikan tidak masuk TOTAL', fn() => eq(dsP12_($db, $P, 'D11')['total'], 'bbnnnnnnnnnn'));
+t('P12 D6 order 2025 = sebelum basis', fn() => eq(dsP12_($db, $P, 'D6')['total'], 'bbnnnnnnnnnn'));
+
 echo "\nHasil: $pass lolos, $fail gagal\n"; exit($fail ? 1 : 0);

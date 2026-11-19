@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup · DSM · Tab STATUS di detail dealer (HP)</title>
+<style>
+:root{--petrol:#10394E;--mut:#5B7285;--line:#E2E9F0;--soft:#F5F8FB;--blue:#1E5FB8;
+ --ac:#237A36;--acb:#E4F4E8;--pa:#9A6400;--pab:#FDF3DC;--id:#B4590F;--idb:#FCEBDD;--in:#B4332E;--inb:#FBE6E5;--pr:#2E6E9E;--prb:#E6F0FA}
+*{box-sizing:border-box}body{margin:0;background:#dfe7ef;color:var(--petrol);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.top{max-width:1240px;margin:0 auto;padding:16px 14px 4px}.top h1{font-size:16px;margin:0 0 4px}.top p{margin:0;color:var(--mut);font-size:12.5px}
+.wrap{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;padding:12px 14px 30px}
+.col{width:390px}.col>h2{font-size:14px;margin:0 0 4px}.col>.why{font-size:12px;color:var(--mut);margin:0 0 8px;min-height:34px}
+.phone{width:390px;height:780px;background:#fff;border-radius:28px;overflow:hidden;box-shadow:0 18px 40px rgba(16,57,78,.18);display:flex;flex-direction:column}
+.sh{padding:14px 16px 10px;border-bottom:1px solid var(--line);display:flex;align-items:center}.sh b{font-size:16px;flex:1}.sh i{font-style:normal;width:28px;height:28px;border-radius:8px;background:var(--soft);display:grid;place-items:center;color:var(--mut)}
+.body{overflow:auto;padding:12px 14px 20px;flex:1}
+.tabs6{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}.tabs6 div{background:#2B5CA8;color:#fff;border-radius:11px;text-align:center;padding:9px 0;font-weight:800;font-size:11.5px;letter-spacing:.03em}.tabs6 .on{background:#0F2A4E;box-shadow:0 3px 0 #4DA3E0}
+.hd{display:flex;align-items:center;gap:6px;font-weight:800;font-size:13px;letter-spacing:.03em;margin:2px 0 10px}.hd .lk{font-size:11px;font-weight:700;color:var(--mut);background:var(--soft);border-radius:999px;padding:2px 8px;letter-spacing:0}
+.hd .i{margin-left:auto;width:22px;height:22px;border-radius:50%;border:1.5px solid #BFD0DF;color:var(--mut);display:grid;place-items:center;font-size:11px;font-weight:800}
+.pill{display:inline-block;border-radius:999px;padding:2px 9px;font-size:10.5px;font-weight:800;letter-spacing:.03em;white-space:nowrap}
+.ACTIVE{background:var(--acb);color:var(--ac)}.PASSIVE{background:var(--pab);color:var(--pa)}.IDLE{background:var(--idb);color:var(--id)}.INACTIVE{background:var(--inb);color:var(--in)}.PROSPECT{background:var(--prb);color:var(--pr)}
+.dots{display:inline-flex;gap:3px}.dots i{width:12px;height:12px;border-radius:4px;background:#E6ECF2}.dots i.y{background:#2E9B57}
+.d12{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;width:100%}.d12 i{height:11px;border-radius:3px;background:#E6ECF2}.d12 i.y{background:#2E9B57}.d12 i.b{background:#fff;border:1px dashed #C9D6E2}.d12 i.w{box-shadow:0 2px 0 #10394E}
+.m12c{display:grid;grid-template-columns:4fr 8fr;gap:3px;font-size:8.5px;font-weight:800;color:#8DA0B1;letter-spacing:.3px;margin-top:2px}.m12c span+span{border-left:1px solid #D5DFE8;padding-left:4px}
+.m12{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;width:100%;font-size:10px;font-weight:800;color:#8DA0B1;text-align:center;margin:1px 0 4px}.m12 span.w{color:#10394E}
+.rb .s2{grid-column:1/-1}.rb .s3{grid-column:1/-1;font-size:11px;color:var(--mut)}
+.mhd{display:inline-flex;gap:3px}.mhd span{width:12px;text-align:center;font-size:8.5px;font-weight:800;color:#8DA0B1}
+/* A tabel */
+.ta{width:100%;border-collapse:collapse;font-size:12.5px}.ta th{font-size:9.5px;letter-spacing:.06em;color:var(--mut);text-align:left;font-weight:800;padding:0 4px 6px;border-bottom:1px solid var(--line)}
+.ta td{padding:9px 4px;border-bottom:1px solid var(--line);vertical-align:middle}.ta td.r{text-align:right;white-space:nowrap}.ta td.r small{display:block;color:var(--mut);font-size:10.5px}
+.ta tr.tot td{background:#F3F8FF}.ta tr.tot td:first-child{border-radius:10px 0 0 10px}.ta tr.tot td:last-child{border-radius:0 10px 10px 0}.ta b.br{font-size:12.5px}
+.ta tr.open td{background:#FBFCFE}.ta tr.det td{padding:0 4px 9px;font-size:11.5px;color:var(--mut)}
+/* B kartu baris */
+.rb{border:1px solid var(--line);border-radius:14px;padding:9px 11px;margin-bottom:7px;display:grid;grid-template-columns:1fr auto;row-gap:5px}
+.rb.tot{background:linear-gradient(135deg,#F3F8FF,#fff);border-color:#CFE0F5}.rb .n{font-weight:800;font-size:13px;display:flex;align-items:center;gap:7px}
+.rb .q{text-align:right;font-weight:800;font-size:13px}.rb .q small{font-weight:600;color:var(--mut);font-size:10.5px;display:block}
+.rb .s{grid-column:1/-1;display:flex;align-items:center;gap:8px;font-size:11px;color:var(--mut)}
+/* C ringkas + grup */
+.big{border-radius:16px;padding:12px 14px;background:linear-gradient(135deg,#EAF5EE,#fff);border:1px solid #CFE8D7;margin-bottom:10px}
+.big .r1{display:flex;align-items:center;gap:8px}.big .r1 b{font-size:13px}.big .r1 .q{margin-left:auto;font-weight:800;font-size:18px}.big .r1 .q small{font-size:10.5px;color:var(--mut);font-weight:600}
+.big .r2{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:11px;color:var(--mut)}
+.grp{margin-bottom:9px}.grp .gh{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800;color:var(--mut);margin-bottom:5px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.bc{border:1px solid var(--line);border-radius:12px;padding:6px 9px;font-size:12px;font-weight:800;display:flex;align-items:center;gap:6px;background:#fff}
+.bc small{font-weight:600;color:var(--mut);font-size:10.5px}.bc.on{border-color:#9DB9DC;box-shadow:0 2px 8px rgba(30,95,184,.15)}
+.tipc{background:var(--soft);border-radius:12px;padding:9px 11px;font-size:11.5px;color:var(--mut);margin:-2px 0 9px}.tipc b{color:var(--petrol)}
+.leg{display:flex;gap:10px;font-size:10.5px;color:var(--mut);margin-top:10px;align-items:center}.leg i{display:inline-block;width:10px;height:10px;border-radius:3px;background:#2E9B57;margin-right:3px;vertical-align:-1px}.leg i.n{background:#E6ECF2}
+.side{max-width:1240px;margin:0 auto 30px;padding:0 14px}.side .c{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:13px}
+.side ul{margin:4px 0 0;padding-left:18px}.rec{border-left:4px solid #F07A0C}
+</style></head><body>
+<div class="top"><h1>Mockup · DSM · Tab STATUS di detail dealer (HP) — pilihan B, 12 bulan</h1>
+<p>Data contoh dari screenshot: CV MANDIRI JAYA MAKMUR, dikunci 1 Sep, jendela 3 bulan (Jun–Agu). Label pakai 5 status baru (ACTIVE · PASSIVE · IDLE · INACTIVE · PROSPECT).</p></div>
+<div class="wrap" id="w"></div>
+<div class="side"><div class="c rec"><b>Catatan</b><ul>
+<li>12 titik per brand, ±56–70px per baris; huruf bulan cukup sekali di baris TOTAL.</li>
+<li>3 bulan terakhir diberi garis bawah supaya jelas status dihitung dari bulan mana (aturan Admin: jendela 3 bulan).</li>
+<li>Bulan sebelum basis (Jan 2026) tampil kotak putus-putus, bukan "tidak order".</li>
+<li>Ringan: pola 12 bulan diambil hanya saat popup satu dealer dibuka (daftar Dealer tidak bertambah berat).</li>
+<li>Hanya HP; desktop tidak diubah.</li></ul></div></div>
+<script>
+const M=['J','J','A'];const M12=[9,10,11,12,1,2,3,4,5,6,7,8];
+const d12=(p)=>`<div class="d12">${[...p].map((c,i)=>`<i class="${c==='b'?'b':c==='y'?'y':''}${i>=9?' w':''}"></i>`).join('')}</div>`;
+const m12=`<div class="m12c"><span>BULAN · 2025</span><span>2026 →</span></div><div class="m12">${M12.map((m,i)=>`<span class="${i>=9?'w':''}">${m}</span>`).join('')}</div>`;
+const P12={TOTAL:'bbbbyyyyyyyy',ITEL:'bbbbyyyyyyyy',REALME:'bbbbynyyyyyy',SAMSUNG:'bbbbnnynynnn',MOTOPAD:'bbbbnnnnnnnn'};
+const D=[{b:'TOTAL',s:'ACTIVE',p:'yyy',q:655,t:'semua brand',da:'DA terpenuhi'},{b:'ITEL',s:'ACTIVE',p:'yyy',q:575,t:'terakhir 7 Sep',da:'memenuhi DA'},{b:'REALME',s:'ACTIVE',p:'yyy',q:80,t:'terakhir 1 Sep',da:'memenuhi DA'},{b:'SAMSUNG',s:'IDLE',p:'nnn',q:0,t:'terakhir order Mei',da:''},{b:'MOTOPAD',s:'PROSPECT',p:'nnn',q:0,t:'belum pernah ambil',da:''}];
+const dots=p=>`<span class="dots">${[...p].map(c=>`<i class="${c==='y'?'y':''}"></i>`).join('')}</span>`;
+const mh=`<span class="mhd">${M.map(m=>`<span>${m}</span>`).join('')}</span>`;
+const shell=(inner)=>`<div class="phone"><div class="sh"><b>CV MANDIRI JAYA MAKMUR</b><i>✕</i></div><div class="body">
+<div class="tabs6"><div>RINGKASAN</div><div class="on">STATUS</div><div>HISTORI</div><div>STOK</div><div>TRANSAKSI</div><div>KONTAK</div></div>
+<div class="hd">STATUS DEALER <span class="lk">🔒 dikunci 1 Sep</span><span class="i">i</span></div>${inner}
+<div class="leg"><span><i></i>order</span><span><i class="n"></i>tidak order</span><span>12 bulan: Sep 2025 – Agu 2026</span></div></div></div>`;
+const A=()=>shell(`<table class="ta"><tr><th>BRAND</th><th>STATUS</th><th>${mh}</th><th style="text-align:right">SEP</th></tr>
+${D.map((r,i)=>`<tr class="${i?'':'tot'}${i===3?' open':''}"><td><b class="br">${r.b}</b></td><td><span class="pill ${r.s}">${r.s}</span></td><td>${dots(r.p)}</td><td class="r"><b>${r.q}</b><small>unit</small></td></tr>${i===3?`<tr class="det open"><td colspan="4">Tidak order 3 bulan terakhir · ${r.t} · ketuk baris lain untuk rincian</td></tr>`:''}`).join('')}</table>`);
+const B=()=>shell(`<div style="font-size:10.5px;color:var(--mut);margin:-4px 0 8px">12 bulan terakhir · <b style="color:#10394E">garis bawah = jendela status (Jun–Agu)</b> · kotak putus-putus = sebelum basis Jan 2026</div>`+D.map((r,i)=>`<div class="rb${i?'':' tot'}"><div class="n">${r.b}<span class="pill ${r.s}">${r.s}</span></div><div class="q">${r.q?r.q+' <small>unit SEP</small>':'<small>belum order SEP</small>'}</div>
+<div class="s2">${i===0?m12:''}${d12(P12[r.b])}</div><div class="s3">${[r.da,r.t].filter(Boolean).join(' · ')}</div></div>`).join(''));
+const C=()=>shell(`<div class="big"><div class="r1"><b>TOTAL</b><span class="pill ACTIVE">ACTIVE</span><span class="q">655 <small>unit SEP</small></span></div><div class="r2">${dots('yyy')}<span>order 3 dari 3 bulan · DA terpenuhi</span></div></div>
+${[['ACTIVE',['ITEL','575'],['REALME','80']],['IDLE',['SAMSUNG','0']],['PROSPECT',['MOTOPAD','0']]].map(([s,...bs])=>`<div class="grp"><div class="gh"><span class="pill ${s}">${s}</span>${bs.length} brand</div><div class="chips">${bs.map(([b,q])=>`<div class="bc${b==='SAMSUNG'?' on':''}">${b}<small>${q!=='0'?q+' unit':'–'}</small></div>`).join('')}</div></div>${s==='IDLE'?`<div class="tipc"><b>SAMSUNG</b> · ${dots('nnn')} Jun–Agu tidak order · terakhir order Mei</div>`:''}`).join('')}`);
+document.getElementById('w').innerHTML=[['B · Kartu baris · 12 bulan','Satu brand satu baris, 12 titik bulan kecil (hijau = order). 3 bulan terakhir bergaris bawah = dasar status.',B]].map(([t,w,f])=>`<div class="col"><h2>${t}</h2><p class="why">${w}</p>${f()}</div>`).join('');
+</script></body></html>

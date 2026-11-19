@@ -35,6 +35,12 @@ Pending:
 
 # History
 
+## 2026-11-19 - Status dealer: file kunci format lama dihitung ulang (bug 12 status di halaman Dealer)
+- Gejala (HP user, data s.d. 30 Sep): ringkasan status Dealer berisi 5 status baru (hampir semua 0) + label lama AKTIF/TURUN/PASIF/NONAKTIF/DI BAWAH MIN/BELUM ORDER/BANGKIT.
+- Sebab: dsLocked_ memakai storage/status/<P>.json untuk periode lampau walau dibuat rumus sebelum Paket 3 (label lama).
+- Perbaikan lib/dealer_status.php: dsLockOk_() — file kunci hanya dipakai bila semua status (total & per brand) termasuk DS_BASE; selain itu dihitung ulang dengan aturan sekarang dan ditulis ulang bila bulan sudah ditutup.
+- Tes dealer_status_test 31 lolos (+2, termasuk file kunci label lama -> status baru & file ditulis ulang).
+
 ## 2026-11-19 - Status dealer: dealer yang sedang DIAJUKAN tutup tidak dihitung PROSPECT
 - Keputusan user: "nonaktif" = pengajuan tutup yang belum disetujui (master dealer tidak punya penanda nonaktif lain; TUTUP sudah dikecualikan).
 - lib/dealer.php dealerPendingClose_() (baris terakhir per dealer di Dealer_Tutup = PENGAJUAN). lib/dealer_status.php dsEligible_() = master minus TUTUP minus diajukan tutup; dsCount_ menghitung PROSPECT langsung dari dealer yang ikut dihitung (dulu: master dikurangi jumlah berstatus -> dealer tutup yang pernah order mengurangi dua kali). Dipakai Admin › Aturan Status (pratinjau dampak).
@@ -441,6 +447,13 @@ Validation:
 - `config.local.php` is ignored by Git.
 
 ---
+
+### 2026-11-19 - Tab STATUS dealer di HP: 12 bulan
+
+- `lib/dealer_status.php`: `dsP12_()` pola 12 bulan per dealer (total + per brand, retur dihitung bersih, brand dimatikan tidak masuk total).
+- `lib/api_menu.php`: apiDealer menambah `ds.p12`.
+- `assets/dealer_status.js` + `.css`: tampilan kartu baris 12 bulan khusus ≤760px; desktop tetap.
+- `tools/tests/dealer_status_test.php`: +5 tes (36 lolos).
 
 ### 2026-10-19 - Peringatan tabrakan (Alihkan Portofolio) + Riwayat Transfer & tombol Batalkan
 AI:

@@ -88,13 +88,22 @@ function dsBase_(array $db): array {
     return ['_vid' => $h['vid'], 'cubes' => $h['cubes'], 'coverage' => $h['coverage'], 'first' => $db['first'] ?? [], 'meta' => $db['meta'], '_tm' => $db['_tm'] ?? null];
 }
 /** Status terkunci periode P (dari file kunci bila ada & aturan sama; dibuat bila bulan P-1 sudah ditutup). */
+/** File kunci memakai status versi sekarang (ACTIVE/PASSIVE/IDLE/INACTIVE) di total & per brand. */
+function dsLockOk_(array $j): bool {
+    if (!is_array($j['total'] ?? null) || !is_array($j['brand'] ?? null)) return false;
+    $ok = array_flip(DS_BASE);
+    foreach ($j['total'] as $v) if (!is_array($v) || !isset($ok[$v[0] ?? ''])) return false;
+    foreach ($j['brand'] as $bs) { if (!is_array($bs)) return false; foreach ($bs as $v) if (!is_array($v) || !isset($ok[$v[0] ?? ''])) return false; }
+    return true;
+}
 function dsLocked_(array $db, string $period): array {
     $db = dsBase_($db); $c = dsConfig_(); $h = dsHash_($c); $key = PortalCore::vid($db) . '|' . $period . '|' . $h;
     return PortalCore::memo('dsLocked', $key, function () use ($db, $period, $c, $h) {
         $file = storage_dir_('status') . '/' . preg_replace('/[^0-9\-]/', '', $period) . '.json';
         $ks = array_keys($db['coverage'] ?? []); sort($ks, SORT_STRING); $latest = $ks ? end($ks) : $period;
         // Periode lampau tetap memakai kunci lamanya walau aturan sudah diubah; periode terbaru ikut aturan baru.
-        if (is_file($file)) { $j = json_decode((string) @file_get_contents($file), true); if (is_array($j) && (($j['hash'] ?? '') === $h || strcmp($period, $latest) < 0)) return $j + ['locked' => true]; }
+        // File kunci dari rumus versi lama (sebelum Paket 3: label AKTIF/TURUN/PASIF/NONAKTIF/...) tidak dipakai: dihitung ulang & ditulis ulang.
+        if (is_file($file)) { $j = json_decode((string) @file_get_contents($file), true); if (is_array($j) && dsLockOk_($j) && (($j['hash'] ?? '') === $h || strcmp($period, $latest) < 0)) return $j + ['locked' => true]; }
         $raw = dsComputeRaw_($db, $period, $c);
         $pp = dsPm_(dsMi_($period) - 1); $closed = truthy($db['coverage'][$pp]['closed'] ?? false) || dsPeriodLocked_($pp);
         $raw['at'] = gmdate('c'); $raw['locked'] = false;
@@ -171,6 +180,19 @@ function dsDealer_(array $db, string $period, string $cust): array {
     }
     return ['status' => $status, 'pola' => $t[1] ?? str_repeat('n', count($L['months'])), 'gap' => $t[2] ?? null, 'order' => $cur, 'noo' => !$t && $cur['q'] > 0, 'bangkit' => in_array($status, ['IDLE', 'INACTIVE'], true) && $cur['q'] > 0,
         'bs' => $bs, 'bc' => $bc, 'locked' => $L['locked'], 'months' => $L['months']];
+}
+/** Pola 12 bulan (P-12..P-1) satu dealer untuk tab STATUS di HP. y = order, n = tidak, b = sebelum basis. Hanya dipanggil saat popup dealer dibuka. */
+function dsP12_(array $db, string $period, string $cust): array {
+    $db = dsBase_($db); $c = dsConfig_(); $p0 = dsMi_($c['since']); $p1 = dsMi_($period); $off = array_flip($c['off']);
+    $ms = []; $tot = ''; $q = []; $sum = [];
+    for ($i = 0; $i < 12; $i++) {
+        $m = $p1 - 12 + $i; $ms[] = dsPm_($m);
+        if ($m < $p0) continue;
+        foreach ($db['cubes'][dsPm_($m)] ?? [] as $r) if ((string) $r['customer'] === $cust) { $b = (string) $r['brand']; $q[$b][$i] = ($q[$b][$i] ?? 0) + $r['q']; if (!isset($off[js_upper($b)])) $sum[$i] = ($sum[$i] ?? 0) + $r['q']; }
+    }
+    $row = function ($has) use ($p0, $p1) { $o = ''; for ($i = 0; $i < 12; $i++) $o .= $p1 - 12 + $i < $p0 ? 'b' : (($has[$i] ?? 0) > 0 ? 'y' : 'n'); return $o; };
+    $br = []; foreach ($q as $b => $h) $br[$b] = $row($h);
+    return ['months' => $ms, 'total' => $row($sum), 'brand' => $br];
 }
 /** Ringkasan untuk kumpulan dealer (halaman Dealer / Beranda). $brand = null → TOTAL. */
 function dsSummary_(array $db, string $period, array $custIds, ?string $brand = null): array {

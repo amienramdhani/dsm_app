@@ -580,3 +580,8 @@ Dikerjakan atas "gas 1-4" dari user.
 - Header tabel standar: pita Teal tua #0E5A63 teks putih (assets/table_head.css, dimuat terakhir). Header grup berwarna (tpG/tpG2/tpL/v7bh/total/skor) tidak diubah.
 - Tahap 4: pqWarm_() memuat snapshot & status dealer setelah publikasi antrean.
 - PROSPECT: master dealer tidak punya status nonaktif terpisah; yang dikecualikan dealer TUTUP. Dianggap selesai.
+
+## Tab STATUS detail dealer di HP (2026-11-19)
+- Selesai (BELUM TERUJI di server): tab STATUS popup dealer di HP jadi kartu baris per brand + 12 kotak bulan (P-12..P-1), angka bulan + label tahun di kartu TOTAL, 3 bulan jendela bergaris bawah, sebelum basis = putus-putus. Mockup: doc/mockup/2026-11-19/dsm-status-dealer-hp.html.
+- Data: `dsP12_()` (lib/dealer_status.php) dipanggil hanya di apiDealer (popup), field `ds.p12`. Daftar Dealer tidak bertambah. Desktop (>760px) tidak berubah.
+- Uji: buka popup dealer di HP (≤760px) tab STATUS; cek dealer dengan retur, brand dimatikan, dan PROSPECT.

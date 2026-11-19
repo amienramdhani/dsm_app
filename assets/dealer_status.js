@@ -97,8 +97,21 @@
     const bs = Object.keys(ds.bs || {});
     const head = `<div class="dsDetHead"><span></span><span></span><div class="dsPola">${(ds.months || []).map(m => `<small>${dsMon(m)}</small>`).join('')}</div><small>KETERANGAN</small></div>`;
     const leg = `<div class="dsLeg"><span><i class="dsc y"></i>Order (qty &gt; 0)</span><span><i class="dsc n"></i>Tidak order</span><span><i class="dsc a"></i>Sebelum basis</span></div>`;
-    return `<section class="dsDet"><h4>Status dealer ${ds.locked ? '· 🔒 dikunci 1 ' + M.charAt(0) + M.slice(1).toLowerCase() : '· ⏳ sementara'}</h4>${head}<div class="dsDetRow dsTot"><b>TOTAL</b>${pill(ds.status)}${dsPola(ds.pola, ds.months)}<small>${esc(dsDesc(ds.status))}${ds.noo ? ' · NOO bulan ini' : ''}${ds.order?.q > 0 ? ` · order ${M}: ${num(ds.order.q)} unit` : ` · belum order ${M}`}</small></div>
-      ${bs.map(b => { const x = ds.bc[b] || {}; return `<div class="dsDetRow"><b>${esc(b)}</b>${pill(ds.bs[b])}${dsPola(x.pola, ds.months)}<small>${x.q > 0 ? `${M}: ${num(x.q)} unit${x.da ? ' · memenuhi DA' : ' · di bawah minimal DA'}${x.last ? ' · terakhir ' + esc(tgl(x.last)) : ''}` : 'Belum order ' + M}</small></div>`; }).join('')}${leg}</section>`;
+    return `<section class="dsDet${ds.p12 ? ' has12' : ''}"><h4>Status dealer ${ds.locked ? '· 🔒 dikunci 1 ' + M.charAt(0) + M.slice(1).toLowerCase() : '· ⏳ sementara'}</h4>${head}<div class="dsDetRow dsTot"><b>TOTAL</b>${pill(ds.status)}${dsPola(ds.pola, ds.months)}<small>${esc(dsDesc(ds.status))}${ds.noo ? ' · NOO bulan ini' : ''}${ds.order?.q > 0 ? ` · order ${M}: ${num(ds.order.q)} unit` : ` · belum order ${M}`}</small></div>
+      ${bs.map(b => { const x = ds.bc[b] || {}; return `<div class="dsDetRow"><b>${esc(b)}</b>${pill(ds.bs[b])}${dsPola(x.pola, ds.months)}<small>${x.q > 0 ? `${M}: ${num(x.q)} unit${x.da ? ' · memenuhi DA' : ' · di bawah minimal DA'}${x.last ? ' · terakhir ' + esc(tgl(x.last)) : ''}` : 'Belum order ' + M}</small></div>`; }).join('')}${leg}${ds.p12 ? dsP12Html(ds, M) : ''}</section>`;
+  };
+  // ---------- HP: kartu baris 12 bulan (mockup 2026-11-19) ----------
+  const d12 = p => `<div class="ds12">${String(p || '').padEnd(12, 'n').split('').map((c, i) => `<i class="${c === 'b' ? 'b' : c === 'y' ? 'y' : ''}${i >= 9 ? ' w' : ''}"></i>`).join('')}</div>`;
+  window.dsP12Html = function (ds, M) {
+    const P = ds.p12, ms = P.months || [], y0 = (ms[0] || '').slice(0, 4), y1 = (ms[11] || '').slice(0, 4), cut = ms.findIndex(m => m.slice(0, 4) !== y0);
+    const yr = cut > 0 ? `<div class="ds12y" style="grid-template-columns:${cut}fr ${12 - cut}fr"><span>BULAN · ${y0}</span><span>${y1} →</span></div>` : `<div class="ds12y"><span>BULAN · ${y0}</span></div>`;
+    const mn = `<div class="ds12m">${ms.map((m, i) => `<span class="${i >= 9 ? 'w' : ''}">${+m.slice(5, 7)}</span>`).join('')}</div>`;
+    const card = (nm, st, q, pola, info, tot) => `<div class="ds12r${tot ? ' tot' : ''}"><div class="n"><b>${esc(nm)}</b>${pill(st)}</div><div class="q">${q > 0 ? num(q) + ' <small>unit ' + M + '</small>' : '<small>belum order ' + M + '</small>'}</div><div class="p">${tot ? yr + mn : ''}${d12(pola)}</div><div class="t">${info}</div></div>`;
+    const bs = Object.keys(ds.bs || {});
+    return `<div class="ds12x">12 bulan terakhir · <b>garis bawah = jendela status</b> · kotak putus-putus = sebelum basis</div>` +
+      card('TOTAL', ds.status, ds.order?.q, P.total, esc(dsDesc(ds.status)) + (ds.noo ? ' · NOO bulan ini' : ''), 1) +
+      bs.map(b => { const x = ds.bc[b] || {}; return card(b, ds.bs[b], x.q, P.brand?.[b] || String(P.total || '').replace(/y/g, 'n'), x.q > 0 ? (x.da ? 'memenuhi DA' : 'di bawah minimal DA') + (x.last ? ' · terakhir ' + esc(tgl(x.last)) : '') : (x.last ? 'terakhir ' + esc(tgl(x.last)) : 'belum order ' + M)); }).join('') +
+      `<div class="ds12l"><span><i class="y"></i>order</span><span><i></i>tidak order</span><span><i class="b"></i>sebelum basis</span></div>`;
   };
   // ---------- ganti tampilan status lama ----------
   window.badge = function (status) {
