@@ -67,6 +67,7 @@ CREATE TABLE claims (
  admin_check {LTXT} NULL,
  stage_since DATETIME NULL, submitted_at DATETIME NULL, done_at DATETIME NULL,
  pc_id INT NULL,
+ nota_state VARCHAR(10) NULL, nota_due DATE NULL, nota_sent_at DATETIME NULL, nota_realized BIGINT NULL, nota_sisa BIGINT NULL, nota_setoran_no VARCHAR(60) NULL, nota_excess_id INT NULL, nota_rev_note {LTXT} NULL,
  created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL
 );
 CREATE INDEX ix_claims_status ON claims(status, stage);
@@ -77,6 +78,10 @@ CREATE TABLE claim_versions (
 CREATE TABLE claim_notes (
  id {AI}, claim_id INT NOT NULL, line_no INT NOT NULL DEFAULT 1, nominal BIGINT NOT NULL DEFAULT 0, nota_date DATE NULL, detail {LTXT} NULL
 );
+CREATE TABLE claim_rnotes (
+ id {AI}, claim_id INT NOT NULL, line_no INT NOT NULL DEFAULT 1, plan_note_id INT NULL, komponen VARCHAR(30) NULL, uraian VARCHAR(160) NULL, nominal BIGINT NOT NULL DEFAULT 0, nota_date DATE NULL, off_plan INT NOT NULL DEFAULT 0
+);
+CREATE INDEX ix_rnotes_claim ON claim_rnotes(claim_id);
 CREATE TABLE claim_files (
  id {AI}, uploader INT NOT NULL, stored_name VARCHAR(80) NOT NULL, orig VARCHAR(160) NULL, mime VARCHAR(60) NULL, size_b INT NOT NULL DEFAULT 0, sha VARCHAR(64) NOT NULL,
  ref_type VARCHAR(10) NULL, ref_id INT NULL, note_id INT NULL, slot VARCHAR(20) NULL, created_at DATETIME NOT NULL

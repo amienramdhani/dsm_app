@@ -43,6 +43,7 @@ R.claim = async (id) => {
    ${c.status === 'WAIT' || c.status === 'REV' ? `<div class="mut" style="margin-top:6px">Di tahap ini ${c.age_days} hari${c.aging ? ' · <b style="color:#F07A0C">menunggu lama</b>' : ''}</div>` : ''}</div></div>`;
   // tindakan
   h += actionsHtml(d);
+  h += pnotaHtml(d);
   // info
   const info = [['Pemohon', `${esc(cu.name)} (${esc(cu.job)})`], ['Region', esc(cu.region || '-')], ['Badan usaha', c.entity_by ? `${esc(c.entity)} <span class="chip on" style="cursor:default;font-size:10px">DIPILIH ADMIN</span> <span class="mut">${esc(c.entity_by)}</span>` : '<span class="mut">Belum ditentukan Admin</span>'], ['Kategori / jenis', `${esc(c.category)} / ${esc(d.type_label)}`], ['Brand · Refnote', `${esc(c.brand)} · ${esc(c.refnote)}`]];
   if (k !== 'perdin' && k !== 'makan') info.push(['Lokasi', esc(c.location)]);
@@ -103,6 +104,7 @@ R.claim = async (id) => {
     });
   }));
   bindActions(d);
+  pnotaBind(d);
 };
 const row = c => ({ status: c.status, stage: c.stage, label: c.label });
 
@@ -261,4 +263,80 @@ function baSections(b, d) {
     : code === 'NOTA_HARI' && (x.hari || []).length ? `<table class="batb"><tr><th>Nota</th><th>Tanggal</th><th>Hari</th><th>Nominal</th></tr>${x.hari.map(r => `<tr><td>${r.line}</td><td>${esc(r.date || '')}</td><td>${esc(r.hari)}</td><td>${rp(r.nominal)}</td></tr>`).join('')}</table>` : '';
   if (!Object.keys(ex).length) return `<p>${esc(b.explanation)}</p>`; // BA lama: satu penjelasan
   return codes.filter(cd => ex[cd]).map((cd, i) => `<div style="margin-top:8px"><b>${i + 1}. ${esc(BA_TITLE[cd] || (b.triggers || [])[codes.indexOf(cd)] || cd)}</b>${tb(cd)}${cd === 'KEHILANGAN_NOTA' && x.lost ? `<div class="mut">${nl(x.lost)}</div>` : ''}${(cd === 'TEMUAN_ADMIN' || cd === 'TEMUAN_LAIN') ? `<div class="mut">${esc(TEMUAN_KAT[x.kategori] || '')}${(x.related || []).length ? ' · ' + nl(x.related) : ''}</div>` : ''}<p style="margin:4px 0">${esc(ex[cd])}</p></div>`).join('');
+}
+
+/* ---------- Perdin balik nota (mockup doc/mockup/2026-11-20/dsm-klaim-perdin-balik-nota.html) ---------- */
+function pnotaHtml(d) {
+  const n = d.nota; if (!n) return ''; const c = d.claim;
+  const pillCls = n.state === 'OK' ? 'p-ok' : n.overdue ? 'p-no' : n.state === 'REV' ? 'p-rev' : 'p-adm';
+  let h = `<div class="sec"><h3>Balik nota</h3><div class="card"><div class="row"><span class="pill ${pillCls}">${esc(n.label)}</span><span class="mut">Dana ${rp(n.dana)}</span></div>`;
+  if (['WAIT', 'REV'].includes(n.state)) h += `<div class="kv" style="margin-top:6px"><span>Tenggat balik nota</span><span><b>${tgl(n.due)}</b></span></div>${n.overdue ? '<div class="note red"><b>Lewat tenggat.</b> Pengajuan klaim baru Anda diblokir sampai nota dibawa balik.</div>' : '<div class="note blue">Balik nota sebelum tenggat. Kalau telat, pengajuan klaim baru Anda ikut diblokir.</div>'}`;
+  if (n.state === 'REV' && n.rev_note) h += `<div class="note"><b>Catatan Admin:</b> ${esc(n.rev_note)}</div>`;
+  if (n.rnotes.length) h += `<div class="mut" style="margin-top:8px">Nota yang dibawa balik</div>${n.rnotes.map(r => `<div class="card"><div class="row"><b>${esc(r.komponen || 'Nota')}${r.uraian ? ' · ' + esc(r.uraian) : ''}</b><b>${rp(r.nominal)}</b></div><div class="mut">${tgl(r.nota_date)} · ${+r.off_plan ? 'Di luar rencana' : 'Sesuai rencana'}</div>${thumbs(r.files)}</div>`).join('')}${n.makan ? hl('Uang makan (tanpa nota)', rp(n.makan)) : ''}`;
+  if (n.terpakai != null) h += `<div class="sum" style="margin-top:8px"><div><b>${rp(n.dana)}</b><span class="mut">Dana</span></div><div><b>${rp(n.terpakai)}</b><span class="mut">Terpakai</span></div><div><b style="${n.sisa < 0 ? 'color:#D2453F' : ''}">${rp(n.sisa)}</b><span class="mut">${n.sisa < 0 ? 'Kelebihan' : 'Sisa'}</span></div></div>`;
+  if (n.state === 'SETOR') h += `<div class="note blue">Sisa ${rp(n.sisa)} disetor ke rekening perusahaan.${n.setoran_no ? ' Bukti setoran no. ' + esc(n.setoran_no) + ' menunggu konfirmasi Finance Transfer.' : ''}</div>${thumbs(n.setoran_files)}`;
+  if (n.excess_claim_id) h += `<div class="note blue">Kelebihan menjadi klaim reimburse. <span data-go="#/claim/${n.excess_claim_id}" style="color:#1E5FB8;font-weight:800;cursor:pointer">Lihat klaimnya ›</span></div>`;
+  const p = n.perm;
+  if (p.submit) h += `<button class="btn gr" id="pnGo" style="margin-top:8px">${n.state === 'REV' ? 'PERBAIKI BALIK NOTA' : 'BALIK NOTA'}</button>`;
+  if (p.review) h += `<div class="card" style="border:2px solid #F07A0C;margin-top:8px"><b>Periksa balik nota</b><div class="mut">Cocokkan nominal dan foto tiap nota.</div><div class="two" style="margin-top:8px"><button class="btn gr" id="pnApp">SETUJUI</button><button class="btn b2" id="pnRev">MINTA REVISI</button></div></div>`;
+  if (p.setoran) h += `<button class="btn" id="pnSet" style="margin-top:8px">KIRIM BUKTI SETORAN ${rp(n.sisa)}</button>`;
+  if (p.close) h += `<div class="card" style="border:2px solid #12866A;margin-top:8px"><b>Konfirmasi setoran</b><div class="mut">Setoran ${rp(n.sisa)} · no. ${esc(n.setoran_no)}</div><button class="btn gr" id="pnClose" style="margin-top:8px">KONFIRMASI SETORAN</button></div>`;
+  return h + '</div></div>';
+}
+function pnotaBind(d) {
+  const n = d.nota; if (!n) return; const id = d.claim.id; const done = async m => { toast(m); await refreshCounts(); route(); };
+  $('#pnGo')?.addEventListener('click', () => { location.hash = '#/pnota/' + id; });
+  $('#pnApp')?.addEventListener('click', () => confirm('Setujui balik nota ini?') && guard(async () => { const r = await api('pn_review', { id, action: 'approve' }); await done(r.excess ? `Disetujui. Kelebihan ${rp(r.excess)} menjadi klaim reimburse.` : r.sisa ? `Disetujui. Pemohon diminta setor sisa ${rp(r.sisa)}.` : 'Disetujui. Balik nota selesai.'); }));
+  $('#pnRev')?.addEventListener('click', () => sheet(`<h3>Minta revisi balik nota</h3>${fld('Catatan untuk pemohon', '<textarea id="pnn"></textarea>')}<button class="btn" id="pnok" style="margin-top:10px">KIRIM REVISI</button>`, (el, close) => {
+    $('#pnok', el).onclick = () => guard(async () => { await api('pn_review', { id, action: 'revise', notes: $('#pnn', el).value }); close(); await done('Revisi dikirim ke pemohon.'); }); }));
+  $('#pnSet')?.addEventListener('click', () => { let sf = []; sheet(`<h3>Setoran sisa ${rp(n.sisa)}</h3><div class="note blue">Transfer ke rekening perusahaan lalu unggah bukti.</div>${fld('Nomor setoran / referensi', '<input id="sn">')}<div id="sfl"></div><button class="btn g sm" id="sfa">+ Bukti setoran</button><button class="btn" id="sok" style="margin-top:10px">KIRIM BUKTI</button>`, (el, close) => { $('#sfa', el).onclick = () => pickFiles(fs => { sf.push(...fs); $('#sfl', el).innerHTML = thumbs(sf); }); $('#sok', el).onclick = () => guard(async () => { await api('pn_setoran', { id, setoran_no: $('#sn', el).value, files: sf.map(f => f.id) }); close(); await done('Bukti setoran terkirim.'); }); }); });
+  $('#pnClose')?.addEventListener('click', () => guard(async () => { await api('pn_close', { id }); await done('Balik nota selesai.'); }));
+}
+/* Layar BALIK NOTA (pemohon): isi realisasi + foto per komponen -> ringkasan -> kirim */
+let PN = null;
+R.pnota = async (id) => {
+  const d = await api('claim_get', { id }); const n = d.nota;
+  if (!n || !n.perm.submit) { toast('Balik nota tidak tersedia untuk klaim ini.'); location.hash = '#/claim/' + id; return; }
+  if (!PN || PN.id !== id) {
+    const old = n.rnotes; const find = pid => old.find(r => +r.plan_note_id === pid);
+    PN = { id, step: 0, d, rows: n.plan.map(p => { const o = find(p.id); return { plan_id: p.id, komponen: p.komponen, jenis: p.jenis, rencana: p.nominal, nominal: o ? o.nominal : p.nominal, date: o ? o.nota_date : (n.tgl_berangkat || ''), files: o ? o.files.map(f => ({ id: f.id, mime: f.mime })) : [] }; }) };
+    old.filter(r => !+r.plan_note_id || r.off_plan == 1).forEach(o => PN.rows.push({ plan_id: null, komponen: o.komponen || 'Nota', jenis: o.uraian || '', rencana: null, nominal: o.nominal, date: o.nota_date, files: o.files.map(f => ({ id: f.id, mime: f.mime })) }));
+  } else PN.d = d;
+  pnDraw();
+};
+function pnDraw() {
+  const d = PN.d, n = d.nota, c = d.claim; const max = n.tgl_pulang && n.tgl_pulang < today() ? n.tgl_pulang : today();
+  const real = PN.rows.reduce((s, r) => s + (num(r.nominal) || 0), 0) + n.makan, sisa = n.dana - real;
+  let h = '';
+  if (PN.step === 0) {
+    h += `<div class="sec"><div class="note blue">Isi realisasi dan foto nota tiap komponen. Foto nota wajib. Tanggal nota harus di antara ${tgl(n.tgl_berangkat)} dan ${tgl(n.tgl_pulang)}.</div>${n.rev_note ? `<div class="note"><b>Catatan Admin:</b> ${esc(n.rev_note)}</div>` : ''}
+    ${n.makan ? `<div class="card"><h3>UANG MAKAN</h3>${hl('Tarif × hari', `<b>${rp(n.makan)} · tanpa nota</b>`)}</div>` : ''}
+    ${PN.rows.map((r, i) => `<div class="card" data-pr="${i}"><h3>${esc(String(r.komponen).toUpperCase())}${r.jenis ? ' · ' + esc(String(r.jenis).toUpperCase()) : ''}</h3>${r.rencana != null ? hl('Rencana', `<b>${rp(r.rencana)}</b>`) : '<div class="mut">Di luar rencana</div>'}
+      <div class="two">${fld('Realisasi (Rp)', `<input inputmode="numeric" data-pf="nominal" value="${fmtN(r.nominal)}">`)}${fld('Tanggal nota', `<input type="date" data-pf="date" value="${r.date || ''}" min="${n.tgl_berangkat}" max="${max}">`)}</div>
+      ${fld('Foto nota · wajib', thumbs(r.files, { rm: 1 }) + '<button type="button" class="btn g sm" data-padd="1" style="margin-top:6px">+ Foto nota</button>')}${r.rencana == null ? '<button type="button" class="btn w sm" data-pdel="1" style="margin-top:6px">HAPUS NOTA INI</button>' : ''}</div>`).join('')}
+    <button class="btn w" id="pnAdd">+ TAMBAH NOTA DI LUAR RENCANA</button><button class="btn" id="pnNext" style="margin-top:8px">LANJUT</button></div>`;
+  } else {
+    h += `<div class="sec"><div class="card"><div class="sum"><div><b>${rp(n.dana)}</b><span class="mut">Dana</span></div><div><b>${rp(real)}</b><span class="mut">Terpakai</span></div><div><b style="${sisa < 0 ? 'color:#D2453F' : ''}">${rp(sisa)}</b><span class="mut">${sisa < 0 ? 'Kelebihan' : 'Sisa'}</span></div></div></div>
+    <div class="note blue">${sisa > 0 ? `Sisa ${rp(sisa)} disetor ke rekening perusahaan setelah balik nota disetujui.` : sisa < 0 ? `Terpakai melebihi dana. Selisih ${rp(-sisa)} menjadi klaim reimburse otomatis setelah disetujui.` : 'Terpakai sama dengan dana. Tidak ada sisa.'}</div>
+    <div class="card">${PN.rows.map(r => hl(esc(r.komponen) + (r.jenis ? ' · ' + esc(r.jenis) : ''), `<b>${rp(num(r.nominal))}</b> · ${tgl(r.date)} · ${r.files.length} foto`)).join('')}${n.makan ? hl('Uang makan', rp(n.makan)) : ''}</div>
+    <button class="btn gr" id="pnSend">KIRIM PERTANGGUNGJAWABAN</button><button class="btn w" id="pnBack" style="margin-top:8px">← UBAH</button></div>`;
+  }
+  shell(hero('Balik nota', `${esc(d.type_label)} · ${esc(c.number)}`, { back: true, small: true }) + h, { hero: false });
+  const root = $('#app');
+  root.querySelectorAll('[data-pr]').forEach(card => {
+    const i = +card.dataset.pr, r = PN.rows[i];
+    card.querySelectorAll('[data-pf]').forEach(inp => inp.oninput = e => { if (inp.dataset.pf === 'nominal') { inp.value = fmtN(num(inp.value)); r.nominal = num(inp.value); } else r.date = inp.value; });
+    card.querySelector('[data-padd]')?.addEventListener('click', () => pickFiles(fs => { r.files.push(...fs); pnDraw(); }));
+    card.querySelectorAll('[data-rm]').forEach(b => b.onclick = e => { e.stopPropagation(); r.files = r.files.filter(f => f.id != b.dataset.rm); pnDraw(); });
+    card.querySelector('[data-pdel]')?.addEventListener('click', () => { PN.rows.splice(i, 1); pnDraw(); });
+  });
+  $('#pnAdd')?.addEventListener('click', () => { PN.rows.push({ plan_id: null, komponen: 'Nota', jenis: '', rencana: null, nominal: '', date: n.tgl_berangkat || '', files: [] }); pnDraw(); });
+  $('#pnNext')?.addEventListener('click', () => {
+    for (let i = 0; i < PN.rows.length; i++) { const r = PN.rows[i], no = 'Nota ' + (i + 1) + ': ';
+      if (!(num(r.nominal) > 0)) return toast(no + 'realisasi wajib diisi.'); if (!r.date) return toast(no + 'tanggal wajib.'); if (!r.files.length) return toast(no + 'foto nota wajib.'); }
+    if (!PN.rows.length) return toast('Isi minimal satu nota.'); PN.step = 1; pnDraw(); window.scrollTo(0, 0); });
+  $('#pnBack')?.addEventListener('click', () => { PN.step = 0; pnDraw(); });
+  $('#pnSend')?.addEventListener('click', () => confirm('Kirim pertanggungjawaban? Admin akan memeriksa nota Anda.') && guard(async () => {
+    const r = await api('pn_submit', { id: PN.id, notes: PN.rows.map(x => ({ plan_id: x.plan_id, komponen: x.komponen, uraian: x.plan_id ? '' : x.jenis, nominal: num(x.nominal), date: x.date, files: x.files.map(f => f.id) })) });
+    const cid = PN.id; PN = null; toast('Terkirim. Menunggu pemeriksaan Admin.'); await refreshCounts(); location.hash = '#/claim/' + cid; }));
 }

@@ -99,7 +99,7 @@ function demo_purge(): array {
     $files = q("SELECT id, stored_name FROM claim_files WHERE (ref_type='claim' AND ref_id IN (" . $in($cl) . ")) OR (ref_type IN ('pc','ba') AND ref_id IN (" . $in(array_merge($pc, array_map('intval', array_column(q("SELECT id FROM claim_ba WHERE claim_id IN (" . $in($cl) . ")"), 'id')))) . ")) OR (ref_id IS NULL AND uploader IN (" . $in($uji) . "))");
     $ba = $in(array_map('intval', array_column(q("SELECT id FROM claim_ba WHERE claim_id IN (" . $in($cl) . ")"), 'id')));
     ex("DELETE FROM claim_ba_sign WHERE ba_id IN ($ba)"); ex("DELETE FROM claim_ba WHERE id IN ($ba)");
-    foreach (['claim_versions', 'claim_notes'] as $t) ex("DELETE FROM $t WHERE claim_id IN (" . $in($cl) . ")");
+    foreach (['claim_versions', 'claim_notes', 'claim_rnotes'] as $t) ex("DELETE FROM $t WHERE claim_id IN (" . $in($cl) . ")");
     ex("DELETE FROM claim_pc_notes WHERE pc_id IN (" . $in($pc) . ")");
     foreach (['claim_approvals', 'claim_transfers'] as $t) ex("DELETE FROM $t WHERE (ref_type='claim' AND ref_id IN (" . $in($cl) . ")) OR (ref_type='pc' AND ref_id IN (" . $in($pc) . "))");
     ex("DELETE FROM claim_notif WHERE user_id IN (" . $in($uji) . ")");

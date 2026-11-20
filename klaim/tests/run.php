@@ -164,8 +164,69 @@ t('perdin: kirim tanpa maps / hari melebihi durasi ditolak', function () use ($d
   $p = $perdin($dewi); unset($p['files']['maps']); $id = claim_save($dewi, $p); throws(fn() => claim_submit($dewi, $id, []), 'Maps');
   $p = $perdin($dewi); $p['notes'][1]['detail']['hari'] = 5; $id = claim_save($dewi, $p); throws(fn() => claim_submit($dewi, $id, []), 'durasi');
 });
+t('perdin: boleh diajukan di muka (tanggal perjalanan masa depan)', function () use ($dewi, $perdin) {
+  $a = date('Y-m-d', time() + 86400 * 7); $b = date('Y-m-d', time() + 86400 * 9); $p = $perdin($dewi);
+  $p['meta']['tgl_berangkat'] = $a; $p['meta']['tgl_pulang'] = $b; foreach ($p['notes'] as &$n) $n['date'] = $a; unset($n);
+  $id = claim_save($dewi, $p); $r = claim_check(get_claim($id)); eq(count(array_filter($r['err'] ?? $r['errors'] ?? [], fn($e) => str_contains($e, 'masa depan'))), 0, 'perdin di muka tidak boleh kena cek masa depan');
+});
+t('perdin: semua lampiran nota opsional (Sekali & Entertain tanpa foto tidak ditolak)', function () use ($dewi, $perdin) {
+  $p = $perdin($dewi); foreach ($p['notes'] as &$n) $n['files'] = []; unset($n);
+  $p['notes'][] = ['nominal' => 50000, 'date' => '2026-10-21', 'detail' => ['komponen' => 'Entertain', 'keterangan' => 'Makan dealer']];
+  $id = claim_save($dewi, $p); $r = claim_check(get_claim($id));
+  eq(count(array_filter($r['errors'], fn($e) => str_contains($e, 'foto nota'))), 0, 'Perdin tanpa foto nota tidak boleh ditolak');
+});
 t('perdin: kirim lalu Admin wajib checklist rute', function () use ($dewi, $rina, &$pd) {
   claim_submit($dewi, $pd, []); throws(fn() => claim_act($rina, $pd, ['entity' => 'RISM', 'action' => 'approve']), 'Checklist'); claim_act($rina, $pd, ['entity' => 'RISM', 'action' => 'approve', 'perdin_check' => ['titik' => 1, 'jarak' => 1, 'durasi' => 1]]); eq(get_claim($pd)['stage'], 'FM');
+});
+/* ---------- Perdin balik nota ---------- */
+$pnFlow = function (int $id) use ($rina, $maya, $ft) {
+  claim_act($maya, $id, ['entity' => 'RISM', 'action' => 'approve']); claim_act($ft, $id, ['action' => 'transfer', 'transfer_no' => 'PN-' . $id, 'proof' => [fakefile($ft, 'tf')]]); ex("UPDATE claims SET nota_due=? WHERE id=?", [date('Y-m-d', time() + 86400 * 5), $id]); /* tes memakai perjalanan masa lalu: tenggat digeser supaya tidak memblokir */ return get_claim($id);
+};
+t('perdin balik nota: setelah transfer status tetap DONE tapi menunggu nota + tenggat', function () use ($dewi, &$pd, $pnFlow) {
+  $c = $pnFlow($pd); eq($c['status'], 'DONE'); eq($c['nota_state'], 'WAIT'); eq($c['nota_due'] !== null, true); eq(status_label($c), 'Menunggu nota');
+  $o = pn_out($dewi, $c); eq($o['perm']['submit'], true); eq(count($o['plan']), 2);
+});
+t('perdin balik nota: validasi (foto wajib, tanggal dalam perjalanan, nominal)', function () use ($dewi, &$pd) {
+  $p = pn_out($dewi, get_claim($pd))['plan'][0]['id'];
+  $base = ['plan_id' => $p, 'komponen' => 'Transportasi', 'nominal' => 90000, 'date' => '2026-10-20', 'files' => [fakefile($dewi, 'rnota')]];
+  throws(fn() => pn_submit($dewi, $pd, ['notes' => [['files' => []] + $base]]), 'foto nota');
+  throws(fn() => pn_submit($dewi, $pd, ['notes' => [['date' => '2026-10-25'] + $base]]), 'antara tanggal berangkat');
+  throws(fn() => pn_submit($dewi, $pd, ['notes' => [['nominal' => 0] + $base]]), 'nominal');
+  throws(fn() => pn_submit($dewi, $pd, ['notes' => []]), 'minimal satu');
+});
+t('perdin balik nota: kirim -> Admin periksa; revisi wajib catatan; kirim ulang; setuju -> sisa disetor -> FT konfirmasi -> selesai', function () use ($dewi, $rina, $ft, &$pd) {
+  $pl = pn_out($dewi, get_claim($pd))['plan'];
+  $mk = fn($n, $d) => ['plan_id' => $pl[$n]['id'], 'komponen' => $pl[$n]['komponen'], 'nominal' => $pl[$n]['nominal'] - $d, 'date' => '2026-10-21', 'files' => [fakefile($dewi, 'rnota')]];
+  $r = pn_submit($dewi, $pd, ['notes' => [$mk(0, 10000), $mk(1, 0)]]); eq($r['sisa'], 10000); eq(get_claim($pd)['nota_state'], 'CEK');
+  throws(fn() => pn_review($dewi, $pd, ['action' => 'approve']), 'Tidak diizinkan');
+  throws(fn() => pn_review($rina, $pd, ['action' => 'revise']), 'Catatan');
+  pn_review($rina, $pd, ['action' => 'revise', 'notes' => 'foto buram']); eq(get_claim($pd)['nota_state'], 'REV'); eq(status_label(get_claim($pd)), 'Nota perlu revisi');
+  pn_submit($dewi, $pd, ['notes' => [$mk(0, 10000), $mk(1, 0)]]); eq(count(q("SELECT id FROM claim_rnotes WHERE claim_id=?", [$pd])), 2);
+  $o = pn_review($rina, $pd, ['action' => 'approve']); eq($o['state'], 'SETOR'); eq($o['sisa'], 10000);
+  throws(fn() => pn_close($ft, $pd), 'Bukti setoran belum');
+  pn_setoran($dewi, $pd, ['setoran_no' => 'SET-1', 'files' => [fakefile($dewi, 'setoran')]]); pn_close($ft, $pd); eq(get_claim($pd)['nota_state'], 'OK'); eq(status_label(get_claim($pd)), 'Selesai');
+});
+t('perdin balik nota: terpakai melebihi dana -> klaim reimburse otomatis', function () use ($dewi, $rina, $perdin, $pnFlow) {
+  $p = $perdin($dewi); foreach ($p['notes'] as &$nn) $nn['date'] = '2026-10-21'; unset($nn); $id = claim_save($dewi, $p); claim_submit($dewi, $id, []); claim_act($rina, $id, ['entity' => 'RISM', 'action' => 'approve', 'perdin_check' => ['titik' => 1, 'jarak' => 1, 'durasi' => 1]]); $pnFlow($id);
+  $pl = pn_out($dewi, get_claim($id))['plan'];
+  pn_submit($dewi, $id, ['notes' => [['plan_id' => $pl[0]['id'], 'komponen' => 'Transportasi', 'nominal' => $pl[0]['nominal'] + $pl[1]['nominal'] + 50000, 'date' => '2026-10-21', 'files' => [fakefile($dewi, 'rnota')]]]]);
+  $o = pn_review($rina, $id, ['action' => 'approve']); eq($o['state'], 'OK'); eq($o['excess'] > 0, true);
+  $ex = get_claim((int) get_claim($id)['nota_excess_id']); eq($ex['status'], 'WAIT'); eq((int) $ex['total'], $o['excess']);
+});
+t('perdin balik nota: muncul di "perlu tindakan saya" pemohon, Admin, dan FT sesuai tahap', function () use ($dewi, $rina, $ft, $perdin, $pnFlow) {
+  $b = $perdin($dewi); $b['meta']['tgl_berangkat'] = '2026-10-12'; $b['meta']['tgl_pulang'] = '2026-10-14'; foreach ($b['notes'] as &$nn) $nn['date'] = '2026-10-12'; unset($nn); $id = claim_save($dewi, $b); claim_submit($dewi, $id, []);
+  claim_act($rina, $id, ['entity' => 'RISM', 'action' => 'approve', 'perdin_check' => ['titik' => 1, 'jarak' => 1, 'durasi' => 1]]); $pnFlow($id);
+  $tag = fn($u) => array_column(array_filter(claim_list($u, ['todo' => 1])['rows'], fn($r) => (int) $r['id'] === $id), 'todo')[0] ?? null;
+  eq($tag($dewi), 'Balik nota'); eq($tag($rina), null);
+  $pl = pn_out($dewi, get_claim($id))['plan']; $nt = array_map(fn($p) => ['plan_id' => $p['id'], 'komponen' => $p['komponen'], 'nominal' => 1000, 'date' => '2026-10-12', 'files' => [fakefile($dewi, 'rnota')]], $pl);
+  pn_submit($dewi, $id, ['notes' => $nt]); eq($tag($rina), 'Periksa balik nota'); eq($tag($dewi), null);
+  pn_review($rina, $id, ['action' => 'approve']); eq($tag($dewi), 'Setor sisa dana');
+  pn_setoran($dewi, $id, ['setoran_no' => 'S1', 'files' => [fakefile($dewi, 'setoran')]]); eq($tag($ft), 'Konfirmasi setoran');
+});
+t('perdin balik nota: lewat tenggat memblokir pengajuan baru', function () use ($dewi, $perdin, $rina, $pnFlow) {
+  $p = $perdin($dewi); foreach ($p['notes'] as &$nn) $nn['date'] = '2026-10-22'; unset($nn); $id = claim_save($dewi, $p); claim_submit($dewi, $id, []); claim_act($rina, $id, ['entity' => 'RISM', 'action' => 'approve', 'perdin_check' => ['titik' => 1, 'jarak' => 1, 'durasi' => 1]]); $pnFlow($id);
+  eq(pc_blocked((int) $dewi['id']), null); ex("UPDATE claims SET nota_due=? WHERE id=?", [date('Y-m-d', time() - 86400), $id]);
+  $b = pc_blocked((int) $dewi['id']); eq($b !== null, true); eq(status_label(get_claim($id)), 'Lewat tenggat nota'); ex("UPDATE claims SET nota_due=? WHERE id=?", [date('Y-m-d', time() + 86400 * 5), $id]);
 });
 t('perdin: tarif makan per orang (eko beda dari dewi)', function () { $e = U('eko'); ex("UPDATE claim_users SET meal_rate=65000 WHERE id=?", [$e['id']]); global $perdin; });
 

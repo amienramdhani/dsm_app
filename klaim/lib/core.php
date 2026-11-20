@@ -91,8 +91,8 @@ function demo_transfer_sql(string $t): string {
 /** Pastikan kolom penanda demo sudah ada (sekali, lalu diingat di setting). */
 function ensure_demo_schema(): void {
   static $done = false; if ($done) return; $done = true;
-  try { if (setting('schema_demo') === '1') return; } catch (Throwable $e) { return; }
-  migrate_schema(); set_setting('schema_demo', '1');
+  try { if (setting('schema_demo') === '2') return; } catch (Throwable $e) { return; }
+  migrate_schema(); set_setting('schema_demo', '2'); // '2' = + kolom balik nota (nota_*, claim_rnotes)
 }
 function setting(string $k, ?string $d = null): ?string { $v = val("SELECT sval FROM claim_settings WHERE skey=?", [$k]); return $v ?? $d; }
 function set_setting(string $k, ?string $v): void { if (val("SELECT 1 FROM claim_settings WHERE skey=?", [$k])) ex("UPDATE claim_settings SET sval=? WHERE skey=?", [$v, $k]); else ex("INSERT INTO claim_settings (skey,sval) VALUES (?,?)", [$k, $v]); }

@@ -1,10 +1,11 @@
 <?php
 require_once __DIR__ . '/pc.php';
+require_once __DIR__ . '/pnota.php';
 
 function age_days(?string $since): int { return $since ? (int) floor((time() - strtotime($since)) / 86400) : 0; }
 function status_label(array $c): string {
   return match ($c['status']) {
-    'DRAFT' => 'Draft', 'WAIT' => ba_pemohon_pending($c) ? 'Menunggu TTD BA Pemohon' : 'Menunggu ' . STAGE_NAME[$c['stage']], 'DONE' => 'Selesai', 'REJECTED' => 'Ditolak',
+    'DRAFT' => 'Draft', 'WAIT' => ba_pemohon_pending($c) ? 'Menunggu TTD BA Pemohon' : 'Menunggu ' . STAGE_NAME[$c['stage']], 'DONE' => pn_label($c) ?? 'Selesai', 'REJECTED' => 'Ditolak',
     'REV' => 'Perlu Revisi · di ' . ($c['rev_holder'] === 'ADMIN' ? 'Admin' : 'Pemohon'), default => $c['status'],
   };
 }
@@ -39,6 +40,13 @@ function claim_list(array $u, array $f): array {
     foreach (q("SELECT * FROM claims WHERE claimant_id=? AND is_demo=? AND status IN ('WAIT','REV')", [$u['id'], demo_ctx()]) as $c) {
       if ($c['status'] === 'REV' && $c['rev_holder'] === 'PEMOHON') $todo[(int) $c['id']] = 'Perbaiki klaim';
       elseif ($c['status'] === 'WAIT' && ba_pemohon_pending($c)) $todo[(int) $c['id']] = 'Tanda tangan BA';
+    }
+    foreach (q("SELECT * FROM claims WHERE nota_state IN ('WAIT','REV','CEK','SETOR') AND is_demo=?", [demo_ctx()]) as $c) { // balik nota Perdin
+      $ns = $c['nota_state']; $own = same_person($u, $c) && (int) $c['claimant_id'] === (int) $u['id'];
+      if ($own && in_array($ns, ['WAIT', 'REV'], true)) $todo[(int) $c['id']] = $ns === 'REV' ? 'Perbaiki balik nota' : 'Balik nota';
+      elseif ($own && $ns === 'SETOR' && !$c['nota_setoran_no']) $todo[(int) $c['id']] = 'Setor sisa dana';
+      elseif (!$mineOnly && $ns === 'CEK' && pn_is_admin($u, $c)) $todo[(int) $c['id']] = 'Periksa balik nota';
+      elseif (!$mineOnly && $ns === 'SETOR' && $c['nota_setoran_no'] && pn_is_ft($u, $c)) $todo[(int) $c['id']] = 'Konfirmasi setoran';
     }
     $f['view'] = $view = 'all'; $w[] = $todo ? 'id IN (' . implode(',', array_keys($todo)) . ')' : '0=1';
   }
@@ -155,6 +163,7 @@ function claim_detail(array $u, int $id): array {
     'history' => $hist, 'route' => $route, 'perm' => $perm, 'versions' => q("SELECT version_no,total,reason,snapshot,created_at FROM claim_versions WHERE claim_id=? ORDER BY version_no", [$id]),
     'admin_check' => jdec($c['admin_check']), 'transfer' => one("SELECT t.*, u.name AS uname FROM claim_transfers t JOIN claim_users u ON u.id=t.user_id WHERE ref_type='claim' AND ref_id=? ORDER BY t.id DESC", [$id]),
     'rev' => $c['status'] === 'REV' ? ['holder' => $c['rev_holder'], 'stage' => $c['rev_stage'], 'note' => $c['rev_note'], 'lines' => jdec($c['rev_notes'] ?? null) ?: new stdClass, 'by' => val("SELECT name FROM claim_users WHERE id=?", [$c['rev_by']])] : null,
+    'nota' => pn_out($u, $c),
     'rule' => current_rule()];
 }
 function pc_out(array $p): array {

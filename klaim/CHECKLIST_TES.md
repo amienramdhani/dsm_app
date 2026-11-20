@@ -47,7 +47,7 @@ Catatan penting:
 1. `dewi` → Ajukan → Perdin. Isi rute (min. 2 titik), **1 screenshot Google Maps**, total jarak. ☐
 2. Uang makan otomatis (tarif × durasi), terkunci. ☐
 3. Transportasi / Penginapan mode **Per hari**: **lampiran nota opsional** (label "· opsional"), bisa kirim tanpa nota. ☐
-4. Transportasi / Penginapan mode **Sekali** dan Entertain: nota tetap wajib. ☐
+4. Perdin diajukan di muka: semua lampiran nota (Per hari, Sekali, Entertain) opsional, nota dibawa balik setelah perjalanan. ☐
 5. Jumlah hari tidak boleh melebihi durasi perjalanan. ☐
 6. `admin`: tanpa centang checklist rute (titik, jarak, durasi) → SETUJUI ditolak. Setelah dicentang → berhasil. ☐
 7. Total di form = total di PDF. ☐
@@ -215,3 +215,10 @@ Jalankan ulang `install.php` (ada tabel baru `claim_fuel_price`; harga tes Perta
 - Kunci = NIK. Sel kosong tidak mengubah apa pun. WA dinormalkan (0812… → 62812…). Bank harus ada di daftar bank, rekening 5–20 angka.
 - Admin hanya bisa mengubah orang di regionnya dan tidak mengubah rekening dirinya sendiri. Riwayat mencatat rekening hanya 4 digit terakhir.
 - Template xlsx diunduh lewat tautan GET (butuh `contact_template` di daftar unduhan `dsm_auth`).
+
+## 3.5 Perdin balik nota
+- [ ] Ajukan Perdin tanggal depan → Admin → FM → FT transfer; detail klaim tampil "Menunggu nota" + tenggat.
+- [ ] Pemohon: BALIK NOTA → isi realisasi, tanggal, foto per komponen → LANJUT → KIRIM; status "Nota diperiksa Admin".
+- [ ] Admin: MINTA REVISI (catatan wajib) → pemohon PERBAIKI BALIK NOTA; lalu SETUJUI.
+- [ ] Sisa > 0: pemohon KIRIM BUKTI SETORAN → FT KONFIRMASI SETORAN → selesai. Lebih dari dana: terbentuk klaim reimburse otomatis.
+- [ ] Lewat tenggat: pengajuan klaim baru diblokir.

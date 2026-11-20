@@ -99,6 +99,8 @@ function owner_can_edit(array $u, array $c): bool {
   return false;
 }
 function pc_blocked(int $uid): ?array {
+  $pn = one("SELECT * FROM claims WHERE claimant_id=? AND nota_state IN ('WAIT','REV') AND nota_due IS NOT NULL AND nota_due<? ORDER BY nota_due LIMIT 1", [$uid, date('Y-m-d')]); // Perdin lewat tenggat balik nota
+  if ($pn) return $pn + ['deadline' => $pn['nota_due']];
   $p = one("SELECT * FROM claim_pc WHERE claimant_id=? AND (status='DANA' OR (status='SETOR' AND setoran_no IS NULL)) ", [$uid]);
   if (!$p) return null;
   $grace = (int) (current_rule()['pc_grace_days'] ?? 0);
@@ -321,9 +323,9 @@ function claim_check(array $c, ?array $rule = null): array {
     if ($makan && $n['nominal'] <= 0) $err[] = 'Tarif uang makan Anda belum diatur Admin.';
     if (!$makan) {
       if (!$n['nota_date']) $err[] = $no . 'tanggal nota wajib.';
-      elseif ($n['nota_date'] > $today) $err[] = $no . 'tanggal tidak boleh di masa depan.';
+      elseif ($n['nota_date'] > $today && $kind !== 'perdin') $err[] = $no . 'tanggal tidak boleh di masa depan.'; /* Perdin boleh diajukan di muka (petty cash) */
       $perHari = in_array($n['detail']['komponen'] ?? '', ['Transportasi', 'Penginapan'], true) && ($n['detail']['mode'] ?? '') === 'hari';
-      if (!count($n['files']) && !$perHari) $err[] = $no . 'lampirkan minimal satu foto nota.';
+      if (!count($n['files']) && !$perHari && $kind !== 'perdin') $err[] = $no . 'lampirkan minimal satu foto nota.'; /* Perdin di muka: nota dibawa balik setelah perjalanan */
     }
     if ($n['nota_date'] && !in_array((int) date('N', strtotime($n['nota_date'])), allowed_days($rule, (string) $c['category']), true) && !$makan) { $trig['NOTA_HARI'] = 1; $info['hari'][] = ['line' => $i + 1, 'date' => $n['nota_date'], 'hari' => HARI_ID[(int) date('N', strtotime($n['nota_date']))], 'nominal' => (int) $n['nominal']]; }
     $np = $multi ? ($byT[(int) ($n['detail']['type_id'] ?? 0)] ?? null) : $parts[0];
@@ -603,6 +605,7 @@ function claim_act(array $u, int $id, array $in, bool $auto = false): array {
     ex("UPDATE claims SET status='DONE', stage=NULL, done_at=?, updated_at=? WHERE id=?", [now(), now(), $id]);
     hist('claim', $id, 'Transfer dicatat' . $star, $u, $no, null, rp((int) $c['total']), 'FT');
     notify((int) $c['claimant_id'], 'selesai', "Klaim {$c['number']} sudah ditransfer (" . rp((int) $c['total']) . ").", 'claim', $id);
+    pn_start(get_claim($id), $u); // Perdin: lanjut ke balik nota
     return ['ok' => 1];
   }
   if ($act !== 'approve') fail('Aksi tidak dikenal.');

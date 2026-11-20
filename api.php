@@ -1,153 +1,360 @@
 <?php
-/**
- * Pintu tunggal semua panggilan dari aplikasi (pengganti google.script.run).
- * Request : POST {"fn":"apiDashboard","args":[token, periode, cakupan]}
- * Response: {"ok":true,"result":...}  atau  {"ok":false,"message":"..."}
- */
-declare(strict_types=0);
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
-ini_set('memory_limit', '1536M');
-set_time_limit(300);
+require_once __DIR__ . '/lib/report.php';
+require_once __DIR__ . '/lib/seed.php';
 
-require_once __DIR__ . '/lib/blob.php';
-require_once __DIR__ . '/lib/api_main.php';
-require_once __DIR__ . '/lib/api_analisa.php';
-require_once __DIR__ . '/lib/api_tutup.php';
-require_once __DIR__ . '/lib/api_weekly.php';
-require_once __DIR__ . '/lib/api_exec.php';
-require_once __DIR__ . '/lib/api_import.php';
-require_once __DIR__ . '/lib/dealer.php';
-require_once __DIR__ . '/lib/bulk.php';
-require_once __DIR__ . '/lib/api_dealer_transfer_direct.php';
-require_once __DIR__ . '/lib/users_bulk.php';
-require_once __DIR__ . '/lib/activity.php';
-require_once __DIR__ . '/lib/api_kpi.php';
-require_once __DIR__ . '/lib/api_kpikhusus.php';
-require_once __DIR__ . '/lib/api_portfolio.php';
-require_once __DIR__ . '/lib/tx_effective.php';
-require_once __DIR__ . '/lib/api_txcorr.php';
-require_once __DIR__ . '/lib/api_commit.php';
-require_once __DIR__ . '/lib/keep_seller.php';
-require_once __DIR__ . '/lib/owner_snapshot.php';
-require_once __DIR__ . '/lib/api_dealertarget.php';
-require_once __DIR__ . '/lib/transfer_undo.php';
-require_once __DIR__ . '/lib/api_admin2.php';
-require_once __DIR__ . '/lib/api_acct.php';
-require_once __DIR__ . '/lib/api_health.php';
-require_once __DIR__ . '/lib/api_backup.php';
-require_once __DIR__ . '/lib/api_contact.php';
-require_once __DIR__ . '/lib/api_info.php';
-require_once __DIR__ . '/lib/api_menu.php';
-require_once __DIR__ . '/lib/api_export2.php';
-require_once __DIR__ . '/lib/api_brand.php';
-require_once __DIR__ . '/lib/dealer_status.php';
-require_once __DIR__ . '/lib/rescache.php';
-require_once __DIR__ . '/lib/api_telemarketing.php';
-require_once __DIR__ . '/lib/api_push.php';
-require_once __DIR__ . '/lib/api_ui.php';
-require_once __DIR__ . '/lib/api_notif.php';
-require_once __DIR__ . '/lib/api_ai.php';
-require_once __DIR__ . '/lib/agent.php';
-require_once __DIR__ . '/lib/publish_queue.php';
-require_once __DIR__ . '/lib/warm.php';
-
-/** Fungsi yang boleh dipanggil dari browser (daftar putih). */
-const DSM_ALLOWED = ['apiPublishStatus','apiPublishNow','apiPublishHold','apiUiPrefs','apiUiPrefSave','apiAdminHome','apiTgState','apiTgCode','apiTgUnlink','apiTgAdminList','apiTgAdminUnlink','apiTgAdminUnlinkAll','apiAgentKeyList','apiAgentKeyCreate','apiAgentKeyRevoke','apiTgBotSave','apiTgBotSave','apiCommitComment','apiCommitBoot','apiCommitSave','apiCommitStatus','apiCommitDelete','apiDealerTargetTemplate','apiDealerTargetStage','apiDealerTargetRejected','apiDealerTargetCommit','apiDealerTargetList','apiDealerTargetLog','apiDealerTransferDirectBoot','apiDealerTransferDirectList','apiDealerTransferDirectStage','apiPortfolioTransferPreview','apiPortfolioExitState','apiPortfolioAssets','apiPortfolioEnsureVacant','apiTransferUndoList','apiTransferUndo','apiOwnerHistoryBoot','apiOwnerHistory','apiOwnerHistoryExport','apiKeepSellerBoot','apiKeepSellerSave','apiKeepSellerRevoke','apiTxCorrBoot','apiTxCorrList','apiTxCorrSearch','apiTxCorrHistory','apiTxCorrSave','apiTxCorrBulk','apiTxCorrRevoke','apiPortfolioTransferCommit','apiNotifState','apiNotifPreview','apiNotifSend','apiNotifTest','apiNotifHistory','apiNotifCancel','apiNotifOpened','apiNotifRuleSave','apiKpiKhususGet','apiKpiKhususSave','apiKpiKhususDelete','apiKpiKhususCopy','apiKpiKhususCopyTo','apiKpiKhususPreview','apiKpiKhususDealers','apiKpiKhususDealerList','apiKpiKhususRuleSave','apiKpiKhususRuleCopy','apiKpiKhususTargets','apiKpiKhususTargetSave','apiKpiKhususTargetCopy','apiPushState','apiPushSave','apiPushTest','apiTMTeam','apiTMDailyReport','apiKpiValidation','apiKpiSearch','apiKpiExport','apiOrderBoot','apiOrderList','apiTMAdmin','apiTMProfileSave','apiTMAssignmentSave','apiTMKpiSettings','apiTMKpiSave','apiTMKpiCopy','apiTMKpi','apiTMRank','apiTMBusinessSave','apiTMBoot','apiTMActivity','apiTMFollowUpSave','apiTMOrderSave','apiDealerStatusRules', 'apiDealerStatusImpact', 'apiDealerStatusSave', 'apiBrandAdmin','apiBrandSave','apiBrandSetActive','apiBrandClassificationSave','apiBrandThresholdSave','apiTransactionExportRaw','apiCompare','apiGrowthType','apiHariLibur','apiExportSummary','apiDOS','apiKPIExportOptions','apiKPIExportData','apiDOSExportOptions','apiDOSExportData','apiBrandExportOptions','apiBrandExportData','apiExportDealerCsv','apiExportDealerExcel','apiExportDealerHistory','apiDealerHistory','apiDealerHistorySummary','apiTransactions','apiTransactionGroups','apiDealerStock','apiDealerDetail','apiTeam','apiAdminBanner','apiInfo','apiUploadInfo','apiSetInfoActive','apiDownloadInfo','apiDealerContact','apiSubmitDealerContact','apiContactRequests','apiReviewDealerContacts','apiSaveDealerContact','apiExportDealerContacts','apiStageContactBulk','apiCommitContactBulk','apiDealerTutupAjukan','apiDealerTutupProses','apiDealerTutupUpload','apiStartBackup','apiBackupSettings','apiHealthCheck',
-    'apiAccountMergePreview', 'apiAccountMergeCommit', 'apiAccountDeleteCheck', 'apiAccountDelete',
-    'apiHariLiburAdmin', 'apiHariLiburSave', 'apiHariLiburHapus', 'apiRegionMapGet', 'apiRegionMapSave',
-    'apiRegionBrandGet', 'apiKpiRgmPanel', 'apiRegionBrandSave', 'apiKpiGet', 'apiKpiSaveRegion', 'apiKpiSaveRgm', 'apiKpiCopy', 'apiTargetGet', 'apiTargetSave', 'apiCoverageMatrix',
-    'apiActivity', 'apiCheckpoints', 'apiCheckpointRestore',
-    'apiSyncStatus',
-    'apiUserTemplate', 'apiStageUsers', 'apiCommitUsers', 'apiUsersRejected', 'apiStatusBulkStage', 'apiStatusBulkCommit', 'apiStatusBulkRejected',
-    'apiProductMasterGet', 'apiProductImpact', 'apiProductMasterSave', 'apiDealerBrandSettings', 'apiDealerBrandSetCutover', 'apiDealerBrandList', 'apiDealerBrandSuggestions', 'apiDealerBrandSet', 'apiDealerSearch', 'apiDealerEditDetail', 'apiDealerIndukPeek', 'apiDealerSave', 'apiDealerDelete', 'apiDealerDeleteCheck', 'apiIndukBulkTemplate', 'apiIndukBulkStage', 'apiIndukBulkRejected', 'apiIndukBulkCommit', 'apiUserPinExport', 'apiDealerRegionGet', 'apiDealerRegionLookup', 'apiDealerRegionSave', 'apiDealerUploadStage', 'apiDealerUploadRejected', 'apiDealerUploadCommit', 'apiDealerDownloadAll', 'apiDealerTemplate', 'apiStageDealers', 'apiCommitDealers', 'apiAddDealer', 'apiCustomerBulkExport', 'apiStageCustomerBulk', 'apiCommitCustomerBulk', 'apiTransferDealerTemplate', 'apiStageDealerTransfer', 'apiTransferRejected', 'apiCommitDealerTransfer', 'apiMasterBulkTemplate', 'apiStageMasterBulk', 'apiMasterBulkRejected', 'apiCommitMasterBulk',
-    // Login & akun
-    'apiLogin', 'apiLogin2fa', 'apiTotpSetup', 'apiTotpEnable', 'apiSecurityPanel', 'apiResetTfa', 'apiUnlockAccount', 'apiLogout', 'apiChangePin', 'apiDemoOptions', 'apiStartDemo', 'apiStopDemo',
-    // Perangkat (Paket 11 / #37)
-    'apiMyDevices', 'apiRenameDevice', 'apiRemoveDevice', 'apiAdminListDevices', 'apiAdminRemoveDevice',
-    // Kerangka & Beranda
-    'apiBootstrap', 'apiDashboard', 'apiExec', 'apiV6Boot',
-    // KPI & Peringkat
-    'apiKpiTree', 'apiPersonKpi', 'apiTeamKpi', 'apiRank', 'apiMyRank', 'apiRankDetail',
-    // Analisa
-    'apiAnalisa', 'apiEarlyWarning', 'apiPotensi', 'apiWeeklyAnalysis', 'apiTeamComparison', 'apiDealerTutupList',
-    // Admin & upload (Paket 3)
-    'apiAdmin', 'apiSaveUser', 'apiPeriodLock', 'apiResetPin', 'apiSetActive', 'apiSaveExportAccess', 'apiStageRestore', 'apiCommitRestore',
-    'apiStageImport', 'apiPublishImport', 'apiStageSO', 'apiPublishSO', 'apiPublishConfig', 'apiRegionImportTemplate',
-    // Fitur versi Apps Script yang tidak dipakai lagi (tombol lama di layar → pesan jelas, bukan error)
-    'apiSyncRunNow', 'apiSyncSchedule', 'apiSyncRetry', 'apiSyncFileDownload', 'apiAIOptions', 'apiAIChat',
-];
-
-/** Fungsi yang mengubah data (diblok saat Mode Demo). */
-const DSM_WRITE_FNS = ['apiUiPrefSave','apiDealerStatusSave','apiTgCode','apiTgUnlink','apiTgAdminUnlink','apiTgAdminUnlinkAll','apiAgentKeyCreate','apiAgentKeyRevoke','apiCommitComment','apiCommitSave','apiCommitStatus','apiCommitDelete','apiKeepSellerSave','apiKeepSellerRevoke','apiDealerTargetStage','apiDealerTargetCommit','apiDealerTransferDirectStage','apiPortfolioTransferCommit','apiPortfolioEnsureVacant','apiTransferUndo','apiTxCorrSave','apiTxCorrBulk','apiTxCorrRevoke','apiNotifSend','apiNotifTest','apiNotifCancel','apiNotifRuleSave','apiKpiKhususSave','apiKpiKhususDelete','apiKpiKhususCopy','apiKpiKhususCopyTo','apiKpiKhususRuleSave','apiKpiKhususRuleCopy','apiKpiKhususTargetSave','apiKpiKhususTargetCopy','apiTMKpiCopy','apiBrandThresholdSave','apiTMProfileSave','apiTMAssignmentSave','apiTMKpiSave','apiTMBusinessSave','apiTMFollowUpSave','apiTMOrderSave','apiBrandSave','apiBrandSetActive','apiBrandClassificationSave','apiSubmitDealerContact','apiReviewDealerContacts','apiSaveDealerContact','apiStageContactBulk','apiCommitContactBulk','apiDealerTutupAjukan','apiDealerTutupProses','apiDealerTutupUpload','apiStartBackup','apiBackupSettings','apiUploadInfo','apiSetInfoActive',
-    'apiAccountMergeCommit','apiAccountDelete','apiHariLiburSave','apiHariLiburHapus','apiRegionMapSave','apiRegionBrandSave','apiKpiSaveRegion','apiKpiSaveRgm','apiKpiCopy','apiTargetSave','apiCheckpointRestore',
-    'apiProductMasterSave','apiDealerBrandSetCutover','apiDealerBrandSet','apiStageUsers','apiCommitUsers','apiStatusBulkStage','apiStatusBulkCommit','apiDealerSave','apiDealerDelete','apiIndukBulkStage','apiIndukBulkCommit','apiUserPinExport','apiDealerRegionSave','apiDealerUploadStage','apiDealerUploadCommit',
-    'apiStageDealers','apiCommitDealers','apiAddDealer','apiStageCustomerBulk','apiCommitCustomerBulk','apiStageDealerTransfer','apiCommitDealerTransfer','apiStageMasterBulk','apiCommitMasterBulk',
-    'apiResetTfa','apiUnlockAccount','apiAdminRemoveDevice','apiSaveUser','apiPeriodLock','apiResetPin','apiSetActive','apiSaveExportAccess','apiStageRestore','apiCommitRestore','apiStageImport','apiPublishImport','apiStageSO','apiPublishSO','apiPublishConfig'];
-
-header('Content-Type: application/json; charset=utf-8');
-header('Cache-Control: no-store');
-if (extension_loaded('zlib') && !ini_get('zlib.output_compression') && str_contains($_SERVER['HTTP_ACCEPT_ENCODING'] ?? '', 'gzip')) ob_start('ob_gzhandler');
-
-function dsm_reply(array $data, ?string $cacheKey = null): void {
-    $json = json_encode(js_norm($data), (JS_JSON_FLAGS & ~JSON_PRESERVE_ZERO_FRACTION) | JSON_PARTIAL_OUTPUT_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE);
-    if ($json !== false && $cacheKey !== null && ($data['ok'] ?? false) === true) dsm_cache_put_($cacheKey, isset($GLOBALS['DSM_CACHE_WRAP_CONTACT']) ? 'CS:' . $GLOBALS['DSM_CACHE_WRAP_CONTACT'] . "\n" . $json : $json);
-    echo $json === false ? '{"ok":false,"message":"Gagal menyusun jawaban server."}' : $json;
-    exit;
+function body(): array {
+  static $b; if ($b !== null) return $b;
+  $raw = file_get_contents('php://input'); $j = $raw && ($raw[0] ?? '') === '{' ? json_decode($raw, true) : null;
+  return $b = is_array($j) ? $j + $_GET : array_merge($_GET, $_POST);
 }
+function out($d, int $code = 200): never { http_response_code($code); header('Content-Type: application/json; charset=utf-8'); echo json_encode(['ok' => true] + (is_array($d) ? $d : ['data' => $d]), JSON_UNESCAPED_UNICODE); exit; }
+function need_role(array $u, string ...$roles): void { if (sa_free($u) || has_role($u, 'SA')) return; foreach ($roles as $r) if (has_role($u, $r)) return; fail('Tidak diizinkan.', 403); }
+function can_manage_user(array $u, array $t): bool { return sa_free($u) || has_role($u, 'SA') || (has_role($u, 'ADMIN') && covers_region($u, $t['region'])); }
 
 try {
-    if (($_SERVER['REQUEST_METHOD'] ?? 'POST') !== 'POST') throw new AppError('Gunakan aplikasi DSM untuk mengakses data.');
-    if (isset($_POST['__payload'])) {
-        // Upload form + file (multipart): susun ulang argumen seperti google.script.run
-        $body = json_decode((string) $_POST['__payload'], true);
-        if (is_array($body) && is_array($body['args'] ?? null)) {
-            foreach ($body['args'] as &$a) {
-                if (!is_array($a) || !isset($a['__form'])) continue;
-                $form = [];
-                foreach ((array) $a['__form'] as $k => $v) {
-                    if (is_array($v) && isset($v['__file'])) {
-                        $f = $_FILES[$v['__file']] ?? null;
-                        if ($f && ($f['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_INI_SIZE) throw new AppError('File terlalu besar untuk server. Naikkan upload_max_filesize/post_max_size di PHP.');
-                        $form[$k] = ($f && ($f['error'] ?? 4) === UPLOAD_ERR_OK) ? Blob::fromUpload($f) : new Blob('', 'application/octet-stream', '');
-                    } else $form[$k] = $v;
-                }
-                $a = $form;
-            }
-            unset($a);
+  sess(); ensure_demo_schema();
+  $in = body(); $a = $in['a'] ?? '';
+  if ($a === 'login') {
+    if (dsm_present()) fail('Masuk lewat DSM.', 401);
+    $r = one("SELECT * FROM claim_users WHERE username=? AND active=1", [strtolower(trim($in['username'] ?? ''))]);
+    if (!$r || !password_verify($in['password'] ?? '', $r['pass_hash'])) fail('Username atau password salah.', 401);
+    session_regenerate_id(true); $_SESSION['uid'] = (int) $r['id']; $_SESSION['real_uid'] = (int) $r['id']; unset($_SESSION['backup']);
+    out(['me' => me()]);
+  }
+  if ($a === 'logout') { $_SESSION = []; session_destroy(); out([]); }
+  if ($a === 'demo_users') { if (dsm_present()) out(['users' => []]); out(['users' => array_map(fn($r) => ['username' => $r['username'], 'name' => $r['name'], 'job' => $r['job']], q("SELECT username,name,job FROM claim_users WHERE active=1 ORDER BY id"))]); }
+  $u = need_me();
+  // Mode lihat: Super Admin yang "masuk sebagai" orang lain (Mode tes mati = produksi) hanya boleh melihat, tidak boleh mengubah apa pun.
+  if (!empty($u['impersonating']) && !test_mode() && in_array($a, ['upload', 'draft_note_add', 'entity_rename', 'claim_save', 'claim_submit', 'claim_act', 'pn_submit', 'pn_review', 'pn_setoran', 'pn_close', 'claim_resubmit', 'claim_cancel', 'followup_log', 'wa_save', 'sign_save', 'ba_sign', 'pc_submit', 'pc_act', 'pc_note', 'pc_report', 'pc_setoran', 'pc_close', 'notif_read', 'entitlement_save', 'entitlement_copy', 'contact_bulk', 'type_save', 'rules_save', 'aging_save', 'entity_add', 'entity_del', 'fuel_save', 'sa_user_save', 'sa_seed_uji', 'sa_uji_off', 'sa_testmode', 'sa_reset', 'backup_issue', 'backup_use', 'backup_revoke'], true))
+    fail('Mode lihat: Super Admin tidak bisa mengubah data atas nama orang lain. Klik "kembali" dulu.', 403);
+
+  switch ($a) {
+    case 'me': out(['dsm_role' => dsm_present() ? (dsm_auth()['role'] ?? '') : null, 'me' => $u, 'counts' => counts($u), 'test_mode' => test_mode(), 'demo' => demo_ctx() === 1, 'real_sa' => real_is_sa($u), 'aging_days' => aging_days()]);
+    case 'switch_user': // Super Admin: masuk sebagai akun demo (di DSM hanya akun UJI-* dan hanya saat Mode Demo nyala)
+      if (!real_is_sa($u)) fail('Hanya Super Admin.', 403);
+      $t = user_row((int) $in['user_id']); if (!$t) fail('Pengguna tidak ada.');
+      if (dsm_present() && (int) $t['id'] !== (int) $u['real_id']) {
+        if (!test_mode()) fail('Nyalakan Mode Demo dulu.', 403);
+        if (!is_demo_nik($t['nik'] ?? null) || !$t['active']) fail('Hanya bisa masuk sebagai akun demo.', 403);
+      }
+      $_SESSION['uid'] = $t['id']; unset($_SESSION['backup']);
+      hist('user', (int) $u['real_id'], 'Super Admin beralih ke ' . $t['name'], $u);
+      out(['me' => me()]);
+    case 'lookups':
+      if (!val("SELECT 1 FROM claim_types WHERE name='Uang makan'")) sync_claim_types(); // jenis baru muncul tanpa menunggu migrate.php
+      out(['kota' => array_column(q("SELECT val FROM claim_lookup WHERE kind='kota' ORDER BY val"), 'val'), 'brand' => brand_options(),
+        'bank' => array_column(q("SELECT val FROM claim_lookup WHERE kind='bank' ORDER BY val"), 'val'), 'gate' => array_column(q("SELECT name FROM claim_gate ORDER BY used DESC, name LIMIT 300"), 'name'),
+        'fuel' => q("SELECT effective_from, pertalite, pertamax FROM claim_fuel_price ORDER BY effective_from DESC, id DESC"), 'types' => q("SELECT id, category, name, active, locked FROM claim_types WHERE active=1 ORDER BY sort_no"), 'regions' => array_column(q("SELECT DISTINCT region FROM claim_users WHERE region IS NOT NULL AND " . demo_user_sql() . " ORDER BY region"), 'region'),
+        'entities' => entity_options(), 'rules' => ['min_km_makan' => min_km_makan(current_rule()), 'bbm_round' => (int) (current_rule()['bbm_round'] ?? 0)],
+        'people' => q("SELECT id, name, job, region FROM claim_users WHERE can_submit=1 AND active=1 AND " . demo_user_sql() . " ORDER BY name")]);
+    case 'budget': out(['period' => date('Y-m'), 'budget' => budget_all((int) $u['id'], date('Y-m')), 'blocked' => pc_blocked((int) $u['id']), 'meal_rate' => $u['meal_rate'], 'account' => ['bank' => $u['bank'], 'no' => $u['bank_no'], 'name' => $u['bank_name']]]);
+    case 'upload':
+      if (empty($_FILES['file'])) fail('File tidak ditemukan.');
+      out(['file' => save_upload($u, $_FILES['file'], $in['slot'] ?? 'nota')]);
+    case 'file':
+      $f = one("SELECT * FROM claim_files WHERE id=?", [(int) $in['id']]); if (!$f) fail('Berkas tidak ada.', 404);
+      $okv = false;
+      if ($f['ref_type'] === 'claim') $okv = can_view($u, get_claim((int) $f['ref_id']));
+      elseif ($f['ref_type'] === 'pc') $okv = pc_view($u, get_pc((int) $f['ref_id']));
+      elseif ($f['ref_type'] === 'ba') { $ba = one("SELECT claim_id FROM claim_ba WHERE id=?", [$f['ref_id']]); $okv = $ba && can_view($u, get_claim((int) $ba['claim_id'])); }
+      else $okv = (int) $f['uploader'] === (int) $u['id'];
+      if (!$okv && !sa_free($u)) fail('Tidak diizinkan.', 403);
+      header('Content-Type: ' . $f['mime']); header('Cache-Control: private, max-age=3600'); readfile(upload_dir() . '/' . $f['stored_name']); exit;
+    case 'claim_save': $id = claim_save($u, $in); out(['id' => $id, 'check' => (function () use ($id) { $c = get_claim($id); $k = claim_check($c); return ['errors' => $k['errors'], 'triggers' => $k['triggers'], 'budget' => $k['budget'], 'total' => (int) $c['total']]; })()]);
+    case 'claim_check': $c = get_claim((int) $in['id']); if (!can_view($u, $c)) fail('Tidak diizinkan.', 403); $k = claim_check($c);
+      out(['errors' => $k['errors'], 'triggers' => $k['triggers'], 'trigger_labels' => array_map(fn($t) => TRIG[$t], $k['triggers']), 'budget' => $k['budget'], 'route' => build_route($c + ['ba_required' => $k['triggers'] ? 1 : $c['ba_required']]), 'total' => (int) $c['total'], 'period' => $k['period'], 'info' => $k['info'] ?? new stdClass]);
+    case 'claim_submit': out(claim_submit($u, (int) $in['id'], $in));
+    case 'claim_get': out(claim_detail($u, (int) $in['id']));
+    case 'claim_list': out(claim_list($u, $in));
+    case 'draft_list': out(draft_list($u, (int) ($in['limit'] ?? 50)));
+    case 'draft_note_add': out(draft_note_add($u, $in));
+    case 'claim_act': out(claim_act($u, (int) $in['id'], $in));
+    case 'claim_resubmit': out(claim_resubmit($u, (int) $in['id'], $in));
+    case 'claim_cancel': claim_cancel($u, (int) $in['id']); out([]);
+    case 'followup_info': out(followup_info($u, (int) $in['id']));
+    case 'followup_log': followup_log($u, (int) $in['id'], ($in['via'] ?? '') === 'app' ? 'app' : 'wa', (int) ($in['to'] ?? 0)); out([]);
+    case 'wa_save': ex("UPDATE claim_users SET wa=? WHERE id=?", [norm_wa($in['wa'] ?? ''), (int) $u['id']]); out(['wa' => val("SELECT wa FROM claim_users WHERE id=?", [(int) $u['id']])]);
+    case 'sign_get': out(['img' => val("SELECT sign_img FROM claim_users WHERE id=?", [(int) $u['id']]) ?: null]);
+    case 'sign_save': // tanda tangan milik akun yang sedang aktif
+      $img = (string) ($in['img'] ?? '');
+      if ($img === '') { ex("UPDATE claim_users SET sign_img=NULL WHERE id=?", [(int) $u['id']]); out([]); }
+      if (!preg_match('#^data:image/png;base64,[A-Za-z0-9+/=]+$#', $img) || strlen($img) > 300000) fail('Tanda tangan harus berupa gambar PNG maksimal sekitar 200 KB.', 422);
+      $bin = base64_decode(substr($img, 22), true); if ($bin === false || substr($bin, 0, 4) !== "\x89PNG") fail('Gambar tanda tangan tidak valid.', 422);
+      ex("UPDATE claim_users SET sign_img=? WHERE id=?", [$img, (int) $u['id']]); hist('user', (int) $u['id'], 'Tanda tangan diperbarui', $u); out([]);
+    case 'ba_sign': ba_pemohon_sign($u, (int) $in['id']); out([]);
+    case 'counts': out(['counts' => counts($u)]);
+    case 'gate_suggest': out(['gate' => array_column(q("SELECT name FROM claim_gate ORDER BY used DESC, name LIMIT 300"), 'name')]);
+    // ---- petty cash
+    case 'pc_submit': out(['id' => pc_submit($u, $in)]);
+    case 'pc_get': $p = get_pc((int) $in['id']); if (!pc_view($u, $p)) fail('Tidak diizinkan.', 403);
+      out(['pc' => pc_out($p), 'history' => q("SELECT * FROM claim_history WHERE ref_type='pc' AND ref_id=? ORDER BY id", [$p['id']]), 'transfer' => one("SELECT * FROM claim_transfers WHERE ref_type='pc' AND ref_id=? ORDER BY id DESC", [$p['id']]),
+        'setoran_files' => files_of('pc', (int) $p['id'], 'setoran'), 'maps' => files_of('pc', (int) $p['id'], 'maps'), 'can_act' => $p['status'] === 'WAIT' && pc_stage_ok($u, $p, $p['stage']), 'stage' => $p['stage'], 'is_owner' => (int) $p['claimant_id'] === (int) $u['id']]);
+    case 'pc_list': out(['rows' => pc_list($u, $in)]);
+    case 'pc_act': out(pc_act($u, (int) $in['id'], $in));
+    case 'pn_submit': out(pn_submit($u, (int) $in['id'], $in));
+    case 'pn_review': out(pn_review($u, (int) $in['id'], $in));
+    case 'pn_setoran': pn_setoran($u, (int) $in['id'], $in); out([]);
+    case 'pn_close': pn_close($u, (int) $in['id']); out([]);
+    case 'pc_note': out(['id' => pc_add_note($u, (int) $in['id'], $in)]);
+    case 'pc_report': out(pc_send_report($u, (int) $in['id']));
+    case 'pc_setoran': pc_setoran($u, (int) $in['id'], $in); out([]);
+    case 'pc_close': pc_close($u, (int) $in['id']); out([]);
+    // ---- notifikasi
+    case 'notif_list': out(['rows' => q("SELECT * FROM claim_notif WHERE user_id=? ORDER BY id DESC LIMIT 60", [$u['id']])]);
+    case 'notif_read': ex("UPDATE claim_notif SET is_read=1 WHERE user_id=?" . (!empty($in['id']) ? " AND id=" . (int) $in['id'] : ''), [$u['id']]); out([]);
+    // ---- monitoring dan laporan
+    case 'monitor': out(monitor_budget($u, $in));
+    case 'claimant_claims': out(claimant_claims($u, (int) $in['user_id'], $in['period'] ?? date('Y-m')));
+    case 'todo_count': out(['n' => claim_list($u, ['view' => 'all', 'todo' => 1, 'limit' => 1])['total']]);
+    case 'cal_day': out(cal_day($u, (string) ($in['date'] ?? '')));
+    case 'cal': out(cal_month($u, (string) ($in['month'] ?? date('Y-m'))));
+    case 'realisasi': out(realisasi($u, $in));
+    case 'export':
+      [$h, $rows] = export_claims($u, $in); $data = xlsx_build($h, $rows, 'Klaim');
+      header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'); header('Content-Disposition: attachment; filename="klaim_' . date('Ymd_His') . '.xlsx"'); echo $data; exit;
+    case 'pdf': case 'ba_pdf': case 'pc_pdf':
+      $id = (int) $in['id'];
+      $html = $a === 'pdf' ? claim_pdf_html($u, $id) : ($a === 'ba_pdf' ? ba_pdf_html($u, $id) : pc_pdf_html($u, $id));
+      hist($a === 'pc_pdf' ? 'pc' : 'claim', $id, ($a === 'ba_pdf' ? 'PDF BA' : 'PDF') . ' diunduh', $u, null, null, 'oleh ' . $u['name']);
+      header('Content-Type: text/html; charset=utf-8'); echo $html; exit;
+    // ---- admin
+    case 'people_admin':
+      need_role($u, 'ADMIN');
+      $w = '1=1'; $p = []; if (!sa_free($u) && !has_role($u, 'SA') && ($u['area_list'] || $u['region'])) { $ar = $u['area_list'] ?: [$u['region']]; $w = 'region IN (' . implode(',', array_fill(0, count($ar), '?')) . ')'; $p = $ar; }
+      $rows = q("SELECT * FROM claim_users WHERE $w AND active=1 AND " . demo_user_sql() . " ORDER BY name", $p);
+      foreach ($rows as &$r) { unset($r['pass_hash']); $r['ent'] = q("SELECT category, enabled, budget FROM claim_entitlement WHERE user_id=?", [$r['id']]); }
+      out(['rows' => $rows]);
+    case 'entitlement_save':
+      $t = user_row((int) $in['user_id']); if (!$t) fail('Pengguna tidak ada.'); need_role($u, 'ADMIN'); if (!can_manage_user($u, $t)) fail('Di luar region Anda.', 403);
+      if (same_person($u, ['claimant_id' => $t['id'], 'created_by' => $t['id']]) && !sa_free($u)) fail('Admin tidak mengatur hak klaimnya sendiri.', 403);
+      $f = ['can_submit' => !empty($in['can_submit']) ? 1 : 0, 'can_petty' => !empty($in['can_petty']) ? 1 : 0, 'petty_ceiling' => max(0, (int) ($in['petty_ceiling'] ?? 0)),
+        'meal_rate' => ($in['meal_rate'] ?? '') === '' ? null : max(0, (int) $in['meal_rate'])];
+      foreach (['bank', 'bank_no', 'bank_name'] as $k) if (isset($in[$k])) $f[$k] = trim($in[$k]);
+      upd('claim_users', $t['id'], $f);
+      foreach (CATS as $cat) {
+        $e = $in['cats'][$cat] ?? null; if (!$e) continue;
+        if (val("SELECT 1 FROM claim_entitlement WHERE user_id=? AND category=?", [$t['id'], $cat])) ex("UPDATE claim_entitlement SET enabled=?, budget=? WHERE user_id=? AND category=?", [!empty($e['enabled']) ? 1 : 0, no_budget_cat($cat) ? 0 : max(0, (int) $e['budget']), $t['id'], $cat]);
+        else ins('claim_entitlement', ['user_id' => $t['id'], 'category' => $cat, 'enabled' => !empty($e['enabled']) ? 1 : 0, 'budget' => no_budget_cat($cat) ? 0 : max(0, (int) $e['budget'])]);
+      }
+      hist('user', (int) $t['id'], 'Hak klaim diubah', $u, jenc(['tarif_makan' => $f['meal_rate'], 'plafon' => $f['petty_ceiling']]));
+      out([]);
+    case 'entitlement_copy': // salin hak klaim (yang tersimpan) dari satu orang ke banyak orang. Rekening tidak ikut.
+      need_role($u, 'ADMIN'); $src = user_row((int) ($in['from_user_id'] ?? 0)); if (!$src) fail('Sumber tidak ada.'); if (!can_manage_user($u, $src)) fail('Di luar region Anda.', 403);
+      $parts = $in['parts'] ?? []; $do = fn($k) => !empty($parts[$k]); if (!($do('submit') || $do('cats') || $do('meal') || $do('petty'))) fail('Pilih apa yang disalin.');
+      $ids = array_values(array_unique(array_filter(array_map('intval', $in['to_ids'] ?? [])))); if (!$ids) fail('Pilih penerima.'); if (count($ids) > 300) fail('Maksimal 300 orang sekali salin.');
+      $skipEx = !empty($in['skip_existing']); $dry = !empty($in['dry']);
+      $sent = []; foreach (q("SELECT category, enabled, budget FROM claim_entitlement WHERE user_id=?", [$src['id']]) as $e) $sent[$e['category']] = $e;
+      $new = 0; $over = 0; $skip = []; $samples = []; $done = 0;
+      try { if (!$dry) db()->beginTransaction();
+      foreach ($ids as $tid) {
+        if ($tid === (int) $src['id']) continue;
+        $t = user_row($tid); if (!$t || !$t['active']) { $skip[] = ['name' => $t['name'] ?? ('#' . $tid), 'why' => 'tidak aktif']; continue; }
+        if (!can_manage_user($u, $t)) { $skip[] = ['name' => $t['name'], 'why' => 'di luar region Anda']; continue; }
+        if (same_person($u, ['claimant_id' => $t['id'], 'created_by' => $t['id']]) && !sa_free($u)) { $skip[] = ['name' => $t['name'], 'why' => 'hak sendiri']; continue; }
+        $cur = []; foreach (q("SELECT category, enabled, budget FROM claim_entitlement WHERE user_id=?", [$tid]) as $e) $cur[$e['category']] = $e;
+        $has = (bool) $cur; if ($has && $skipEx) { $skip[] = ['name' => $t['name'], 'why' => 'sudah punya hak']; continue; }
+        $has ? $over++ : $new++;
+        if ($dry) {
+          if ($has && count($samples) < 3) { $ch = [];
+            if ($do('cats')) foreach (CATS as $c) { if (no_budget_cat($c)) continue; $a = (int) ($cur[$c]['budget'] ?? 0); $b = (int) ($sent[$c]['budget'] ?? 0); if ($a !== $b) $ch[] = $c . ' ' . number_format($a, 0, ',', '.') . ' → ' . number_format($b, 0, ',', '.'); }
+            if ($do('meal') && (int) $t['meal_rate'] !== (int) $src['meal_rate']) $ch[] = 'Tarif makan ' . number_format((int) $t['meal_rate'], 0, ',', '.') . ' → ' . number_format((int) $src['meal_rate'], 0, ',', '.');
+            if ($do('submit') && (int) $t['can_submit'] !== (int) $src['can_submit']) $ch[] = 'Boleh klaim ' . ($t['can_submit'] ? 'ya' : 'tidak') . ' → ' . ($src['can_submit'] ? 'ya' : 'tidak');
+            if ($ch) $samples[] = ['name' => $t['name'], 'changes' => array_slice($ch, 0, 3)]; }
+          continue;
         }
-    } else {
-        if (empty($_POST) && (int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > 0 && str_starts_with((string) ($_SERVER['CONTENT_TYPE'] ?? ''), 'multipart/')) throw new AppError('File terlalu besar untuk server (melebihi post_max_size PHP).');
-        $body = json_decode((string) file_get_contents('php://input'), true);
-    }
-    if (!is_array($body) || !isset($body['fn'])) throw new AppError('Permintaan tidak valid.');
-    $fn = (string) $body['fn'];
-    $args = is_array($body['args'] ?? null) ? array_values($body['args']) : [];
-    if (!in_array($fn, DSM_ALLOWED, true) || !function_exists($fn)) throw new AppError('Fitur ini belum tersedia di versi DSM sekarang (' . $fn . ').');
-    // Sesi internal Agent API (bot Telegram) tidak boleh dipakai lewat pintu browser sama sekali.
-    $atk = $args[0] ?? null; if (is_array($atk)) $atk = $atk['token'] ?? null;
-    if (is_string($atk) && strlen($atk) >= 30 && strlen($atk) <= 200) { $as = session_get_('SESSION_' . hash_($atk)); if ($as && (!empty($as['agent']) || !empty($as['warm']))) throw new AppError('SESI: Silakan masuk kembali.'); /* sesi internal (bot / panaskan cache) */ }
-    if (in_array($fn, DSM_WRITE_FNS, true)) {
-        $tk = $args[0] ?? null; if (is_array($tk)) $tk = $tk['token'] ?? null;
-        if (is_string($tk) && strlen($tk) >= 30 && strlen($tk) <= 200) {
-            $ss = session_get_('SESSION_' . hash_($tk));
-            if ($ss && !empty($ss['demoNik'])) throw new AppError('Mode Demo hanya-baca. Kembali ke akun Super Admin untuk melakukan perubahan.');
+        $f = [];
+        if ($do('submit')) $f['can_submit'] = (int) $src['can_submit'];
+        if ($do('meal')) $f['meal_rate'] = $src['meal_rate'] === null ? null : (int) $src['meal_rate'];
+        if ($do('petty')) { $f['can_petty'] = (int) $src['can_petty']; $f['petty_ceiling'] = (int) $src['petty_ceiling']; }
+        if ($f) upd('claim_users', $tid, $f);
+        if ($do('cats')) foreach (CATS as $c) {
+          $en = (int) ($sent[$c]['enabled'] ?? 0); $bu = no_budget_cat($c) ? 0 : (int) ($sent[$c]['budget'] ?? 0);
+          if (isset($cur[$c])) ex("UPDATE claim_entitlement SET enabled=?, budget=? WHERE user_id=? AND category=?", [$en, $bu, $tid, $c]); else ins('claim_entitlement', ['user_id' => $tid, 'category' => $c, 'enabled' => $en, 'budget' => $bu]);
         }
-    }
-    $rf = new ReflectionFunction($fn);
-    while (count($args) < $rf->getNumberOfParameters()) $args[] = null;
-    tmBeginRequest_($fn, $args);
-    $ckey = dsm_cache_key_($fn, $args);
-    if ($ckey !== null) warmNote_($fn, $args);
-    $cpatch = $ckey !== null && dsm_contact_patch_on_($fn);
-    if ($ckey !== null && ($hit = $cpatch ? dsm_cache_contact_($ckey) : dsm_cache_get_($ckey)) !== null) { echo $hit; exit; }
-    if ($cpatch) $GLOBALS['DSM_CACHE_WRAP_CONTACT'] = prop_get_('DEALER_CONTACT_STATE') ?? ''; // status kontak SAAT mulai menghitung
-    dsm_reply(['ok' => true, 'result' => $fn(...$args)], $ckey);
-} catch (AppError $e) {
-    $out = ['ok' => false, 'message' => $e->getMessage()];
-    if (property_exists($e, 'data') && $e->data) $out['data'] = $e->data;
-    dsm_reply($out);
+        hist('user', $tid, 'Hak klaim disalin dari ' . $src['name'], $u, implode(', ', array_keys(array_filter(['akses' => $do('submit'), 'budget' => $do('cats'), 'tarif makan' => $do('meal'), 'petty cash' => $do('petty')]))));
+        $done++;
+      }
+      if (!$dry) db()->commit(); } catch (Throwable $e) { if (!$dry && db()->inTransaction()) db()->rollBack(); throw $e; }
+      out(['dry' => $dry, 'new' => $new, 'over' => $over, 'skipped' => $skip, 'samples' => $samples, 'done' => $done]);
+    case 'contact_template': // unduh template update massal WA & rekening (isi sekarang), sesuai wewenang Admin
+      need_role($u, 'ADMIN'); $w = '1=1'; $p = []; if (!sa_free($u) && !has_role($u, 'SA') && ($u['area_list'] || $u['region'])) { $ar = $u['area_list'] ?: [$u['region']]; $w = 'region IN (' . implode(',', array_fill(0, count($ar), '?')) . ')'; $p = $ar; }
+      $rows = array_map(fn($r) => [(string) $r['nik'], (string) $r['name'], (string) $r['job'], (string) $r['region'], (string) ($r['wa'] ? '0' . substr($r['wa'], 2) : ''), (string) $r['bank'], (string) $r['bank_no'], (string) $r['bank_name']], q("SELECT * FROM claim_users WHERE $w AND active=1 AND nik IS NOT NULL AND nik NOT LIKE 'UJI-%' ORDER BY name", $p));
+      $data = xlsx_build(['NIK', 'NAMA', 'JABATAN', 'REGION', 'WA', 'BANK', 'NO REKENING', 'ATAS NAMA'], $rows, 'Kontak');
+      header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'); header('Content-Disposition: attachment; filename="template_wa_rekening_' . date('Ymd') . '.xlsx"'); echo $data; exit;
+    case 'contact_bulk': // update massal WA & rekening berdasarkan NIK. Sel kosong = tidak diubah. dry=1: hanya pratinjau.
+      need_role($u, 'ADMIN'); $rows = $in['rows'] ?? []; $dry = !empty($in['dry']);
+      if (!is_array($rows) || !$rows) fail('Tidak ada data.'); if (count($rows) > 1000) fail('Maksimal 1.000 baris sekali proses.');
+      $banks = array_column(q("SELECT val FROM claim_lookup WHERE kind='bank'"), 'val'); $bmap = []; foreach ($banks as $b) $bmap[strtolower($b)] = $b;
+      $mask = fn($n) => $n === '' || $n === null ? '' : '••••' . substr((string) $n, -4);
+      $out = []; $seen = []; $cnt = ['berubah' => 0, 'sama' => 0, 'error' => 0, 'wa' => 0, 'rek' => 0];
+      try { if (!$dry) db()->beginTransaction();
+      foreach (array_values($rows) as $i => $r) {
+        $nik = trim((string) ($r['nik'] ?? '')); $o = ['row' => $i + 1, 'nik' => $nik, 'name' => '', 'status' => 'ERROR', 'changes' => [], 'error' => '', 'note' => ''];
+        $err = function (string $m) use (&$o, &$cnt, &$out) { $o['error'] = $m; $cnt['error']++; $out[] = $o; };
+        if ($nik === '') { $err('NIK kosong'); continue; }
+        if (isset($seen[$nik])) { $err('NIK dobel di file'); continue; } $seen[$nik] = 1;
+        $t = one("SELECT * FROM claim_users WHERE nik=? AND active=1", [$nik]); if (!$t) { $err('NIK tidak ditemukan di Klaim'); continue; }
+        $o['name'] = $t['name']; $tt = user_row((int) $t['id']);
+        if (!can_manage_user($u, $tt)) { $err('Di luar region Anda'); continue; }
+        $f = []; $ch = []; $note = [];
+        $wa = trim((string) ($r['wa'] ?? ''));
+        if ($wa !== '') { $d = preg_replace('/\D/', '', $wa); if (str_starts_with($d, '0')) $d = '62' . substr($d, 1); elseif (str_starts_with($d, '8')) $d = '62' . $d;
+          if (!preg_match('/^62\d{8,13}$/', $d)) { $err('Nomor WA tidak valid (' . $wa . ')'); continue; }
+          if ($d !== (string) $t['wa']) { $f['wa'] = $d; $ch[] = ['f' => 'WA', 'old' => $t['wa'] ? '0' . substr($t['wa'], 2) : '-', 'new' => '0' . substr($d, 2)]; $cnt['wa']++; } }
+        $bk = trim((string) ($r['bank'] ?? '')); $bn = preg_replace('/[\s.\-]/', '', (string) ($r['bank_no'] ?? '')); $bm = trim((string) ($r['bank_name'] ?? ''));
+        if ($bk !== '' || $bn !== '' || $bm !== '') {
+          if (same_person($u, ['claimant_id' => $t['id'], 'created_by' => $t['id']]) && !sa_free($u)) { $err('Rekening sendiri tidak diubah lewat sini'); continue; }
+          if ($bk !== '') { $k = $bmap[strtolower($bk)] ?? null;
+            if (!$k) { $best = null; $bd = 99; foreach ($banks as $b) { $dd = levenshtein(strtolower($bk), strtolower($b)); if ($dd < $bd) { $bd = $dd; $best = $b; } } $err('Bank "' . $bk . '" tidak dikenal' . ($best && $bd <= 2 ? '. Mungkin: ' . $best : '')); continue; } $bk = $k; }
+          if ($bn !== '' && !preg_match('/^\d{5,20}$/', $bn)) { $err('Nomor rekening harus 5-20 angka'); continue; }
+          $nb = $bk !== '' ? $bk : (string) $t['bank']; $nn = $bn !== '' ? $bn : (string) $t['bank_no']; $na = $bm !== '' ? $bm : (string) $t['bank_name'];
+          if ($nn !== '' && $nb === '') { $err('Bank belum diisi'); continue; } if ($nb !== '' && $nn === '') { $err('Nomor rekening belum diisi'); continue; }
+          if ($na === '' && $nn !== '') { $na = (string) $t['name']; $note[] = 'Atas nama kosong, dipakai nama akun'; }
+          if ($nb !== (string) $t['bank'] || $nn !== (string) $t['bank_no'] || $na !== (string) $t['bank_name']) {
+            $f += ['bank' => $nb, 'bank_no' => $nn, 'bank_name' => $na]; $cnt['rek']++;
+            $ch[] = ['f' => 'Rekening', 'old' => $t['bank_no'] ? $t['bank'] . ' ' . $mask($t['bank_no']) : '-', 'new' => $nb . ' ' . $nn . ' a.n. ' . $na]; }
+        }
+        $o['note'] = implode('; ', $note);
+        if (!$ch) { $o['status'] = 'SAMA'; $cnt['sama']++; $out[] = $o; continue; }
+        $o['status'] = $note ? 'PERIKSA' : 'BERUBAH'; $o['changes'] = $ch; $cnt['berubah']++; $out[] = $o;
+        if (!$dry) { upd('claim_users', (int) $t['id'], $f);
+          hist('user', (int) $t['id'], 'Kontak/rekening diperbarui lewat update massal', $u, implode(', ', array_map(fn($c) => $c['f'] === 'Rekening' ? 'Rekening ' . $mask($f['bank_no'] ?? $t['bank_no']) : $c['f'], $ch))); }
+      }
+      if (!$dry) db()->commit(); } catch (Throwable $e) { if (!$dry && db()->inTransaction()) db()->rollBack(); throw $e; }
+      out(['dry' => $dry, 'count' => $cnt, 'rows' => $out]);
+    case 'type_save':
+      need_role($u, 'ADMIN'); $id = (int) ($in['id'] ?? 0); $cat = $in['category'] ?? '';
+      if ($id) { $t = type_row($id); if ($t['locked']) fail('Jenis ini terkunci.'); $f = ['name' => trim($in['name'] ?? $t['name']), 'active' => isset($in['active']) ? ($in['active'] ? 1 : 0) : $t['active']]; if (!$f['name']) fail('Nama wajib.'); upd('claim_types', $id, $f); }
+      else { if (!in_array($cat, ['Operasional', 'Transportasi', 'Entertain'], true)) fail('Kategori tidak valid.'); if (!trim($in['name'] ?? '')) fail('Nama wajib.'); if (strcasecmp(trim($in['name']), 'Lainnya') === 0 && $cat !== 'Operasional') fail('Jenis "Lainnya" tidak tersedia.'); $id = ins('claim_types', ['category' => $cat, 'name' => trim($in['name']), 'active' => 1, 'locked' => 0, 'sort_no' => 50]); }
+      out(['id' => $id]);
+    case 'types_all': need_role($u, 'ADMIN'); out(['rows' => q("SELECT * FROM claim_types WHERE name<>'Reimburse petty cash' ORDER BY sort_no")]);
+    case 'rules_get': need_role($u, 'ADMIN', 'AUDIT', 'FM', 'HOS'); out(['rule' => current_rule(), 'history' => q("SELECT * FROM claim_rules ORDER BY effective_from DESC, id DESC LIMIT 20"), 'aging_days' => aging_days(), 'is_sa' => has_role($u, 'SA') || sa_free($u)]);
+    case 'rules_save':
+      need_role($u, 'ADMIN'); $f = ['effective_from' => $in['effective_from'] ?: date('Y-m-d'), 'created_by' => $u['id'], 'created_at' => now()];
+      foreach (['bbm_round', 'pc_grace_days', 'min_km_makan'] as $k) $f[$k] = ($in[$k] ?? '') === '' ? null : max(0, (int) $in[$k]);
+      if (isset($f['bbm_round']) && $f['bbm_round'] > 9999) fail('Aturan digit akhir BBM berupa angka ribuan di bawah 10.000, mis. 2000 atau 5000.', 422);
+      $dj = []; foreach (is_array($in['days'] ?? null) ? $in['days'] : [] as $cat => $ds) if (in_array($cat, CATS, true) && is_array($ds)) $dj[$cat] = array_values(array_unique(array_filter(array_map('intval', $ds), fn($d) => $d >= 1 && $d <= 7)));
+      $f['days'] = $dj ? json_encode($dj) : null;
+      ins('claim_rules', $f); hist('user', (int) $u['id'], 'Aturan BA diperbarui (versi baru)', $u, jenc($f)); out([]);
+    case 'aging_save': if (!has_role($u, 'SA') && !sa_free($u)) fail('Hanya Super Admin.', 403); set_setting('aging_days', ($in['aging_days'] ?? '') === '' ? null : (string) max(1, (int) $in['aging_days'])); out([]);
+    // ---- super admin
+    case 'entity_list': { $us = entity_usage();
+      out(['rows' => array_map(fn($e) => ['name' => $e, 'users' => (int) ($us[$e]['users'] ?? 0), 'claims' => (int) ($us[$e]['claims'] ?? 0), 'used' => isset($us[$e])], entity_options())]); }
+    case 'entity_add': need_role($u, 'SA'); $n = strtoupper(trim($in['name'] ?? ''));
+      if (!preg_match('/^[A-Z0-9 .&-]{2,30}$/', $n)) fail('Nama badan usaha 2-30 karakter (huruf, angka, spasi, titik, &, -).');
+      if (in_array($n, entity_options(), true)) fail('Badan usaha itu sudah ada.'); ins('claim_lookup', ['kind' => 'entity', 'val' => $n]);
+      hist('user', (int) $u['id'], 'Badan usaha ditambahkan: ' . $n, $u); out(['ok' => 1]);
+    case 'entity_rename': need_role($u, 'SA'); out(entity_change($u, (string) ($in['from'] ?? ''), (string) ($in['to'] ?? '')));
+    case 'entity_del': need_role($u, 'SA'); $n = trim($in['name'] ?? ''); $to = trim((string) ($in['to'] ?? ''));
+      if ($to !== '') { if ($to === $n || !in_array($to, entity_options(), true)) fail('Pilih badan usaha tujuan yang lain.'); out(entity_change($u, $n, $to)); }
+      if (isset(entity_usage()[$n])) fail('Masih dipakai. Pilih badan usaha tujuan untuk menggabungkan.');
+      ex("DELETE FROM claim_lookup WHERE kind='entity' AND val=?", [$n]); hist('user', (int) $u['id'], 'Badan usaha dihapus: ' . $n, $u); out(['ok' => 1]);
+    case 'fuel_list': out(['rows' => q("SELECT f.*, u.name AS uname FROM claim_fuel_price f LEFT JOIN claim_users u ON u.id=f.created_by ORDER BY f.effective_from DESC, f.id DESC"), 'today' => date('Y-m-d')]);
+    case 'fuel_save':
+      need_role($u, 'SA'); $ef = $in['effective_from'] ?? ''; $pl = (int) ($in['pertalite'] ?? 0); $px = (int) ($in['pertamax'] ?? 0);
+      if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $ef)) fail('Tanggal berlaku wajib diisi.'); if ($pl <= 0 || $px <= 0) fail('Harga Pertalite dan Pertamax wajib diisi (lebih dari 0).');
+      if ($px < $pl) fail('Harga Pertamax tidak boleh lebih rendah dari Pertalite.');
+      if (val("SELECT 1 FROM claim_fuel_price WHERE effective_from=?", [$ef])) fail('Sudah ada harga untuk tanggal berlaku itu. Gunakan tanggal lain.');
+      $id = ins('claim_fuel_price', ['effective_from' => $ef, 'pertalite' => $pl, 'pertamax' => $px, 'created_by' => $u['id'], 'created_at' => now()]);
+      hist('user', (int) $u['id'], 'Harga BBM diperbarui', $u, null, null, "berlaku $ef · Pertalite " . rp($pl) . ' · Pertamax ' . rp($px)); out(['id' => $id]);
+    case 'sa_users': need_role($u, 'SA'); $r = q("SELECT id,username,name,nik,job,region,areas,entity,roles,can_submit,active,wa FROM claim_users ORDER BY id"); out(['rows' => $r]);
+    case 'area_check': need_role($u, 'SA');
+      $adm = array_map('shape_user', q("SELECT * FROM claim_users WHERE active=1")); $adm = array_values(array_filter($adm, fn($x) => has_role($x, 'ADMIN')));
+      $regs = q("SELECT region, COUNT(*) n FROM claim_users WHERE active=1 AND can_submit=1 AND region IS NOT NULL AND nik NOT LIKE 'UJI-%' GROUP BY region ORDER BY region");
+      $open = array_values(array_filter($regs, function ($r) use ($adm) { foreach ($adm as $a) if (covers_region($a, $r['region'])) return false; return true; }));
+      out(['regions' => array_column($regs, 'region'), 'uncovered' => $open, 'admins_empty' => array_values(array_map(fn($a) => $a['id'], array_filter($adm, fn($a) => !$a['area_list'] && !$a['region']))), 'dsm' => dsm_present()]);
+    case 'area_dsm': need_role($u, 'SA'); $nk = trim($in['nik'] ?? ''); $per = dsm_present() && $nk !== '' ? dsm_person($nk) : null;
+      out(['areas' => array_values(array_filter(array_map('strval', $per['adminRegions'] ?? []))), 'dsm' => dsm_present()]);
+    case 'dsm_people': need_role($u, 'SA'); if (!dsm_present()) out(['rows' => []]);
+      try { require_once __DIR__ . '/../lib/auth.php'; $pp = snapshot_()['meta']['people'] ?? []; } catch (Throwable $e) { $pp = []; }
+      $have = array_flip(array_map('strval', array_column(q("SELECT nik FROM claim_users WHERE nik IS NOT NULL"), 'nik'))); $rows = [];
+      foreach ($pp as $x) { $nk = (string) ($x['nik'] ?? ''); if ($nk === '' || str_starts_with($nk, 'UJI-') || isset($rows[$nk])) continue;
+        $rows[$nk] = ['nik' => $nk, 'nama' => (string) ($x['nama'] ?? $nk), 'role' => (string) ($x['role'] ?? ''), 'region' => (string) ($x['region'] ?? ''), 'disabled' => isset($have[$nk]), 'note' => isset($have[$nk]) ? 'Sudah punya akses Klaim' : ''];
+      }
+      usort($rows, fn($a, $b) => strcasecmp($a['nama'], $b['nama'])); out(['rows' => array_values($rows)]);
+    case 'sa_user_save':
+      need_role($u, 'SA'); $id = (int) ($in['id'] ?? 0); $roles = implode(',', array_values(array_intersect(['ADMIN', 'AUDIT', 'HOS', 'FM', 'FT', 'RGM', 'ASM', 'SALES', 'SA'], $in['roles'] ?? [])));
+      $f = ['name' => trim($in['name'] ?? ''), 'nik' => trim($in['nik'] ?? '') ?: null, 'job' => trim($in['job'] ?? ''), 'region' => ($in['region'] ?? '') ?: null, 'areas' => implode(',', array_values(array_unique(array_filter(array_map('trim', (array) ($in['areas'] ?? [])))))) ?: null, 'entity' => ($in['entity'] ?? '') ?: null, 'roles' => $roles, 'can_submit' => !empty($in['can_submit']) ? 1 : 0, 'active' => isset($in['active']) ? ($in['active'] ? 1 : 0) : 1];
+      if (array_key_exists('wa', $in)) $f['wa'] = norm_wa($in['wa']);
+      if (dsm_present() && !$id) { $nk = trim($in['nik'] ?? ''); $per = $nk !== '' ? dsm_person($nk) : null; if (!$per) fail('NIK tidak ditemukan di DSM. Tambahkan dulu akunnya di DSM.');
+        if (val("SELECT 1 FROM claim_users WHERE nik=?", [$nk])) fail('NIK itu sudah punya akses Klaim.'); $f['nik'] = $nk; $f['name'] = $f['name'] ?: ($per['nama'] ?? ''); $f['job'] = $f['job'] ?: ucfirst(strtolower((string) ($per['role'] ?? ''))); $f['region'] = $f['region'] ?: ($per['region'] ?? null);
+        $in['username'] = strtolower(preg_replace('/[^a-z0-9_.]/i', '', $nk)) ?: 'u' . substr(md5($nk), 0, 6); $in['password'] = bin2hex(random_bytes(8)); }
+      if (!$f['name']) fail('Nama wajib.');
+      if ($id) upd('claim_users', $id, $f);
+      else { if (!preg_match('/^[a-z0-9_.]{3,30}$/', $in['username'] ?? '')) fail('Username 3-30 huruf kecil/angka.'); $id = ins('claim_users', $f + ['username' => $in['username'], 'pass_hash' => password_hash($in['password'] ?: '123456', PASSWORD_DEFAULT), 'created_at' => now()]); }
+      hist('user', $id, 'Peran/akses pengguna diubah', $u, $roles . ($f['can_submit'] ? ' +pemohon' : '')); out(['id' => $id]);
+    case 'sa_seed_uji': need_role($u, 'SA'); if (!test_mode()) fail('Nyalakan Mode Demo dulu.'); $n = seed_uji_users(); out(['dibuat' => $n]);
+    case 'sa_uji_off': need_role($u, 'SA'); $n = ex("UPDATE claim_users SET active=0 WHERE nik LIKE 'UJI-%'"); out(['nonaktif' => $n]);
+    case 'demo_state': if (!real_is_sa($u)) fail('Hanya Super Admin.', 403); out(demo_state());
+    case 'sa_testmode': // satu sakelar Mode Demo: nyala = akun demo aktif; mati = akun demo disembunyikan, data demo disimpan tapi tidak tampil
+      if (!real_is_sa($u) || !empty($u['impersonating'])) fail('Kembali ke akun Super Admin dulu.', 403);
+      $on = !empty($in['on']); set_setting('test_mode', $on ? '1' : '0');
+      if ($on && dsm_present()) seed_uji_users(); else if (!$on) ex("UPDATE claim_users SET active=0 WHERE nik LIKE 'UJI-%'");
+      hist('user', (int) $u['id'], 'Mode Demo ' . ($on ? 'dinyalakan' : 'dimatikan'), $u);
+      out(demo_state());
+    case 'demo_purge': // hapus permanen data demo; data asli tidak tersentuh
+      if (!real_is_sa($u) || !empty($u['impersonating'])) fail('Kembali ke akun Super Admin dulu.', 403);
+      if (trim((string) ($in['confirm'] ?? '')) !== 'HAPUS') fail('Ketik HAPUS untuk konfirmasi.', 422);
+      $n = demo_purge(); hist('user', (int) $u['id'], 'Data demo dihapus permanen', $u, jenc($n)); out(['deleted' => $n] + demo_state());
+    case 'sa_reset': if (dsm_present()) fail('Reset dinonaktifkan di DSM.', 403); if (!real_is_sa($u)) fail('Hanya Super Admin.', 403); install_schema(); seed_all(); $_SESSION = []; out(['reset' => true]);
+    case 'backup_issue':
+      $role = $in['role'] ?? ''; if (!in_array($role, ['ADMIN', 'FT'], true)) fail('Kode cadangan hanya untuk Admin atau Finance Transfer.');
+      $for = (int) ($in['for_user_id'] ?? 0); $fu = user_row($for);
+      if (!$fu || !has_role($fu, $role)) fail('Pemegang peran tidak ditemukan.');
+      $to = (int) ($in['to_user_id'] ?? 0); $tu = $to ? user_row($to) : null;
+      if (!$tu || !$tu['active']) fail('Pilih orang yang akan diberi kode.');
+      if ($to === $for) fail('Penerima kode tidak boleh orang yang digantikan.');
+      if (!has_role($tu, $role)) fail('Penerima harus pemegang peran ' . ($role === 'FT' ? 'Finance Transfer' : 'Admin') . ' juga.');
+      $hours = (int) ($in['duration_hours'] ?? 0); if (!in_array($hours, [2, 4, 8, 24, 72], true)) fail('Pilih durasi akses.');
+      if (!has_role($u, 'SA') && !sa_free($u) && (int) $u['id'] !== $for) fail('Kode hanya dapat diterbitkan Super Admin atau orang yang digantikan.', 403);
+      $code = strtoupper(substr(bin2hex(random_bytes(4)), 0, 6));
+      ins('claim_backup', ['role' => $role, 'code_hash' => password_hash($code, PASSWORD_DEFAULT), 'issuer_id' => $u['id'], 'for_user_id' => $for, 'to_user_id' => $to, 'duration_min' => $hours * 60, 'use_count' => 0, 'max_use' => 5, 'expires_at' => date('Y-m-d H:i:s', time() + 86400), 'created_at' => now()]);
+      hist('user', $for, 'Kode cadangan ' . $role . ' untuk ' . $tu['name'] . ' (' . $hours . ' jam) diterbitkan oleh ' . $u['name'], $u);
+      notify($to, 'info', 'Anda diberi kode cadangan ' . ($role === 'FT' ? 'Finance Transfer' : 'Admin') . ' menggantikan ' . $fu['name'] . ' (' . $hours . ' jam). Kode dikirim terpisah oleh pemberi. Pakai lewat menu Masuk kode cadangan dalam 24 jam.');
+      out(['code' => $code, 'valid_hours' => 24, 'duration_hours' => $hours, 'to' => $tu['name']]);
+    case 'backup_use':
+      $code = strtoupper(trim($in['code'] ?? ''));
+      foreach (q("SELECT * FROM claim_backup WHERE revoked_at IS NULL AND (used_at IS NULL AND expires_at>? OR active_until>?) ORDER BY id DESC", [now(), now()]) as $b) if (password_verify($code, $b['code_hash'])) {
+        if ((int) $b['for_user_id'] === (int) $u['id']) fail('Kode ini untuk menggantikan Anda, bukan untuk Anda sendiri.');
+        if (!empty($b['to_user_id']) && (int) $b['to_user_id'] !== (int) $u['id']) fail('Kode ini diberikan untuk orang lain.');
+        if ($b['used_by'] && (int) $b['used_by'] !== (int) $u['id']) fail('Kode ini sudah dipakai orang lain.');
+        $max = (int) ($b['max_use'] ?: 5); $n = (int) $b['use_count'];
+        if ($n >= $max) fail("Jatah masuk habis ($max kali). Minta kode baru.");
+        if (!$b['used_by']) { $until = date('Y-m-d H:i:s', time() + ((int) ($b['duration_min'] ?: 120)) * 60); ex("UPDATE claim_backup SET used_by=?, used_at=?, active_until=?, use_count=1, last_used_at=? WHERE id=?", [$u['id'], now(), $until, now(), $b['id']]); }
+        else ex("UPDATE claim_backup SET use_count=use_count+1, last_used_at=? WHERE id=?", [now(), $b['id']]);
+        $_SESSION['backup'] = ['id' => (int) $b['id']];
+        hist('user', (int) $u['id'], 'Akses cadangan ' . $b['role'] . ' dipakai (masuk ke-' . ($n + 1) . ' dari ' . $max . ')', $u); out(['me' => me()]);
+      }
+      fail('Kode tidak valid, kedaluwarsa, atau sudah dicabut.');
+    case 'backup_exit':
+      if (!empty($_SESSION['backup'])) { hist('user', (int) $u['id'], 'Keluar dari akses cadangan', $u); unset($_SESSION['backup']); }
+      out(['me' => me()]);
+    case 'backup_list':
+      $sa = has_role($u, 'SA') || sa_free($u);
+      $rows = q("SELECT b.*, f.name AS for_name, t.name AS to_name, i.name AS issuer_name FROM claim_backup b LEFT JOIN claim_users f ON f.id=b.for_user_id LEFT JOIN claim_users t ON t.id=b.to_user_id LEFT JOIN claim_users i ON i.id=b.issuer_id" . ($sa ? '' : " WHERE b.issuer_id=" . (int) $u['id']) . " ORDER BY b.id DESC LIMIT 60");
+      foreach ($rows as &$r) {
+        $r['code_hash'] = null; $now = now();
+        $r['status'] = $r['revoked_at'] ? 'DICABUT' : ($r['used_at'] ? ($r['active_until'] > $now ? 'AKTIF' : 'SELESAI') : ($r['expires_at'] > $now ? 'BELUM' : 'KEDALUWARSA'));
+        $r['left'] = $r['status'] === 'AKTIF' ? max(0, strtotime($r['active_until']) - time()) : 0;
+      } unset($r);
+      out(['rows' => $rows]);
+    case 'backup_revoke':
+      $b = one("SELECT * FROM claim_backup WHERE id=?", [(int) ($in['id'] ?? 0)]); if (!$b) fail('Kode tidak ditemukan.', 404);
+      if (!has_role($u, 'SA') && !sa_free($u) && (int) $b['issuer_id'] !== (int) $u['id']) fail('Hanya Super Admin atau pemberi kode yang bisa mencabut.', 403);
+      if ($b['revoked_at']) fail('Kode sudah dicabut.');
+      ex("UPDATE claim_backup SET revoked_at=?, revoked_by=? WHERE id=?", [now(), $u['id'], $b['id']]);
+      hist('user', (int) $b['for_user_id'], 'Kode cadangan #' . $b['id'] . ' dicabut oleh ' . $u['name'], $u); out([]);
+    case 'backup_people': // calon penerima: pemegang peran yang sama dengan yang digantikan
+      $role = $in['role'] ?? ''; $ex = (int) ($in['except'] ?? 0);
+      out(['rows' => array_values(array_filter(q("SELECT id, name, job, region, roles FROM claim_users WHERE active=1 AND " . demo_user_sql() . " ORDER BY name"), fn($r) => (int) $r['id'] !== $ex && in_array($role, explode(',', (string) $r['roles']), true)))]);
+    case 'backup_holders': out(['rows' => q("SELECT id, name, roles FROM claim_users WHERE (roles LIKE '%ADMIN%' OR roles LIKE '%FT%') AND active=1 AND " . demo_user_sql())]);
+    case 'history_user': need_role($u, 'SA', 'ADMIN'); out(['rows' => q("SELECT * FROM claim_history WHERE ref_type='user' ORDER BY id DESC LIMIT 100")]);
+    default: fail('Aksi tidak dikenal: ' . $a, 404);
+  }
+} catch (Err $e) {
+  out_err($e->getMessage(), $e->getCode() ?: 400);
 } catch (Throwable $e) {
-    error_log('[dsm] ' . get_class($e) . ': ' . $e->getMessage() . ' @ ' . $e->getFile() . ':' . $e->getLine());
-    dsm_reply(['ok' => false, 'message' => 'Terjadi kesalahan di server: ' . $e->getMessage()]);
+  error_log('[claim] ' . $e->getMessage() . ' @ ' . $e->getFile() . ':' . $e->getLine());
+  out_err('Terjadi kesalahan pada server: ' . $e->getMessage(), 500);
 }
+function out_err(string $m, int $code): never { if ($code < 100 || $code > 599) $code = 400; http_response_code($code); header('Content-Type: application/json; charset=utf-8'); echo json_encode(['ok' => false, 'error' => $m], JSON_UNESCAPED_UNICODE); exit; }

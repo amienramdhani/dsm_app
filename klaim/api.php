@@ -25,7 +25,7 @@ try {
   if ($a === 'demo_users') { if (dsm_present()) out(['users' => []]); out(['users' => array_map(fn($r) => ['username' => $r['username'], 'name' => $r['name'], 'job' => $r['job']], q("SELECT username,name,job FROM claim_users WHERE active=1 ORDER BY id"))]); }
   $u = need_me();
   // Mode lihat: Super Admin yang "masuk sebagai" orang lain (Mode tes mati = produksi) hanya boleh melihat, tidak boleh mengubah apa pun.
-  if (!empty($u['impersonating']) && !test_mode() && in_array($a, ['upload', 'draft_note_add', 'entity_rename', 'claim_save', 'claim_submit', 'claim_act', 'claim_resubmit', 'claim_cancel', 'followup_log', 'wa_save', 'sign_save', 'ba_sign', 'pc_submit', 'pc_act', 'pc_note', 'pc_report', 'pc_setoran', 'pc_close', 'notif_read', 'entitlement_save', 'entitlement_copy', 'contact_bulk', 'type_save', 'rules_save', 'aging_save', 'entity_add', 'entity_del', 'fuel_save', 'sa_user_save', 'sa_seed_uji', 'sa_uji_off', 'sa_testmode', 'sa_reset', 'backup_issue', 'backup_use', 'backup_revoke'], true))
+  if (!empty($u['impersonating']) && !test_mode() && in_array($a, ['upload', 'draft_note_add', 'entity_rename', 'claim_save', 'claim_submit', 'claim_act', 'pn_submit', 'pn_review', 'pn_setoran', 'pn_close', 'claim_resubmit', 'claim_cancel', 'followup_log', 'wa_save', 'sign_save', 'ba_sign', 'pc_submit', 'pc_act', 'pc_note', 'pc_report', 'pc_setoran', 'pc_close', 'notif_read', 'entitlement_save', 'entitlement_copy', 'contact_bulk', 'type_save', 'rules_save', 'aging_save', 'entity_add', 'entity_del', 'fuel_save', 'sa_user_save', 'sa_seed_uji', 'sa_uji_off', 'sa_testmode', 'sa_reset', 'backup_issue', 'backup_use', 'backup_revoke'], true))
     fail('Mode lihat: Super Admin tidak bisa mengubah data atas nama orang lain. Klik "kembali" dulu.', 403);
 
   switch ($a) {
@@ -91,6 +91,10 @@ try {
         'setoran_files' => files_of('pc', (int) $p['id'], 'setoran'), 'maps' => files_of('pc', (int) $p['id'], 'maps'), 'can_act' => $p['status'] === 'WAIT' && pc_stage_ok($u, $p, $p['stage']), 'stage' => $p['stage'], 'is_owner' => (int) $p['claimant_id'] === (int) $u['id']]);
     case 'pc_list': out(['rows' => pc_list($u, $in)]);
     case 'pc_act': out(pc_act($u, (int) $in['id'], $in));
+    case 'pn_submit': out(pn_submit($u, (int) $in['id'], $in));
+    case 'pn_review': out(pn_review($u, (int) $in['id'], $in));
+    case 'pn_setoran': pn_setoran($u, (int) $in['id'], $in); out([]);
+    case 'pn_close': pn_close($u, (int) $in['id']); out([]);
     case 'pc_note': out(['id' => pc_add_note($u, (int) $in['id'], $in)]);
     case 'pc_report': out(pc_send_report($u, (int) $in['id']));
     case 'pc_setoran': pc_setoran($u, (int) $in['id'], $in); out([]);
