@@ -3604,3 +3604,16 @@ html body :is(#app,.modal) :is(#main,#view,#mbody) table.rgT.v7rgNt thead th{ver
 .bs-BULAN{background:#eef2f7;color:#62798b}.bs-b-BULAN{border-color:#9fb0c0}
 .v6bsd{margin:10px 0}.v6bsRow{display:flex;gap:10px;align-items:center;padding:5px 0;border-bottom:1px dashed #dbe5ee;flex-wrap:wrap}.v6bsRow b{min-width:90px}.v6bsRow small{color:#62798b;flex:1;min-width:180px}.bsb{display:inline-block;font-size:10px;font-weight:800;border-radius:8px;padding:1px 6px;margin-top:2px}.bs-AKTIF{background:#e3f6f1;color:#0E7C6B}.bs-IDLE{background:#fff1d6;color:#b25e09}.bs-PASIF{background:#fdeaea;color:#c0392b}.bs-NOO{background:#ece6fb;color:#6D3FD8}
 .mobileBs{display:flex;gap:6px;overflow-x:auto;margin:8px 0;padding-bottom:2px}.bs-box{flex:0 0 auto;min-width:78px;border:1px solid #dbe5ee;border-radius:8px;padding:5px 7px;text-align:center}.bs-box small{display:block;font-size:10px;color:#62798b}.bs-box b{display:block;font-size:13px}.bs-b-AKTIF{border-color:#0E7C6B}.bs-b-IDLE{border-color:#b25e09}.bs-b-PASIF{border-color:#c0392b}.bs-b-NOO{border-color:#6D3FD8}
+
+/* History: panel Ber-promotor vs Non promotor senada panel Summary, bawaan tertutup (2026-11-19, mockup doc/mockup/2026-11-19/dsm-promotor-lipat.html) */
+html body details.v6hpc.v7hpc{margin:13px 0 0;padding:0;border:1px solid #aaa8e7;border-radius:12px;background:#fff;overflow:hidden;box-shadow:0 3px 12px rgba(55,52,128,.07)}
+html body details.v7hpc>summary.v6hpch{display:flex;flex-direction:row;align-items:flex-start;gap:12px;margin:0;padding:13px 15px;background:#d5d4fc;color:#302e72;cursor:pointer;list-style:none;border-left:5px solid #6663c4}
+details.v7hpc>summary::-webkit-details-marker{display:none}
+details.v7hpc>summary:before{content:'›';display:grid;place-items:center;width:21px;height:21px;border-radius:50%;background:#6663c4;color:#fff;font-size:18px;line-height:1;transition:transform .15s ease;flex:0 0 auto}
+details.v7hpc[open]>summary:before{transform:rotate(90deg)}
+details.v7hpc>summary>span{display:flex;flex-direction:column;gap:3px}details.v7hpc>summary b{font-size:12px;letter-spacing:.2px;color:#302e72}details.v7hpc>summary small{font-size:10px;font-weight:500;color:#5d5a91}
+details.v7hpc .v7hpcIn{padding:12px}
+html body #app#app#app details.v7hpc.v7hpc table thead th,html body #app#app#app details.v7hpc.v7hpc table thead tr>th:first-child{background:#DCE6F2!important;color:#15303F!important;border-bottom:2px solid #1E3A5F!important}
+html body #app#app#app details.v7hpc.v7hpc table thead th *{color:#15303F!important}
+html body #app#app#app details.v7hpc.v7hpc table tbody tr.tot>td,html body #app#app#app details.v7hpc.v7hpc table tbody tr.tot>td:first-child{background:#DCE6F2!important;color:#15303F!important;font-weight:800;border-top:2px solid #1E3A5F!important}
+html body #app#app#app details.v7hpc.v7hpc table tbody tr:not(.tot):not(.dif)>td:first-child{box-shadow:inset 4px 0 #6D3FD8!important;padding-left:14px!important}

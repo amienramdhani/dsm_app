@@ -35,4 +35,82 @@
  /* brand tanpa transaksi */
  .modal.ddX table.ddHideEmpty tr.ddEmpty{display:none}
  .modal.ddX .ddAll{border:0;background:none;color:#1E5FB8;font:inherit;font-size:11.5px;font-weight:700;padding:6px 0;cursor:pointer}
+ /* v2 2026-11-19: HUBUNGI + tab segmen penuh */
+ .modal.ddX .ddHub{position:relative}
+ .modal.ddX .ddB.g{background:#F2FBF5!important;color:#137A44!important;border:1px solid #9ED9B6!important}.modal.ddX .ddB.g:disabled{opacity:.55;cursor:default}
+ .modal.ddX .ddHm{position:absolute;left:0;top:42px;background:#fff;border:1px solid #E3E9F0;border-radius:12px;box-shadow:0 12px 30px rgba(16,57,78,.18);width:240px;padding:6px;z-index:20}
+ .modal.ddX .ddHm a{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:9px;color:#15303F;text-decoration:none;font-weight:700;font-size:12.5px}.modal.ddX .ddHm a:hover{background:#F3F7FA}
+ .modal.ddX .ddHm i{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-style:normal;font-size:15px}.modal.ddX .ddHm small{display:block;color:#7C8899;font-weight:600;font-size:11px}.modal.ddX .ddHm hr{border:0;border-top:1px solid #E3E9F0;margin:5px 4px}
+ .modal.ddX .ddAddr{display:none!important}
+ .modal.ddX .dealerTabs.ddSeg{background:#CBD5E0!important;margin:10px 0 12px!important;padding:4px!important;border:0!important;border-radius:12px;gap:2px;top:8px}
+ .modal.ddX .dealerTabs.ddSeg .modalTab{flex:1 1 0!important;justify-content:center;border:0!important;border-radius:9px!important;padding:9px 10px!important;color:#3F5163!important}
+ .modal.ddX .dealerTabs.ddSeg .modalTab[hidden]{display:none!important}
+ .modal.ddX .dealerTabs.ddSeg .modalTab.active,.modal.ddX .dealerTabs.ddSeg .modalTab[aria-selected=true]{background:#fff!important;color:#10394E!important;box-shadow:0 2px 8px rgba(16,57,78,.12)!important}
+ /* tabel di popup desktop: tidak perlu kolom pertama menempel (lebar cukup), huruf seragam */
+ html body #mask .modal.ddX #mbody table.tpT thead tr:first-child>th:first-child,html body #mask .modal.ddX #mbody table.tpT tbody tr>td:first-child,html body #mask .modal.ddX #mbody table.tpT tr.tpTot>td:first-child{position:static!important;box-shadow:none!important;overflow:visible!important}
+ html body #mask .modal.ddX #mbody table.tpT tbody tr:not(.tpTot)>td:first-child{font-size:12.5px!important}
+ .modal.ddX .ddFoot{flex:none;display:flex;justify-content:flex-end;background:#fff;border-top:1px solid #E3E9F0;padding:10px 18px}.modal.ddX .ddFoot .ddB{padding:0 22px}
+}
+/* ===== v3 2026-11-19 — popup dealer desktop: tabel padat, TOTAL per kolom, font seragam, Kontak K3, tombol tutup A =====
+   Mockup disetujui: doc/mockup/2026-11-19/dsm-popup-dealer-tabel-kontak.html. Desktop saja. Selektor memakai 2 id (#mask #mbody) agar
+   mengalahkan aturan tema tabel (table_theme.css, dsm.css) tanpa menyentuh halaman lain. */
+@media (min-width:821px){
+ /* satu jenis font untuk seluruh popup (sebelumnya tombol/tab/angka bercampur Arial, monospace, Inter) */
+ html body #mask .modal.ddX,html body #mask .modal.ddX *{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important}
+ /* tab: teks + ikon sejajar */
+ html body #mask .modal.ddX .dealerTabs.ddSeg .modalTab:not([hidden]){display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;font-size:11px!important;font-weight:800!important;letter-spacing:.4px!important;text-transform:uppercase;line-height:1!important}
+ html body #mask .modal.ddX .dealerTabs.ddSeg .modalTab svg{width:14px!important;height:14px!important;flex:none!important;margin:0!important;stroke:currentColor}
+ html body #mask .modal.ddX .dealerTabs.ddSeg .modalTab span{display:inline!important;line-height:1!important}
+
+ /* tabel padat: Histori, Stok, Transaksi */
+ html body #mask .modal.ddX #mbody :is(.cmhTable,#dealerTabExtra,#detailTransactions) table{border-collapse:separate!important;border-spacing:0!important}
+ html body #mask .modal.ddX #mbody :is(.cmhTable,#dealerTabExtra,#detailTransactions) table thead th{padding:6px 10px!important;height:auto!important;font-size:10.5px!important;line-height:1.3!important;letter-spacing:.3px!important;white-space:nowrap}
+ html body #mask .modal.ddX #mbody :is(.cmhTable,#dealerTabExtra,#detailTransactions) table :is(tbody,tfoot) td{padding:3px 10px!important;height:auto!important;font-size:12px!important;font-weight:500;line-height:1.3!important;font-variant-numeric:tabular-nums;border-bottom:1px solid #E7EBF0!important;white-space:nowrap}
+ html body #mask .modal.ddX #mbody :is(.cmhTable,#dealerTabExtra,#detailTransactions) table td :is(small,.cellsub){display:inline!important;margin:0 0 0 6px!important;font-size:9.5px!important;font-weight:500!important;line-height:1!important;color:#7B8A98!important}
+ html body #mask .modal.ddX #mbody :is(.cmhTable tr.cmhCurrent,#detailTransactions) td small::before{content:'· '}
+ html body #mask .modal.ddX #mbody .cmhTable tbody td.cmhTotal{font-weight:800!important}
+ /* TOTAL: warna tiap kolom = warna judul kolomnya (kolom brand/indikator ikut warnanya, kolom lain teal muda) */
+ html body #mask .modal.ddX #mbody :is(.cmhTable,#dealerTabExtra,#detailTransactions) table tr.tpTot>td{background:#DCEBEC!important;color:#0E5A63!important;border-top:3px solid #0E5A63!important;font-weight:800!important;padding:4px 10px!important;font-size:12px!important}
+ html body #mask .modal.ddX #mbody :is(.cmhTable,#detailTransactions) table tr.tpTot>td.tpC{background:var(--l)!important;color:var(--d)!important;border-top:3px solid var(--d)!important}
+ html body #mask .modal.ddX #mbody :is(.cmhTable,#dealerTabExtra,#detailTransactions) table tr.tpTot>td small{opacity:1!important;color:#4F7C82!important}
+ /* Transaksi: TOTAL nempel di bawah area gulir supaya selalu terlihat */
+ html body #mask .modal.ddX #mbody #detailTransactions table.tpT tr.tpTot>td{position:sticky!important;bottom:-18px;z-index:3}
+ html body #mask .modal.ddX #mbody #detailTransactions .table-scroll{overflow:visible!important;max-height:none!important}
+ /* Stok: semua judul sama (teal), tanpa kolom berwarna khusus */
+ html body #mask .modal.ddX #mbody #dealerTabExtra table thead th.tpH{background:#0E5A63!important;color:#fff!important;border-top:0!important;border-bottom:0!important;border-left:0!important}
+ html body #mask .modal.ddX #mbody #dealerTabExtra table thead th.tpH::before,html body #mask .modal.ddX #mbody #dealerTabExtra table thead th.tpH .tpLbl::before{display:none!important}
+ html body #mask .modal.ddX #mbody #dealerTabExtra table tbody td.tpC{background-color:#fff!important;color:inherit!important;border-left:0!important}
+ html body #mask .modal.ddX #mbody #dealerTabExtra table tr.tpTot>td.tpC{background:#DCEBEC!important;color:#0E5A63!important;border-top:3px solid #0E5A63!important}
+ html body #mask .modal.ddX #mbody #dealerTabExtra table .ddBr{display:inline-flex;align-items:center;gap:5px;font-weight:800;color:var(--d)}
+ html body #mask .modal.ddX #mbody #dealerTabExtra table .ddBr::before{content:"";width:8px;height:8px;border-radius:2px;background:var(--d)}
+ html body #mask .modal.ddX #mbody #dealerTabExtra table .dosBadge{border-radius:4px!important;padding:1px 6px!important;font-size:9.5px!important;font-weight:800!important;line-height:1.5!important;display:inline-block}
+
+ /* tombol tutup dealer: terlihat di baris aksi + popover formulir */
+ .modal.ddX .ddTut{margin-left:auto;position:relative}
+ .modal.ddX .ddB.red{background:#fff!important;color:#B4332E!important;border:1px solid #E7B4B1!important;text-transform:uppercase}
+ .modal.ddX .ddB.red:hover{background:#FFF4F3!important}
+ .modal.ddX .ddTf{display:none;position:absolute;right:0;top:42px;z-index:30;background:#fff;border:1px solid #E3E9F0;border-radius:12px;box-shadow:0 12px 30px rgba(16,57,78,.18);width:340px;padding:12px 14px}
+ .modal.ddX .ddTf.on{display:block}
+ .modal.ddX .ddTfT{font-size:12.5px;font-weight:800;color:#B4332E;margin-bottom:8px}
+ .modal.ddX .ddTf .v6tf{display:grid;gap:8px;background:none!important;border:0!important;padding:0!important;margin:0!important}.modal.ddX .ddTf .v6tf label{font-size:11px;font-weight:700;color:#46586A}
+ .modal.ddX .ddTf .v6tf .fi{display:block;width:100%;margin-top:3px;box-sizing:border-box}.modal.ddX .ddTf .v6tf textarea.fi{height:54px;resize:none}
+ .modal.ddX .ddTfF{display:flex;justify-content:flex-end;margin-top:8px}.modal.ddX .ddTfF .ddB{height:30px}
+
+ /* tab KONTAK: tabel rapat (K3) */
+ .modal.ddX .ddK3t{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border:1px solid #D5DCE4;border-radius:12px;overflow:hidden;margin:0 0 12px}
+ .modal.ddX .ddK3t thead th{background:#0E5A63;color:#fff;font-size:10.5px;font-weight:800;letter-spacing:.3px;padding:6px 10px;text-align:left}
+ html body #mask .modal.ddX .ddK3t td{padding:6px 10px;font-size:12px!important;letter-spacing:0!important;font-variant-numeric:normal;font-weight:500;border-top:1px solid #E7EBF0;text-align:left;vertical-align:middle}
+ .modal.ddX .ddK3t td.kl{width:140px;background:#F4F7FA;font-size:10.5px;font-weight:800;letter-spacing:.4px;color:#46586A}
+ .modal.ddX .ddK3t .e{color:#9AA7B3;font-style:italic}
+ .modal.ddX .ddK3t th.ddK3a{text-align:right;padding:4px 8px;width:1%;white-space:nowrap}
+ html body #mask .modal.ddX .ddK3t th.ddK3a .chip{display:inline-flex!important;align-items:center;height:24px!important;min-height:0!important;margin:0 0 0 6px!important;padding:0 10px!important;border:0!important;border-radius:999px!important;background:#fff!important;background-image:none!important;box-shadow:none!important;color:#0E5A63!important;-webkit-text-fill-color:#0E5A63!important;font-size:10.5px!important;font-weight:800!important;text-transform:uppercase;cursor:pointer}
+ .modal.ddX .ddK3t td.ddK3l{text-align:right;width:1%;white-space:nowrap}
+ html body #mask .modal.ddX .ddK3 .toolbar.contactLinks{display:inline-flex!important;flex-wrap:nowrap!important;gap:6px;margin:0!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important}
+ html body #mask .modal.ddX .ddK3 .contactLinks .chip{display:inline-flex!important;align-items:center;height:22px!important;min-height:0!important;margin:0!important;padding:0 10px!important;border:1px solid #D5DEE7!important;border-radius:8px!important;background:#fff!important;background-image:none!important;box-shadow:none!important;color:#10394E!important;-webkit-text-fill-color:#10394E!important;font-size:10.5px!important;font-weight:800!important;text-decoration:none;text-transform:uppercase}
+ html body #mask .modal.ddX .ddK3 .contactLinks .chip::before{display:none!important}
+ html body #mask .modal.ddX .ddK3 .contactLinks .chip.contactWhatsApp{background:#E7F7EE!important;color:#12866A!important;-webkit-text-fill-color:#12866A!important;border-color:#B9E4CB!important}
+ .modal.ddX .ddK3h{background:#0E5A63;color:#fff;font-size:10.5px;font-weight:800;letter-spacing:.3px;padding:6px 10px;border-radius:12px 12px 0 0}
+ .modal.ddX .ddK3hl{background:#fff;border:1px solid #D5DCE4;border-top:0;border-radius:0 0 12px 12px;overflow:hidden}
+ .modal.ddX .ddK3hl details.contactHistory{margin:0;padding:0;border:0;border-top:1px solid #E7EBF0}.modal.ddX .ddK3hl details.contactHistory:first-child{border-top:0}
+ .modal.ddX .ddK3hl details>summary{padding:6px 10px;font-size:12px;cursor:pointer}.modal.ddX .ddK3hl details>:not(summary){margin:0;padding:6px 10px;font-size:12px}
 }

@@ -1,0 +1,64 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><title>Mockup · Peringkat desktop</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:12px/1.3 Inter,system-ui,Arial,sans-serif;background:#DDE4F5;color:#15232E}
+.top{position:sticky;top:0;z-index:9;background:#fff;border-bottom:1px solid #DDE3EA;padding:8px 14px;display:flex;gap:12px;align-items:center}
+.seg{display:inline-flex;background:#CBD5E0;border-radius:99px;padding:3px}.seg button{border:0;background:none;padding:5px 12px;border-radius:99px;font:700 11px Inter,system-ui,Arial,sans-serif;color:#15303F;cursor:pointer}.seg button.on{background:#fff}
+.note{margin:12px 14px 0;background:#fff;border-left:4px solid #F0A400;border-radius:8px;padding:9px 12px;font-size:12px}
+.pg{margin:12px 14px;display:flex;flex-direction:column;gap:10px}
+.card{background:#fff;border-radius:14px;box-shadow:0 1px 4px #0001;overflow:hidden}
+/* SEKARANG */
+.old .hdr{background:#0B5BAE;color:#fff;padding:16px 20px;border-radius:14px;display:flex;justify-content:space-between;align-items:center}.old .hdr b{font-size:22px}
+.old .row{display:flex;gap:8px;padding:10px}.old .in{flex:1;border:1px solid #D5DCE4;border-radius:8px;padding:8px;color:#8A94A0;font-size:10px}
+.old table{width:100%;border-collapse:collapse}.old th{background:#1F56C4;color:#fff;font-size:9px;padding:10px 8px;text-align:left}.old td{padding:9px 8px;border-bottom:1px solid #EEF1F5;font-size:10px}.old td.nm{color:#1F56C4;font-weight:700}
+/* USULAN */
+.hd2{display:flex;align-items:center;gap:14px;padding:10px 14px}.hd2 h1{margin:0;font-size:16px;color:#10394E;letter-spacing:.3px}.hd2 small{color:#6B7785}
+.per{margin-left:auto;display:flex;gap:6px;align-items:center;font-size:11px}.per span{background:#E6EBF1;border-radius:99px;padding:4px 10px;font-weight:700;color:#15303F}
+.tabs{display:flex;gap:10px;align-items:center;padding:0 14px 10px}
+.tabs .seg button{padding:5px 14px}
+.fl{display:flex;gap:8px;align-items:center;padding:0 14px 12px;flex-wrap:nowrap}
+.fl .sr{flex:1;height:32px;border:1px solid #CBD5E0;border-radius:8px;padding:0 10px;display:flex;align-items:center;color:#8A94A0}
+.fl .dd{height:32px;border:1px solid #CBD5E0;border-radius:8px;padding:0 10px;display:flex;align-items:center;gap:6px;white-space:nowrap}.dd i{font-style:normal;color:#6B7785;font-size:10px;font-weight:700}
+.lg{display:flex;gap:6px;margin-left:auto}.ch{border-radius:99px;padding:4px 10px;font-size:11px;font-weight:700;white-space:nowrap}
+.g{background:#FFF3C9;color:#8A6200}.r{background:#FFE0DE;color:#B0332E}.k{background:#E3F6EC;color:#0F6B4A}
+.ib{width:20px;height:20px;border-radius:50%;border:1.5px solid #6B7785;color:#6B7785;font:700 11px/17px Inter,system-ui,sans-serif;text-align:center;cursor:pointer}
+.ph{padding:10px 14px;border-top:1px solid #EEF1F5;display:flex;align-items:baseline;gap:10px}.ph b{font-size:13px;color:#10394E}.ph small{color:#6B7785}
+.st{background:#FFF0C2;color:#8A6200;font-size:10px;font-weight:800;border-radius:99px;padding:2px 9px}
+table.n{width:100%;border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums}
+.n th{background:#E6EBF1;color:#15232E;font-size:11px;padding:6px 9px;text-align:left;border-bottom:2px solid #15303F;border-right:1px solid #D5DCE4;white-space:nowrap}
+.n td{padding:0 9px;height:25px;border-bottom:1px solid #E6EBF1;border-right:1px solid #EEF1F5;font-size:11px;white-space:nowrap}
+.n .r2{text-align:right}.n .c{text-align:center}
+.n th{border-top:3px solid #15303F}.n th.ki{background:#E3EEFB;color:#1E5FB8;border-top:3px solid #1E5FB8}.n th.mp{background:#FCEBE2;color:#B33D0B;border-top:3px solid #B33D0B}.n th.ak{background:#E3F6EC;color:#0F6B4A;border-top:3px solid #12866A}
+.n td.nm{font-weight:700;color:#10394E}.n td.asm{color:#455A64}
+.n tr.t1 td:first-child{box-shadow:inset 4px 0 #E0A800}.n tr.t2 td:first-child{box-shadow:inset 4px 0 #9AA5B1}.n tr.t3 td:first-child{box-shadow:inset 4px 0 #B87333}
+.n tr.t1 td,.n tr.t2 td,.n tr.t3 td{background:#FFFCF0}
+.n tr.bt td{background:#FFF6F5}.n tr.bt td:first-child{box-shadow:inset 4px 0 #D2453F}
+.rk{display:inline-block;min-width:20px;text-align:center;font-weight:800}
+.bar{display:inline-block;height:8px;border-radius:2px;vertical-align:middle;margin-right:6px}
+.fs{background:#EEF1F5;color:#455A64;font-size:9.5px;font-weight:700;border-radius:99px;padding:2px 8px}
+.sc{overflow:auto}
+</style></head><body>
+<div class="top"><b>Peringkat · desktop</b><div class="seg" id="m"><button data-m="now">SEKARANG</button><button data-m="new" class="on">USULAN</button></div></div>
+<div class="note" id="note"></div>
+<div class="pg" id="pg"></div>
+<script>
+const D=[
+['IMAM FAISAL','ASM Contoh A','BOGOR-DEPOK',101.3,56.0,2,78.7],['MOHAMMAD NOVRIAN','ASM Contoh B','JAKARTA',67.2,86.6,2,76.9],['FENDI ERYANTORO','ASM Contoh C','JAWA TIMUR 1',87.2,66.4,2,76.8],['THEO FALCHEN S','ASM Contoh B','JAKARTA',69.0,59.0,2,64.0],['WAHYUDI TRI MARYONO','ASM Contoh D','JAWA TIMUR 3',70.4,56.3,2,63.3],['R. ADI PUTRO','ASM Contoh E','JAWA TIMUR 2',65.3,58.8,2,62.0],['MUHAMMAD RIZKY WIRANTA','ASM Contoh A','BOGOR-DEPOK',85.8,32.0,2,58.9],['RENDRA ARYA PANCA','ASM Contoh F','BEKASI',82.8,28.0,2,55.4],['MIFTAKHUL HUDA','ASM Contoh D','JAWA TIMUR 3',57.8,49.3,2,53.6],['M RIZKI ZAINUR ROZIKIN','ASM Contoh E','JAWA TIMUR 2',74.5,30.9,2,52.7],['TEDY BRAMASTA ALFIANTORO','ASM Contoh C','JAWA TIMUR 1',44.7,57.7,2,51.2],['DIMAS PRATAMA','ASM Contoh F','BEKASI',40.1,30.2,2,35.1],['AGUS SETIAWAN','ASM Contoh G','BANDUNG',30.5,28.8,2,29.7],['LUKMAN HAKIM','ASM Contoh G','BANDUNG',25.0,22.1,2,23.6]];
+const BG=r=>/JAWA TIMUR/.test(r)?'JAWA TIMUR':/BANDUNG/.test(r)?'JAWA BARAT':'JABODEBEK';
+const f=v=>v.toFixed(1).replace('.',',')+'%';
+let M='new';
+function colorOf(v){return v>=90?'#12866A':v>=60?'#C28A00':'#D2453F'}
+function oldV(){return `<div class="hdr"><div><b>PERINGKAT</b><br><small>Papan peringkat KPI Sales dan ASM</small></div><div>MTD 1–28 Sep vs LMTD 1–28 Agu</div></div>
+<div class="card"><div style="padding:14px 18px;font-weight:800">CARI &amp; KROSCEK KPI ⓘ</div><div class="row"><div class="in">Cari nama atau NIK, mis. fendi / 2024.12</div><div class="in" style="flex:none;width:90px">SEMUA JABATAN</div></div></div>
+<div class="card" style="padding:12px;background:#EAF0FB;font-size:10px">Peringkat individu tersedia untuk Sales dan ASM. Pilih cakupan Sales atau ASM untuk melihat posisinya.</div>
+<div class="card"><div style="padding:12px 18px"><b>PAPAN PERINGKAT · SALES</b><br><small>Urutan: KPI Akhir tertinggi</small></div><table><thead><tr><th>PERINGKAT</th><th>NAMA</th><th>REGION</th><th style="text-align:right">KPI ALL BRAND</th><th style="text-align:right">KPI MOTOPAD</th><th style="text-align:right">KELOMPOK BERLAKU</th><th style="text-align:right">KPI AKHIR</th><th>STATUS</th></tr></thead><tbody>${D.slice(0,11).map((r,i)=>`<tr><td>${i+1}</td><td class="nm">${r[0]}</td><td>${r[2]}</td><td style="text-align:right">${f(r[3])}</td><td style="text-align:right">${f(r[4])}</td><td style="text-align:right">${r[5]}</td><td style="text-align:right"><b>${f(r[6])}</b></td><td>FINAL · S.D. 28 SEP 2026</td></tr>`).join('')}</tbody></table></div>`}
+function newV(){const n=D.length;return `<div class="card">
+<div class="hd2"><h1>PERINGKAT</h1><small>Papan peringkat KPI Sales dan ASM</small><div class="per"><span>MTD 1–28 Sep</span>vs<span>LMTD 1–28 Agu</span></div></div>
+<div class="tabs"><div class="seg"><button class="on">SALES</button><button>TELEMARKETING</button></div><div class="seg"><button class="on">DALAM CAKUPAN SAYA</button><button>NASIONAL</button></div><div class="ib" title="Peringkat individu tersedia untuk Sales dan ASM. Pilih cakupan Sales atau ASM untuk melihat posisinya.">i</div></div>
+<div class="fl"><div class="sr">🔍&nbsp; Cari nama atau NIK, mis. fendi / 2024.12 (kroscek KPI)</div><div class="dd"><i>JABATAN</i> SEMUA ▾</div><div class="dd"><i>PERINGKAT</i> SALES ▾</div><div class="dd"><i>DASAR</i> KPI AKHIR (SEMUA KELOMPOK) ▾</div></div>
+<div class="ph"><b>PAPAN PERINGKAT · SALES</b><small>Urut KPI Akhir tertinggi</small><span class="st">SEMENTARA</span><div class="lg"><span class="ch g">3 teratas</span><span class="ch r">3 terbawah</span><span class="ch k">KPI Akhir ≥90%</span></div></div>
+<div class="sc"><table class="n"><thead><tr><th class="c" style="width:46px">#</th><th>NAMA</th><th>ASM</th><th>BIG REGION</th><th>REGION</th><th class="r2 ki">KPI ALL BRAND</th><th class="r2 mp">KPI MOTOPAD</th><th class="c">Σ GRUP KPI</th><th class="ak" style="min-width:170px">KPI AKHIR</th><th>STATUS</th></tr></thead><tbody>${D.map((r,i)=>{const cls=i<3?'t'+(i+1):i>=n-3?'bt':'';const med=['🥇','🥈','🥉'][i]||'';return `<tr class="${cls}"><td class="c"><span class="rk">${med||i+1}</span></td><td class="nm">${r[0]}</td><td class="asm">${r[1]}</td><td>${BG(r[2])}</td><td>${r[2]}</td><td class="r2">${f(r[3])}</td><td class="r2">${f(r[4])}</td><td class="c">${r[5]}</td><td><span class="bar" style="width:${Math.min(r[6],100)*0.9}px;background:${colorOf(r[6])}"></span><b style="color:${colorOf(r[6])}">${f(r[6])}</b></td><td><span class="fs">FINAL · S.D. 28 SEP 2026</span></td></tr>`}).join('')}</tbody></table></div></div>`}
+function render(){const pg=document.getElementById('pg');pg.className='pg '+(M==='now'?'old':'');pg.innerHTML=M==='now'?oldV():newV();
+document.getElementById('note').innerHTML=M==='now'?'<b>SEKARANG</b>: banner biru besar, 3 blok terpisah (kroscek, info, pemilih), kolom NAMA ke REGION ke angka berjauhan, tanpa ASM.':'<b>USULAN</b>: judul ringkas + periode, tab &amp; filter jadi 1 baris (cari + 3 pemilih), info panjang jadi ⓘ, legenda 3 teratas/terbawah/≥90% dipindah ke judul papan. Tabel padat 25px/baris, <b>kolom ASM &amp; BIG REGION baru</b> (khusus desktop) + REGION dekat NAMA, kolom jumlah kelompok berjudul <b>Σ GRUP KPI</b> (tidak disingkat), header abu muda + garis atas 3px (hitam kebiruan untuk kolom netral, berwarna untuk kolom KPI) + garis bawah 2px, kolom KPI berwarna indikator, KPI AKHIR berbatang mini (≥90 hijau, 60–89 kuning, &lt;60 merah), 3 teratas aksen emas/perak/perunggu, 3 terbawah aksen merah. <span style="color:#6B7785">Nama ASM &amp; isi BIG REGION = contoh (belum data asli). Desktop saja.</span>'}
+document.getElementById('m').onclick=e=>{const b=e.target.closest('button');if(!b)return;M=b.dataset.m;document.querySelectorAll('#m button').forEach(x=>x.classList.toggle('on',x===b));render()};
+render();
+</script></body></html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><title>DSM · Brand: kartu KPI mint tanpa ikon</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:#DCE6F8;color:#15232E;font-size:12px}
+.top{position:sticky;top:0;z-index:9;background:#fff;border-bottom:1px solid #DDE3EA;padding:8px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.seg{display:inline-flex;background:#CBD5E0;border-radius:999px;padding:3px}.seg button{border:0;background:transparent;padding:6px 14px;border-radius:999px;font:700 11px Inter,sans-serif;cursor:pointer;color:#33414D}.seg button.on{background:#fff;color:#10394E;box-shadow:0 1px 3px #0002}
+.note{margin:10px auto;max-width:1500px;background:#fff;border-left:4px solid #F0A400;padding:9px 12px;border-radius:8px;line-height:1.55}
+.wrap{max-width:1500px;margin:0 auto;padding:0 14px 30px}
+.ban{background:#0B5CAD;color:#fff;border-radius:16px;padding:14px 22px;display:flex;align-items:center;margin-bottom:10px}.ban h1{margin:0;font-size:24px;letter-spacing:.5px}.ban small{display:block;font-size:12px;opacity:.95;margin-top:3px}
+.pill{background:#fff;border-radius:999px;padding:5px 14px;font-weight:800;font-size:12px;color:#0B5CAD;margin-left:8px}.pill i{font-style:normal;font-size:9px;letter-spacing:.8px;margin-right:8px}.pill.l{color:#8A4B00}
+.kp{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.kc{background:#fff;border-radius:14px;padding:10px 14px;display:flex;gap:12px;align-items:center;box-shadow:0 1px 4px #0001}
+.kc .ic{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800}
+.kc small{display:block;font-size:10.5px;font-weight:800;letter-spacing:.4px;color:#6B7785;text-transform:uppercase}.kc b{display:block;font-size:24px;color:#10202C;line-height:1.2}.kc i{display:block;font-style:normal;font-size:11.5px;color:#6B7785}
+.mint .kc{background:#E8F7EF;border:1px solid #CFEBDC;box-shadow:none;display:block;padding:9px 14px}.mint .kc small{color:#3F6F58}.mint .kc b{color:#0F4F3B;font-size:22px}.mint .kc i{color:#4E7A66}
+.lbl{font-weight:800;font-size:10.5px;letter-spacing:.5px;color:#4A5663;margin:14px 0 6px}
+.hide{display:none}
+</style></head><body>
+<div class="top"><b>Brand · kartu KPI</b><div class="seg" id="m"><button data-v="now">SEKARANG</button><button data-v="new" class="on">USULAN</button><button data-v="both">BANDINGKAN</button></div></div>
+<div class="note"><b>USULAN</b>: kartu KPI halaman Brand dibuat sama seperti kartu di Cross-sell: <b>tanpa ikon</b>, latar <b>hijau mint muda</b> dengan garis tipis, angka tetap besar. Isi, urutan, dan angka kartu <b>tidak berubah</b> (nama "Dealer Aktif" dibiarkan karena di Brand memang artinya ≥2 unit per brand). Banner biru BRAND dan MTD/LMTD tidak disentuh. Hanya halaman Brand, desktop. Data contoh.</div>
+<div class="wrap" id="out"></div>
+<script>
+const K=[['SellThru','30.072','Unit device','→','#E8F7EF','#12866A'],['Dealer aktif','1.626','Dealer Produktif: 1.327 dealer unik','↻','#E6F0FB','#1F7FC2'],['NOO','368','September 2026','★','#FFF0DD','#D9770B'],['Sell out','29.898','s.d. 28 Sep 2026','↑','#FCE7EE','#D23A68'],['Omzet aksesori','Rp 153,6 jt','Tidak masuk QTY KPI','Rp','#EEE8FB','#6D3FD8']];
+const ban=`<div class="ban"><div><h1>BRAND</h1><small>Pencapaian per brand dan perbandingan periode</small></div><span style="flex:1"></span><span class="pill"><i>MTD</i>1–28 Sep</span><span style="font-size:9px;margin-left:8px">vs</span><span class="pill l"><i>LMTD</i>1–28 Agu</span></div>`;
+const now=()=>`<div class="kp">${K.map(k=>`<div class="kc"><span class="ic" style="background:${k[4]};color:${k[5]}">${k[3]}</span><div><small>${k[0]}</small><b>${k[1]}</b><i>${k[2]}</i></div></div>`).join('')}</div>`;
+const nw=()=>`<div class="kp mint">${K.map(k=>`<div class="kc"><small>${k[0]}</small><b>${k[1]}</b><i>${k[2]}</i></div>`).join('')}</div>`;
+let v='new';function r(){$out.innerHTML=ban+(v==='both'?`<div class="lbl">SEKARANG</div>${now()}<div class="lbl">USULAN</div>${nw()}`:v==='now'?now():nw());document.querySelectorAll('#m button').forEach(b=>b.classList.toggle('on',b.dataset.v===v))}
+const $out=document.getElementById('out');document.addEventListener('click',e=>{const b=e.target.closest('[data-v]');if(b){v=b.dataset.v;r()}});r();
+</script></body></html>

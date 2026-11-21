@@ -1,0 +1,149 @@
+/* DSM · Menu TIM desktop (T1+T3). Hanya class tv*; selektor diberi prefiks id berulang supaya menang atas CSS lama. */
+html body #app#app#app #view .tvRoot,html body #app#app#app #view .tvRoot *{box-sizing:border-box}
+html body #app#app#app #view .tvRoot{font-family:Inter,system-ui,sans-serif;color:#10394E}
+html body #app#app#app #view .tvRoot .tvFb{display:flex;gap:8px;align-items:flex-end;background:#fff;border-radius:10px;padding:6px 10px;box-shadow:0 1px 3px rgba(0,0,0,.08);margin:0 0 10px;flex-wrap:wrap}
+html body #app#app#app #view .tvRoot .tvFb label{font-size:9px!important;font-weight:800!important;color:#6B7785!important;letter-spacing:.4px;display:flex!important;flex-direction:column;gap:2px;text-transform:uppercase;margin:0!important}
+html body #app#app#app #view .tvRoot .tvFb select{height:30px!important;min-width:130px;border:1px solid #CBD5E0!important;border-radius:8px!important;padding:0 9px!important;font-size:11.5px!important;font-weight:600!important;color:#10394E!important;background:#fff!important;margin:0!important}
+html body #app#app#app #view .tvRoot .tvSp{flex:1}
+html body #app#app#app #view .tvRoot .tvFbtn{height:30px;border:0;border-radius:8px;background:linear-gradient(#FFB020,#F07A0C);color:#fff;font-weight:800;font-size:10px;padding:0 14px;cursor:pointer}
+html body #app#app#app #view .tvRoot .tvPopW{position:relative}
+html body #app#app#app #view .tvRoot .tvPop{position:absolute;right:0;top:36px;z-index:30;background:#fff;border:1px solid #D5DDE6;border-radius:10px;box-shadow:0 6px 18px rgba(16,57,78,.16);padding:10px 12px;display:flex;gap:10px;align-items:flex-end;min-width:260px}
+html body #app#app#app #view .tvRoot .tvPop[hidden]{display:none}
+html body #app#app#app #view .tvRoot .tvReset{height:30px;border:1px solid #CBD5E0;background:#fff;border-radius:8px;font-weight:800;font-size:10px;padding:0 12px;cursor:pointer;color:#10394E}
+html body #app#app#app #view .tvRoot .tvMint{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 12px}
+html body #app#app#app #view .tvRoot .tvMint>div{background:#E8F7EF;border:1px solid #CFEBDC;border-radius:12px;padding:9px 14px}
+html body #app#app#app #view .tvRoot .tvMint small{display:block;font-size:10px;font-weight:800;letter-spacing:.3px;color:#3F6F58;text-transform:uppercase}
+html body #app#app#app #view .tvRoot .tvMint b{font-size:20px;color:#0F4F3B}
+html body #app#app#app #view .tvRoot .tvMint em{display:block;font-style:normal;font-size:10.5px;color:#4E7A66}
+html body #app#app#app #view .tvRoot .tvMint .r{background:#FDEEEC;border-color:#F4CFCB}html body #app#app#app #view .tvRoot .tvMint .r small{color:#A33A33}html body #app#app#app #view .tvRoot .tvMint .r b{color:#A3282A}
+html body #app#app#app #view .tvRoot .tvMint .y{background:#FFF6DF;border-color:#F1E0AE}html body #app#app#app #view .tvRoot .tvMint .y small,html body #app#app#app #view .tvRoot .tvMint .y b{color:#8A6200}
+html body #app#app#app #view .tvRoot .tvTabs{display:flex;gap:4px;border-bottom:2px solid #E3E9EF;margin:0 0 10px;align-items:flex-end}
+html body #app#app#app #view .tvRoot .tvTabs>button{padding:8px 16px;font:800 11.5px Inter,system-ui,sans-serif;color:#7C8899;border:0;border-bottom:3px solid transparent;margin-bottom:-2px;cursor:pointer;background:none;letter-spacing:.3px}
+html body #app#app#app #view .tvRoot .tvTabs>button.on{color:#10394E;border-bottom-color:#1E5FB8}
+html body #app#app#app #view .tvRoot .tvNote{align-self:center;color:#6B7785;font-size:10.5px;margin-bottom:6px}
+html body #app#app#app #view .tvRoot .tvSeg{display:inline-flex;border:1px solid #CBD5E0;border-radius:8px;overflow:hidden;background:#fff;align-self:center;margin-bottom:4px}
+html body #app#app#app #view .tvRoot .tvSeg small{padding:6px 10px;font-weight:800;color:#6B7785;font-size:9px;letter-spacing:.4px;align-self:center}
+html body #app#app#app #view .tvRoot .tvSeg button{padding:5px 13px;font:800 10.5px Inter,system-ui,sans-serif;color:#6B7785;border:0;border-left:1px solid #CBD5E0;background:#fff;cursor:pointer}
+html body #app#app#app #view .tvRoot .tvSeg button.on{background:#10394E;color:#fff}
+html body #app#app#app #view .tvRoot .tvCard{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(16,57,78,.08);margin-bottom:12px;overflow:hidden}
+html body #app#app#app #view .tvRoot .tvPh{padding:10px 14px;display:flex;align-items:center;gap:10px}html body #app#app#app #view .tvRoot .tvPh b{font-size:12.5px;letter-spacing:.2px}html body #app#app#app #view .tvRoot .tvPh small{color:#6B7785}
+html body #app#app#app #view .tvRoot .tvMd{display:grid;grid-template-columns:420px minmax(0,1fr);gap:12px;margin-bottom:12px}
+html body #app#app#app #view .tvRoot .tvMd .tvCard{margin:0}
+html body #app#app#app #view .tvRoot .tvList>div:not(.tvPh){display:grid;grid-template-columns:24px 1fr 56px 90px;gap:6px;padding:6px 12px;border-top:1px solid #EEF1F5;align-items:center;cursor:pointer;font-size:11.5px}
+html body #app#app#app #view .tvRoot .tvList>div.on{background:#EAF2FB;box-shadow:inset 4px 0 0 #1E5FB8}
+html body #app#app#app #view .tvRoot .tvDt{padding:14px 16px;min-width:0}
+html body #app#app#app #view .tvRoot .tvDh{display:flex;align-items:flex-start;gap:10px}html body #app#app#app #view .tvRoot .tvDh h3{margin:0 0 2px;font-size:15px;color:#10394E}html body #app#app#app #view .tvRoot .tvDh small{color:#6B7785}
+html body #app#app#app #view .tvRoot .tvKc{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:12px 0}
+html body #app#app#app #view .tvRoot .tvKc div{border:1px solid #E3E9EF;border-radius:10px;padding:8px 10px}html body #app#app#app #view .tvRoot .tvKc small{display:block;font-size:9px;font-weight:800;color:#6B7785}html body #app#app#app #view .tvRoot .tvKc b{font-size:16px}
+html body #app#app#app #view .tvRoot .tvCap{margin:4px 0 6px;font-size:10px;font-weight:800;color:#6B7785}html body #app#app#app #view .tvRoot .tvCap span{font-weight:600}
+html body #app#app#app #view .tvRoot .tvTren{display:block;font-family:Inter,system-ui,sans-serif}
+html body #app#app#app #view .tvRoot .tvBtn{border:1px solid #1E5FB8;color:#1E5FB8;background:#fff;border-radius:7px;padding:2px 9px;font:800 9.5px Inter,system-ui,sans-serif;white-space:nowrap;cursor:pointer}
+html body #app#app#app #view .tvRoot .tvBtn:hover{background:#1E5FB8;color:#fff}
+html body #app#app#app #view .tvRoot .tvSc{overflow:auto;max-height:calc(100vh - 230px);border-top:1px solid #D5DDE6}
+html body #app#app#app #view .tvRoot .tvSc.h0{max-height:none;border:1px solid #D5DDE6;border-radius:8px;margin-top:8px}
+html body #app#app#app #view .tvRoot .tvSc.tvFull{max-height:none}
+html body #app#app#app #view .tvRoot .tvHint{font-size:10px;color:#6B7785;margin:4px 0 0}html body #app#app#app #view .tvRoot .tvPad{padding:4px 12px 8px}
+html body #app#app#app #view .tvRoot .tvNoteB{padding:8px 14px 12px;font-size:10.5px;color:#6B7785;line-height:1.5}
+html body #app#app#app #view .tvRoot table.tvT{border-collapse:separate!important;border-spacing:0!important;width:100%;font-family:Inter,system-ui,sans-serif!important;font-variant-numeric:tabular-nums}
+html body #app#app#app #view .tvRoot table.tvT th{background:#E6EBF1!important;color:#10394E!important;font:800 9.5px Inter,system-ui,sans-serif!important;letter-spacing:.4px;text-align:left!important;padding:5px 8px!important;border:0!important;border-bottom:2px solid #15303F!important;border-right:1px solid #D5DDE6!important;white-space:nowrap;position:sticky;top:0;z-index:2;text-transform:uppercase}
+html body #app#app#app #view .tvRoot table.tvT thead tr+tr th{top:26px}
+html body #app#app#app #view .tvRoot table.tvT th.n{text-align:right!important}
+html body #app#app#app #view .tvRoot table.tvT th.bg{text-align:center!important;color:#fff!important;border-bottom:0!important}
+html body #app#app#app #view .tvRoot table.tvT th.b1{background:#0E7C6B!important}html body #app#app#app #view .tvRoot table.tvT th.b2{background:#B33D0B!important}html body #app#app#app #view .tvRoot table.tvT th.b3{background:#1E5FB8!important}html body #app#app#app #view .tvRoot table.tvT th.b4{background:#455A64!important}html body #app#app#app #view .tvRoot table.tvT th.b5{background:#6D3FD8!important}html body #app#app#app #view .tvRoot table.tvT th.b6{background:#9A6400!important}html body #app#app#app #view .tvRoot table.tvT th.bo{background:#9A6400!important}
+html body #app#app#app #view .tvRoot table.tvT td{padding:3px 8px!important;border:0!important;border-top:1px solid #E3E9EF!important;border-right:1px solid #EEF1F5!important;font:400 11.5px Inter,system-ui,sans-serif!important;white-space:nowrap;background:#fff!important;color:#10394E!important;height:auto!important}
+html body #app#app#app #view .tvRoot table.tvT tbody tr:nth-child(even) td{background:#FAFBFD!important}
+html body #app#app#app #view .tvRoot table.tvT td.n{text-align:right!important}
+html body #app#app#app #view .tvRoot table.tvT td.nm{font-weight:700!important}
+html body #app#app#app #view .tvRoot table.tvT td small{color:#6B7785;font-size:10px;margin-left:5px}
+html body #app#app#app #view .tvRoot table.tvT tfoot td{background:#E6EBF1!important;font-weight:800!important;border-top:2px solid #15303F!important;position:sticky;bottom:0;z-index:2}
+html body #app#app#app #view .tvRoot table.tvT .bsep{border-left:1px solid #7F93A6!important}
+html body #app#app#app #view .tvRoot table.tvT th.tvLead,html body #app#app#app #view .tvRoot table.tvT tbody td:first-child,html body #app#app#app #view .tvRoot table.tvT tfoot td:first-child{position:sticky;left:0;z-index:3;box-shadow:2px 0 3px rgba(0,0,0,.08)}
+html body #app#app#app #view .tvRoot table.tvT thead th.tvLead{z-index:5;top:0}
+html body #app#app#app #view .tvRoot table.tvT thead tr+tr th:first-child:not(.tvLead){position:sticky}
+html body #app#app#app #view .tvRoot table.tvT.tvFlat tbody td:first-child{position:static;box-shadow:none}
+html body #app#app#app #view .tvRoot tr.cl{cursor:pointer}html body #app#app#app #view .tvRoot tr.cl:hover td{background:#EAF2FB!important}html body #app#app#app #view .tvRoot tr.cl.sel td{background:#DCE9F8!important}
+html body #app#app#app #view .tvRoot tr.cl .lk{color:#10394E}html body #app#app#app #view .tvRoot tr.cl:hover .lk{color:#1E5FB8;text-decoration:underline;text-underline-offset:2px}html body #app#app#app #view .tvRoot tr.cl:hover .lk::after{content:' ›';color:#1E5FB8}
+html body #app#app#app #view .tvRoot .tvSt{display:inline-block;border-radius:99px;padding:0 8px;font-size:10px;font-weight:800}
+html body #app#app#app #view .tvRoot .tvSt.bad{background:#FCE9E8;color:#B43138}html body #app#app#app #view .tvRoot .tvSt.warn{background:#FFF3D6;color:#925c00}html body #app#app#app #view .tvRoot .tvSt.ok{background:#E5F6EE;color:#176d48}html body #app#app#app #view .tvRoot .tvSt.na{background:#EEF1F5;color:#6B7785}
+html body #app#app#app #view .tvRoot .tvGc{display:inline-block;border-radius:99px;padding:0 7px;font-size:10px;font-weight:800}html body #app#app#app #view .tvRoot .tvGc.u{background:#E5F6EE;color:#176d48}html body #app#app#app #view .tvRoot .tvGc.d{background:#FCE9E8;color:#b43138}html body #app#app#app #view .tvRoot .tvD{color:#6B7785}
+html body #app#app#app #view .tvRoot .tvAch{display:flex;align-items:center;gap:6px}html body #app#app#app #view .tvRoot .tvAch .v6mb{width:80px}
+/* ===== HP ===== */
+html body #app#app#app #view .tvRoot .tvM{margin:0 0 8px}
+html body #app#app#app #view .tvRoot .tvFbtn.full{display:flex;width:100%;justify-content:center;align-items:center;gap:8px;height:36px;font-size:12px;margin:0 0 8px}
+html body #app#app#app #view .tvRoot .tvFbtn i{font-style:normal;background:#fff;color:#C25A12;border-radius:99px;padding:0 7px;font-size:10px}
+html body #app#app#app #view .tvRoot .tvFp{background:#fff;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.08);padding:10px;margin:0 0 8px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+html body #app#app#app #view .tvRoot .tvFp[hidden]{display:none}
+html body #app#app#app #view .tvRoot .tvFp label{font-size:9px;font-weight:800;color:#6B7785;letter-spacing:.4px;display:flex;flex-direction:column;gap:2px;text-transform:uppercase}
+html body #app#app#app #view .tvRoot .tvFp select{height:32px;border:1px solid #CBD5E0;border-radius:8px;padding:0 8px;font-size:12px;background:#fff;color:#10394E;width:100%}
+html body #app#app#app #view .tvRoot .tvFp .tvReset{grid-column:1/-1}
+html body #app#app#app #view .tvRoot .tvChips{display:flex;gap:5px;flex-wrap:wrap;margin:0 0 8px}
+html body #app#app#app #view .tvRoot .tvChips span{background:#fff;border:1px solid #D5DDE6;border-radius:99px;padding:2px 9px;font-size:10px;font-weight:700;color:#10394E}
+html body #app#app#app #view .tvRoot .tvChips a{color:#A33A33;cursor:pointer;margin-left:3px}
+html body #app#app#app #view .tvRoot .tvMst{display:flex;background:#E8F7EF;border:1px solid #CFEBDC;border-radius:12px;margin:0 0 8px;overflow:hidden}
+html body #app#app#app #view .tvRoot .tvMst>div{flex:1;text-align:center;padding:6px 4px;border-right:1px solid #CFEBDC}
+html body #app#app#app #view .tvRoot .tvMst>div:last-child{border:0}
+html body #app#app#app #view .tvRoot .tvMst small{display:block;font-size:8.5px;font-weight:800;color:#3F6F58;text-transform:uppercase;line-height:1.2}
+html body #app#app#app #view .tvRoot .tvMst b{font-size:15px;color:#0F4F3B}
+html body #app#app#app #view .tvRoot .tvMst .r b{color:#A3282A}html body #app#app#app #view .tvRoot .tvMst .y b{color:#8A6200}
+@media(max-width:760px){html body #app#app#app #view .tvRoot .tvTabs>button{flex:1;padding:7px 0;font-size:10px}}
+@media(max-width:760px){html body #app#app#app #view .tvRoot .tvSeg{display:flex;width:100%;margin:0 0 8px}}
+@media(max-width:760px){html body #app#app#app #view .tvRoot .tvSeg small:empty{display:none}}
+@media(max-width:760px){html body #app#app#app #view .tvRoot .tvSeg button{flex:1;padding:5px 0;font-size:10px}}
+@media(max-width:760px){html body #app#app#app #view .tvRoot .tvSeg button:first-of-type{border-left:0}}
+html body #app#app#app #view .tvRoot .tvJump{display:flex;gap:5px;margin:0 0 6px;overflow-x:auto}
+html body #app#app#app #view .tvRoot .tvJump button{flex:none;background:#fff;border:1px solid #CBD5E0;border-radius:7px;padding:3px 10px;font:800 9.5px Inter,system-ui,sans-serif;color:#10394E;cursor:pointer}
+html body #app#app#app #view .tvRoot .tvJump button.on{background:#10394E;color:#fff}
+@media(max-width:760px){html body #app#app#app #view .tvRoot .tvSc{max-height:68vh}}
+.tvSheetBg{position:fixed;inset:0;background:rgba(16,57,78,.35);z-index:9998;opacity:0;pointer-events:none;transition:.2s}.tvSheetBg.on{opacity:1;pointer-events:auto}
+.tvSheet{position:fixed;left:0;right:0;bottom:0;background:#fff;border-radius:18px 18px 0 0;box-shadow:0 -6px 20px rgba(0,0,0,.2);padding:10px 14px 20px;transform:translateY(105%);transition:.25s;z-index:9999;max-height:80vh;overflow:auto;font-family:Inter,system-ui,sans-serif;color:#10394E}.tvSheet.on{transform:none}
+.tvSheet .tvGrip{width:40px;height:4px;border-radius:2px;background:#CBD5E0;margin:0 auto 8px}
+.tvSheet h3{margin:0;font-size:14px}.tvSheet small{color:#6B7785;font-size:10.5px}
+.tvSheet .tvKc.m{grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0}.tvSheet .tvKc div{border:1px solid #E3E9EF;border-radius:8px;padding:5px 8px}.tvSheet .tvKc small{display:block;font-size:8.5px;font-weight:800;color:#6B7785}.tvSheet .tvKc b{font-size:14px}
+.tvSheet .tvCap{margin:6px 0;font-size:10px;font-weight:800;color:#6B7785}.tvSheet .tvCap span{font-weight:600}
+.tvSheet .tvBtn.full{display:block;width:100%;text-align:center;padding:8px;font-size:10.5px;border-radius:8px;margin-top:10px}
+.tvSheet .tvSc{overflow:auto;max-height:none;border:1px solid #D5DDE6;border-radius:8px}
+.tvSheet table.tvT{border-collapse:separate;border-spacing:0;width:100%;font-size:10.5px}.tvSheet table.tvT th{background:#E6EBF1;font:800 9px Inter,system-ui,sans-serif;padding:4px 6px;text-align:left;border-bottom:2px solid #15303F;white-space:nowrap}.tvSheet table.tvT td{padding:3px 6px;border-top:1px solid #E3E9EF;white-space:nowrap;font-size:10.5px}.tvSheet table.tvT .n{text-align:right}
+.tvSheet .tvGc{display:inline-block;border-radius:99px;padding:0 6px;font-size:9px;font-weight:800}.tvSheet .tvGc.u{background:#E5F6EE;color:#176d48}.tvSheet .tvGc.d{background:#FCE9E8;color:#b43138}
+.tvSheet .tvKc.m{display:grid}
+.tvSheet .tvBtn.full{border:1px solid #1E5FB8;color:#1E5FB8;background:#fff;font:800 10.5px Inter,system-ui,sans-serif;cursor:pointer}
+.tvSheet table.tvT th,.tvSheet table.tvT td{padding:3px 4px}
+.tvSheet .tvTren{display:block;width:100%}
+@media(max-width:760px){
+html body #app#app#app #view .tvRoot table.tvT tbody td:first-child,html body #app#app#app #view .tvRoot table.tvT tfoot td:first-child{white-space:nowrap!important;font-weight:600!important;font-size:10.5px!important;max-width:152px;overflow:hidden;text-overflow:ellipsis}
+html body #app#app#app #view .tvRoot table.tvT tbody td:first-child b{font-weight:600!important}
+html body #app#app#app #view .tvRoot table.tvT tfoot td:first-child{font-weight:800!important}
+html body #app#app#app #view .tvRoot table.tvT tbody tr[data-tvs]{cursor:pointer}
+}
+.tvSheetBg{z-index:100000!important}.tvSheet{z-index:100001!important}
+html body #app#app#app #view .tvRoot .tvAct,html body #app#app#app #view .tvRoot table.tvT td .tvAct,html body #app#app#app #view .tvRoot table.tvT td b .tvAct,html body #app#app#app #view .tvRoot h3 .tvAct,.tvSheet .tvAct{color:#B43138!important}
+@media(max-width:760px){
+html body #app#app#app #view .tvRoot table.tvT th.tvLead,html body #app#app#app #view .tvRoot table.tvT tbody td:first-child,html body #app#app#app #view .tvRoot table.tvT tfoot td:first-child{width:140px!important;min-width:140px!important;max-width:140px!important;box-sizing:border-box!important}
+html body #app#app#app #view .tvRoot table.tvT thead tr+tr th:first-child{position:sticky;left:auto}
+}
+html body #app#app#app #view .tvRoot table.tvT th{z-index:20!important}
+html body #app#app#app #view .tvRoot table.tvT thead th.tvLead{z-index:40!important}
+html body #app#app#app #view .tvRoot table.tvT tbody td:first-child,html body #app#app#app #view .tvRoot table.tvT tfoot td:first-child{z-index:10!important}
+html body #app#app#app #view .tvRoot table.tvT tfoot td{z-index:10!important}
+html body #app#app#app #view .tvRoot table.tvT tfoot td:first-child{z-index:15!important}
+.tvSheet table.tvT th{z-index:auto}
+/* ===== tren ===== */
+html body #app#app#app #view .tvRoot .tvTg,.tvSheet .tvTg{display:flex;align-items:center;gap:6px 8px;margin:10px 0 6px;flex-wrap:wrap}
+html body #app#app#app #view .tvRoot .tvTg b,.tvSheet .tvTg b{font-size:10px;color:#6B7785;font-weight:800}
+html body #app#app#app #view .tvRoot .tvTg small,.tvSheet .tvTg small{color:#6B7785;font-size:10px}
+html body #app#app#app #view .tvRoot .tvSeg2,.tvSheet .tvSeg2{display:inline-flex;border:1px solid #CBD5E0;border-radius:8px;overflow:hidden;background:#fff}
+html body #app#app#app #view .tvRoot .tvSeg2 button,.tvSheet .tvSeg2 button{border:0;background:#fff;padding:5px 12px;font:800 10px Inter,system-ui,sans-serif;color:#6B7785;cursor:pointer;white-space:nowrap}
+html body #app#app#app #view .tvRoot .tvSeg2 button+button,.tvSheet .tvSeg2 button+button{border-left:1px solid #CBD5E0}
+html body #app#app#app #view .tvRoot .tvSeg2 button.on,.tvSheet .tvSeg2 button.on{background:#10394E;color:#fff}
+html body #app#app#app #view .tvRoot .tvLg,.tvSheet .tvLg{display:flex;gap:14px;font-size:10px;color:#6B7785;margin:2px 0 4px}
+html body #app#app#app #view .tvRoot .tvLg span,.tvSheet .tvLg span{display:flex;align-items:center;gap:5px}
+html body #app#app#app #view .tvRoot .tvLg i,.tvSheet .tvLg i{display:inline-block;width:16px;height:2px}
+html body #app#app#app #view .tvRoot .tvTrSc,.tvSheet .tvTrSc{overflow-x:auto}
+html body #app#app#app #view .tvRoot .tvTb .tvSc.h0,.tvSheet .tvTb .tvSc.h0{margin-top:8px}
+/* ===== TOTAL = rincian area saya ===== */
+html body #app#app#app #view .tvRoot .tvTotB,.tvSheet .tvTotB{display:inline-block;vertical-align:middle;background:#E6EBF1;color:#10394E;border-radius:6px;padding:1px 8px;font:800 9.5px Inter,system-ui,sans-serif;margin-left:6px}
+html body #app#app#app #view .tvRoot .tvBack,.tvSheet .tvBack{border:1px solid #1E5FB8;color:#1E5FB8;background:#fff;border-radius:8px;padding:3px 10px;font:800 10px Inter,system-ui,sans-serif;white-space:nowrap;cursor:pointer;margin-right:8px;height:fit-content}
+html body #app#app#app #view .tvRoot .tvHintI{color:#1E5FB8;font-size:9.5px;font-weight:700;margin-left:6px}
+html body #app#app#app #view .tvRoot table.tvT tfoot tr.cl{cursor:pointer}
+html body #app#app#app #view .tvRoot table.tvT tfoot tr.cl:hover td{background:#D6E3F3!important}
+html body #app#app#app #view .tvRoot table.tvT tfoot tr.cl.sel td{background:#CFE0F5!important;box-shadow:inset 0 -3px #1E5FB8}
+html body #app#app#app #view .tvRoot .tvMst{cursor:pointer}

@@ -1,0 +1,178 @@
+/* KPI · tabel KPI ALL BRAND + Ringkasan Skor KPI, level ASM (2026-11-20). Mockup disetujui: doc/mockup/2026-11-20/dsm-kpi-tabel-rapi.html USULAN A.
+   Kelas table.kcA (dibuat kpiCompareTableA / kpiFinalSummaryTableA di dsm.js). Warna: indikator via --d/--l/--t di tiap sel. */
+html body #app#app#app#app#app#app .kcaWrap{overflow:auto}
+html body #app#app#app#app#app#app table.kcA{border-collapse:separate!important;border-spacing:0!important;width:auto;min-width:max-content;border:1px solid #D5DCE4!important;font-family:Inter,"Segoe UI",system-ui,sans-serif}
+html body #app#app#app#app#app#app table.kcA th{font-size:10.5px!important;font-weight:800!important;padding:4px 9px!important;white-space:nowrap;letter-spacing:.3px;text-transform:uppercase;line-height:1.3!important;border:0!important;border-right:1px solid #D5DCE4!important;box-shadow:none!important}
+html body #app#app#app#app#app#app table.kcA td{padding:3px 9px!important;height:24px!important;font-size:11px!important;font-weight:500;line-height:1.3!important;border:0!important;border-bottom:1px solid #E7EBF0!important;border-right:1px solid #EEF1F4!important;white-space:nowrap;text-align:right!important;font-variant-numeric:tabular-nums;background:#fff!important}
+html body #app#app#app#app#app#app table.kcA td.l{text-align:left!important}
+html body #app#app#app#app#app#app table.kcA td.k{color:#6B7785!important;font-size:10px!important;text-align:left!important}
+html body #app#app#app#app#app#app table.kcA td.v7kWho b{display:inline;font-size:11px!important;text-transform:none}
+html body #app#app#app#app#app#app table.kcA td.ctr,html body #app#app#app#app#app#app table.kcA td.res{text-align:center!important}
+html body #app#app#app#app#app#app table.kcA td.res{border-left:3px solid #10394E!important;background:#fff!important}
+html body #app#app#app#app#app#app table.kcA td.gc{background:var(--t)!important}
+html body #app#app#app#app#app#app table.kcA td.gc.pt{color:var(--d)!important;font-weight:800}
+html body #app#app#app#app#app#app table.kcA td.edge,html body #app#app#app#app#app#app table.kcA th.edge{border-left:3px solid var(--d)!important}
+html body #app#app#app#app#app#app table.kcA td .dim{color:#7A8794}
+/* header */
+html body #app#app#app#app#app#app table.kcA thead th.id{background:#E6EBF1!important;color:#15232E!important;border-bottom:2px solid #15303F!important;border-top:3px solid #15303F!important;text-align:left!important;vertical-align:bottom}
+html body #app#app#app#app#app#app table.kcA thead th.gh{background:var(--l)!important;color:var(--d)!important;border-top:3px solid var(--d)!important;border-bottom:0!important;text-align:center!important}
+html body #app#app#app#app#app#app table.kcA thead th.gh1{border-bottom:2px solid var(--d)!important}
+html body #app#app#app#app#app#app table.kcA thead th.sh{background:var(--l)!important;color:var(--d)!important;border-bottom:2px solid var(--d)!important;text-align:right!important;font-size:9.5px!important}
+html body #app#app#app#app#app#app table.kcA thead th.sk{background:#10394E!important;color:#fff!important;border-top:3px solid #10394E!important;border-bottom:2px solid #0A2230!important;border-left:3px solid #10394E!important;text-align:center!important;vertical-align:bottom}
+html body #app#app#app#app#app#app table.kcA.kcaSum thead th.gh{text-align:center!important}
+.kcaSq{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;background:var(--b)}
+.kcaW{display:inline-block;background:#fff;color:var(--d);border:1px solid var(--d);border-radius:8px;padding:0 6px;font-size:9px;margin-left:6px;font-weight:800}
+/* baris TOTAL */
+html body #app#app#app#app#app#app table.kcA tr.tot td{background:#E6EBF1!important;font-weight:800!important;border-top:2px solid #15303F!important}
+html body #app#app#app#app#app#app table.kcA tr.tot td.gc{background:var(--l)!important;color:var(--d)!important;border-top:3px solid var(--d)!important}
+html body #app#app#app#app#app#app table.kcA tr.tot td.res{background:#E6EBF1!important}
+/* freeze nama + area */
+html body #app#app#app#app#app#app table.kcA thead tr:first-child th:nth-child(1),html body #app#app#app#app#app#app table.kcA thead tr:nth-child(2) th.id1:nth-child(1),html body #app#app#app#app#app#app table.kcA tbody td:nth-child(1){position:sticky;left:0;z-index:4;min-width:190px;max-width:190px;overflow:hidden;text-overflow:ellipsis}
+html body #app#app#app#app#app#app table.kcA thead tr:first-child th:nth-child(2),html body #app#app#app#app#app#app table.kcA thead tr:nth-child(2) th.id1:nth-child(2),html body #app#app#app#app#app#app table.kcA tbody td:nth-child(2){position:sticky;left:190px;z-index:4;min-width:130px;max-width:130px;overflow:hidden;text-overflow:ellipsis;box-shadow:3px 0 4px -1px rgba(0,0,0,.2)!important}
+html body #app#app#app#app#app#app table.kcA thead th.id{z-index:30!important}
+html body #app#app#app#app#app#app table.kcA thead th.id0{border-bottom:0!important}
+html body #app#app#app#app#app#app table.kcA thead th.id1{border-top:0!important}
+html body #app#app#app#app#app#app table.kcA tbody tr:not(.tot) td:nth-child(-n+2){background:#fff!important}
+html body #app#app#app#app#app#app table.kcA tbody tr.tot td:nth-child(-n+2){background:#E6EBF1!important}
+html body #app#app#app#app#app#app table.kcA thead th.sk0{border-bottom:0!important}
+html body #app#app#app#app#app#app table.kcA thead th.sk1{border-top:0!important}
+html body #app#app#app#app#app#app table.kcA thead th *{color:inherit!important}
+html body #app#app#app#app#app#app table.kcA thead th .kcaW{color:var(--d)!important;background:#fff!important}
+html body #app#app#app#app#app#app table.kcA thead th::after{display:none!important;content:none!important}
+
+/* ===== KPI RGM (mockup dsm-kpi-rgm-tabel.html USULAN) ===== */
+html body #app#app#app#app#app#app table.kcR{border-collapse:separate!important;border-spacing:0!important;width:max-content!important;min-width:0!important;max-width:none!important;font-variant-numeric:tabular-nums;border:1px solid #D5DCE4!important;font-family:Inter,"Segoe UI",system-ui,sans-serif}
+html body #app#app#app#app#app#app table.kcR th{background:#E6EBF1!important;color:#15232E!important;font-size:11px!important;font-weight:800!important;padding:6px 10px!important;text-align:left!important;border:0!important;border-top:3px solid #15303F!important;border-bottom:2px solid #15303F!important;border-right:1px solid #D5DCE4!important;white-space:nowrap;text-transform:uppercase;line-height:1.3!important}
+html body #app#app#app#app#app#app table.kcR th.c{text-align:center!important}
+html body #app#app#app#app#app#app table.kcR th.b{text-align:center!important;background:var(--l)!important;color:var(--d)!important;border-top-color:var(--d)!important}
+html body #app#app#app#app#app#app table.kcR th.tt{text-align:center!important;background:#E3EEFB!important;color:#1E5FB8!important;border-top-color:#1E5FB8!important}
+html body #app#app#app#app#app#app table.kcR th::after{display:none!important;content:none!important}
+html body #app#app#app#app#app#app table.kcR td{height:26px!important;padding:0 10px!important;border:0!important;border-bottom:1px solid #E6EBF1!important;border-right:1px solid #EEF1F5!important;font-size:11px!important;white-space:nowrap;background:#fff!important;line-height:1.3!important}
+html body #app#app#app#app#app#app table.kcR td.n{text-align:right!important}html body #app#app#app#app#app#app table.kcR td.c{text-align:center!important}
+html body #app#app#app#app#app#app table.kcR td.nm{font-weight:700!important;color:#10394E!important;min-width:150px;text-align:left!important;text-transform:uppercase}
+html body #app#app#app#app#app#app table.kcR tr.me td{background:#F0F6FF!important}
+html body #app#app#app#app#app#app table.kcR tr.t1 td:first-child{box-shadow:inset 4px 0 #E0A800}html body #app#app#app#app#app#app table.kcR tr.t2 td:first-child{box-shadow:inset 4px 0 #9AA5B1}
+html body #app#app#app#app#app#app table.kcR .pt{display:inline-flex;align-items:center;gap:8px;justify-content:flex-end;width:100%}
+html body #app#app#app#app#app#app table.kcR .pt .bar{display:block;width:44px;height:6px;border-radius:2px;background:#E9EDF2;position:relative}
+html body #app#app#app#app#app#app table.kcR .pt .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:2px}
+html body #app#app#app#app#app#app table.kcR .pt b{min-width:30px;text-align:right}
+html body #app#app#app#app#app#app table.kcR .tot{display:flex;align-items:center;gap:8px;justify-content:space-between}
+html body #app#app#app#app#app#app table.kcR .stk{display:flex;height:6px;width:96px;border-radius:2px;overflow:hidden;background:#E9EDF2}html body #app#app#app#app#app#app table.kcR .stk i{display:block}
+html body #app#app#app#app#app#app table.kcR .na{color:#9AA6B6}
+html body #app#app#app#app#app#app table.kcR tfoot td{height:27px!important;border-top:2px solid #15303F!important;border-bottom:0!important;font-weight:800!important;background:#E6EBF1!important}
+html body #app#app#app#app#app#app table.kcR tfoot td.tt2{color:#1E5FB8!important;background:#E3EEFB!important;text-align:right!important}
+
+/* ===== Peringkat desktop (mockup dsm-peringkat-desktop.html USULAN) ===== */
+html body #app#app#app#app#app#app .rkBarRow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:8px 0}
+html body #app#app#app#app#app#app .rkBarRow .toolbar{margin:0!important;display:flex;gap:8px}html body #app#app#app#app#app#app .rkBarRow .tabs{margin:0!important}
+.rkI{width:20px;height:20px;min-height:0!important;padding:0!important;border-radius:50%;border:1.5px solid #6B7785;background:#fff;color:#6B7785;font:700 11px/17px Inter,system-ui,sans-serif;text-align:center;cursor:help}
+.rkCard{background:#fff;border-radius:14px;box-shadow:0 1px 4px #0001;overflow:hidden}
+.rkPh{padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}.rkPh b{font-size:13px;color:#10394E}.rkPh small{color:#6B7785}
+.rkSt{background:#FFF0C2;color:#8A6200;font-size:10px;font-weight:800;border-radius:99px;padding:2px 9px}
+.rkLg{display:flex;gap:6px;margin-left:auto;align-items:center}
+.rkBar{display:inline-block;height:8px;border-radius:2px;vertical-align:middle;margin-right:6px}
+.rkFs{background:#EEF1F5;color:#455A64;font-size:9.5px;font-weight:700;border-radius:99px;padding:2px 8px;text-transform:uppercase}
+.rkRk{display:inline-block;min-width:20px;text-align:center;font-weight:800}
+html body #app#app#app#app#app#app table.rkT{border-collapse:separate!important;border-spacing:0!important;width:100%!important;font-variant-numeric:tabular-nums}
+html body #app#app#app#app#app#app table.rkT th{background:#E6EBF1!important;color:#15232E!important;font-size:11px!important;font-weight:800!important;padding:6px 9px!important;text-align:left!important;border:0!important;border-top:3px solid #15303F!important;border-bottom:2px solid #15303F!important;border-right:1px solid #D5DCE4!important;white-space:nowrap;text-transform:uppercase;line-height:1.3!important}
+html body #app#app#app#app#app#app table.rkT th::after{display:none!important;content:none!important}
+html body #app#app#app#app#app#app table.rkT th.c{text-align:center!important}html body #app#app#app#app#app#app table.rkT th.r2{text-align:right!important}
+html body #app#app#app#app#app#app table.rkT th.kg{background:var(--l)!important;color:var(--d)!important;border-top-color:var(--d)!important}
+html body #app#app#app#app#app#app table.rkT th.ak{background:#E3F6EC!important;color:#0F6B4A!important;border-top-color:#12866A!important}
+html body #app#app#app#app#app#app table.rkT td{height:25px!important;padding:0 9px!important;border:0!important;border-bottom:1px solid #E6EBF1!important;border-right:1px solid #EEF1F5!important;font-size:11px!important;white-space:nowrap;background:#fff!important;line-height:1.3!important;text-align:left}
+html body #app#app#app#app#app#app table.rkT td.r2{text-align:right!important}html body #app#app#app#app#app#app table.rkT td.c{text-align:center!important}
+html body #app#app#app#app#app#app table.rkT td.nm,html body #app#app#app#app#app#app table.rkT td.nm .textlink{font-weight:700!important;color:#10394E!important;text-transform:uppercase}
+html body #app#app#app#app#app#app table.rkT td .textlink{min-height:0!important;padding:0!important;font-size:11px!important}
+html body #app#app#app#app#app#app table.rkT td.asm{color:#455A64!important}
+html body #app#app#app#app#app#app table.rkT tr.t1 td,html body #app#app#app#app#app#app table.rkT tr.t2 td,html body #app#app#app#app#app#app table.rkT tr.t3 td{background:#FFFCF0!important}
+html body #app#app#app#app#app#app table.rkT tr.t1 td:first-child{box-shadow:inset 4px 0 #E0A800}html body #app#app#app#app#app#app table.rkT tr.t2 td:first-child{box-shadow:inset 4px 0 #9AA5B1}html body #app#app#app#app#app#app table.rkT tr.t3 td:first-child{box-shadow:inset 4px 0 #B87333}
+html body #app#app#app#app#app#app table.rkT tr.bt td{background:#FFF6F5!important}html body #app#app#app#app#app#app table.rkT tr.bt td:first-child{box-shadow:inset 4px 0 #D2453F}
+html body #app#app#app#app#app#app .rkBarRow .toolbar{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important}
+html body #app#app#app#app#app#app .rkBarRow .toolbar label{display:flex!important;align-items:center;gap:6px;font-size:10px}html body #app#app#app#app#app#app .rkBarRow .toolbar select{height:32px;min-height:0!important}
+
+/* ===== Transaksi desktop (mockup dsm-transaksi-tabel-rapi.html: Harian H4 + Rincian) ===== */
+html body #app#app#app#app#app#app .trxSc{overflow:auto;max-height:560px;border:1px solid #D5DCE4;border-radius:8px}
+html body #app#app#app#app#app#app .trxLg{font-size:10.5px;color:#4A5663;margin-bottom:6px}
+html body #app#app#app#app#app#app table.trxD{border-collapse:separate!important;border-spacing:0!important;width:100%!important;font-variant-numeric:tabular-nums}
+html body #app#app#app#app#app#app table.trxD.hd,html body #app#app#app#app#app#app table.trxD.rd{table-layout:fixed}
+html body #app#app#app#app#app#app table.trxD.hd thead tr:first-child th:nth-child(1){width:104px}html body #app#app#app#app#app#app table.trxD.hd thead tr:first-child th:nth-child(2){width:74px}html body #app#app#app#app#app#app table.trxD.hd thead tr:first-child th:nth-child(3){width:118px}
+html body #app#app#app#app#app#app table.trxD.rd th:nth-child(1){width:104px}html body #app#app#app#app#app#app table.trxD.rd th:nth-child(2){width:170px}html body #app#app#app#app#app#app table.trxD.rd th:nth-child(3){width:70px}html body #app#app#app#app#app#app table.trxD.rd th:nth-child(4){width:230px}html body #app#app#app#app#app#app table.trxD.rd th:nth-child(5){width:110px}html body #app#app#app#app#app#app table.trxD.rd th:nth-child(7){width:70px}html body #app#app#app#app#app#app table.trxD.rd th:nth-child(8){width:140px}
+html body #app#app#app#app#app#app table.trxD th{background:#E6EBF1!important;color:#15232E!important;font-size:10.5px!important;font-weight:800!important;letter-spacing:.3px;padding:5px 9px!important;text-align:left!important;white-space:nowrap;border:0!important;border-bottom:2px solid #15303F!important;border-top:3px solid #15303F!important;border-right:1px solid #D5DCE4!important;position:sticky!important;top:0;z-index:3;text-transform:uppercase;line-height:1.3!important}
+html body #app#app#app#app#app#app table.trxD th::after{display:none!important;content:none!important}
+html body #app#app#app#app#app#app table.trxD th.r2{text-align:right!important}
+html body #app#app#app#app#app#app table.trxD th.bh{background:var(--l)!important;color:var(--d)!important;border-top-color:var(--d)!important;border-bottom-color:var(--d)!important;text-align:center!important}
+html body #app#app#app#app#app#app table.trxD th.tdp{background:#E2F4F1!important;color:#0E7C6B!important;border-top-color:#0E7C6B!important}
+html body #app#app#app#app#app#app table.trxD th.tst,html body #app#app#app#app#app#app table.trxD th.qh{background:#E3EEFB!important;color:#1E5FB8!important;border-top-color:#1E5FB8!important}
+html body #app#app#app#app#app#app table.trxD th.oh{background:#FFF4D6!important;color:#7A5200!important;border-top-color:#9A6400!important}
+html body #app#app#app#app#app#app table.trxD td{padding:3px 9px!important;height:24px!important;font-size:11px!important;border:0!important;border-bottom:1px solid #E7EBF0!important;border-right:1px solid #EEF1F4!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#fff;line-height:1.3!important;text-align:left}
+html body #app#app#app#app#app#app table.trxD td.n{text-align:right!important}
+html body #app#app#app#app#app#app table.trxD td.k{color:#6B7785!important;font-size:10px!important}
+html body #app#app#app#app#app#app table.trxD .sub{color:#8A94A0;font-size:9.5px}
+html body #app#app#app#app#app#app table.trxD .lnk{color:#1E5FB8;font-weight:700}
+html body #app#app#app#app#app#app table.trxD .bc{font-weight:800;color:var(--d)}html body #app#app#app#app#app#app table.trxD .bs{display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--d);margin-right:5px}
+html body #app#app#app#app#app#app table.trxD td.ql{background:#F3F8FE!important;color:#1E5FB8!important;font-weight:800}html body #app#app#app#app#app#app table.trxD td.om{background:#FFFAEC!important;color:#7A5200!important;font-weight:700}
+html body #app#app#app#app#app#app table.trxD tbody tr:hover td{filter:brightness(.97)}
+html body #app#app#app#app#app#app table.trxD tr.off td{color:#B0413E!important;position:relative}
+html body #app#app#app#app#app#app table.trxD tr.off td::after{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(135deg,#0000 0 5px,#D2453F40 5px 6px)}
+html body #app#app#app#app#app#app table.trxD tr.tot td{position:sticky;bottom:0;z-index:2;background:#E6EBF1!important;font-weight:800!important;border-top:2px solid #15303F!important;color:#15232E}
+html body #app#app#app#app#app#app table.trxD tr.tot td.bt{background:var(--l)!important;color:var(--d)!important;border-top:3px solid var(--d)!important}
+html body #app#app#app#app#app#app .trxFF{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+html body #app#app#app#app#app#app .trxFF .f{display:flex;align-items:center;gap:6px;height:32px;border:1px solid #CBD5E0;border-radius:8px;padding:0 10px;background:#fff;font-size:11.5px}
+html body #app#app#app#app#app#app .trxFF .f span{font-size:9.5px;font-weight:800;color:#6B7785;letter-spacing:.3px}
+html body #app#app#app#app#app#app .trxFF .f input{border:0!important;height:28px;min-height:0!important;padding:0!important;box-shadow:none!important;background:transparent!important;font-size:11.5px}
+html body #app#app#app#app#app#app .trxFF .btn{height:32px;min-height:0!important;border:1px solid #CBD5E0;border-radius:8px;background:#fff;font-weight:800;font-size:10.5px;padding:0 12px;color:#4A5663;cursor:pointer}
+html body #app#app#app#app#app#app .trxFF .btn.dl{margin-left:auto;border-color:#0B5CAD;color:#0B5CAD}
+html body #app#app#app#app#app#app .trxFF .sg{display:inline-flex;background:#CBD5E0;border-radius:999px;padding:2px}
+html body #app#app#app#app#app#app .trxFF .sg button{border:0;background:transparent;padding:6px 12px;min-height:0!important;border-radius:999px;font-size:10.5px;font-weight:800;color:#33414D;cursor:pointer}
+html body #app#app#app#app#app#app .trxFF .sg button.on{background:#0B5CAD;color:#fff}
+html body #app#app#app#app#app#app table.trxD{display:table!important}
+html body #app#app#app#app#app#app table.trxD thead{display:table-header-group!important}html body #app#app#app#app#app#app table.trxD tbody{display:table-row-group!important}html body #app#app#app#app#app#app table.trxD tr{display:table-row!important}
+/* TOTAL TIM menempel (mockup dsm-kpi-total-freeze.html) — hanya tabel per grup, bukan Ringkasan */
+html body #app#app#app#app#app#app .kcaWrap:has(table.kcA:not(.kcaSum)){max-height:340px;overflow:auto}
+html body #app#app#app#app#app#app table.kcA:not(.kcaSum) thead th{position:sticky!important;top:0}
+html body #app#app#app#app#app#app table.kcA:not(.kcaSum) thead tr:nth-child(2) th{top:24.5px}
+html body #app#app#app#app#app#app table.kcA:not(.kcaSum) thead tr:first-child th:not(.id){z-index:6!important}
+html body #app#app#app#app#app#app table.kcA:not(.kcaSum) thead tr:nth-child(2) th:not(.id){z-index:6!important}
+html body #app#app#app#app#app#app table.kcA:not(.kcaSum) tbody tr.tot td{position:sticky!important;bottom:0;z-index:5;box-shadow:0 -6px 8px -6px #0003}
+html body #app#app#app#app#app#app table.kcA:not(.kcaSum) tbody tr.tot td:nth-child(-n+2){z-index:7}
+
+/* Transaksi Harian + OMZET (O1): pemisah tipis antar brand, header 2 baris */
+html body #app#app#app#app#app#app table.trxD.hd{table-layout:auto!important}
+html body #app#app#app#app#app#app table.trxD .bsep{border-left:1px solid color-mix(in srgb,var(--d) 55%,#fff)!important}
+html body #app#app#app#app#app#app table.trxD thead tr:first-child th{height:27px!important}
+html body #app#app#app#app#app#app table.trxD thead tr.h2 th{top:27px!important;border-top:0!important;font-size:9.5px!important;text-align:right!important}
+html body #app#app#app#app#app#app table.trxD thead tr.h2 th.s2{top:27px!important}
+html body #app#app#app#app#app#app table.trxD th.oh{background:#FFF4D6!important;color:#7A5200!important;border-top-color:#9A6400!important}
+html body #app#app#app#app#app#app table.trxD td.om{background:#FFFAEC!important;color:#7A5200!important;font-weight:700}
+html body #app#app#app#app#app#app table.trxD tr.tot td.omt{background:#FFF4D6!important;color:#7A5200!important;border-top:3px solid #9A6400!important}
+
+/* Kalender + Pola Hari 2 kolom (mockup dsm-transaksi-kalender-pola.html), desktop */
+html body #app#app#app#app#app#app .trxTop{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:10px;align-items:stretch;margin-bottom:10px}
+html body #app#app#app#app#app#app .trxTop>.panel{display:grid!important;grid-template-rows:auto minmax(0,1fr);margin:0}html body #app#app#app#app#app#app .trxTop>.panel>.pb{display:flex;flex-direction:column;min-height:0;height:auto}
+html body #app#app#app#app#app#app .trxTop .v6cal{flex:1;gap:4px}
+html body #app#app#app#app#app#app .trxTop .v6cal .v6day{min-height:0;height:auto}
+html body #app#app#app#app#app#app .trxDowCol{display:flex;flex-direction:column;gap:10px}html body #app#app#app#app#app#app .trxDowCol>.panel{margin:0}
+html body #app#app#app#app#app#app .trxTop .ph .v6legend{margin:0 0 0 auto;display:flex;gap:10px;flex-wrap:wrap;font-size:10px}
+html body #app#app#app#app#app#app .dwSc{max-height:none}html body #app#app#app#app#app#app table.trxD.dw td.c,html body #app#app#app#app#app#app table.trxD.dw th.c{text-align:center!important}
+html body #app#app#app#app#app#app table.trxD.dw td.nm{font-weight:700!important;color:#10394E!important}
+html body #app#app#app#app#app#app table.trxD.dw .v6heat{min-width:28px;padding:1px 5px;font-size:10.5px;border-radius:6px;display:inline-block}
+html body #app#app#app#app#app#app .dwSc{overflow:visible}
+html body #app#app#app#app#app#app table.trxD.dw{width:100%!important;table-layout:fixed}
+html body #app#app#app#app#app#app table.trxD.dw th,html body #app#app#app#app#app#app table.trxD.dw td{padding:3px 3px!important}
+html body #app#app#app#app#app#app table.trxD.dw th:first-child,html body #app#app#app#app#app#app table.trxD.dw td.nm{width:76px}
+/* Peringkat: baris filter rapi (tab | PERINGKAT DASAR REGION RESET ... ⓘ) */
+html body #app#app#app#app#app#app .rkBarRow .tabs{padding-right:12px;border-right:1px solid #D5DDE6}
+html body #app#app#app#app#app#app .rkBarRow .toolbar{flex-wrap:nowrap;align-items:center}
+html body #app#app#app#app#app#app .rkBarRow .toolbar label{font-size:9.5px!important;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:#6B7785;white-space:nowrap}
+html body #app#app#app#app#app#app .rkBarRow .toolbar select{font-size:12px;font-weight:600;text-transform:none;min-width:0;max-width:190px;border:1px solid #CBD5E0;border-radius:8px;background:#fff}
+html body #app#app#app#app#app#app .rkBarRow .toolbar .btn{height:32px;border:1px solid #CBD5E0;border-radius:8px;background:#fff;font:800 10.5px Inter,system-ui,sans-serif;padding:0 12px;color:#4A5663;cursor:pointer}
+html body #app#app#app#app#app#app .rkBarRow .rkI{margin-left:auto}
+
+/* 2026-11-21 mockup dsm-transaksi-kalender-tinggi.html "A · KECIL + POLA PENDEK" (desktop): kotak tanggal ringkas, grafik Pola Hari pendek; trxSyncCal menyejajarkan ujung kalender dengan kolom kanan */
+html body #app#app#app#app#app#app .trxTop .v6cal .v6day{display:grid;grid-template-columns:auto 1fr;column-gap:6px;align-content:start;min-height:46px;padding:4px 7px;border-radius:7px}
+html body #app#app#app#app#app#app .trxTop .v6cal .v6day b{font-size:11.5px}
+html body #app#app#app#app#app#app .trxTop .v6cal .v6day span{font-size:11px;text-align:right}
+html body #app#app#app#app#app#app .trxTop .v6cal .v6day small{grid-column:1/3;text-align:right;font-size:9px}
+html body #app#app#app#app#app#app .trxTop .v6dow{height:112px;padding-top:4px;gap:6px}
+html body #app#app#app#app#app#app .trxTop .v6dowb{gap:3px}html body #app#app#app#app#app#app .trxTop .v6dowb b{font-size:11px}
+html body #app#app#app#app#app#app .trxTop>.trxDowCol{align-self:start}/* kolom kanan setinggi isinya: trxSyncCal mengukur tinggi asli, bukan tinggi yang ikut melar */

@@ -1,0 +1,132 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><title>Mockup · Gaya tampilan tabel</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:13px/1.45 Inter,Segoe UI,Arial,sans-serif;background:#F3F6F9;color:#15303F;padding:20px}
+h1{font-size:18px;margin:0 0 4px;color:#10394E}.lead{color:#5B6B7A;margin:0 0 12px;max-width:1150px}
+.pick{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 6px}.pick button{border:1.5px solid #CBD6E1;background:#fff;border-radius:10px;padding:8px 12px;font-weight:800;font-size:12px;color:#10394E;cursor:pointer}.pick button.on{background:#10394E;color:#fff;border-color:#10394E}
+.desc{color:#5B6B7A;font-size:12px;margin:0 0 12px}
+.box{max-width:1300px;overflow:auto}
+table{border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums;width:100%;min-width:1100px}
+th,td{padding:9px 11px;text-align:right;white-space:nowrap;font-size:12px}th.l,td.l{text-align:left}th{font-size:10.5px;letter-spacing:.4px;font-weight:800}
+td.n{color:#0B5CAD;font-weight:800}td.z{color:#B3BEC9}
+/* 1 Kotak garis (grid) */
+.g1{background:#fff;border:1px solid #D5DEE7;border-radius:12px;overflow:hidden}
+.g1 th,.g1 td{border-right:1px solid #E3E9F0;border-bottom:1px solid #E3E9F0}
+.g1 th.id{background:#E6EBF1}.g1 th.br{background:var(--c);color:#fff;text-align:center}.g1 th.in{background:var(--l);color:var(--c);text-align:left}.g1 th.m{background:var(--l);color:var(--c)}
+.g1 td.v{background:var(--x)}.g1 tr.t td{background:#E6EBF1;font-weight:800}.g1 tr.t td.v{background:var(--l);color:var(--c)}
+/* 2 Garis tipis minimalis */
+.g2{background:#fff;border-radius:14px;padding:4px 10px}
+.g2 th{background:#fff;color:#7C8899;border-bottom:1.5px solid #E3E9F0}.g2 th.br{color:var(--c);text-align:center;border-bottom:3px solid var(--c);font-size:11.5px}.g2 th.in{color:var(--c);text-align:left;border-bottom:0}.g2 th.m{color:var(--c)}
+.g2 td{border-bottom:1px solid #F0F3F6}.g2 tr:hover td{background:#F7FAFC}
+.g2 tr.t td{font-weight:800;border-top:2px solid #15303F;border-bottom:0}.g2 tr.t td.v{color:var(--c)}
+/* 3 Baris kartu */
+.g3 table{border-spacing:0 6px}
+.g3 th{background:transparent;color:#7C8899}.g3 th.br{background:var(--c);color:#fff;text-align:center;border-radius:9px 9px 0 0}.g3 th.in{background:var(--l);color:var(--c);text-align:left}.g3 th.m{background:var(--l);color:var(--c)}
+.g3 td{background:#fff;border-top:1px solid #E3E9F0;border-bottom:1px solid #E3E9F0}.g3 td:first-child{border-left:1px solid #E3E9F0;border-radius:10px 0 0 10px}.g3 td:last-child{border-right:1px solid #E3E9F0;border-radius:0 10px 10px 0}
+.g3 td.v{background:var(--x)}.g3 tr:hover td{box-shadow:0 2px 8px rgba(16,57,78,.08)}
+.g3 tr.t td{background:#E6EBF1;font-weight:800}.g3 tr.t td.v{background:var(--l);color:var(--c)}
+/* 4 Header kapsul + zebra */
+.g4{background:#fff;border-radius:14px;padding:8px;border:1px solid #E3E9F0}
+.g4 th{background:#fff;color:#5B6B7A;padding:4px 3px}.g4 th>span{display:block;border-radius:8px;padding:7px 9px}
+.g4 th.id>span{background:#E6EBF1;color:#15303F}.g4 th.br>span{background:var(--c);color:#fff;text-align:center}.g4 th.in>span{background:var(--l);color:var(--c);text-align:left}.g4 th.m>span{background:var(--l);color:var(--c);text-align:right}
+.g4 tbody tr:nth-child(odd) td{background:#F7F9FB}.g4 td:first-child{border-radius:8px 0 0 8px}.g4 td:last-child{border-radius:0 8px 8px 0}
+.g4 tr.t td{background:#E6EBF1!important;font-weight:800}.g4 tr.t td.v{background:var(--l)!important;color:var(--c)}
+/* 5 Header gelap solid */
+.g5{background:#fff;border-radius:14px;overflow:hidden;border:1px solid #D5DEE7}
+.g5 th{background:#1F2D3A;color:#fff}.g5 th.br{background:#1F2D3A;color:#fff;text-align:center;border-bottom:4px solid var(--c)}.g5 th.in{background:#2A3A49;color:#9CC3F2;text-align:left}.g5 th.m{background:#2A3A49;color:#fff}
+.g5 td{border-bottom:1px solid #EEF2F6}.g5 td.v{background:var(--x)}.g5 tr.t td{background:#1F2D3A;color:#fff;font-weight:800}
+/* 6 Kartu melayang */
+.g6{background:#fff;border-radius:18px;box-shadow:0 10px 30px rgba(16,57,78,.10);padding:6px 6px 10px}
+.g6 th{background:#fff;color:#7C8899;font-size:10px}.g6 th.br{color:#fff;background:var(--c);border-radius:10px;text-align:center}.g6 th.in,.g6 th.m{color:var(--c)}.g6 th.in{text-align:left}
+.g6 td{border-bottom:1px dashed #E3E9F0}.g6 tr:hover td{background:#F5F8FB}
+.g6 tr.t td{font-weight:800;background:#F3F6F9;border-bottom:0}.g6 tr.t td:first-child{border-radius:10px 0 0 10px}.g6 tr.t td:last-child{border-radius:0 10px 10px 0}.g6 tr.t td.v{color:var(--c)}
+/* 7 Aksen kiri */
+.g7{background:#fff;border-radius:14px;border:1px solid #E3E9F0;overflow:hidden}
+.g7 th{background:#F7F9FB;color:#46586A;border-bottom:1px solid #E3E9F0}.g7 th.br{color:var(--c);text-align:center;box-shadow:inset 0 3px var(--c)}.g7 th.in,.g7 th.m{color:var(--c)}.g7 th.in{text-align:left}
+.g7 td{border-bottom:1px solid #F0F3F6}.g7 td:first-child{box-shadow:inset 4px 0 var(--a,#E3E9F0)}
+.g7 tr.t td{background:#F7F9FB;font-weight:800;border-top:2px solid #46586A}.g7 tr.t td.v{color:var(--c)}
+/* 8 Panel terpisah */
+.g8 table{border-spacing:10px 0;margin:0 -10px}
+.g8 th,.g8 td{background:#fff}.g8 th{color:#5B6B7A;border-bottom:1.5px solid #E3E9F0}
+.g8 th.br{background:var(--c);color:#fff;text-align:center;border-radius:12px 12px 0 0}.g8 th.in,.g8 th.m{background:var(--l);color:var(--c)}.g8 th.in{text-align:left}
+.g8 td{border-bottom:1px solid #F0F3F6}.g8 td.v{background:var(--x)}
+.g8 tr.t td{font-weight:800;background:#EEF2F6}.g8 tr.t td.v{background:var(--l);color:var(--c)}
+/* 9 Padat ala laporan */
+.g9{background:#fff;border:1px solid #C9D2DC}
+.g9 th,.g9 td{padding:5px 8px;font-size:11px;border-right:1px solid #E6EBF1}.g9 td{border-bottom:1px solid #E6EBF1}
+.g9 th{background:#fff;color:#15303F;border-bottom:2px solid #15303F;text-transform:uppercase}.g9 th.br{color:var(--c);text-align:center;border-bottom:2px solid var(--c)}.g9 th.in,.g9 th.m{color:var(--c)}.g9 th.in{text-align:left;border-bottom:1px solid #E6EBF1}
+.g9 td{font-family:ui-monospace,Consolas,monospace}.g9 td.l{font-family:inherit}.g9 tr.t td{border-top:2px solid #15303F;font-weight:800;background:#fff}
+/* 10 Gaya Notion */
+.g10{background:#fff;border-radius:12px;border:1px solid #ECEEF0}
+.g10 th{background:#fff;color:#9AA3AD;font-weight:600;text-transform:none;letter-spacing:0;font-size:11.5px;border-bottom:1px solid #ECEEF0}.g10 th.br{color:#37352F;font-weight:700;text-align:left}.g10 th.br::before{content:'';display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--c);margin-right:6px}
+.g10 th.in{color:var(--c);text-align:left;font-weight:700}.g10 th.m{color:#9AA3AD}
+.g10 td{color:#37352F;border-bottom:1px solid #F3F4F5}.g10 td.n{color:#37352F;text-decoration:underline;text-decoration-color:#D5D8DC}.g10 tr:hover td{background:#F7F7F5}
+.g10 tr.t td{font-weight:700;background:#FBFBFA}
+/* 11 Angka berwarna intensitas */
+.g11{background:#fff;border-radius:14px;border:1px solid #E3E9F0;overflow:hidden}
+.g11 th{background:#F7F9FB;color:#46586A;border-bottom:1px solid #E3E9F0}.g11 th.br{background:var(--c);color:#fff;text-align:center}.g11 th.in,.g11 th.m{background:var(--l);color:var(--c)}.g11 th.in{text-align:left}
+.g11 td{border-bottom:1px solid #F0F3F6}.g11 td.v{background:color-mix(in srgb,var(--c) calc(var(--p,0)*1%),#fff)}
+.g11 tr.t td{background:#EEF2F6;font-weight:800}
+/* 12 Angka kapsul */
+.g12{background:#fff;border-radius:14px;border:1px solid #E3E9F0;overflow:hidden}
+.g12 th{background:#fff;color:#7C8899;border-bottom:1.5px solid #E3E9F0}.g12 th.br{color:var(--c);text-align:center;font-size:12px}.g12 th.in,.g12 th.m{color:var(--c)}.g12 th.in{text-align:left}
+.g12 td{border-bottom:1px solid #F0F3F6}.g12 td.v>b{display:inline-block;min-width:34px;text-align:center;padding:2px 8px;border-radius:999px;background:var(--l);color:var(--c);font-weight:800}.g12 td.z>b{background:none;color:#C5CED8}
+.g12 tr.t td{font-weight:800;background:#F7F9FB}.g12 tr.t td.v>b{background:var(--c);color:#fff}
+/* 13 Airtable */
+.g13{background:#fff;border:1px solid #DDE1E6;border-radius:8px;overflow:hidden}
+.g13 th,.g13 td{border-right:1px solid #EEF0F2;border-bottom:1px solid #EEF0F2}.g13 th{background:#F5F6F8;color:#4B5563;font-weight:600;text-transform:none;letter-spacing:0;font-size:11.5px}
+.g13 th.br{background:#F5F6F8;color:#111;text-align:left}.g13 th.br::before{content:'';display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--c);margin-right:6px;vertical-align:-1px}
+.g13 th.in{background:#F5F6F8;color:var(--c);text-align:left}.g13 th.m{background:#F5F6F8;color:#4B5563}
+.g13 td.l:nth-child(3)>*,.g13 td.l:nth-child(3){color:#374151}.g13 td.chip span{background:#E8F0FE;color:#1D4ED8;border-radius:4px;padding:2px 7px;font-size:11px;font-weight:600}
+.g13 tr:hover td{background:#F9FAFB}.g13 tr.t td{background:#F5F6F8;font-weight:700}
+/* 14 Kotak per kelompok */
+.g14{background:#fff;border-radius:14px;padding:8px;border:1px solid #E3E9F0}
+.g14 table{border-collapse:separate;border-spacing:0}
+.g14 th{background:#fff;color:#5B6B7A}.g14 th.br{color:var(--c);text-align:center;border:1.5px solid #6D3FD8;border-bottom:0;border-radius:12px 12px 0 0;background:var(--l)}
+.g14 th.in{color:var(--c);text-align:left;border-left:1.5px solid #6D3FD8;border-right:1.5px solid #6D3FD8}.g14 th.m{color:var(--c)}
+.g14 tr>*:nth-last-child(5):is(td,th.m){border-left:1.5px solid #6D3FD8}.g14 tr>*:last-child:is(td,th.m){border-right:1.5px solid #6D3FD8}
+.g14 td{border-bottom:1px solid #F0F3F6}.g14 tr.t td{font-weight:800;background:#F3F6F9}.g14 tr.t td.v{background:var(--l);color:var(--c);border-bottom:1.5px solid #6D3FD8}.g14 tr.t td:last-child{border-radius:0 0 12px 0}
+/* 15 Judul putih, TOTAL warna brand */
+.g15{background:#fff;border-radius:14px;border:1px solid #E3E9F0;overflow:hidden}
+.g15 th{background:#fff;color:#15303F;border-bottom:2px solid #15303F}.g15 th.br{color:var(--c);text-align:center;border-bottom:2px solid var(--c);font-size:12px}.g15 th.in,.g15 th.m{color:var(--c);border-bottom-color:var(--c)}.g15 th.in{text-align:left;border-bottom:1px solid #E3E9F0}
+.g15 td{border-bottom:1px solid #F0F3F6}.g15 tr.t td{background:#F3F6F9;font-weight:800}.g15 tr.t td.v{background:var(--c);color:#fff}
+/* 16 Tegas dua warna */
+.g16{background:#fff;border-radius:14px;overflow:hidden;border:2px solid #10394E}
+.g16 th{background:#10394E;color:#fff}.g16 th.br{background:#fff;color:var(--c);text-align:center;font-size:12.5px;border-bottom:3px solid var(--c)}.g16 th.in{background:#fff;color:var(--c);text-align:left}.g16 th.m{background:#fff;color:#10394E;border-bottom:2px solid #10394E}
+.g16 td{border-bottom:1px solid #E3E9F0}.g16 td:nth-child(5){border-left:2px solid #10394E}.g16 tr.t td{background:#10394E;color:#fff;font-weight:800}
+/* 17 Gabungan 1 + 7 + 9 */
+.g17{background:#fff;border:1px solid #C9D2DC;border-radius:10px;overflow:hidden}
+.g17 th,.g17 td{padding:5px 8px;font-size:11px;border-right:1px solid #E3E9F0;border-bottom:1px solid #E3E9F0}
+.g17 th{text-transform:uppercase}.g17 th.id{background:#E6EBF1;color:#15303F;border-bottom:2px solid #15303F}
+.g17 th.br{background:var(--c);color:#fff;text-align:center}.g17 th.in{background:var(--l);color:var(--c);text-align:left}.g17 th.m{background:var(--l);color:var(--c);border-bottom:2px solid var(--c)}
+.g17 td{font-family:ui-monospace,Consolas,monospace}.g17 td.l{font-family:inherit}.g17 td.v{background:var(--x)}
+.g17 td:first-child{box-shadow:inset 4px 0 var(--a,#E3E9F0);padding-left:11px}
+.g17 tr.t td{border-top:2px solid #15303F;font-weight:800;background:#E6EBF1}.g17 tr.t td.v{background:var(--l);color:var(--c);border-top-color:var(--c)}.g17 tr.t td:first-child{box-shadow:none}
+.g17 .lg17{display:flex;gap:12px;font:600 10.5px Inter,Segoe UI,Arial;color:#5B6B7A;padding:6px 10px;border-top:1px solid #E3E9F0;background:#FAFBFC}.g17 .lg17 i{display:inline-block;width:4px;height:11px;margin-right:5px;vertical-align:-1px}
+.side{max-width:1300px;margin-top:16px;background:#fff;border-radius:14px;padding:12px 16px;border:1px solid #E3E9F0}.side ul{margin:6px 0 0;padding-left:18px}.side li{margin:4px 0}
+</style></head><body>
+<h1>Mockup · Gaya tampilan tabel (contoh History Dealer per Brand)</h1>
+<p class="lead">Isi & kolom sama persis, yang beda cuma "rupa" tabelnya. Warna brand & indikator tetap.</p>
+<div class="pick" id="pk"></div><p class="desc" id="ds"></p>
+<div class="box" id="o"></div>
+<div class="side"><b>Catatan</b><ul>
+<li><b>1 Kotak garis</b>: rapi seperti Excel, semua sel bergaris. Paling gampang dibaca untuk angka banyak.</li>
+<li><b>2 Garis tipis</b>: paling bersih, tanpa blok warna; warna cuma di teks & garis judul.</li>
+<li><b>3 Baris kartu</b>: tiap dealer jadi "kartu" dengan jarak antar baris, modern, tapi makan tempat ke bawah.</li>
+<li><b>4 Header kapsul</b>: judul kolom berbentuk kapsul membulat, isi belang tipis, lembut.</li>
+<li><b>5 Header gelap</b>: kontras tinggi, terkesan tegas/korporat.</li><li><b>6 Kartu melayang</b>: lembut & modern, cocok untuk tabel pendek.</li><li><b>7 Aksen kiri</b>: garis warna di kiri baris bisa dipakai untuk status dealer (ACTIVE hijau, IDLE oranye, dst).</li><li><b>8 Panel terpisah</b>: tiap brand jadi blok sendiri, enak kalau brand banyak.</li><li><b>9 Padat laporan</b>: paling banyak baris per layar, rasa laporan cetak.</li><li><b>10 Gaya Notion</b>: tenang dan minimal.</li><li><b>11 Warna intensitas</b>: pola tinggi/rendah langsung kelihatan.</li><li><b>12 Angka kapsul</b>: angka menonjol, nol tenggelam; enak untuk cari dealer yang order.</li><li><b>13–16</b>: Airtable (spreadsheet modern), kotak per brand (batas brand jelas), TOTAL warna brand (bawah langsung kebaca per brand), tegas dua warna (identitas vs angka jelas terpisah).</li><li>Rekomendasi gue untuk tabel angka padat seperti History: <b>1 Kotak garis</b> atau <b>2 Garis tipis</b>.</li></ul></div>
+<script>
+const MO=['APR 26','MEI 26','JUN 26','JUL 26'],C={c:'#6D3FD8',l:'#EEE8FD',x:'#FAF8FE'},I={c:'#1E5FB8',l:'#E3EEFB',x:'#F5F9FE'};
+const AC=['#B42318','#12866A','#C25A12','#9A6400'];const D=[['028.145','1217 CELL - OGAN KOMERING ILIR','SUMATERA BAG. SELATAN','AGUS IZHA',[0,0,0,0]],['321.158','123 DEAL','SULAWESI SELATAN','MUH IKBAL',[5,0,3,2]],['BT06609','2 DAN CELLULAR','JAWA TENGAH','DEDE PUJI',[0,2,1,0]],['320.822','21 CELL PALANG','JAWA TIMUR','MIFTAKHUL',[12,9,0,14]]];
+const G=[['1 · Kotak garis','Semua sel bergaris, gaya Excel.'],['2 · Garis tipis','Tanpa blok warna; garis pemisah tipis, warna di teks judul.'],['3 · Baris kartu','Tiap baris jadi kartu membulat dengan jarak.'],['4 · Header kapsul','Judul kolom kapsul membulat, isi belang tipis.'],['5 · Header gelap','Judul & TOTAL abu-hitam solid, garis warna brand di bawah judul brand.'],['6 · Kartu melayang','Tabel di kartu putih dengan bayangan lembut, garis putus-putus tipis.'],['7 · Aksen kiri','Garis warna di kiri tiap baris (bisa untuk status dealer), header terang.'],['8 · Panel terpisah','Kolom identitas & tiap brand jadi panel sendiri berjarak.'],['9 · Padat laporan','Huruf kecil, angka monospace, garis tipis, garis tebal di judul & TOTAL. Muat banyak baris.'],['10 · Gaya Notion','Tanpa warna blok, teks abu tenang, brand cuma kotak kecil. Sangat bersih.'],['11 · Warna intensitas','Sel makin berwarna kalau angkanya makin besar.'],['12 · Angka kapsul','Tiap angka di kapsul warna indikator, nol jadi samar. TOTAL kapsul solid.'],['13 · Gaya Airtable','Seperti spreadsheet modern: garis abu halus, judul abu terang, huruf biasa (tidak kapital).'],['14 · Kotak per brand','Tiap brand dibingkai garis warnanya sendiri, membulat di atas.'],['15 · TOTAL warna indikator','Judul putih bergaris, isi bersih, baris TOTAL di kolom brand pakai warna indikator solid (SELL THRU biru, SELL OUT oranye).'],['16 · Tegas dua warna','Bingkai & judul identitas petrol, bagian brand putih dengan aksen warna; pemisah tebal antara identitas & brand.'],['★ Gabungan 1 + 7 + 9','Kotak garis (1) + garis status di kiri baris (7) + padat, angka monospace, garis tebal judul & TOTAL (9).']];
+let S=16;const f=n=>n?n.toLocaleString('id-ID'):'–',sum=a=>a.reduce((x,y)=>x+y,0);
+const sp=(s,k)=>k===3?`<span>${s}</span>`:s;
+function draw(){const k=S,st=`--c:${I.c};--l:${I.l};--x:${I.x}`;
+ const h=`<tr><th class="l id" rowspan="3">${sp('KODE',k)}</th><th class="l id" rowspan="3">${sp('NAMA DEALER',k)}</th><th class="l id" rowspan="3">${sp('BIG REGION',k)}</th><th class="l id" rowspan="3">${sp('SALES',k)}</th><th class="br" colspan="5" style="--c:${C.c};--l:${C.l}">${sp('IPHONE',k)}</th></tr><tr><th class="in" colspan="5" style="${st}">${sp('SELL THRU',k)}</th></tr><tr>${MO.concat(['TOTAL']).map(m=>`<th class="m" style="${st}">${sp(m,k)}</th>`).join('')}</tr>`;
+ const r=D.map((d,i)=>`<tr style="--a:${AC[i]}"><td class="l">${d[0]}</td><td class="l n">${d[1]}</td><td class="l">${d[2]}</td><td class="l">${d[3]}</td>${d[4].concat([sum(d[4])]).map((x,j)=>`<td class="v${x?'':' z'}" style="${st};--p:${j<4?Math.round(x/14*45):0}${j===4?';font-weight:800':''}">${k===11?'<b>'+f(x)+'</b>':f(x)}</td>`).join('')}</tr>`).join('');
+ const T=MO.map((_,j)=>sum(D.map(d=>d[4][j])));
+ const t=`<tr class="t"><td class="l">TOTAL</td><td></td><td></td><td></td>${T.concat([sum(T)]).map(x=>`<td class="v" style="${st}">${k===11?'<b>'+f(x)+'</b>':f(x)}</td>`).join('')}</tr>`;
+ document.getElementById('pk').innerHTML=G.map((g,i)=>`<button class="${i===S?'on':''}" data-s="${i}">${g[0]}</button>`).join('');
+ document.getElementById('ds').textContent=G[S][1];
+ document.getElementById('o').innerHTML=`<div class="g${k+1}"><table><thead>${h}</thead><tbody>${r}${t}</tbody></table>${k===16?'<div class="lg17"><span><i style="background:#12866A"></i>ACTIVE</span><span><i style="background:#9A6400"></i>PASSIVE</span><span><i style="background:#C25A12"></i>IDLE</span><span><i style="background:#B42318"></i>INACTIVE</span><span><i style="background:#1E5FB8"></i>PROSPECT</span><span style="margin-left:auto">Garis kiri = status dealer bulan ini</span></div>':''}</div>`;}
+document.getElementById('pk').onclick=e=>{const b=e.target.closest('[data-s]');if(b){S=+b.dataset.s;draw();}};draw();
+</script></body></html>

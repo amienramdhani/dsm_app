@@ -1,0 +1,63 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><title>Mockup · Filter History Dealer (desktop)</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:13px/1.45 Inter,Segoe UI,Arial,sans-serif;background:#F3F6F9;color:#15303F;padding:20px}
+h1{font-size:18px;margin:0 0 4px;color:#10394E}.lead{color:#5B6B7A;margin:0 0 12px;max-width:1200px}
+.pick{display:flex;gap:8px;margin:0 0 6px}.pick button{border:1.5px solid #CBD6E1;background:#fff;border-radius:10px;padding:8px 12px;font-weight:800;font-size:12px;color:#10394E;cursor:pointer}.pick button.on{background:#10394E;color:#fff;border-color:#10394E}
+.desc{color:#5B6B7A;font-size:12px;margin:0 0 10px}
+.panel{background:#fff;border:1px solid #E3E9F0;border-radius:14px;max-width:1500px;padding:14px 16px}
+.ph{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}.ph b{font-size:15px;color:#10394E}.ph small{display:block;color:#7C8899;font-size:11.5px}
+label{display:flex;flex-direction:column;gap:4px;font-size:10px;font-weight:800;letter-spacing:.4px;color:#46586A}
+.fi{height:34px;border:1px solid #D5DEE7;border-radius:9px;background:#fff;padding:0 10px;font:inherit;font-size:12.5px;color:#15303F;display:flex;align-items:center;justify-content:space-between}
+.fi.s::after{content:'▾';color:#7C8899;font-size:11px}.fi.ph2{color:#9AA6B6}
+.btn{height:34px;padding:0 14px;border-radius:9px;border:1px solid #D5DEE7;background:#fff;font-weight:800;font-size:12px;color:#10394E;display:inline-flex;align-items:center;gap:6px}
+.btn.p{background:#0B5CAD;border-color:#0B5CAD;color:#fff}.btn.o{background:linear-gradient(90deg,#FFB020,#F07A0C);border:0;color:#fff}
+.chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.chip{font-size:11px;font-weight:700;border:1px solid #D5DEE7;border-radius:999px;padding:3px 9px;background:#fff}.chip b{margin-right:4px}.chip.x::after{content:' ✕';color:#9AA6B6}
+.cnt{font-size:12px;font-weight:800;color:#10394E}
+/* A: kelompok */
+.A .grid{display:grid;grid-template-columns:1.05fr 1fr 1.6fr;gap:12px}
+.grp{border:1px solid #E3E9F0;border-radius:12px;padding:10px 12px 12px;background:#FAFCFE;border-top:3px solid var(--g)}
+.grp h4{margin:0 0 8px;font-size:10.5px;letter-spacing:.6px;color:var(--g)}
+.row{display:grid;gap:8px}
+.foot{display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid #EEF2F6}.foot .sp{flex:1}
+/* B: satu baris + filter lain */
+.B .bar{display:grid;grid-template-columns:1.4fr .9fr .9fr .8fr .8fr auto;gap:8px;align-items:end}
+.more{margin-top:10px;border:1px dashed #D5DEE7;border-radius:12px;padding:10px 12px;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;background:#FAFCFE}
+/* C: dua baris rata */
+.C .r1,.C .r2{display:grid;gap:8px 10px;align-items:end}.C .r1{grid-template-columns:repeat(5,1fr)}.C .r2{grid-template-columns:repeat(5,1fr);margin-top:8px}
+/* D: panel samping */
+.D .lay{display:grid;grid-template-columns:260px 1fr;gap:14px}.D .sbar{border:1px solid #E3E9F0;border-radius:12px;padding:12px;background:#FAFCFE;display:flex;flex-direction:column;gap:8px}.D .sbar h4{margin:4px 0 0;font-size:10px;letter-spacing:.6px;color:#7C8899}
+.D .tbl{border:1px dashed #D5DEE7;border-radius:12px;display:grid;place-items:center;color:#9AA6B6;min-height:330px}
+/* E: kapsul sebaris */
+.E .pills{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.pl{display:inline-flex;align-items:center;gap:6px;height:32px;border:1px solid #D5DEE7;border-radius:999px;padding:0 12px;background:#fff;font-size:12px}.pl small{font-size:10px;font-weight:800;color:#7C8899;letter-spacing:.4px}.pl b{color:#15303F}.pl::after{content:'▾';color:#9AA6B6;font-size:10px}
+.pl.on{background:#E8F1FB;border-color:#1E5FB8}.pl.on b{color:#1E5FB8}.pl.q{min-width:240px;color:#9AA6B6}.pl.q::after{content:''}
+/* F: kalimat */
+.F .sen{font-size:15px;line-height:2.3;color:#46586A}.F .sen .pl{height:30px;font-size:13px;vertical-align:middle;margin:0 2px}
+.side{max-width:1500px;margin-top:14px;background:#fff;border-radius:14px;padding:12px 16px;border:1px solid #E3E9F0}.side ul{margin:6px 0 0;padding-left:18px}.side li{margin:3px 0}
+</style></head><body>
+<h1>Mockup · Filter "History Dealer per Brand" di desktop</h1>
+<p class="lead">Isi filter sama persis (Indikator, Brand, Bulan awal/akhir, Cakupan tanggal, Region, Sub region, Dealer/kode, Status promotor, Grade, Filter order lanjutan). Yang beda cuma susunannya. HP tidak berubah.</p>
+<div class="pick" id="pk"></div><p class="desc" id="ds"></p><div id="o"></div>
+<div class="side"><b>Catatan</b><ul>
+<li><b>A · Dikelompokkan</b>: 3 kotak — PERIODE, DATA, WILAYAH & DEALER. Paling gampang dicari, sesuai aturan filter DSM (isi dikelompokkan berwarna).</li>
+<li><b>B · Ringkas + Filter lain</b>: 5 filter utama sebaris, sisanya di balik tombol FILTER LAIN (oren, sama dengan halaman lain). Paling hemat tempat.</li>
+<li><b>C · Dua baris rata</b>: semua filter dibagi 2 baris × 5 kolom sama lebar, tombol di bawah. Paling mirip sekarang tapi rapi.</li>
+<li>Semua opsi: chip filter aktif + jumlah dealer + KOLOM / RESET / TAMPILKAN DATA di satu baris bawah.</li>
+<li><b>D · Panel samping</b>: filter selalu kelihatan, tapi tabel jadi lebih sempit (History tabel lebar → kurang cocok).</li><li><b>E · Kapsul sebaris</b>: paling ringkas & modern (1–2 baris saja), nilai filter langsung kebaca.</li><li><b>F · Kalimat</b>: unik & gampang dipahami orang baru, tapi makan tempat kalau filter banyak.</li><li>Rekomendasi gue: <b>A</b> atau <b>E</b>.</li></ul></div>
+<script>
+const F={ind:['INDIKATOR','Semua indikator',1],br:['BRAND','Semua brand',1],ba:['BULAN AWAL','Des 2025'],bk:['BULAN AKHIR','Sep 2026'],ct:['CAKUPAN TANGGAL','Semua tanggal',1],rg:['REGION','Semua region',1],sr:['SUB REGION','Semua sub region',1],dl:['DEALER / KODE','Cari dealer / kode',0,1],sp:['STATUS PROMOTOR','Semua promotor',1],gr:['GRADE','Pilih 1 brand dulu',1]};
+const fld=k=>{const f=F[k];return `<label>${f[0]}<span class="fi${f[2]?' s':''}${f[3]?' ph2':''}">${f[1]}</span></label>`;};
+const foot=`<div class="foot"><div class="chips"><span class="chip"><b>Mode</b>Semua tanggal</span><span class="chip"><b>Indikator</b>Semua</span></div><span class="sp"></span><span class="cnt">3.831 dealer</span><span class="btn">KOLOM ▾</span><span class="btn">RESET</span><span class="btn p">TAMPILKAN DATA</span></div>`;
+const head=`<div class="ph"><div><b>HISTORY DEALER PER BRAND</b><small>Unit device · total seluruh hasil · geser tabel untuk bulan lainnya</small></div><span style="color:#7C8899">⌃</span></div>`;
+const V=[['A · Dikelompokkan','Tiga kotak berwarna sesuai jenis filter.',()=>`<div class="panel A">${head}<div class="grid">
+<div class="grp" style="--g:#1E5FB8"><h4>PERIODE</h4><div class="row" style="grid-template-columns:1fr 1fr">${fld('ba')}${fld('bk')}</div><div class="row" style="margin-top:8px">${fld('ct')}</div></div>
+<div class="grp" style="--g:#0E7C6B"><h4>DATA</h4><div class="row" style="grid-template-columns:1fr 1fr">${fld('ind')}${fld('br')}</div><div class="row" style="margin-top:8px"><label>&nbsp;<span class="btn" style="justify-content:center;border-style:dashed;color:#6D3FD8">＋ Filter order lanjutan</span></label></div></div>
+<div class="grp" style="--g:#6D3FD8"><h4>WILAYAH & DEALER</h4><div class="row" style="grid-template-columns:1fr 1fr 1.3fr">${fld('rg')}${fld('sr')}${fld('dl')}</div><div class="row" style="grid-template-columns:1fr 1fr 1.3fr;margin-top:8px">${fld('sp')}${fld('gr')}<span></span></div></div>
+</div>${foot}</div>`],
+['B · Ringkas + Filter lain','Filter utama sebaris, sisanya di panel FILTER LAIN (contoh: sedang dibuka).',()=>`<div class="panel B">${head}<div class="bar">${fld('dl')}${fld('br')}${fld('ind')}${fld('ba')}${fld('bk')}<span class="btn o">FILTER LAIN · 0</span></div><div class="more">${fld('ct')}${fld('rg')}${fld('sr')}${fld('sp')}${fld('gr')}<label style="grid-column:span 5">&nbsp;<span class="btn" style="width:max-content;border-style:dashed;color:#6D3FD8">＋ Filter order lanjutan</span></label></div>${foot}</div>`],
+['C · Dua baris rata','Semua filter 2 baris × 5 kolom sama lebar.',()=>`<div class="panel C">${head}<div class="r1">${fld('ind')}${fld('br')}${fld('ba')}${fld('bk')}${fld('ct')}</div><div class="r2">${fld('rg')}${fld('sr')}${fld('dl')}${fld('sp')}${fld('gr')}</div><div style="margin-top:8px"><span class="btn" style="border-style:dashed;color:#6D3FD8">＋ Filter order lanjutan</span></div>${foot}</div>`],
+['D · Panel samping','Filter di kolom kiri (menempel), tabel di kanan. Filter selalu kelihatan saat scroll.',()=>`<div class="panel D">${head}<div class="lay"><div class="sbar"><h4>PERIODE</h4><div class="row" style="grid-template-columns:1fr 1fr">${fld('ba')}${fld('bk')}</div>${fld('ct')}<h4>DATA</h4>${fld('ind')}${fld('br')}<h4>WILAYAH & DEALER</h4>${fld('rg')}${fld('sr')}${fld('dl')}${fld('sp')}${fld('gr')}<span class="btn p" style="justify-content:center;margin-top:4px">TAMPILKAN DATA</span><span class="btn" style="justify-content:center">RESET</span></div><div class="tbl">tabel History di sini</div></div></div>`],
+['E · Kapsul sebaris','Semua filter jadi kapsul kecil "LABEL nilai" sebaris; klik kapsul = pilihan muncul. Yang sudah diubah jadi biru.',()=>`<div class="panel E">${head}<div class="pills"><span class="pl q">🔍 Cari dealer / kode</span><span class="pl on"><small>PERIODE</small><b>Des 2025 – Sep 2026</b></span><span class="pl"><small>CAKUPAN</small><b>Semua tanggal</b></span><span class="pl"><small>INDIKATOR</small><b>Semua</b></span><span class="pl on"><small>BRAND</small><b>ITEL, MOTOPAD</b></span><span class="pl"><small>REGION</small><b>Semua</b></span><span class="pl"><small>SUB REGION</small><b>Semua</b></span><span class="pl"><small>PROMOTOR</small><b>Semua</b></span><span class="pl"><small>GRADE</small><b>—</b></span><span class="pl" style="border-style:dashed;color:#6D3FD8">＋ Filter order</span></div>${foot}</div>`],
+['F · Kalimat','Filter dibaca seperti kalimat; tiap bagian bisa diklik.',()=>`<div class="panel F">${head}<div class="sen">Tampilkan <span class="pl"><b>semua indikator</b></span> untuk <span class="pl on"><b>ITEL, MOTOPAD</b></span> dari <span class="pl on"><b>Des 2025</b></span> sampai <span class="pl on"><b>Sep 2026</b></span> (<span class="pl"><b>semua tanggal</b></span>), dealer di <span class="pl"><b>semua region</b></span> · <span class="pl"><b>semua sub region</b></span>, <span class="pl"><b>semua promotor</b></span>, grade <span class="pl"><b>—</b></span>. <span class="pl q" style="min-width:200px">🔍 Cari dealer / kode</span> <span class="pl" style="border-style:dashed;color:#6D3FD8">＋ Filter order</span></div>${foot}</div>`]];
+let S=0;function draw(){document.getElementById('pk').innerHTML=V.map((v,i)=>`<button class="${i===S?'on':''}" data-s="${i}">${v[0]}</button>`).join('');document.getElementById('ds').textContent=V[S][1];document.getElementById('o').innerHTML=V[S][2]();}
+document.getElementById('pk').onclick=e=>{const b=e.target.closest('[data-s]');if(b){S=+b.dataset.s;draw();}};draw();
+</script></body></html>

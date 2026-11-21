@@ -211,6 +211,35 @@ function apiKpiTree($token, $period, $selection) {
 // Peringkat
 // ------------------------------------------------------------------
 
+function rankTeamSales_($people, $asm) {
+    static $cnt = null, $key = null;
+    $k = count($people);
+    if ($cnt === null || $key !== $k) {
+        $key = $k; $cnt = []; $by = [];
+        foreach ($people as $x) $by[(string) $x['nik']] = $x;
+        foreach ($people as $x) {
+            if (($x['role'] ?? '') !== 'SALES') continue;
+            $n = $x['atasan'] ?? null;
+            for ($g = 0; $n && $g < 6; $g++) {
+                $q = $by[(string) $n] ?? null;
+                if (!$q) break;
+                if (($q['role'] ?? '') === 'ASM') { $cnt[(string) $q['nik']] = ($cnt[(string) $q['nik']] ?? 0) + 1; break; }
+                $n = $q['atasan'] ?? null;
+            }
+        }
+    }
+    return $cnt[(string) $asm['nik']] ?? 0;
+}
+function rankAsmName_($people, $p) {
+    $n = $p['atasan'] ?? null;
+    for ($g = 0; $n && $g < 6; $g++) {
+        $q = js_find($people, fn($x) => (string) $x['nik'] === (string) $n);
+        if (!$q) return null;
+        if (($q['role'] ?? '') === 'ASM') return $q['nama'];
+        $n = $q['atasan'] ?? null;
+    }
+    return null;
+}
 function apiRank($token, $period, $national, $level = null) {
     $source = snapshot_(); $u = guard_($token, false, false, $source); $period = js_str($period);
     $level = js_or($level, 'SALES'); $national = truthy($national);
@@ -230,7 +259,7 @@ function apiRank($token, $period, $national, $level = null) {
             'status' => $pending ? 'Menunggu ST ' . js_or($p['wilayah'] ?? null, 'region') : ((!empty($db['partial']) || !empty($db['missingST']) ? 'Sementara · ' : '') . $k['status'] . ' · s.d. ' . js_or($ownCut, $db['coverage'][$period]['cutoff'] ?? null)),
             'groups' => $k['count'],
             'groupScores' => array_map(fn($g) => ['name' => $g['name'], 'score' => $pending ? null : $g['score'], 'status' => $pending ? 'Menunggu ST' : ($g['na'] ? 'Tidak diwajibkan' : ($g['pending'] ? 'Belum final' : ((!empty($g['partial']) || !empty($k['tentative'])) ? 'Sementara' : 'Berlaku')))], $k['groups']),
-            'canOpen' => $can];
+            'canOpen' => $can, 'asm' => $level === 'SALES' ? rankAsmName_($people, $p) : null, 'salesCount' => $level === 'ASM' ? rankTeamSales_($people, $p) : null];
     }
     $rows = js_sort($rows, fn($a, $b) => (($b['score'] ?? -1) - ($a['score'] ?? -1)) ?: lc($a['nama'], $b['nama']));
     foreach ($rows as &$r) $r['vacant'] = (bool) (preg_match('/^VAC/i', js_str($r['nik'] ?? '')) || preg_match('/^VACANT\b/i', js_str($r['nama'] ?? '')));

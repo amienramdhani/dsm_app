@@ -61,6 +61,7 @@ function pn_submit(array $u, int $id, array $in): array {
     if ($a && $b && ($date < $a || $date > $b)) fail($no . 'tanggal harus di antara tanggal berangkat dan pulang.', 422);
     if ($date > $today) fail($no . 'tanggal tidak boleh di masa depan.', 422);
     if (!$files) fail($no . 'foto nota wajib.', 422);
+    files_check($u, $files, 'claim', $id);
     foreach ($files as $fid) { $sha = val("SELECT sha FROM claim_files WHERE id=?", [$fid]);
       if (val("SELECT 1 FROM claim_files WHERE sha=? AND slot IN ('nota','pcnota','rnota') AND ref_type IS NOT NULL AND id<>? AND NOT (ref_type='claim' AND ref_id=? AND slot='rnota') AND ref_type IN ('claim','pc')", [$sha, $fid, $id])) fail($no . 'foto nota ini sudah pernah dipakai.', 422); }
     $pid = isset($r['plan_id']) && $r['plan_id'] !== '' && $r['plan_id'] !== null ? (int) $r['plan_id'] : null;
@@ -69,11 +70,13 @@ function pn_submit(array $u, int $id, array $in): array {
   }
   db()->beginTransaction();
   try {
+    lock_row('claims', $id);
+    if (ex("UPDATE claims SET nota_state='CEK', updated_at=? WHERE id=? AND nota_state IN ('WAIT','REV')", [now(), $id]) !== 1) fail('Balik nota ini sudah dikirim.', 409);
     foreach (q("SELECT id FROM claim_rnotes WHERE claim_id=?", [$id]) as $o) ex("UPDATE claim_files SET slot='removed' WHERE ref_type='claim' AND ref_id=? AND note_id=? AND slot='rnota'", [$id, $o['id']]);
     ex("DELETE FROM claim_rnotes WHERE claim_id=?", [$id]);
     foreach ($clean as $i => $r) {
       $nid = ins('claim_rnotes', ['claim_id' => $id, 'line_no' => $i + 1, 'plan_note_id' => $r['pid'], 'komponen' => $r['komponen'], 'uraian' => $r['uraian'], 'nominal' => $r['nom'], 'nota_date' => $r['date'], 'off_plan' => $r['pid'] === null ? 1 : 0]);
-      link_files($r['files'], 'claim', $id, $nid, 'rnota');
+      link_files($u, $r['files'], 'claim', $id, $nid, 'rnota');
     }
     $makan = 0; foreach (q("SELECT nominal, detail FROM claim_notes WHERE claim_id=?", [$id]) as $n) if ((jdec($n['detail'])['komponen'] ?? '') === 'Uang makan') $makan += (int) $n['nominal'];
     $real = (int) array_sum(array_column($clean, 'nom')) + $makan;
@@ -90,22 +93,29 @@ function pn_review(array $u, int $id, array $in): array {
   $c = get_claim($id); $act = $in['action'] ?? ''; $notes = trim((string) ($in['notes'] ?? ''));
   if (($c['nota_state'] ?? '') !== 'CEK') fail('Balik nota tidak sedang menunggu pemeriksaan.');
   if (!pn_is_admin($u, $c)) fail('Tidak diizinkan.', 403);
-  if ($act === 'revise') {
-    if ($notes === '') fail('Catatan revisi wajib diisi.', 422);
-    ex("UPDATE claims SET nota_state='REV', nota_rev_note=?, updated_at=? WHERE id=?", [$notes, now(), $id]);
-    hist('claim', $id, 'Balik nota diminta revisi', $u, $notes, null, 'Nota perlu revisi', 'ADMIN');
-    notify((int) $c['claimant_id'], 'revisi', "Balik nota klaim Perdin {$c['number']} perlu revisi: $notes", 'claim', $id);
-    return ['ok' => 1, 'state' => 'REV'];
-  }
-  if ($act !== 'approve') fail('Aksi tidak dikenal.');
-  $real = (int) ($c['nota_realized'] ?? 0); $dana = (int) $c['total']; $sisa = $dana - $real; $excessId = null;
-  if ($sisa < 0) $excessId = pn_excess_claim($c, -$sisa, $u);
-  $new = $sisa > 0 ? 'SETOR' : 'OK';
-  ex("UPDATE claims SET nota_state=?, nota_sisa=?, nota_excess_id=?, updated_at=? WHERE id=?", [$new, max(0, $sisa), $excessId, now(), $id]);
-  hist('claim', $id, 'Balik nota disetujui Admin', $u, $notes ?: null, 'Terpakai ' . rp($real), $sisa > 0 ? 'Sisa ' . rp($sisa) . ' perlu disetor' : ($sisa < 0 ? 'Kelebihan ' . rp(-$sisa) . ' jadi klaim reimburse' : 'Sisa nol'), 'ADMIN');
-  if ($sisa > 0) notify((int) $c['claimant_id'], 'tugas', "Balik nota {$c['number']} disetujui. Mohon setor sisa " . rp($sisa) . '.', 'claim', $id);
-  else notify((int) $c['claimant_id'], 'selesai', "Balik nota klaim Perdin {$c['number']} selesai.", 'claim', $id);
-  return ['ok' => 1, 'state' => $new, 'sisa' => max(0, $sisa), 'excess' => max(0, -$sisa)];
+  if ($act !== 'revise' && $act !== 'approve') fail('Aksi tidak dikenal.');
+  if ($act === 'revise' && $notes === '') fail('Catatan revisi wajib diisi.', 422);
+  db()->beginTransaction();
+  try {
+    $c = lock_row('claims', $id);
+    $new = 'REV'; $real = (int) ($c['nota_realized'] ?? 0); $dana = (int) $c['total']; $sisa = $dana - $real; $excessId = null;
+    if ($act === 'approve') $new = $sisa > 0 ? 'SETOR' : 'OK';
+    // hanya satu request yang bisa memindahkan status dari CEK; request kedua berhenti di sini, sebelum klaim reimburse dibuat
+    if (ex("UPDATE claims SET nota_state=?, updated_at=? WHERE id=? AND nota_state='CEK'", [$new, now(), $id]) !== 1) fail('Balik nota ini sudah diproses.', 409);
+    if ($act === 'revise') {
+      ex("UPDATE claims SET nota_rev_note=? WHERE id=?", [$notes, $id]);
+      hist('claim', $id, 'Balik nota diminta revisi', $u, $notes, null, 'Nota perlu revisi', 'ADMIN');
+      notify((int) $c['claimant_id'], 'revisi', "Balik nota klaim Perdin {$c['number']} perlu revisi: $notes", 'claim', $id);
+    } else {
+      if ($sisa < 0) $excessId = pn_excess_claim($c, -$sisa, $u);
+      ex("UPDATE claims SET nota_sisa=?, nota_excess_id=? WHERE id=?", [max(0, $sisa), $excessId, $id]);
+      hist('claim', $id, 'Balik nota disetujui Admin', $u, $notes ?: null, 'Terpakai ' . rp($real), $sisa > 0 ? 'Sisa ' . rp($sisa) . ' perlu disetor' : ($sisa < 0 ? 'Kelebihan ' . rp(-$sisa) . ' jadi klaim reimburse' : 'Sisa nol'), 'ADMIN');
+      if ($sisa > 0) notify((int) $c['claimant_id'], 'tugas', "Balik nota {$c['number']} disetujui. Mohon setor sisa " . rp($sisa) . '.', 'claim', $id);
+      else notify((int) $c['claimant_id'], 'selesai', "Balik nota klaim Perdin {$c['number']} selesai.", 'claim', $id);
+    }
+    db()->commit();
+  } catch (Throwable $e) { if (db()->inTransaction()) db()->rollBack(); throw $e; }
+  return $act === 'revise' ? ['ok' => 1, 'state' => 'REV'] : ['ok' => 1, 'state' => $new, 'sisa' => max(0, $sisa), 'excess' => max(0, -$sisa)];
 }
 /** Kelebihan pemakaian Perdin -> klaim reimburse otomatis (pola sama dengan kelebihan petty cash). */
 function pn_excess_claim(array $c, int $excess, array $u): int {
@@ -118,7 +128,7 @@ function pn_excess_claim(array $c, int $excess, array $u): int {
   ex("UPDATE claims SET number=?, route=? WHERE id=?", [next_number('KLM', ''), jenc(['ADMIN', 'FM', 'FT']), $id]);
   ins('claim_versions', ['claim_id' => $id, 'version_no' => 1, 'total' => $excess, 'reason' => 'Reimburse kelebihan Perdin', 'created_at' => now()]);
   $nid = ins('claim_notes', ['claim_id' => $id, 'line_no' => 1, 'nominal' => $excess, 'nota_date' => date('Y-m-d'), 'detail' => jenc(['komponen' => 'Kelebihan Perdin'])]);
-  foreach (q("SELECT id FROM claim_files WHERE ref_type='claim' AND ref_id=? AND slot='rnota' LIMIT 1", [$c['id']]) as $f) {
+  foreach (q("SELECT id FROM claim_files WHERE ref_type='claim' AND ref_id=? AND slot='rnota' ORDER BY id", [$c['id']]) as $f) {
     $src = one("SELECT * FROM claim_files WHERE id=?", [$f['id']]); unset($src['id']); $src['ref_id'] = $id; $src['note_id'] = $nid; $src['slot'] = 'pcref'; ins('claim_files', $src);
   }
   hist('claim', $id, 'Dibuat otomatis dari kelebihan Perdin', $u, $c['number'], null, rp($excess));
@@ -132,9 +142,14 @@ function pn_setoran(array $u, int $id, array $in): void {
   if (($c['nota_state'] ?? '') !== 'SETOR' || $c['nota_setoran_no']) fail('Tidak ada sisa yang perlu disetor.');
   $no = trim((string) ($in['setoran_no'] ?? '')); $files = array_map('intval', $in['files'] ?? []);
   if ($no === '' || !$files) fail('Nomor setoran dan bukti wajib.', 422);
-  link_files($files, 'claim', $id, null, 'setoran');
-  ex("UPDATE claims SET nota_setoran_no=?, updated_at=? WHERE id=?", [$no, now(), $id]);
-  hist('claim', $id, 'Bukti setoran dikirim', $u, $no, null, rp((int) $c['nota_sisa']));
+  db()->beginTransaction();
+  try {
+    lock_row('claims', $id);
+    if (ex("UPDATE claims SET nota_setoran_no=?, updated_at=? WHERE id=? AND nota_state='SETOR' AND nota_setoran_no IS NULL", [$no, now(), $id]) !== 1) fail('Bukti setoran sudah dikirim.', 409);
+    link_files($u, $files, 'claim', $id, null, 'setoran');
+    hist('claim', $id, 'Bukti setoran dikirim', $u, $no, null, rp((int) $c['nota_sisa']));
+    db()->commit();
+  } catch (Throwable $e) { if (db()->inTransaction()) db()->rollBack(); throw $e; }
   foreach (stage_users('FT', $c['region'], $c['entity']) as $a) notify((int) $a['id'], 'tugas', "Bukti setoran klaim Perdin {$c['number']} menunggu konfirmasi.", 'claim', $id);
 }
 /** Finance Transfer mengonfirmasi setoran -> balik nota selesai. */
@@ -142,7 +157,7 @@ function pn_close(array $u, int $id): void {
   $c = get_claim($id);
   if (!pn_is_ft($u, $c)) fail('Hanya Finance Transfer.', 403);
   if (($c['nota_state'] ?? '') !== 'SETOR' || !$c['nota_setoran_no']) fail('Bukti setoran belum dikirim pemohon.');
-  ex("UPDATE claims SET nota_state='OK', updated_at=? WHERE id=?", [now(), $id]);
+  if (ex("UPDATE claims SET nota_state='OK', updated_at=? WHERE id=? AND nota_state='SETOR' AND nota_setoran_no IS NOT NULL", [now(), $id]) !== 1) fail('Setoran ini sudah dikonfirmasi.', 409);
   hist('claim', $id, 'Setoran dikonfirmasi, balik nota selesai', $u, null, null, null, 'FT');
   notify((int) $c['claimant_id'], 'selesai', "Balik nota klaim Perdin {$c['number']} selesai.", 'claim', $id);
 }

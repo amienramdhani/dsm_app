@@ -74,6 +74,16 @@ function apiDealerStock($token, $period = null, $selection = null, $customer = n
     return ['ready' => $r['ready'] ?? null, 'message' => $r['message'] ?? null, 'asof' => $r['asof'] ?? null, 'stCut' => $r['stCut'] ?? null, 'soCut' => $r['soCut'] ?? null, 'rows' => $r['rows'] ?? []];
 }
 
+/** Pola 12 bulan tab STATUS di HP. Diambil saat tab STATUS diketuk; cek akses sama persis dengan apiDealerDetail. */
+function apiDealerP12($token, $period = null, $selection = null, $customer = null) {
+    /* Jalur ringan: dealer milik orang dalam cakupan (master) atau penugasan TM. Selain itu pakai cek lengkap apiDealerDetail. */
+    $source = snapshot_(); $u = guard_($token, false, false, $source); $ids = allowed_($source, $u, $selection); $cust = (string) $customer;
+    $period = preg_match('/^\d{4}-\d{2}$/', (string) $period) ? (string) $period : dsLatest_($source);
+    $known = $source['meta']['customers'][$cust] ?? null;
+    $ok = ($known && in_set(js_set($ids), $known['nik'] ?? null)) || ($u['role'] === 'TELEMARKETING' && tmHasDealer_(tmLivePairs_($u['nik']), $cust));
+    if (!$ok) { $d = apiDealerDetail($token, $period, $selection, $customer); return $d['ds']['p12'] ?? null; }
+    $x = dsP12_($source, $period, $cust); $x['brand'] = js_obj($x['brand']); return $x;
+}
 function apiDealerDetail($token, $period = null, $selection = null, $customer = null) {
     $source = snapshot_(); $u = guard_($token, false, false, $source); $ids = allowed_($source, $u, $selection);
     $db = coverageView_($source, $period, $ids, 'ST', $u); $set = js_set($ids); $known = $db['meta']['customers'][$customer] ?? null;
@@ -105,6 +115,16 @@ function apiDealerDetail($token, $period = null, $selection = null, $customer = 
         'brands' => array_map(fn($brand) => array_merge(['brand' => $brand], PortalCore::metrics($rows, $db, $period, $brand), ['sellout' => StockCore::monthly($db, $period, $ids, $customer, $brand)['qty']]), $brands)];
 }
 
+/* Target tim untuk brand 'ALL' = jumlah target tiap brand device (sama seperti apiEarlyWarning). */
+function teamTarget_(array $meta, string $period, array $ids, $brand, string $metric): array {
+    $t = PortalCore::target($meta, $period, $ids, $brand, $metric);
+    if ($brand === 'ALL' && !$t['exists']) {
+        $parts = array_map(fn($b) => PortalCore::target($meta, $period, $ids, $b, $metric), anaDeviceBrands_($meta));
+        $t = ['value' => js_sum($parts, fn($x) => $x['value']), 'exists' => js_some($parts, fn($x) => $x['exists']), 'missing' => []];
+        foreach ($parts as $x) foreach ($x['missing'] ?? [] as $id) if (!in_array($id, $t['missing'], true)) $t['missing'][] = $id;
+    }
+    return $t;
+}
 function apiTeam($token, $period = null, $level = null, $brand = null, $selection = null, $filters = null) {
     $source = snapshot_(); $u = guard_($token, false, false, $source); $people = $source['meta']['people'];
     $me = js_find($people, fn($p) => $p['nik'] === $u['nik']);
@@ -136,15 +156,15 @@ function apiTeam($token, $period = null, $level = null, $brand = null, $selectio
     foreach ($groups as $p) {
         $team = $p['team']; $curr = PortalCore::metrics(PortalCore::slice($db, $period, $team), $db, $period, $brand);
         $previous = PortalCore::metrics(PortalCore::sliceCmp($db, $cmp['period'], $team, $cmp['cutoff'], $period), $db, $cmp['period'], $brand);
-        $curr['sellout'] = StockCore::monthly($db, $period, $team, null, $brand)['qty'];
+        $curr['sellout'] = StockCore::monthly($db, $period, $team, null, $brand === 'ALL' ? null : $brand)['qty'];
         $output[] = ['nik' => $p['nik'], 'nama' => $p['nama'], 'region' => $p['region'], 'role' => $p['role'], 'boss' => $p['boss'], 'bossRole' => $p['bossRole'], 'acting' => $p['acting'], 'total' => $curr, 'previous' => $previous, 'previousAvailable' => $cmp['available'],
-            'target' => PortalCore::target($db['meta'], $period, $team, $brand, 'QTY'), 'targetDA' => PortalCore::target($db['meta'], $period, $team, $brand, 'DA'), 'targetNOO' => PortalCore::target($db['meta'], $period, $team, $brand, 'NOO')];
+            'target' => teamTarget_($db['meta'], $period, $team, $brand, 'QTY'), 'targetDA' => teamTarget_($db['meta'], $period, $team, $brand, 'DA'), 'targetNOO' => teamTarget_($db['meta'], $period, $team, $brand, 'NOO')];
     }
     $un = []; foreach ($groups as $p) foreach ($p['team'] as $id) $un[] = $id; $union = uniq($un);
-    $total = PortalCore::metrics(PortalCore::slice($db, $period, $union), $db, $period, $brand); $total['sellout'] = StockCore::monthly($db, $period, $union, null, $brand)['qty'];
+    $total = PortalCore::metrics(PortalCore::slice($db, $period, $union), $db, $period, $brand); $total['sellout'] = StockCore::monthly($db, $period, $union, null, $brand === 'ALL' ? null : $brand)['qty'];
     $output[] = ['nik' => '', 'nama' => 'Total', 'region' => 'Seluruh hasil tabel', 'boss' => '', 'bossRole' => '', 'total' => $total,
         'previous' => PortalCore::metrics(PortalCore::sliceCmp($db, $cmp['period'], $union, $cmp['cutoff'], $period), $db, $cmp['period'], $brand), 'previousAvailable' => $cmp['available'],
-        'target' => PortalCore::target($db['meta'], $period, $union, $brand, 'QTY'), 'targetDA' => PortalCore::target($db['meta'], $period, $union, $brand, 'DA'), 'targetNOO' => PortalCore::target($db['meta'], $period, $union, $brand, 'NOO')];
+        'target' => teamTarget_($db['meta'], $period, $union, $brand, 'QTY'), 'targetDA' => teamTarget_($db['meta'], $period, $union, $brand, 'DA'), 'targetNOO' => teamTarget_($db['meta'], $period, $union, $brand, 'NOO')];
     return $output;
 }
 

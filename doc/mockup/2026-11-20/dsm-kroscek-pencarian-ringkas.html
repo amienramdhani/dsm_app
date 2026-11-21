@@ -1,0 +1,22 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><title>Kroscek KPI · lebar pencarian</title><style>
+*{box-sizing:border-box}body{margin:0;font:13px Inter,system-ui,sans-serif;background:#F3F6F9;color:#10394E}
+.top{background:#fff;padding:10px 16px;display:flex;gap:8px;align-items:center;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.top button{border:1px solid #CBD5E0;background:#fff;border-radius:8px;padding:6px 14px;font-weight:800;font-size:11px;cursor:pointer}.top button.on{background:#10394E;color:#fff;border-color:#10394E}
+.note{margin:12px 16px;padding:10px 14px;background:#E8F7EF;border:1px solid #CFEBDC;border-radius:10px;color:#0F4F3B}
+.wrap{margin:0 16px 30px}.bar{display:flex;gap:10px;align-items:center;margin-bottom:10px}.bar span{background:#fff;border:1px solid #CBD5E0;border-radius:8px;padding:7px 12px;font-size:11px;font-weight:700}
+.card{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(16,57,78,.08);overflow:hidden;margin-bottom:12px}
+.ph{padding:10px 16px;font-weight:800;display:flex;align-items:center;gap:8px}.row{padding:0 16px 12px;display:flex;gap:8px;align-items:center}
+.in{height:32px;border:1px solid #CBD5E0;border-radius:8px;color:#98A4B3;padding:8px 10px;font-size:12px;width:var(--w)}
+.sel{height:32px;border:1px solid #CBD5E0;border-radius:8px;padding:8px 10px;font-size:11px;font-weight:700;background:#fff}
+.go{height:32px;border-radius:8px;background:#10394E;color:#fff;font-weight:800;font-size:10.5px;padding:0 14px;display:flex;align-items:center}
+.fake{height:50px;border:1px dashed #CBD5E0;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;color:#98A4B3}
+.full .in{flex:1}
+</style></head><body>
+<div class="top"><b>Kroscek KPI · pencarian</b><span id="bt"></span></div><div class="note" id="n"></div><div class="wrap" id="o"></div>
+<script>
+const O={now:['SEKARANG','Kolom cari melebar penuh satu layar.',null],w1:['W1 · 380px','Kolom cari 380px, dropdown jabatan di sebelahnya, panel tetap selebar halaman.','380px'],w2:['W2 · 460px','Sedikit lebih lega (cukup untuk nama panjang atau NIK + periode).','460px']};
+function r(k){document.getElementById('bt').innerHTML=Object.keys(O).map(x=>`<button data-k="${x}" class="${x===k?'on':''}">${O[x][0]}</button>`).join('');document.querySelectorAll('#bt button').forEach(b=>b.onclick=()=>r(b.dataset.k));
+document.getElementById('n').innerHTML='<b>'+O[k][0]+'</b>: '+O[k][1]+' Hanya panel Cari &amp; Kroscek KPI di Peringkat desktop.';
+const w=O[k][2];document.getElementById('o').innerHTML='<div class="bar"><span>DALAM CAKUPAN SAYA</span><span>NASIONAL</span><span>PERINGKAT: ASM</span><span>DASAR: KPI Akhir</span><span>REGION: SEMUA</span><span>RESET</span></div><div class="card '+(w?'':'full')+'"><div class="ph">CARI &amp; KROSCEK KPI ⓘ</div><div class="row"><div class="in" style="--w:'+(w||'auto')+'">Cari nama atau NIK, mis. fendi / 2024.12</div><div class="sel">SEMUA JABATAN ⌄</div></div></div><div class="fake">papan peringkat</div>';}
+r('w1');
+</script></body></html>

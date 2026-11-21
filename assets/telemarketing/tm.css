@@ -208,3 +208,36 @@ html body .tm-ordermodal #tmOrderForm .tm-form-group>.ph{padding:10px 12px!impor
 .ss-opt{display:block;width:100%;text-align:left;border:0;background:transparent;font:inherit;font-size:13px;padding:9px 10px;border-radius:8px;cursor:pointer;color:#14233A}
 .ss-opt:hover,.ss-opt:focus{background:#EAF3FD}.ss-opt.on{background:#E8F7F1;font-weight:700}.ss-opt[disabled]{opacity:.4;cursor:not-allowed}
 .ss-none{padding:10px;font-size:12.5px;color:#6B7C8D}
+
+/* Validasi: tabel rapi (2026-11-20, mockup dsm-validasi-tabel-rapi). Font satu keluarga (Inter), angka tabular. */
+html body #mask#mask#mask .tm-vt-wrap{border:1px solid #D5DDE6;border-radius:8px;max-height:60vh}
+html body #mask#mask#mask table.tm-vt{font-family:inherit!important;font-size:11.5px!important}
+html body #mask#mask#mask table.tm-vt th{background:#E6EBF1!important;color:#10394E!important;font-family:inherit!important;font-size:10px!important;font-weight:800!important;letter-spacing:.4px;padding:5px 8px!important;border-bottom:2px solid #15303F!important;border-right:1px solid #D5DDE6;line-height:1.3}
+html body #mask#mask#mask table.tm-vt td{font-family:inherit!important;font-size:11.5px!important;font-weight:400;padding:3px 8px!important;line-height:1.35;border-bottom:1px solid #E3E9EF!important;border-right:1px solid #EEF1F5;color:#10394E}
+html body #mask#mask#mask table.tm-vt td b{font-size:11.5px!important;font-weight:700}
+html body #mask#mask#mask table.tm-vt td.n{font-variant-numeric:tabular-nums;font-family:inherit!important}
+html body #mask#mask#mask table.tm-vt tbody tr:nth-child(even) td{background:#FAFBFD}
+html body #mask#mask#mask table.tm-vt td.tm-no{font-size:11px!important;color:#6B7785}
+html body #mask#mask#mask table.tm-vt td:nth-child(2){color:#4A5663;font-variant-numeric:tabular-nums}
+html body #mask#mask#mask table.tm-vt tfoot td{background:#E6EBF1!important;color:#10394E;font-weight:800!important;border-top:2px solid #15303F!important;font-size:11.5px!important}
+html body #mask#mask#mask table.tm-vt .tmTy summary,html body #mask#mask#mask table.tm-vt .tmTyC{font-family:inherit!important;font-size:10.5px!important}
+
+/* Validasi: header H2 (strip ringkas) */
+html body #mask#mask#mask .vh2{display:flex;align-items:center;gap:18px;margin:6px 0 8px;padding:8px 12px;background:#F6F8FB;border-radius:10px;flex-wrap:wrap}
+html body #mask#mask#mask .vh2 .vn b{display:block;font-size:12.5px;color:#10394E}html body #mask#mask#mask .vh2 .vn small{font-size:10.5px;color:#6B7785}
+html body #mask#mask#mask .vh2 .vs{display:flex;gap:20px;align-items:center;flex:1}
+html body #mask#mask#mask .vh2 .vs small{display:block;font-size:9px;font-weight:800;color:#6B7785;letter-spacing:.4px}html body #mask#mask#mask .vh2 .vs b{font-size:14px;color:#10394E;font-variant-numeric:tabular-nums}
+html body #mask#mask#mask .vh2 .vbar{flex:0 0 130px;height:6px;background:#DDE5EC;border-radius:3px}html body #mask#mask#mask .vh2 .vbar i{display:block;height:100%;border-radius:3px}
+
+/* Pemilih Sales / Telemarketing: toggle di judul halaman (desktop, opsi S4) */
+html body #app#app#app .ptitle.ptFlex{display:flex;align-items:center;gap:12px}
+html body #app#app#app .tm-role-tg{margin-left:auto;display:inline-flex;border:1px solid #CBD5E0;border-radius:8px;overflow:hidden;background:#fff}
+html body #app#app#app .tm-role-tg button{border:0;background:#fff;padding:5px 14px;font:800 10.5px Inter,system-ui,sans-serif;color:#6B7785;cursor:pointer;letter-spacing:.3px;height:auto;min-height:0;border-radius:0;box-shadow:none}
+html body #app#app#app .tm-role-tg button+button{border-left:1px solid #CBD5E0}
+html body #app#app#app .tm-role-tg button.on{background:#10394E;color:#fff}
+/* Kroscek KPI: kolom cari ringkas 380px (desktop, opsi W1) */
+@media(min-width:761px){
+html body #app#app#app .adm-search .adm-bar{display:flex;gap:8px;align-items:center;justify-content:flex-start}
+html body #app#app#app .adm-search .adm-bar #admQ{flex:0 0 380px!important;width:380px!important;max-width:380px}
+html body #app#app#app .adm-search .adm-bar #admRole{flex:0 0 auto!important;width:auto!important;min-width:150px}
+}

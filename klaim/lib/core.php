@@ -205,8 +205,26 @@ function save_upload(array $u, array $f, string $slot): array {
   $id = ins('claim_files', ['uploader' => $u['id'], 'stored_name' => $stored, 'orig' => substr($f['name'] ?? 'file', 0, 150), 'mime' => $mime, 'size_b' => (int) $f['size'], 'sha' => $sha, 'slot' => $slot, 'created_at' => now()]);
   return ['id' => $id, 'orig' => $f['name'] ?? '', 'mime' => $mime, 'sha' => $sha];
 }
-function link_files(array $ids, string $rt, int $rid, ?int $noteId, string $slot): void {
-  foreach ($ids as $fid) ex("UPDATE claim_files SET ref_type=?, ref_id=?, note_id=?, slot=? WHERE id=?", [$rt, $rid, $noteId, $slot, (int) $fid]);
+/** Validasi berkas sebelum dipakai: harus ada, dan (a) belum terpakai + diunggah oleh $u sendiri, atau (b) sudah milik dokumen yang sama (simpan ulang). */
+function files_check(array $u, array $ids, string $rt, int $rid): void {
+  foreach (array_unique(array_map('intval', $ids)) as $fid) {
+    $f = one("SELECT id, uploader, ref_type, ref_id FROM claim_files WHERE id=?", [$fid]);
+    if (!$f) fail('Berkas tidak ditemukan.', 422);
+    if ($f['ref_type'] === null) { if ((int) $f['uploader'] !== (int) $u['id'] && !sa_free($u)) fail('Berkas bukan milik Anda.', 403); }
+    elseif (!($f['ref_type'] === $rt && (int) $f['ref_id'] === $rid)) fail('Berkas sudah dipakai di dokumen lain.', 403);
+  }
+}
+function link_files(array $u, array $ids, string $rt, int $rid, ?int $noteId, string $slot): void {
+  $ids = array_values(array_unique(array_map('intval', $ids))); if (!$ids) return;
+  files_check($u, $ids, $rt, $rid);
+  foreach ($ids as $fid) ex("UPDATE claim_files SET ref_type=?, ref_id=?, note_id=?, slot=? WHERE id=? AND (ref_type IS NULL OR (ref_type=? AND ref_id=?))", [$rt, $rid, $noteId, $slot, $fid, $rt, $rid]);
+  // cek ulang setelah update: kalau ada request lain yang mendahului, batalkan
+  foreach ($ids as $fid) { $f = one("SELECT ref_type, ref_id FROM claim_files WHERE id=?", [$fid]); if (!$f || $f['ref_type'] !== $rt || (int) $f['ref_id'] !== $rid) fail('Berkas sudah dipakai di dokumen lain.', 409); }
+}
+/** Kunci baris (MySQL: SELECT ... FOR UPDATE). Wajib dipanggil di dalam transaksi. SQLite mengunci per database saat menulis. */
+function lock_row(string $table, int $id): ?array {
+  $sqlite = (cfg()['driver'] ?? 'mysql') === 'sqlite';
+  return one("SELECT * FROM $table WHERE id=?" . ($sqlite ? '' : ' FOR UPDATE'), [$id]);
 }
 function files_of(string $rt, int $rid, ?string $slot = null, ?int $noteId = null): array {
   $sql = "SELECT id, orig, mime, slot, note_id FROM claim_files WHERE ref_type=? AND ref_id=?"; $p = [$rt, $rid];

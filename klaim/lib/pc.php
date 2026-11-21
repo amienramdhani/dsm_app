@@ -38,7 +38,7 @@ function pc_submit(array $u, array $in): int {
     'purpose' => trim($in['purpose']), 'remark' => trim($in['remark'] ?? '') ?: null, 'location' => $in['location'] ?? null, 'p_start' => $in['p_start'], 'p_end' => $in['p_end'], 'amount' => $amount, 'plan' => jenc($plan),
     'status' => 'WAIT', 'stage' => $route[0], 'route' => jenc($route), 'acct_bank' => $u['bank'], 'acct_no' => $u['bank_no'], 'acct_name' => $u['bank_name'],
     'stage_since' => now(), 'created_at' => now(), 'updated_at' => now()]);
-  foreach ($plan as $r) foreach (($r['perdin']['maps'] ?? []) as $fid) link_files([(int) $fid], 'pc', $id, null, 'maps');
+  foreach ($plan as $r) foreach (($r['perdin']['maps'] ?? []) as $fid) link_files($u, [(int) $fid], 'pc', $id, null, 'maps');
   $p = get_pc($id);
   hist('pc', $id, 'Petty cash diajukan', $u, null, null, $p['number'] . ' · ' . rp($amount));
   foreach (stage_users($route[0], $p['region'], $p['entity']) as $a) notify($a['id'], 'tugas', "Petty cash {$p['number']} menunggu giliran Anda.", 'pc', $id);
@@ -80,7 +80,7 @@ function pc_act(array $u, int $id, array $in): array {
     $no = trim($in['transfer_no'] ?? ''); $proof = array_map('intval', $in['proof'] ?? []);
     if ($no === '' || !$proof) fail('Nomor dan bukti transfer wajib.');
     ins('claim_transfers', ['ref_type' => 'pc', 'ref_id' => $id, 'transfer_no' => $no, 'amount' => $p['amount'], 'user_id' => $u['id'], 'entity' => $p['entity'], 'created_at' => now()]);
-    link_files($proof, 'pc', $id, null, 'transfer');
+    link_files($u, $proof, 'pc', $id, null, 'transfer');
     ex("UPDATE claim_pc SET status='DANA', stage=NULL, funded_at=?, updated_at=? WHERE id=?", [now(), now(), $id]);
     hist('pc', $id, 'Dana ditransfer', $u, $no, null, rp((int) $p['amount']), 'FT');
     notify((int) $p['claimant_id'], 'selesai', "Dana petty cash {$p['number']} sudah ditransfer. Kirim nota sebelum akhir periode.", 'pc', $id); return ['ok' => 1];
@@ -102,11 +102,12 @@ function pc_add_note(array $u, int $id, array $in): int {
   if ($date < $p['p_start'] || $date > $p['p_end']) fail('Tanggal nota harus berada dalam periode petty cash (' . $p['p_start'] . ' s/d ' . $p['p_end'] . ').');
   if ($date > date('Y-m-d')) fail('Tanggal nota tidak boleh di masa depan.');
   $files = array_map('intval', $in['files'] ?? []); if (!$files) fail('Foto nota wajib.');
+  files_check($u, $files, 'pc', $id);
   foreach ($files as $fid) { $sha = val("SELECT sha FROM claim_files WHERE id=?", [$fid]);
     if (val("SELECT 1 FROM claim_files WHERE sha=? AND slot IN ('nota','pcnota') AND ref_type IS NOT NULL AND id<>? AND ref_type IN ('claim','pc')", [$sha, $fid])) fail('Foto nota ini sudah pernah dipakai.'); }
   $off = isset($in['plan_idx']) && $in['plan_idx'] !== '' && $in['plan_idx'] !== null ? 0 : 1;
   $nid = ins('claim_pc_notes', ['pc_id' => $id, 'nominal' => $nom, 'nota_date' => $date, 'plan_idx' => $off ? null : (int) $in['plan_idx'], 'off_plan' => $off, 'uraian' => trim($in['uraian'] ?? '')]);
-  link_files($files, 'pc', $id, $nid, 'pcnota');
+  link_files($u, $files, 'pc', $id, $nid, 'pcnota');
   hist('pc', $id, 'Nota ditambahkan', $u, ($in['uraian'] ?? '') . ($off ? ' (di luar rencana)' : ''), null, rp($nom));
   return $nid;
 }
@@ -146,7 +147,7 @@ function pc_setoran(array $u, int $id, array $in): void {
   if ($p['status'] !== 'SETOR') fail('Tidak ada sisa yang perlu disetor.');
   $no = trim($in['setoran_no'] ?? ''); $files = array_map('intval', $in['files'] ?? []);
   if ($no === '' || !$files) fail('Nomor setoran dan bukti wajib.');
-  link_files($files, 'pc', $id, null, 'setoran');
+  link_files($u, $files, 'pc', $id, null, 'setoran');
   ex("UPDATE claim_pc SET setoran_no=?, setoran_amount=?, updated_at=? WHERE id=?", [$no, $p['sisa'], now(), $id]);
   hist('pc', $id, 'Bukti setoran dikirim', $u, $no, null, rp((int) $p['sisa']));
   foreach (stage_users('FT', $p['region'], $p['entity']) as $a) notify($a['id'], 'tugas', "Bukti setoran {$p['number']} menunggu konfirmasi.", 'pc', $id);

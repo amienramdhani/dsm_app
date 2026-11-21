@@ -1,0 +1,63 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><title>Mockup · Tema tabel seluruh halaman</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:13px/1.45 Inter,Segoe UI,Arial,sans-serif;background:#F3F6F9;color:#15303F;padding:20px}
+h1{font-size:18px;margin:0 0 4px;color:#10394E}.lead{color:#5B6B7A;margin:0 0 16px;max-width:1100px}
+h2{font-size:13px;letter-spacing:.4px;color:#10394E;margin:22px 0 8px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:1300px}.pair>div>b{display:block;font-size:11px;letter-spacing:.5px;color:#7C8899;margin-bottom:6px}
+.wrap{background:#fff;border:1px solid #E3E9F0;border-radius:14px;overflow:hidden}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{padding:8px 10px;text-align:right;white-space:nowrap}th:first-child,td:first-child,th.l,td.l{text-align:left}
+td{border-top:1px solid #EEF2F6}
+/* LAMA */
+.old th{background:#F4F7FB;color:#0B4C8F;font-size:10.5px;border-bottom:3px solid #0B5CAD}
+.old th.k{background:#0F5257;color:#fff}.old th.st{background:#E3EEFB;color:#1E5FB8;border-bottom-color:#1E5FB8}.old th.so{background:#FDEBDD;color:#C25A12;border-bottom-color:#C25A12}.old th.da{background:#DDF3EE;color:#0E7C6B;border-bottom-color:#0E7C6B}
+.old th.gst{background:#1E5FB8;color:#fff;text-align:center}.old th.gso{background:#C25A12;color:#fff;text-align:center}
+.old td.st{background:#F5F9FE}.old td.so{background:#FFF8F2}.old td.da{background:#F3FBF9}
+.old tr.t td{background:#EAF2FB;font-weight:800;border-top:2px solid #0B5CAD}.old tr.t td.st{background:#E3EEFB;color:#1E5FB8}.old tr.t td.so{background:#FDEBDD;color:#C25A12}.old tr.t td.da{background:#DDF3EE;color:#0E7C6B}
+.old td.n{color:#0B5CAD;font-weight:800}
+/* BARU */
+.new th{background:#10394E;color:#fff;font-size:10.5px;letter-spacing:.4px}
+.new th i{display:inline-block;width:9px;height:9px;margin-right:6px;box-shadow:0 0 0 1.5px rgba(255,255,255,.9);vertical-align:0}
+.new th.g{background:#0C2C3D;text-align:left;border-bottom:3px solid var(--c)}.new th.s{border-left:1px solid rgba(255,255,255,.18)}
+.new td.s{border-left:1px solid #E3E9F0}.new tbody tr:nth-child(even) td{background:#FAFCFD}
+.new tr.t td{background:#10394E;color:#fff;font-weight:800}
+.new td.n{color:#10394E;font-weight:800}
+.up{color:#12866A;font-weight:800}.dn{color:#B42318;font-weight:800}.new tr.t .up{color:#7FE0B8}.new tr.t .dn{color:#FFB4AC}
+.side{max-width:1300px;margin-top:18px;background:#fff;border-radius:14px;padding:12px 16px;border:1px solid #E3E9F0}.side ul{margin:6px 0 0;padding-left:18px}.side li{margin:3px 0}
+</style></head><body>
+<h1>Mockup · Tema tabel untuk SEMUA halaman (Beranda, Dealer, DOS, KPI, Transaksi, dll)</h1>
+<p class="lead">Kiri = sekarang, kanan = usulan. Sama dengan tabel popup yang sudah disetujui: header petrol, warna indikator/brand jadi kotak kecil, isi putih, TOTAL petrol. Struktur, kolom, lebar, sticky tidak berubah.</p>
+
+<h2>1 · Tabel biasa (contoh Daftar Dealer)</h2>
+<div class="pair">
+<div><b>SEKARANG</b><div class="wrap old"><table><tr><th class="k">KODE</th><th class="k l">NAMA DEALER</th><th class="l">BIG REGION</th><th class="l">SUB REGION</th><th class="l">SALES</th></tr>
+<tr><td>028.145</td><td class="l n">1217 CELL</td><td class="l">SUMATERA BAG. SELATAN</td><td class="l">SUMATERA SELATAN</td><td class="l">AGUS IZHA</td></tr>
+<tr><td>321.158</td><td class="l n">123 DEAL</td><td class="l">SULAWESI SELATAN</td><td class="l">SULAWESI SELATAN</td><td class="l">MUH IKBAL</td></tr>
+<tr><td>BT06609</td><td class="l n">2 DAN CELLULAR</td><td class="l">JAWA TENGAH</td><td class="l">BIG SEMARANG</td><td class="l">DEDE PUJI</td></tr></table></div></div>
+<div><b>USULAN</b><div class="wrap new"><table><tr><th>KODE</th><th class="l">NAMA DEALER</th><th class="l">BIG REGION</th><th class="l">SUB REGION</th><th class="l">SALES</th></tr>
+<tr><td>028.145</td><td class="l n">1217 CELL</td><td class="l">SUMATERA BAG. SELATAN</td><td class="l">SUMATERA SELATAN</td><td class="l">AGUS IZHA</td></tr>
+<tr><td>321.158</td><td class="l n">123 DEAL</td><td class="l">SULAWESI SELATAN</td><td class="l">SULAWESI SELATAN</td><td class="l">MUH IKBAL</td></tr>
+<tr><td>BT06609</td><td class="l n">2 DAN CELLULAR</td><td class="l">JAWA TENGAH</td><td class="l">BIG SEMARANG</td><td class="l">DEDE PUJI</td></tr></table></div></div>
+</div>
+
+<h2>2 · Tabel berkelompok indikator (contoh Pencapaian Tim)</h2>
+<div class="pair">
+<div><b>SEKARANG</b><div class="wrap old"><table><tr><th rowspan="2" class="l">SALES</th><th colspan="3" class="gst">SELL THRU</th><th colspan="2" class="gso">SELL OUT</th></tr>
+<tr><th class="st">MTD</th><th class="st">LMTD</th><th class="st">GROWTH</th><th class="so">MTD</th><th class="so">GROWTH</th></tr>
+<tr><td class="l">AGUS IZHA</td><td class="st">1.240</td><td class="st">1.100</td><td class="st up">+12,7%</td><td class="so">980</td><td class="so dn">-4,1%</td></tr>
+<tr><td class="l">MUH IKBAL</td><td class="st">860</td><td class="st">910</td><td class="st dn">-5,5%</td><td class="so">700</td><td class="so up">+3,0%</td></tr>
+<tr class="t"><td class="l">TOTAL</td><td class="st">2.100</td><td class="st">2.010</td><td class="st">+4,5%</td><td class="so">1.680</td><td class="so">-1,2%</td></tr></table></div></div>
+<div><b>USULAN</b><div class="wrap new"><table><tr><th rowspan="2" class="l">SALES</th><th colspan="3" class="g s" style="--c:#1E5FB8"><i style="background:#1E5FB8"></i>SELL THRU</th><th colspan="2" class="g s" style="--c:#C25A12"><i style="background:#C25A12"></i>SELL OUT</th></tr>
+<tr><th class="s">MTD</th><th>LMTD</th><th>GROWTH</th><th class="s">MTD</th><th>GROWTH</th></tr>
+<tr><td class="l">AGUS IZHA</td><td class="s">1.240</td><td>1.100</td><td class="up">+12,7%</td><td class="s">980</td><td class="dn">-4,1%</td></tr>
+<tr><td class="l">MUH IKBAL</td><td class="s">860</td><td>910</td><td class="dn">-5,5%</td><td class="s">700</td><td class="up">+3,0%</td></tr>
+<tr class="t"><td class="l">TOTAL</td><td class="s">2.100</td><td>2.010</td><td class="up">+4,5%</td><td class="s">1.680</td><td class="dn">-1,2%</td></tr></table></div></div>
+</div>
+
+<div class="side"><b>Catatan</b><ul>
+<li>Kelompok indikator (SELL THRU, SELL OUT, DA, NOO, OMZET) ditandai kotak warna + garis warna tipis di bawah judul kelompok. Warna indikator tetap (ST biru, SO oranye, DA tosca, NOO ungu, Omzet cokelat), hanya tidak lagi mewarnai isi kolom.</li>
+<li>Chip growth hijau/merah, angka, dan isi sel tidak berubah.</li>
+<li>Tidak ikut: heatmap (warna = data), tabel KPI per RGM (sudah punya gaya sendiri).</li>
+<li>Rekomendasi gue: <b>USULAN</b>. Lebih tenang, satu tema dengan popup. Yang hilang cuma "blok warna per kolom"; kalau lu masih butuh pembeda kolom saat menggeser tabel panjang, bisa diganti garis pemisah antar kelompok yang sedikit lebih tebal.</li>
+</ul></div>
+</body></html>

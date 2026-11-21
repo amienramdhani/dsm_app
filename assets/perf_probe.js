@@ -1,4 +1,4 @@
-/* Alat ukur performa (mati bawaan). Nyalakan: buka DSM dengan ?probe=1 di alamat. Matikan: ?probe=0.
+/* Alat ukur performa (mati bawaan). Nyala/mati: Admin › Sistem › Alat ukur performa (Super Admin), atau ?probe=1 / ?probe=0.
    Mengukur: lama tiap panggilan server (nama fungsi + ukuran jawaban), dan waktu kerja tiap pengamat DOM / rAF per file skrip.
    Tidak mengubah perilaku DSM; hanya mencatat dan menampilkan kotak kecil di pojok kiri bawah. */
 (function () {
@@ -52,7 +52,7 @@
     if (!el) {
       el = document.createElement('div'); el.id = 'dsmProbe';
       el.style.cssText = 'position:fixed;left:6px;bottom:6px;z-index:2147483647;max-width:520px;max-height:60vh;overflow:auto;background:#10253F;color:#E8F0FA;font:11px/1.35 ui-monospace,Consolas,monospace;padding:8px 10px;border-radius:8px;opacity:.96;white-space:pre';
-      el.title = 'Klik untuk tutup/buka. Alat ukur DSM (?probe=0 untuk mati).';
+      el.title = 'Klik untuk tutup/buka. Alat ukur DSM. Matikan di Admin › Sistem › Alat ukur performa.';
       el.onclick = function () { el.dataset.min = el.dataset.min ? '' : '1'; draw(); };
       (document.body || document.documentElement).appendChild(el);
     }

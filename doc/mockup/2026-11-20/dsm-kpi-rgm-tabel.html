@@ -1,0 +1,46 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><title>Mockup · Tabel KPI RGM</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:12px/1.3 Inter,system-ui,Arial,sans-serif;background:#DDE4F5;color:#15232E}
+.top{position:sticky;top:0;z-index:9;background:#fff;border-bottom:1px solid #DDE3EA;padding:8px 14px;display:flex;gap:12px;align-items:center}
+.seg{display:inline-flex;background:#CBD5E0;border-radius:99px;padding:3px}.seg button{border:0;background:none;padding:5px 12px;border-radius:99px;font:700 11px Inter,system-ui,sans-serif;color:#15303F;cursor:pointer}.seg button.on{background:#fff}
+.note{margin:12px 14px 0;background:#fff;border-left:4px solid #F0A400;border-radius:8px;padding:9px 12px}
+.panel{margin:12px 14px;background:#fff;border-radius:14px;box-shadow:0 1px 4px #0001;overflow:hidden}
+.ph{padding:12px 16px;border-bottom:1px solid #EEF1F5}.ph b{font-size:14px;color:#10394E}.ph small{display:block;color:#6B7785;font-size:11px;margin-top:2px}
+.pb{padding:12px 16px 16px}.meta{font-size:11px;color:#6B7785;margin-bottom:8px;display:flex;gap:8px;align-items:center}.st{background:#FFF0C2;color:#8A6200;font-size:10px;font-weight:800;border-radius:99px;padding:2px 9px}
+table{border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums}
+/* SEKARANG */
+.old table{width:100%;border:1px solid #CFE0E3;border-radius:10px;overflow:hidden}.old th{background:#0E5A63;color:#fff;font-size:9px;padding:11px 8px;text-align:center}.old td{padding:13px 8px;border-bottom:1px solid #EEF1F5;font-size:11px}
+.old .bw{display:inline-block;width:80px;height:6px;border-radius:9px;background:#E3E8EE;vertical-align:middle;margin-right:14px;position:relative}.old .bw i{position:absolute;left:0;top:0;bottom:0;border-radius:9px}
+.old tfoot td{background:#EAF0FB;font-weight:800}
+/* USULAN */
+.new{width:max-content;max-width:100%}
+.new th{background:#E6EBF1;color:#15232E;font-size:11px;padding:6px 10px;text-align:left;border-bottom:2px solid #15303F;border-top:3px solid #15303F;border-right:1px solid #D5DCE4;white-space:nowrap}
+.new th.b{text-align:center}.new th.tt{text-align:center;background:#E3EEFB;color:#1E5FB8;border-top-color:#1E5FB8}
+.new td{height:26px;padding:0 10px;border-bottom:1px solid #E6EBF1;border-right:1px solid #EEF1F5;font-size:11px;white-space:nowrap}
+.new td.n{text-align:right}.new td.c{text-align:center}.new td.nm{font-weight:700;color:#10394E;min-width:150px}
+.sq{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px}
+.pt{display:inline-flex;align-items:center;gap:8px;justify-content:flex-end;width:100%}.pt .bar{width:44px;height:6px;border-radius:2px;background:#E9EDF2;position:relative}.pt .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:2px}
+.chip{display:inline-block;border-radius:99px;padding:1px 8px;font-weight:800;font-size:11px}.r{background:#FFE0DE;color:#B0332E}.y{background:#FFF3C9;color:#8A6200}.g{background:#E3F6EC;color:#0F6B4A}
+.stk{display:flex;height:6px;width:96px;border-radius:2px;overflow:hidden;background:#E9EDF2}.stk i{display:block}
+.tot{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.new tr.t1 td:first-child{box-shadow:inset 4px 0 #E0A800}.new tr.t2 td:first-child{box-shadow:inset 4px 0 #9AA5B1}
+.new tfoot td{height:27px;border-top:2px solid #15303F;border-bottom:0;font-weight:800;background:#E6EBF1}
+</style></head><body>
+<div class="top"><b>KPI RGM · tabel desktop</b><div class="seg" id="m"><button data-m="now">SEKARANG</button><button data-m="new" class="on">USULAN</button></div></div>
+<div class="note" id="note"></div>
+<div class="panel" id="pn"></div>
+<script>
+const B=[['ITEL','#0E6E64','#E2F4F1'],['MOTOPAD','#B33D0B','#FCEEE4'],['VILLAON','#455A64','#E9EEF1']];
+const R=[['ROBBY AGUSTINA',[21.6,30.5,11.2],63.3],['TOYO',[11.5,28.7,17.8],58.0]];
+const MX=[30,40,30];
+const f=v=>v.toFixed(1).replace('.',',');
+const avg=i=>R.reduce((n,r)=>n+r[1][i],0)/R.length,avgT=R.reduce((n,r)=>n+r[2],0)/R.length;
+let M='new';
+const cls=x=>x>=100?'g':x>=80?'y':'r';
+function oldV(){return `<div class="pb old"><div class="meta"><span class="st">SEMENTARA</span>Data s.d. 28 Sep 2026 · angka per brand = poin yang menyumbang ke total</div><table><thead><tr><th style="width:40px">#</th><th style="text-align:left">NAMA RGM</th>${B.map(b=>`<th style="width:28%">${b[0]}</th>`).join('')}<th style="background:#0B5BAE">TOTAL POIN</th></tr></thead><tbody>${R.map((r,i)=>`<tr><td style="text-align:center">${['🥇','🥈'][i]}</td><td><b>${r[0]}</b></td>${r[1].map((v,j)=>`<td style="background:${B[j][2]}66"><span class="bw"><i style="width:${v/MX[j]*100}%;background:${B[j][1]}"></i></span>${f(v)}</td>`).join('')}<td style="text-align:center"><span class="chip r">${f(r[2])}%</span></td></tr>`).join('')}</tbody><tfoot><tr><td></td><td>RATA-RATA</td>${B.map((b,j)=>`<td style="background:${B[j][2]};color:${b[1]}">${f(avg(j))}</td>`).join('')}<td style="text-align:center"><span class="chip r">${f(avgT)}%</span></td></tr></tfoot></table></div>`}
+function newV(){return `<div class="pb"><div class="meta"><span class="st">SEMENTARA</span>Data s.d. 28 Sep 2026 · angka per brand = poin yang menyumbang ke total</div><table class="new"><thead><tr><th class="b" style="width:34px">#</th><th>NAMA RGM</th>${B.map(b=>`<th class="b" style="background:${b[2]};color:${b[1]};border-top-color:${b[1]}"><span class="sq" style="background:${b[1]}"></span>${b[0]}</th>`).join('')}<th class="tt">TOTAL POIN</th></tr></thead><tbody>${R.map((r,i)=>`<tr class="t${i+1}"><td class="c">${['🥇','🥈'][i]}</td><td class="nm">${r[0]}</td>${r[1].map((v,j)=>`<td class="n"><span class="pt"><span class="bar"><i style="width:${v/MX[j]*100}%;background:${B[j][1]}"></i></span><b style="min-width:30px;text-align:right">${f(v)}</b></span></td>`).join('')}<td><span class="tot"><span class="stk">${r[1].map((v,j)=>`<i style="width:${v}%;background:${B[j][1]}"></i>`).join('')}</span><span class="chip ${cls(r[2])}">${f(r[2])}%</span></span></td></tr>`).join('')}</tbody><tfoot><tr><td></td><td>RATA-RATA</td>${B.map((b,j)=>`<td class="n" style="color:${b[1]};background:${b[2]}">${f(avg(j))}</td>`).join('')}<td class="n" style="color:#1E5FB8;background:#E3EEFB"><span class="chip ${cls(avgT)}">${f(avgT)}%</span></td></tr></tfoot></table></div>`}
+function render(){document.getElementById('pn').innerHTML=`<div class="ph"><b>KPI RGM</b><small>Pencapaian semua RGM · tidak ikut filter Big Region</small></div>`+(M==='now'?oldV():newV());
+document.getElementById('note').innerHTML=M==='now'?'<b>SEKARANG</b>: tabel melebar penuh, header teal tebal, baris ±45px, batang dan angka berjauhan di kolom yang lebar.':'<b>USULAN</b>: tabel <b>tidak full width</b> (selebar isi), baris 24–26px, header abu muda + garis atas 3px (brand berwarna, TOTAL POIN biru) + kotak brand, batang mini menempel di angka, TOTAL POIN = batang gabungan + chip %, baris RATA-RATA warnanya sama dengan header kolom, 2 teratas aksen emas/perak. <span style="color:#6B7785">Isi angka & urutan tidak berubah. Desktop saja.</span>'}
+document.getElementById('m').onclick=e=>{const b=e.target.closest('button');if(!b)return;M=b.dataset.m;document.querySelectorAll('#m button').forEach(x=>x.classList.toggle('on',x===b));render()};
+render();
+</script></body></html>

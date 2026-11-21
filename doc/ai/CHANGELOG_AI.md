@@ -33,7 +33,47 @@ Pending:
 
 ---
 
+### 2026-11-21 - Transaksi desktop: kalender ringkas, sejajar kolom kanan
+- Mockup doc/mockup/2026-11-21/dsm-transaksi-kalender-tinggi.html tab "A · KECIL + POLA PENDEK" disetujui ("gass").
+- Penyebab kalender satu layar penuh: trxSyncCal mengukur panel kalender lama yang sudah dibungkus ulang jadi <details> oleh foldDesktopPanels (tinggi 0) dan kolom kanan yang ikut melar karena grid stretch -> kalender terus dipanjangkan.
+- Perbaikan: kotak tanggal ringkas (tanggal + unit satu baris, dealer di bawah, min 46px), grafik Pola Hari desktop maks 62px, kolom kanan align-self:start, trxSyncCal mengukur panel yang aktif dan menyejajarkan ujung kalender dengan ujung panel terakhir kolom kanan.
+- Panel "Indeks hari per brand" (desktop) berganti judul "Pola SELL THRU per brand", isi tetap indeks, default terbuka. HP tidak diubah.
+- Dites di harness lokal (CSS asli, 1500px), belum di aplikasi asli.
+
+### 2026-11-21 - Klaim: perbaikan temuan review (Amien) sebelum produksi
+- pc_blocked: filter is_demo (Demo dan Produksi tidak saling memblokir).
+- link_files: validasi berkas (harus ada; belum terpakai + diunggah pengguna sendiri, atau milik dokumen yang sama) + update bersyarat + cek ulang. files_check dipanggil sebelum cek SHA di pn_submit dan pc_add_note. Berlaku untuk semua pemanggil (klaim, BA, transfer, petty cash, balik nota, setoran).
+- pn_submit/pn_review/pn_setoran/pn_close: transaksi + lock_row (SELECT ... FOR UPDATE di MySQL) + perubahan status atomik (UPDATE ... WHERE state=... dicek rowCount), klaim reimburse dibuat setelah status terkunci -> tidak bisa ganda.
+- pn_excess_claim: semua foto nota tersalin (LIMIT 1 dihapus).
+- migrate_schema: membuat indeks dari schema.sql kalau belum ada (aman diulang).
+- Transfer FT: status DONE + pn_start dalam satu transaksi, transfer ganda ditolak.
+- Tes: 145 lolos (SQLite) termasuk 8 uji permintaan review. Race condition sungguhan (dua request paralel) dan FOR UPDATE belum dites di MySQL.
+
+### 2026-11-20 - Klaim Perdin balik nota
+- Perdin bisa diajukan di muka (tanggal masa depan, lampiran opsional); setelah transfer klaim tetap DONE dengan status nota WAIT/CEK/REV/SETOR/OK.
+- Server: klaim/lib/pnota.php, api pn_submit/pn_review/pn_setoran/pn_close, kolom baru lewat migrate_schema. UI: detail klaim + layar #/pnota/<id>.
+- Tes: 136 lolos (SQLite) + alur UI via browser lokal. Belum dites di MySQL asli.
+
 # History
+
+## 2026-11-19 - Popup detail dealer: tabel padat, TOTAL, tombol tutup, Kontak K3 (desktop)
+- Mockup disetujui: doc/mockup/2026-11-19/dsm-popup-dealer-tabel-kontak.html (K3 + tutup A).
+- assets/dealer_detail.css: font Inter konsisten, tabel Histori/Stok/Transaksi padat, TOTAL per kolom = warna header (Histori teal muda, bukan biru mockup), TOTAL Transaksi sticky di bawah, header Stok teal semua, style K3 dan tombol tutup.
+- assets/dealer_detail.js: menu ⋯ diganti tombol merah TANDAI DEALER TUTUP + popover form (form asli dipindah, berfungsi dari semua tab); Kontak dibangun ulang jadi tabel K3 (tombol edit dan link asli dipindah, bukan dibuat ulang).
+- assets/dsm.js: v8StokBrand / v8StokStatus (kotak warna brand + badge status di tab Stok, desktop saja).
+- Dites hanya di harness (CSS asli + data palsu, Playwright), BELUM di DSM asli.
+
+## 2026-11-19 - Fix DOS & Analisa padat tidak tampil
+- Sebab: BRC (peta warna brand) ada di dalam IIFE index.php (script v7ux), tidak global -> v8PadTag berhenti di baris pertama. Tes Playwright sebelumnya memakai BRC global, jadi tidak ketahuan.
+- index.php: window.V8BRC=BRC setelah definisi BRC. dsm.js v8PadTag memakai window.V8BRC; juga mengenali panel yang sudah dilipat jadi <details> (foldDesktopPanels).
+- Dicek ulang di render tiruan dengan BRC tertutup (bukan global): 4 tabel ditandai.
+
+## 2026-11-19 - DOS & Analisa: tabel padat "A + WARNA BRAND" (desktop, BELUM TERUJI di DSM asli)
+- Mockup disetujui: doc/mockup/2026-11-19/dsm-dos-analisa-padat.html (opsi A + WARNA BRAND).
+- assets/dsm.js: V8PAD + v8PadTag(root) — menandai table.v8pad hanya di panel: DOS per wilayah, DOS ringkasan brand, Dealer + TYPE, Dealer + Brand, Matriks dealer × brand, Per sales · bulan lalu vs bulan ini, Dealer Baru per Bulan. Kolom teks .v8t, kolom brand jadi kotak warna (BRC), ringkasan brand garis kiri warna brand, judul brand Matriks latar muda + garis atas. Dipanggil di akhir dosView & v6AnaDraw. Desktop saja.
+- assets/table_theme.css: gaya v8pad (padding 3px 9px, 11px, judul & TOTAL abu muda #E6EBF1 garis 2px #15303F, judul angka rata kanan sejajar nilai, angka Inter tabular — bukan monospace, badge kondisi kotak kecil). Selektor #app x5 karena aturan table_dense.css (:not(#customerRows *)) ikut ber-id.
+- Dicek di Playwright dengan CSS asli (render tiruan, bukan DSM asli): baris 22px (1 baris) / 34px (2 baris), header abu, rata kanan cocok.
+- TIDAK dikerjakan: baris TOTAL baru di Matriks (usulan di mockup, belum dijawab user). HP tidak diubah. Tabel Analisa lain (Daftar telepon, Top peluang) tidak diubah.
 
 ## 2026-11-19 - Status dealer: file kunci format lama dihitung ulang (bug 12 status di halaman Dealer)
 - Gejala (HP user, data s.d. 30 Sep): ringkasan status Dealer berisi 5 status baru (hampir semua 0) + label lama AKTIF/TURUN/PASIF/NONAKTIF/DI BAWAH MIN/BELUM ORDER/BANGKIT.
@@ -447,6 +487,68 @@ Validation:
 - `config.local.php` is ignored by Git.
 
 ---
+
+### 2026-11-19 - Tooltip sel brand Daftar Dealer (penyebab sebenarnya)
+
+- `assets/page_tidy.js` dealerCells(): sel brand disusun ulang dan elemen .v6pc (pemegang data-v6tip) dibuang, jadi tooltip hilang. Sekarang data-v6tip dipindah ke pembungkus baru .ptC.
+
+### 2026-11-19 - Tooltip tabel hilang (bug) + filter Daftar Dealer satu baris
+
+- `assets/dsm.js` v6Tip: simpanan tooltip tidak lagi dikosongkan total; kalau > 150.000 hanya yang paling lama dibuang (sisa 70.000 terbaru), jadi render terakhir selalu utuh. (Versi 80000+clear masih hilang karena tabel dirender beberapa kali saat dibuka.) Penyebab: daftar 3.831 dealer × brand membuat > 6000 tooltip, simpanan dikosongkan di tengah render sehingga baris atas kehilangan tooltip. Bukan dimatikan demi kecepatan.
+- `assets/page_tidy.css`: filter Daftar Dealer desktop satu baris (cari, region, brand, order, FILTER LAIN, KOLOM, RESET, jumlah dealer), tinggi 32px, jarak dirapatkan. Mockup dsm-daftar-dealer-filter-rapat.html.
+
+### 2026-11-19 - Daftar Dealer padat (opsi C)
+
+- `assets/table_theme.css`: tabel Daftar Dealer (desktop) padding 3px 9px, huruf 11px, info kedua 9.5px; judul & TOTAL kolom non-brand abu muda #E6EBF1, kolom brand tetap warna brand. Mockup dsm-daftar-dealer-padat.html.
+
+### 2026-11-19 - History: panel Ber-promotor senada Summary, dua panel bawaan tertutup
+
+- Mockup disetujui: doc/mockup/2026-11-19/dsm-promotor-lipat.html.
+- `assets/dsm.js`: panel Ber-promotor vs Non promotor pakai gaya panel Summary (ungu muda, garis kiri, bulatan panah); Summary History Dealer bawaan tertutup (buka/tutup diingat: dsm_hsum_open). Summary baru dimuat saat dibuka (lebih ringan).
+- `assets/dsm.css`: tabel promotor judul & TOTAL abu kebiruan #DCE6F2, aksen ungu hanya di baris data.
+- Filter History desktop: mockup dsm-history-filter-desktop.html (A–F) DITUNDA oleh user.
+
+### 2026-11-19 - History: ringkasan Ber-promotor vs Non promotor bisa dilipat
+
+- `assets/dsm.js` v6HistPromCompare: jadi <details>, bawaan tertutup; buka/tutup diingat per perangkat (localStorage dsm_hpc_open).
+- `assets/dsm.css`: panah lipat di judul.
+
+### 2026-11-19 - History Dealer per Brand + Summary: gaya "Gabungan 1+7+9"
+
+- Mockup disetujui: doc/mockup/2026-11-19/dsm-tabel-gaya.html (pilihan ★ Gabungan 1 + 7 + 9).
+- `assets/table_theme.css`: khusus #dealerHistoryRows & #historySummaryPanel — semua sel bergaris, padat (11px), angka monospace, judul identitas & TOTAL kiri abu muda (#E6EBF1) dengan garis tebal, TOTAL kolom brand ikut warna indikator. Warna brand & indikator tidak diubah.
+- `assets/dsm.js` v7HistStatusBar(): garis status dealer di kiri baris History (status dari REPORT.customers = bulan berjalan) + keterangan warna di bawah tabel.
+- Tabel halaman lain TIDAK diubah.
+
+### 2026-11-19 - Tema tabel satu warna + tombol TUTUP popup dealer desktop
+
+- `assets/table_theme.css` (baru, dimuat di index.php): tabel `tpT` di POPUP saja; semua halaman menunggu mockup History Dealer per Brand header petrol, isi putih, warna brand/indikator jadi kotak kecil di judul kolom, baris TOTAL petrol; histori bulanan popup: periode dipilih kuning lembut + garis amber, kolom TOTAL abu tipis. Mockup doc/mockup/2026-11-19/dsm-dealer-histori-tabel.html.
+- `assets/dealer_detail.js/.css`: tombol TUTUP menempel di bawah popup dealer desktop.
+
+### 2026-11-19 - Tab STATUS: pola 12 bulan lebih cepat, tabel lama tidak muncul saat memuat
+
+- `lib/api_menu.php` apiDealerP12: jalur ringan (dealer di cakupan menurut master / penugasan TM) tanpa menghitung detail dealer lengkap; selain itu tetap cek lengkap via apiDealerDetail.
+- `assets/dealer_status.js/.css`: selama memuat, tabel 3 bulan lama disembunyikan (hanya tulisan memuat).
+
+### 2026-11-19 - Popup dealer: tab langsung tampil saat memuat + tabel desktop rapi
+
+- `assets/dsm.js` detail(): dealerTabs/tmDealerActions/contactPanel dipanggil sebelum transaksi dimuat (sebelumnya menunggu transaksi selesai, jadi tampilan lama sempat muncul).
+- `assets/dealer_detail.css`: di popup desktop kolom pertama tabel tidak menempel (bayangan/garis yang terlihat menabrak hilang), ukuran huruf seragam.
+
+### 2026-11-19 - Popup dealer desktop v2 (mockup dsm-detail-dealer-desktop-v2.html)
+
+- `assets/dealer_detail.js/.css`: tombol HUBUNGI (Telepon / WhatsApp / Lihat semua kontak) di samping CATAT ORDER; tab gaya segmen abu penuh; tab HISTORI disembunyikan di desktop (HP tetap); alamat keluar dari Ringkasan.
+- `assets/dsm.js`: panel kontak menampilkan alamat + nomor juga di desktop (tab KONTAK).
+- `assets/dealer_status.js/.css`: tab STATUS desktop pakai pola 12 bulan (baris grid), data diambil saat tab dibuka.
+
+### 2026-11-19 - Popup dealer desktop: tab dipasang (sesuai mockup 2026-11-18)
+
+- `assets/dsm.js` detail(): `dealerTabs()` sekarang dipanggil juga di desktop (sebelumnya hanya HP, jadi tab RINGKASAN/STATUS/HISTORI/STOK/TRANSAKSI/KONTAK tidak muncul di desktop). Gaya tab desktop sudah ada di dealer_detail.css (.modal.ddX .dealerTabs).
+
+### 2026-11-19 - Alat ukur performa (PROBE) ke Admin Super Admin
+
+- `assets/dsm.js`: panel "Alat ukur performa" di Admin › Sistem (hanya Super Admin), tombol NYALAKAN/MATIKAN per perangkat (localStorage dsm_probe) lalu muat ulang.
+- `assets/perf_probe.js`: hanya teks petunjuk. Alat tetap mati bawaan; ?probe=1/0 masih jalan.
 
 ### 2026-11-19 - Tab STATUS dealer di HP: 12 bulan
 
@@ -959,3 +1061,32 @@ Validation:
 ## 2026-11-17 — Alat ukur performa (diagnosa "page not responding")
 - `assets/perf_probe.js` (dimuat paling awal di `index.php`), MATI bawaan. Nyalakan dengan membuka DSM + `?probe=1`, matikan `?probe=0`. Kotak kecil di kiri bawah menampilkan lama tiap panggilan server (fungsi, ms, KB) dan kerja browser per file skrip (pengamat DOM, rAF, setTimeout), plus jumlah long task.
 - Tujuan: cari penyebab DSM sering "not responding" di Dealer dan DOS (belum terbukti penyebabnya; di halaman uji data tiruan tidak ada putaran tak berujung).
+
+## 2026-11-20 — Analisa › Cross-sell Brand (paket mockup disetujui)
+- Matriks dealer × brand: kolom dipisah KODE · DEALER · SUB REGION · SALES (1 baris/dealer); kolom BRAND jadi badge warna (≥5 hijau, 3–4 kuning, ≤2 merah). HP: KODE disembunyikan, kolom DEALER menempel kiri dengan nama penuh.
+- Filter F1 (desktop, tab Cross-sell saja): 1 baris = cari nama/kode dealer + 5 dropdown + RESET + jumlah dealer. HP tetap filter lama. Tab Reaktivasi & Dealer Baru tidak diubah.
+- Kartu atas Cross-sell gaya mint tanpa ikon; kartu 1 "Dealer bertransaksi", kartu 2 "Brand belum diambil" (nama default, belum dikonfirmasi user).
+- Tombol ⓘ "BEDANYA DENGAN MENU DEALER?" (desktop) dengan penjelasan singkat.
+- Backend: `lib/api_analisa.php` crossSell tiap dealer kini punya field `sub` (Sub Region, dari anaAreaOf_).
+- Tidak diubah: batas 80 dealer di matriks, tab lain, halaman lain.
+- File: assets/dsm.js (v6CrossHtml, v6FilterBarF1, v6AnaDraw/v6AnaBodyDraw, v6Kpis(items,cls), V8PAD), assets/analisa_cross.css (baru), index.php (link css), lib/api_analisa.php.
+
+## 2026-11-20 — Rombak desain tabel (Claude)
+- Commit dev: 896c060 (KPI semua grup + RGM), d837176 (Peringkat), 8dd3530 (Transaksi), 5b9ccc8 (kartu mint), 5ce08ed (Rincian KPI terbuka + Sales), fef93b5 (fix gradasi table_dense).
+- File: assets/dsm.js, assets/kpi_tabel.css, assets/table_dense.css, index.php, lib/api_main.php (asm di apiRank), telemarketing/tm.js, tm_update.js.
+
+## 2026-11-20 paket lanjutan desain
+- assets/dsm.js: trxSyncCal, v6DowPanel (tabel `trxD dw`), v6GrChip + overview kartu `v6mint v6mintH`, ranks(): filter Region (`rankRegion`), RESET, kolom Σ SALES mode ASM.
+- lib/api_main.php: `rankTeamSales_` + field `salesCount` pada apiRank (level ASM).
+- assets/kpi_tabel.css, assets/analisa_cross.css: gaya baru. Tanpa perubahan skema DB.
+
+## 2026-11-20 Menu TIM T1+T3
+- assets/tim_v2.js, assets/tim_v2.css (baru), assets/dsm.js (hook di team()), assets/page_header.js (SKIP tim), index.php (link css + script). Tanpa perubahan API/DB.
+
+## 2026-11-20 Menu TIM tren per hari/minggu
+- assets/tim_v2.js, assets/tim_v2.css: toggle tren + tabel mingguan di rincian Sales (desktop & HP sheet).
+- lib/api_analisa.php (`apiEarlyWarning`): field tambahan `mdays`, `weeks`, `prevPeriod`, `dm`, `wk`, `wkL`; try/catch agar Early Warning tidak rusak bila gagal. Tanpa perubahan skema DB.
+
+## 2026-11-20 Menu TIM SEMUA BRAND + TOTAL klik
+- assets/tim_v2.js, assets/tim_v2.css: opsi SEMUA BRAND (default), rincian TOTAL/area saya + tombol ← AREA SAYA.
+- lib/api_menu.php: `teamTarget_` + `apiTeam` mendukung brand 'ALL'. Tanpa perubahan skema DB.

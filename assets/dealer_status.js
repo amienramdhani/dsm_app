@@ -108,7 +108,8 @@
     const mn = `<div class="ds12m">${ms.map((m, i) => `<span class="${i >= 9 ? 'w' : ''}">${+m.slice(5, 7)}</span>`).join('')}</div>`;
     const card = (nm, st, q, pola, info, tot) => `<div class="ds12r${tot ? ' tot' : ''}"><div class="n"><b>${esc(nm)}</b>${pill(st)}</div><div class="q">${q > 0 ? num(q) + ' <small>unit ' + M + '</small>' : '<small>belum order ' + M + '</small>'}</div><div class="p">${tot ? yr + mn : ''}${d12(pola)}</div><div class="t">${info}</div></div>`;
     const bs = Object.keys(ds.bs || {});
-    return `<div class="ds12x">12 bulan terakhir · <b>garis bawah = jendela status</b> · kotak putus-putus = sebelum basis</div>` +
+    const hd = `<div class="ds12h"><span>BRAND · STATUS</span><div>${yr}${mn}</div><span>UNIT ${M}</span><span>KETERANGAN</span></div>`;
+    return `<div class="ds12x">12 bulan terakhir · <b>garis bawah = jendela status</b> · kotak putus-putus = sebelum basis</div>` + hd +
       card('TOTAL', ds.status, ds.order?.q, P.total, esc(dsDesc(ds.status)) + (ds.noo ? ' · NOO bulan ini' : ''), 1) +
       bs.map(b => { const x = ds.bc[b] || {}; return card(b, ds.bs[b], x.q, P.brand?.[b] || String(P.total || '').replace(/y/g, 'n'), x.q > 0 ? (x.da ? 'memenuhi DA' : 'di bawah minimal DA') + (x.last ? ' · terakhir ' + esc(tgl(x.last)) : '') : (x.last ? 'terakhir ' + esc(tgl(x.last)) : 'belum order ' + M)); }).join('') +
       `<div class="ds12l"><span><i class="y"></i>order</span><span><i></i>tidak order</span><span><i class="b"></i>sebelum basis</span></div>`;
@@ -127,7 +128,7 @@
     for (const k of ['INACTIVE', 'IDLE', 'PASSIVE', 'NONAKTIF', 'PASIF', 'TURUN', 'DI BAWAH MIN', 'NOO']) { const n = vals.filter(x => x[1] === k); if (n.length) return [k, n.length > 1 ? k + ' di ' + n.length + ' brand' : k + ' di ' + n[0][0]]; }
     return ['ACTIVE', 'ACTIVE di semua brand'];
   };
-  window.v6BsDetail = function (c) { return c.ds ? dsDetailHtml({ ds: Object.assign({ status: c.status, bs: c.bs, months: REPORT.statusInfo?.months, locked: REPORT.statusInfo?.locked }, c.ds) }) : ''; };
+  window.v6BsDetail = function (c) { return c.ds ? dsDetailHtml({ ds: window.__dsLast = Object.assign({ status: c.status, bs: c.bs, months: REPORT.statusInfo?.months, locked: REPORT.statusInfo?.locked }, c.ds) }) : ''; };
   // Detail dealer: Status Dealer pindah ke tab sendiri (urutan ke-2, nomor tab 5 supaya logika tab lama tidak bergeser).
   if (typeof window.dealerTabs === 'function' && !window.dealerTabs.__ds) {
     const orig = window.dealerTabs;
@@ -140,7 +141,17 @@
           const b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', 'false'); b.className = 'chip modalTab'; b.dataset.dtab = '5';
           b.innerHTML = `${menuIcon('analisa')}<span>Status</span>`; tabs.children[0].after(b); tabs.classList.add('ds6');
           const hs = tabs.querySelector('[data-dtab="1"] span'); if (hs) hs.textContent = 'Histori';
-          tabs.addEventListener('click', e => { const sel = e.target.closest('[data-dtab]'); if (sel) pane.hidden = sel.dataset.dtab !== '5'; });
+          tabs.addEventListener('click', e => { const sel = e.target.closest('[data-dtab]'); if (sel) pane.hidden = sel.dataset.dtab !== '5'; if (sel && sel.dataset.dtab === '5') loadP12(); });
+          /* HP & desktop: pola 12 bulan diambil saat tab STATUS dibuka (data daftar Dealer tidak membawa p12) */
+          const ds0 = window.__dsLast, tok = typeof TOKEN !== 'undefined' ? TOKEN : null; let p12req = false;
+          const loadP12 = () => {
+            if (p12req || !ds0 || det.classList.contains('has12')) return; p12req = true;
+            det.classList.add('ld12'); det.insertAdjacentHTML('beforeend', '<div class="ds12w">Memuat pola 12 bulan…</div>');
+            rpc('apiDealerP12', tok, period, selection, id).then(p12 => {
+              det.querySelector('.ds12w')?.remove(); det.classList.remove('ld12'); if (!p12 || !det.isConnected) { p12req = false; return; }
+              det.insertAdjacentHTML('beforeend', dsP12Html(Object.assign({}, ds0, { p12 }), dsMon(REPORT.period))); det.classList.add('has12');
+            }).catch(() => { det.querySelector('.ds12w')?.remove(); det.classList.remove('ld12'); p12req = false; });
+          };
           const bd = body.querySelector('#dealerSummary .detailstatus .statusBadge');
           if (bd) { bd.classList.add('dsGo'); bd.title = 'Lihat status dealer'; bd.onclick = () => b.click(); }
         }

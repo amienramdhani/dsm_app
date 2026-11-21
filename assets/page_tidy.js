@@ -137,6 +137,7 @@
       td.dataset.ptC = '1';
       var strip = $q('.dsStrip', td); if (strip) strip.remove();
       var wrap = document.createElement('div'); wrap.className = 'ptC';
+      if (pc && pc.dataset.v6tip) wrap.dataset.v6tip = pc.dataset.v6tip; /* tooltip ikut pindah (dulu hilang karena .v6pc dibuang) */
       var r1 = document.createElement('div'); r1.className = 'ptC1';
       if (pc) {
         var b = $q('b', pc), sm = $q('small', pc);

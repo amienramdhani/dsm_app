@@ -1,0 +1,70 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><title>Mockup · History Dealer per Brand: pilihan bentuk tabel</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:13px/1.45 Inter,Segoe UI,Arial,sans-serif;background:#F3F6F9;color:#15303F;padding:20px}
+h1{font-size:18px;margin:0 0 4px;color:#10394E}.lead{color:#5B6B7A;margin:0 0 12px;max-width:1150px}
+.pick{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 6px}.pick button{border:1.5px solid #CBD6E1;background:#fff;border-radius:10px;padding:8px 12px;font-weight:800;font-size:12px;color:#10394E;cursor:pointer}.pick button.on{background:#10394E;color:#fff;border-color:#10394E}
+.desc{color:#5B6B7A;font-size:12px;margin:0 0 12px;min-height:18px}
+.wrap{background:#fff;border:1px solid #E3E9F0;border-radius:14px;overflow:auto;max-width:1300px}
+table{border-collapse:collapse;font-variant-numeric:tabular-nums;width:100%}
+th,td{padding:8px 10px;text-align:right;white-space:nowrap;font-size:12px}th.l,td.l{text-align:left}td{border-top:1px solid #EEF2F6}th{font-size:10.5px;letter-spacing:.4px}
+th.id{background:#DDE3EA;color:#15303F;border-bottom:3px solid #8C9AA9}
+tr.t td.idt{background:#DDE3EA;font-weight:800;border-top:2px solid #8C9AA9}
+td.n{color:#0B5CAD;font-weight:800}
+.chips{display:flex;gap:6px;padding:10px 12px;border-bottom:1px solid #EEF2F6;flex-wrap:wrap;align-items:center}.chips b{font-size:11px;color:#7C8899;margin-right:4px}
+.chip{border:1.5px solid #D5DFE8;border-radius:999px;padding:5px 11px;font-size:11.5px;font-weight:800;background:#fff;cursor:pointer}.chip i{display:inline-block;width:9px;height:9px;margin-right:6px}
+.chip.on{color:#fff;border-color:transparent}
+/* B */
+.st{display:block;font-weight:800;color:#1E5FB8}.so{display:block;font-size:10.5px;color:#C25A12;font-weight:700}
+th.bm{background:var(--bl);color:var(--bc);border-bottom:3px solid var(--bc)}td.bm{background:var(--bx)}tr.t td.bm{background:var(--bl);font-weight:800}
+/* C */
+.hm{display:block;border-radius:5px;padding:4px 6px;font-weight:700;text-align:center;min-width:44px}
+/* D */
+.sp{display:flex;align-items:flex-end;gap:2px;height:26px}.sp i{width:7px;border-radius:2px 2px 0 0;background:var(--c);opacity:.85}.sp i.z{background:#E6ECF2;height:3px!important;opacity:1}
+.bcell{display:flex;align-items:center;gap:8px;justify-content:flex-end}.bcell b{min-width:40px}.gr{font-size:10.5px;font-weight:800}.up{color:#12866A}.dn{color:#B42318}
+th.bh{background:#fff;color:var(--c);border-bottom:3px solid var(--c);text-align:right}
+.side{max-width:1300px;margin-top:16px;background:#fff;border-radius:14px;padding:12px 16px;border:1px solid #E3E9F0}.side ul{margin:6px 0 0;padding-left:18px}.side li{margin:4px 0}
+</style></head><body>
+<h1>Mockup · History Dealer per Brand — pilihan bentuk tabel</h1>
+<p class="lead">Data contoh 3 dealer, 2 brand, 6 bulan. Kolom identitas abu muda (pilihan lu). Klik untuk ganti bentuk; di B–D brand bisa dipilih lewat chip.</p>
+<div class="pick" id="pk"></div><p class="desc" id="ds"></p>
+<div id="o"></div>
+<div class="side"><b>Perbandingan</b><ul>
+<li><b>A · Sekarang</b>: semua brand × ST & SO × bulan berjejer. Lengkap, tapi sangat lebar (2 brand × 2 indikator × 6 bulan = 24+ kolom), harus banyak geser.</li>
+<li><b>B · Per brand, ST & SO satu sel</b>: pilih brand lewat chip, tiap bulan satu kolom berisi ST (biru, besar) + SO (oranye, kecil). Lebar turun ±4×, tetap bisa lihat semua angka.</li>
+<li><b>C · Peta warna</b>: seperti B tapi tiap sel diberi warna sesuai besar angka. Cepat lihat dealer/bulan yang tinggi atau kosong. Pilih indikator ST atau SO.</li>
+<li><b>D · Ringkas + grafik mini</b>: satu kolom per brand berisi grafik batang 6 bulan + total + growth. Paling ringkas, cocok buat cari pola; angka per bulan lihat di popup dealer.</li>
+<li>Rekomendasi gue: <b>B</b>. Angka tetap lengkap (penting buat lu yang sering cek detail), tapi tabel jauh lebih pendek ke samping. Export Excel tetap format lengkap seperti sekarang.</li></ul></div>
+<script>
+const MO=['APR','MEI','JUN','JUL','AGU','SEP'];
+const BR={IPHONE:['#6D3FD8','#EEE8FD','#FAF8FE'],ITEL:['#0E7C6B','#DDF3EE','#F5FBF9']};
+const D=[['028.145','1217 CELL','SUMATERA BAG. SELATAN',{IPHONE:[[0,0,0,0,0,0],[0,0,0,0,0,0]],ITEL:[[20,35,30,45,20,18],[15,30,28,40,22,16]]}],
+['321.158','123 DEAL','SULAWESI SELATAN',{IPHONE:[[0,5,0,3,0,2],[0,2,1,0,0,1]],ITEL:[[60,80,75,90,70,64],[51,70,66,80,60,58]]}],
+['BT06609','2 DAN CELLULAR','JAWA TENGAH',{IPHONE:[[0,0,2,1,0,0],[0,0,1,1,0,0]],ITEL:[[12,0,9,14,8,10],[10,4,6,12,7,9]]}]];
+const f=n=>n?n.toLocaleString('id-ID'):'–',sum=a=>a.reduce((x,y)=>x+y,0);
+let S=1,B='ITEL',IND=0;
+const idH=`<th class="l id">KODE</th><th class="l id">NAMA DEALER</th><th class="l id">BIG REGION</th>`;
+const idR=d=>`<td class="l">${d[0]}</td><td class="l n">${d[1]}</td><td class="l">${d[2]}</td>`;
+const idT=`<td class="l idt">TOTAL</td><td class="idt"></td><td class="idt"></td>`;
+const chips=(ind)=>`<div class="chips"><b>BRAND</b>${Object.keys(BR).map(b=>`<span class="chip${b===B?' on':''}" data-b="${b}" style="${b===B?'background:'+BR[b][0]:''}"><i style="background:${BR[b][0]}"></i>${b}</span>`).join('')}${ind?`<b style="margin-left:14px">INDIKATOR</b>${['SELL THRU','SELL OUT'].map((x,i)=>`<span class="chip${i===IND?' on':''}" data-i="${i}" style="${i===IND?'background:'+['#1E5FB8','#C25A12'][i]:''}">${x}</span>`).join('')}`:''}</div>`;
+const V={
+1:['A · Sekarang (lebar)',()=>{let h1=`<tr><th class="l id" rowspan="3">KODE</th><th class="l id" rowspan="3">NAMA DEALER</th><th class="l id" rowspan="3">BIG REGION</th>`,h2='<tr>',h3='<tr>';
+ Object.keys(BR).forEach(b=>{h1+=`<th colspan="14" style="background:${BR[b][0]};color:#fff;text-align:center">${b}</th>`;[['SELL THRU','#1E5FB8','#E3EEFB'],['SELL OUT','#C25A12','#FDEBDD']].forEach(x=>{h2+=`<th colspan="7" class="l" style="background:${x[2]};color:${x[1]}">${x[0]}</th>`;MO.concat(['TOTAL']).forEach(m=>h3+=`<th style="background:${x[2]};color:${x[1]};border-bottom:3px solid ${BR[b][0]}">${m}</th>`);});});
+ const rows=D.map(d=>`<tr>${idR(d)}${Object.keys(BR).map(b=>d[3][b].map((v,k)=>v.concat([sum(v)]).map(x=>`<td style="background:${['#F5F9FE','#FFF8F2'][k]}">${f(x)}</td>`).join('')).join('')).join('')}</tr>`).join('');
+ const t=`<tr class="t">${idT}${Object.keys(BR).map(b=>[0,1].map(k=>{const c=MO.map((_,j)=>sum(D.map(d=>d[3][b][k][j])));return c.concat([sum(c)]).map(x=>`<td style="font-weight:800;background:${['#E3EEFB','#FDEBDD'][k]};color:${['#1E5FB8','#C25A12'][k]};border-top:2px solid ${BR[b][0]}">${f(x)}</td>`).join('');}).join('')).join('')}</tr>`;
+ return `<div class="wrap"><table style="min-width:2000px">${h1}</tr>${h2}</tr>${h3}</tr>${rows}${t}</table></div>`;},'Bentuk yang ada sekarang, untuk pembanding.'],
+2:['B · Per brand, ST & SO satu sel',()=>{const c=BR[B],st=`--bc:${c[0]};--bl:${c[1]};--bx:${c[2]}`;
+ const rows=D.map(d=>{const v=d[3][B];return `<tr>${idR(d)}${MO.map((_,j)=>`<td class="bm" style="${st}"><span class="st">${f(v[0][j])}</span><span class="so">SO ${f(v[1][j])}</span></td>`).join('')}<td class="bm" style="${st}"><span class="st">${f(sum(v[0]))}</span><span class="so">SO ${f(sum(v[1]))}</span></td></tr>`;}).join('');
+ const T=k=>MO.map((_,j)=>sum(D.map(d=>d[3][B][k][j])));const a=T(0),b=T(1);
+ return `<div class="wrap">${chips(0)}<table><tr>${idH}${MO.map(m=>`<th class="bm" style="${st}">${m} 26</th>`).join('')}<th class="bm" style="${st}">TOTAL</th></tr>${rows}<tr class="t">${idT}${a.map((x,j)=>`<td class="bm" style="${st}"><span class="st">${f(x)}</span><span class="so">SO ${f(b[j])}</span></td>`).join('')}<td class="bm" style="${st}"><span class="st">${f(sum(a))}</span><span class="so">SO ${f(sum(b))}</span></td></tr></table></div>`;},'Pilih brand lewat chip. Tiap bulan satu kolom: ST di atas (biru), SO di bawah (oranye kecil).'],
+3:['C · Peta warna',()=>{const col=['#1E5FB8','#C25A12'][IND],all=D.flatMap(d=>d[3][B][IND]),mx=Math.max(1,...all);
+ const cell=x=>{const a=x/mx;return `<td><span class="hm" style="background:${x?col+Math.round(20+a*200).toString(16).padStart(2,'0'):'#F3F6F9'};color:${a>.55?'#fff':'#15303F'}">${f(x)}</span></td>`;};
+ const rows=D.map(d=>`<tr>${idR(d)}${d[3][B][IND].map(cell).join('')}<td style="font-weight:800">${f(sum(d[3][B][IND]))}</td></tr>`).join('');
+ const T=MO.map((_,j)=>sum(D.map(d=>d[3][B][IND][j])));
+ return `<div class="wrap">${chips(1)}<table><tr>${idH}${MO.map(m=>`<th style="color:${col};border-bottom:3px solid ${col}">${m} 26</th>`).join('')}<th style="color:${col};border-bottom:3px solid ${col}">TOTAL</th></tr>${rows}<tr class="t">${idT}${T.map(x=>`<td style="font-weight:800;border-top:2px solid ${col}">${f(x)}</td>`).join('')}<td style="font-weight:800;border-top:2px solid ${col}">${f(sum(T))}</td></tr></table></div>`;},'Pilih brand + indikator. Makin tua warnanya, makin besar angkanya; abu = tidak ada.'],
+4:['D · Ringkas + grafik mini',()=>{const cell=(v,c)=>{const mx=Math.max(1,...v),t=sum(v),g=v[4]?((v[5]-v[4])/v[4]*100):null;return `<td><div class="bcell"><div class="sp" style="--c:${c}">${v.map(x=>`<i class="${x?'':'z'}" style="height:${x?Math.max(4,x/mx*26):3}px"></i>`).join('')}</div><b>${f(t)}</b><span class="gr ${g==null?'':g>=0?'up':'dn'}">${g==null?'—':(g>=0?'▲':'▼')+Math.abs(g).toFixed(0)+'%'}</span></div></td>`;};
+ const rows=D.map(d=>`<tr>${idR(d)}${Object.keys(BR).map(b=>cell(d[3][b][0],BR[b][0])).join('')}</tr>`).join('');
+ return `<div class="wrap"><table><tr>${idH}${Object.keys(BR).map(b=>`<th class="bh" style="--c:${BR[b][0]}">${b} · ST 6 BLN</th>`).join('')}</tr>${rows}<tr class="t">${idT}${Object.keys(BR).map(b=>cell(MO.map((_,j)=>sum(D.map(d=>d[3][b][0][j]))),BR[b][0]).replace('<td>','<td style="background:#F3F6F9;border-top:2px solid #8C9AA9">')).join('')}</tr></table></div>`;},'Satu kolom per brand: batang 6 bulan + total + growth bulan terakhir vs sebelumnya.']};
+function draw(){document.getElementById('pk').innerHTML=Object.entries(V).map(([k,v])=>`<button class="${+k===S?'on':''}" data-s="${k}">${v[0]}</button>`).join('');document.getElementById('ds').textContent=V[S][2];document.getElementById('o').innerHTML=V[S][1]();}
+document.body.onclick=e=>{const s=e.target.closest('[data-s]'),b=e.target.closest('[data-b]'),i=e.target.closest('[data-i]');if(s)S=+s.dataset.s;else if(b)B=b.dataset.b;else if(i)IND=+i.dataset.i;else return;draw();};
+S=2;draw();
+</script></body></html>

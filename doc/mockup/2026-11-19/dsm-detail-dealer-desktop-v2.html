@@ -1,0 +1,96 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mockup · Popup dealer desktop v2</title>
+<style>
+:root{--petrol:#10394E;--mut:#7C8899;--ln:#E3E9F0;--or:#F07A0C}
+*{box-sizing:border-box}body{margin:0;font:13px/1.45 Inter,Segoe UI,Arial,sans-serif;background:#E9EEF3;color:#15303F;padding:20px}
+h1{font-size:18px;margin:0 0 4px;color:var(--petrol)}.lead{color:#5B6B7A;margin:0 0 14px;max-width:1080px}
+.pick{display:flex;gap:8px;align-items:center;margin:0 0 14px;flex-wrap:wrap}.pick b{font-size:12px;color:var(--petrol)}
+.pick button{border:1.5px solid #CBD6E1;background:#fff;border-radius:10px;padding:7px 12px;font-weight:800;font-size:12px;color:var(--petrol);cursor:pointer}.pick button.on{background:var(--petrol);color:#fff;border-color:var(--petrol)}
+.pick small{color:var(--mut)}
+.modal{width:1060px;background:#F7F9FB;border-radius:18px;box-shadow:0 20px 50px rgba(16,57,78,.18);overflow:hidden}
+.mh{background:#fff;padding:16px 20px 12px;display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid var(--ln)}
+.mh h3{margin:0;font-size:17px;color:var(--petrol)}.sub{display:flex;gap:6px;align-items:center;margin-top:5px;font-size:12px;color:var(--mut)}
+.pill{font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:999px;letter-spacing:.3px}
+.ACTIVE{background:#E3F5EA;color:#1D7A45}.PASSIVE{background:#FFF3D6;color:#9A6400}.IDLE{background:#FFE9DA;color:#C25A12}.INACTIVE{background:#FDE4E2;color:#B42318}.PROSPECT{background:#E4EEFB;color:#1E5FB8}
+.x{width:32px;height:32px;border-radius:10px;border:0;background:#F1F4F8;font-size:16px;color:#5B6B7A}
+.act{background:#fff;padding:0 20px 12px;display:flex;gap:8px;align-items:center}
+.btn{height:38px;padding:0 16px;border-radius:11px;font-weight:800;font-size:12.5px;letter-spacing:.3px;border:1.5px solid #CFDAE5;background:#fff;color:var(--petrol);display:inline-flex;align-items:center;gap:7px;cursor:pointer;position:relative}
+.btn.p{background:var(--petrol);color:#fff;border-color:var(--petrol)}.btn.g{border-color:#9ED9B6;color:#137A44;background:#F2FBF5}
+.sp{flex:1}.menu{position:absolute;top:44px;left:0;background:#fff;border:1px solid var(--ln);border-radius:12px;box-shadow:0 12px 30px rgba(16,57,78,.16);width:230px;padding:6px;z-index:9;display:none;text-align:left}
+.menu.on{display:block}.menu a{display:flex;gap:10px;align-items:center;padding:9px 10px;border-radius:9px;color:#15303F;text-decoration:none;font-weight:700}.menu a:hover{background:#F3F7FA}.menu small{display:block;color:var(--mut);font-weight:600;font-size:11px}
+.menu .ic{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:15px}.menu hr{border:0;border-top:1px solid var(--ln);margin:5px 4px}
+/* tabs: 3 gaya */
+.tabs{display:flex;gap:4px;padding:0 20px;background:#fff;border-bottom:1px solid var(--ln)}
+.tabs button{border:0;background:none;font:inherit;font-size:12px;font-weight:800;letter-spacing:.5px;color:#6B7B8C;cursor:pointer;display:flex;align-items:center;gap:6px}
+.tabs svg{width:15px;height:15px}
+.tA button{padding:11px 12px;border-bottom:2.5px solid transparent}.tA button.on{color:var(--petrol);border-bottom-color:var(--or)}
+.tB{padding:10px 20px;background:#F7F9FB}.tB .seg{flex:1;display:flex;background:#CBD5E0;border-radius:12px;padding:4px;gap:2px}
+.tB button{flex:1;justify-content:center;padding:9px 14px;border-radius:9px;color:#3F5163}.tB button.on{background:#fff;color:var(--petrol);box-shadow:0 2px 8px rgba(16,57,78,.12)}
+.tC{padding:10px 20px;gap:8px;background:#F7F9FB;border:0}.tC button{padding:8px 14px;border-radius:999px;border:1.5px solid #D5DFE8;background:#fff}
+.tC button.on{background:#E8F1FB;border-color:#1E5FB8;color:#1E5FB8}
+.tC button .n{background:#F1F4F8;border-radius:999px;font-size:10px;padding:1px 6px;color:#6B7B8C}.tC button.on .n{background:#1E5FB8;color:#fff}
+.bd{padding:16px 20px 20px;min-height:430px}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px}
+.k{background:#fff;border:1px solid var(--ln);border-left:4px solid var(--c);border-radius:14px;padding:10px 12px}.k small{display:block;font-size:10.5px;font-weight:800;color:var(--mut);letter-spacing:.4px}.k b{font-size:20px;color:var(--c)}.k em{display:block;font-style:normal;font-size:11px;color:var(--mut)}
+.card{background:#fff;border:1px solid var(--ln);border-radius:14px;padding:12px 14px}
+.card h4{margin:0 0 8px;font-size:13px;color:var(--petrol);letter-spacing:.3px}
+table{border-collapse:collapse;width:100%}th{background:#0F5257;color:#fff;font-size:11px;letter-spacing:.4px;text-align:right;padding:8px 10px}th:first-child{text-align:left}
+td{padding:8px 10px;border-top:1px solid #EEF2F6;text-align:right}td:first-child{text-align:left}tr.t td{font-weight:800;background:#EEF4FB;border-top:2px solid #1E5FB8}
+.note{font-size:11px;color:var(--mut);margin-top:6px}
+/* status 12 bulan desktop */
+.sh{display:flex;align-items:center;gap:8px;margin-bottom:8px}.sh b{color:var(--petrol);font-size:13px}.lk{background:#F1F4F8;border-radius:8px;padding:3px 8px;font-size:11px;font-weight:700;color:#5B6B7A}
+.sx{font-size:11px;color:var(--mut);margin:0 0 10px}.sx b{color:var(--petrol)}
+.sg{display:grid;grid-template-columns:120px 96px minmax(360px,1fr) 90px 1.1fr;gap:0 14px;align-items:center}
+.sg>.r{display:contents}.sg .c{padding:9px 0;border-top:1px solid #EEF2F6}.sg .hd .c{border-top:0;padding:0 0 4px;font-size:10px;font-weight:800;color:var(--mut);letter-spacing:.4px}
+.sg .tot .c{background:#F6F9FE}.sg .nm{font-weight:800;color:var(--petrol)}
+.d12,.m12,.y12{display:grid;grid-template-columns:repeat(12,1fr);gap:4px}
+.d12 i{height:16px;border-radius:4px;background:#E6ECF2}.d12 i.y{background:#2E9B57}.d12 i.b{background:#fff;border:1px dashed #C9D6E2}.d12 i.w{box-shadow:0 2.5px 0 var(--petrol)}
+.m12 span{text-align:center;font-size:10.5px;font-weight:800;color:#8DA0B1}.m12 .w{color:var(--petrol)}
+.y12{font-size:9px;font-weight:800;color:#8DA0B1;letter-spacing:.3px}.y12 span+span{border-left:1px solid #D5DFE8;padding-left:4px}
+.u{text-align:right;font-weight:800;color:var(--petrol)}.u small{display:block;font-size:10.5px;color:var(--mut);font-weight:700}.u.z{color:var(--mut);font-size:11px;font-weight:700}
+.kt{font-size:11.5px;color:#5B6B7A}
+.lg{display:flex;gap:14px;font-size:11px;color:var(--mut);margin-top:10px}.lg i{display:inline-block;width:11px;height:11px;border-radius:3px;background:#E6ECF2;margin-right:5px;vertical-align:-1px}.lg i.y{background:#2E9B57}.lg i.b{background:#fff;border:1px dashed #C9D6E2}
+.ct{display:grid;grid-template-columns:1fr 1fr;gap:12px}.ct p{margin:0 0 6px}.ct small{color:var(--mut);font-weight:800;font-size:10.5px;letter-spacing:.4px;display:block}
+.ph{display:flex;align-items:center;justify-content:center;height:300px;color:var(--mut);border:1.5px dashed #D5DFE8;border-radius:14px;background:#fff}
+.side{max-width:1060px;margin-top:14px;background:#fff;border-radius:14px;padding:12px 16px;border:1px solid var(--ln)}.side ul{margin:6px 0 0;padding-left:18px}.side li{margin:3px 0}
+</style></head><body>
+<h1>Mockup · Popup detail dealer DESKTOP v2</h1>
+<p class="lead">Tombol <b>HUBUNGI</b> di samping CATAT ORDER (Telepon / WhatsApp), alamat & nomor HP keluar dari Ringkasan (pindah ke tab KONTAK), tab STATUS pakai 12 bulan seperti HP. Pilih gaya tab di bawah, klik tab untuk pindah isi.</p>
+<div class="pick"><b>GAYA TAB:</b><button data-s="A">A · Garis bawah (sekarang)</button><button data-s="B" class="on">B · Segmen (kapsul abu)</button><button data-s="C">C · Chip + angka</button><small id="pd"></small></div>
+
+<div class="modal">
+ <div class="mh"><div><h3>PT.AGRES INFO TEKNOLOGI</h3><div class="sub"><span class="pill ACTIVE">ACTIVE</span>Terakhir order 24 Sep 2026 · CUST-00412 · JAKARTA</div></div><button class="x">✕</button></div>
+ <div class="act"><button class="btn p">＋ CATAT ORDER</button>
+  <button class="btn g" id="hub">📞 HUBUNGI ▾<div class="menu" id="hm"><a href="#"><span class="ic" style="background:#E8F1FB">☎</span><div>Telepon<small>0812-3456-7890</small></div></a><a href="#"><span class="ic" style="background:#E3F5EA">💬</span><div>WhatsApp<small>0812-3456-7890</small></div></a><hr><a href="#" data-go="5"><span class="ic" style="background:#F1F4F8">👤</span><div>Lihat semua kontak<small>PIC & alamat · tab KONTAK</small></div></a></div></button>
+  <span class="sp"></span><button class="btn">⋯</button></div>
+ <div class="tabs tA" id="tabs"></div>
+ <div class="bd" id="bd"></div>
+</div>
+<div class="side"><b>Catatan</b><ul>
+<li><b>HUBUNGI</b> membuka pilihan Telepon / WhatsApp (nomor HP dealer). Kalau dealer belum punya nomor, tombol redup + "Nomor belum ada".</li>
+<li><b>Ringkasan</b>: hanya kartu angka + histori bulanan per brand. Alamat & HP pindah ke tab <b>KONTAK</b>.</li>
+<li><b>Status</b> desktop: 12 kotak per brand (lebih besar dari HP), angka bulan + tahun di atas, 3 bulan jendela bergaris bawah, unit SEP + keterangan di kanan. Data 12 bulan diambil saat tab STATUS dibuka.</li>
+<li>Rekomendasi gue: <b>A</b> (paling tenang, sudah dipakai, tidak makan tempat). C enak kalau mau lihat jumlah baris transaksi/stok, tapi butuh hitungan tambahan.</li>
+<li>HP tidak berubah.</li></ul></div>
+<script>
+const ic={r:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7v9H3z"/></svg>',s:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/></svg>',h:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>',k:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7l9-4 9 4-9 4zM3 7v10l9 4 9-4V7"/></svg>',t:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6"/></svg>',c:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h4l2 5-3 2a11 11 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>'};
+const T=[['RINGKASAN','r',''],['STATUS','s',''],['STOK','k','24'],['TRANSAKSI','t','138'],['KONTAK','c','3']];
+let S='B',cur=0;
+const M=[10,11,12,1,2,3,4,5,6,7,8,9].slice(0),MS=[9,10,11,12,1,2,3,4,5,6,7,8];
+const d12=p=>`<div class="d12">${[...p].map((c,i)=>`<i class="${c==='b'?'b':c==='y'?'y':''}${i>=9?' w':''}"></i>`).join('')}</div>`;
+const ST=[['TOTAL','ACTIVE','bbbbyyyyyyyy',1647,'DA terpenuhi · 3 brand'],['ITEL','ACTIVE','bbbbyyyyyyyy',599,'memenuhi DA · terakhir 16 Sep'],['MOTOPAD','ACTIVE','bbbbnnnyyyyy',1005,'memenuhi DA · terakhir 24 Sep'],['MOTOROLA','ACTIVE','bbbbyyyyyyyy',43,'di bawah minimal DA · terakhir 12 Sep'],['VILLAON','INACTIVE','bbbbnnnynnnn',0,'terakhir order Apr']];
+const body=[
+()=>`<div class="kpis">${[['OMZET PERIODE','Rp 3,28 M','September 2026','#9A6400'],['UNIT DEVICE','1.647','Seluruh brand','#1E5FB8'],['NOO','0','September 2026','#6D3FD8'],['SELL OUT','3.683','s.d. 28 Sep 2026','#C25A12'],['JEDA','6 hari','Dari cutoff data','#10394E']].map(k=>`<div class="k" style="--c:${k[3]}"><small>${k[0]}</small><b>${k[1]}</b><em>${k[2]}</em></div>`).join('')}</div>
+<div class="card"><h4>HISTORI PENJUALAN BULANAN PER BRAND</h4><table><tr><th>BULAN</th><th>ITEL</th><th>MOTOPAD</th><th>MOTOROLA</th><th>VILLAON</th><th>TOTAL</th></tr>
+${[['September 2026',599,'1.005',43,'-','1.647'],['Agustus 2026','2.918',500,40,'-','3.458'],['Juli 2026','4.100',396,'1.435','-','5.931'],['Juni 2026','7.392',70,'1.622','-','9.084']].map(r=>`<tr>${r.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}<tr class="t"><td>TOTAL 4 BULAN</td><td>15.009</td><td>1.971</td><td>3.140</td><td>-</td><td>20.120</td></tr></table><div class="note">Isi tabel tetap seperti sekarang (toggle SELL THRU / SELL OUT / OMZET, pilihan bulan).</div></div>`,
+()=>`<div class="card"><div class="sh"><b>STATUS DEALER</b><span class="lk">🔒 dikunci 1 Sep</span></div><p class="sx">12 bulan terakhir · <b>garis bawah = jendela status (Jun–Agu)</b> · kotak putus-putus = sebelum basis Jan 2026</p>
+<div class="sg"><div class="r hd"><div class="c">BRAND</div><div class="c">STATUS</div><div class="c"><div class="y12"><span style="grid-column:span 4">BULAN · 2025</span><span style="grid-column:span 8">2026 →</span></div><div class="m12">${MS.map((m,i)=>`<span class="${i>=9?'w':''}">${m}</span>`).join('')}</div></div><div class="c" style="text-align:right">UNIT SEP</div><div class="c">KETERANGAN</div></div>
+${ST.map((r,i)=>`<div class="r${i?'':' tot'}"><div class="c nm">${r[0]}</div><div class="c"><span class="pill ${r[1]}">${r[1]}</span></div><div class="c">${d12(r[2])}</div><div class="c u${r[3]?'':' z'}">${r[3]?r[3].toLocaleString('id-ID'):'belum order'}</div><div class="c kt">${r[4]}</div></div>`).join('')}</div>
+<div class="lg"><span><i class="y"></i>order</span><span><i></i>tidak order</span><span><i class="b"></i>sebelum basis</span></div></div>`,
+()=>`<div class="ph">Isi tab STOK tetap seperti sekarang</div>`,()=>`<div class="ph">Isi tab TRANSAKSI tetap seperti sekarang</div>`,
+()=>`<div class="ct"><div class="card"><h4>ALAMAT</h4><p>AGRES.ID JL. GUNUNG SAHARI RAYA 1, LT 2 MANGGA DUA</p><p>JAKARTA · Lokasi dealer: JABODETABEK</p></div><div class="card"><h4>KONTAK</h4><small>NOMOR HP</small><p>0812-3456-7890</p><small>PIC</small><p>—</p><button class="btn">✎ Edit kontak & alamat</button></div></div>`];
+function draw(){const t=document.getElementById('tabs');t.className='tabs t'+S;const inner=T.map((x,i)=>`<button class="${i===cur?'on':''}" data-i="${i}">${ic[x[1]]}${x[0]}${S==='C'&&x[2]?` <span class="n">${x[2]}</span>`:''}</button>`).join('');t.innerHTML=S==='B'?`<div class="seg">${inner}</div>`:inner;document.getElementById('bd').innerHTML=body[cur]();}
+document.getElementById('tabs').onclick=e=>{const b=e.target.closest('[data-i]');if(b){cur=+b.dataset.i;draw();}};
+document.querySelector('.pick').onclick=e=>{const b=e.target.closest('[data-s]');if(!b)return;S=b.dataset.s;document.querySelectorAll('.pick button').forEach(x=>x.classList.toggle('on',x===b));draw();};
+document.getElementById('hub').onclick=e=>{const g=e.target.closest('[data-go]');if(g){e.preventDefault();cur=4;draw();}document.getElementById('hm').classList.toggle('on');};
+draw();
+</script></body></html>

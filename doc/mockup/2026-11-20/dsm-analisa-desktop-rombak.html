@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><title>DSM · Rombak Analisa desktop</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#F3F6FA;color:#15232E;font-size:12px}
+button,input,select{font-family:inherit}
+.top{position:sticky;top:0;z-index:9;background:#fff;border-bottom:1px solid #DDE3EA;padding:10px 20px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.top b{font-size:14px}
+.seg{display:inline-flex;background:#CBD5E0;border-radius:999px;padding:3px}
+.seg button{border:0;background:transparent;padding:6px 14px;border-radius:999px;font-weight:700;font-size:11px;cursor:pointer;color:#33414D;white-space:nowrap}
+.seg button.on{background:#fff;color:#10394E;box-shadow:0 1px 3px #0002}
+.wrap{max-width:1400px;margin:0 auto;padding:16px 20px 60px}
+.note{background:#fff;border-left:4px solid #F0A400;padding:10px 14px;border-radius:8px;font-size:12px;margin-bottom:14px;line-height:1.55}
+h2.pt{margin:6px 0 2px;font-size:20px;color:#10394E}.ps{color:#6B7785;font-size:12px;margin-bottom:12px}
+.hint{color:#6B7785;font-size:11px}
+.row{display:flex;align-items:center;gap:10px}.sp{flex:1}
+.panel{background:#fff;border-radius:12px;box-shadow:0 1px 4px #0001;margin-bottom:14px;overflow:hidden}
+.ph{padding:9px 14px;border-bottom:1px solid #EEF0F5;display:flex;align-items:baseline;gap:10px}
+.ph h3{margin:0;font-size:13px;color:#10394E}.ph small{color:#6B7785;font-size:11px}
+.pb{padding:10px 14px;overflow:auto}
+table{border-collapse:separate;border-spacing:0;width:100%}
+.n{text-align:right}.c{text-align:center}
+.lnk{color:#1E5FB8;font-weight:700;background:none;border:0;padding:0;cursor:pointer;font-size:inherit}
+.dcode{font-size:9.5px;color:#6B7785;background:#EEF1F5;border-radius:3px;padding:0 4px;margin-right:5px}
+/* ===== SEKARANG ===== */
+.now .fb{display:flex;gap:10px;flex-wrap:wrap;background:#fff;border-radius:12px;padding:10px 14px;margin-bottom:12px;box-shadow:0 1px 4px #0001;align-items:flex-end}
+.now .fb label{display:flex;flex-direction:column;font-size:10.5px;font-weight:700;color:#4A5663;gap:3px}
+.now .fb select{height:34px;border:1px solid #CBD5E0;border-radius:8px;padding:0 8px;min-width:140px;background:#fff}
+.now .kp{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px}
+.now .kpi{background:#fff;border-radius:12px;padding:12px 14px;box-shadow:0 1px 4px #0001}
+.now .kpi small{color:#6B7785;font-size:11px}.now .kpi b{display:block;font-size:22px;margin:3px 0;color:#10394E}
+.now th{background:linear-gradient(90deg,#0B5FC4,#3F4FD6);color:#fff;font-size:11px;font-weight:800;padding:0 12px;height:36px;text-align:left;white-space:nowrap}
+.now td{padding:0 12px;height:44px;font-size:12.5px;border-bottom:1px solid #EEF0F5;white-space:nowrap}
+.now td small{display:block;font-size:11px;color:#6B7785}
+.now .dc{display:grid;grid-template-columns:1.6fr 1.2fr auto;gap:12px;align-items:center;padding:12px;border:1px solid #E3E8EF;border-radius:10px;margin-bottom:8px}
+.now .av{display:inline-flex;width:28px;height:28px;border-radius:50%;background:#EEE8FB;color:#6D3FD8;font-weight:800;align-items:center;justify-content:center;margin-right:8px}
+.now .fr{display:grid;grid-template-columns:150px 1fr 40px;gap:8px;align-items:center;margin:6px 0}
+/* ===== USULAN (bahasa visual DOS/Analisa padat) ===== */
+.ff{display:flex;align-items:center;gap:8px;background:#fff;border-radius:10px;padding:6px 10px;margin-bottom:10px;box-shadow:0 1px 3px #0001}
+.ff .s{position:relative}.ff .s input{height:32px;width:230px;border:1px solid #CBD5E0;border-radius:8px;padding:0 10px 0 28px;font-size:12px}
+.ff .s:before{content:"⌕";position:absolute;left:9px;top:5px;color:#6B7785;font-size:15px}
+.ff select{height:32px;border:1px solid #CBD5E0;border-radius:8px;padding:0 6px;font-size:12px;background:#fff;color:#15232E}
+.ff .rs{height:32px;border:1px solid #CBD5E0;border-radius:8px;background:#fff;font-weight:800;font-size:10.5px;padding:0 12px;color:#4A5663;cursor:pointer}
+.ff .cnt{font-weight:700;color:#10394E;font-size:12px}
+.ks{display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-radius:10px;box-shadow:0 1px 3px #0001;margin-bottom:12px;overflow:hidden}
+.ks>div{padding:8px 14px;border-right:1px solid #EEF1F4;border-top:3px solid var(--k,#0E5A63)}
+.ks>div:last-child{border-right:0}
+.ks small{display:block;color:#6B7785;font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase}
+.ks b{font-size:19px;color:#10394E;font-variant-numeric:tabular-nums}
+.ks i{display:block;font-style:normal;color:#6B7785;font-size:10px}
+.new table{border:1px solid #D5DCE4}
+.new th{background:#E6EBF1;color:#15232E;font-size:10.5px;font-weight:800;letter-spacing:.3px;padding:5px 9px;text-align:left;white-space:nowrap;border-bottom:2px solid #15303F;border-right:1px solid #D5DCE4}
+.new td{padding:3px 9px;font-size:11px;border-bottom:1px solid #E7EBF0;border-right:1px solid #EEF1F4;white-space:nowrap;line-height:1.35;font-variant-numeric:tabular-nums}
+.new td small{display:block;font-size:9.5px;color:#6B7785;line-height:1.2}
+.new tbody tr:hover td{background:#F5F8FB}
+.new tbody tr.sel td{background:#EAF3F4}
+.new tr.tot td{background:#E6EBF1;font-weight:800;border-top:2px solid #15303F}
+.new th.bh{background:var(--l);color:var(--d);border-top:3px solid var(--d)}
+.bs{display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--d);margin-right:5px;vertical-align:0}
+.mx{text-align:center;padding:2px 6px!important}.mx.y{background:#DDEBFA}.mx.p{background:#FFF3DC;outline:1.5px dashed #E0A93A;outline-offset:-3px;color:#8A5A00;font-weight:700;cursor:pointer}.mx.g{background:#F4F6F9;color:#9AA4AF}
+.lg{display:flex;gap:14px;font-size:10.5px;color:#4A5663;margin-bottom:6px}.lg i{display:inline-block;width:12px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.bd{display:inline-block;border-radius:4px;padding:1px 6px;font-weight:800;font-size:9.5px;border:1px solid transparent}
+.b-warn{background:#fff3d6;color:#925c00;border-color:#efda9f}.b-vio{background:#EEE8FB;color:#5B3FD6;border-color:#d9cffa}.b-bad{background:#fce9e8;color:#b43138;border-color:#f1c0c1}
+.wa{display:inline-block;background:#E5F6EE;color:#12866A;border:1px solid #BCE3CD;border-radius:6px;padding:1px 8px;font-weight:800;font-size:10px;cursor:pointer}
+.rh{display:inline-block;border:1px solid #CBD5E0;border-radius:6px;padding:1px 8px;font-weight:800;font-size:10px;color:#10394E;background:#fff;margin-left:4px;cursor:pointer}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gmain{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px;align-items:start}
+.gmd{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(320px,1fr);gap:14px;align-items:start}
+.gc{display:grid;grid-template-columns:230px minmax(0,1fr);gap:14px;align-items:start}
+.opp{display:grid;grid-template-columns:18px 1fr auto;gap:8px;align-items:center;padding:6px 4px;border-bottom:1px solid #EEF1F4}
+.opp .rk{font-weight:800;color:#6B7785;font-size:11px}.opp b{font-size:11.5px;font-variant-numeric:tabular-nums}
+.opp small{display:block;font-size:9.5px;color:#6B7785}
+.fun{display:grid;grid-template-columns:130px 1fr 38px;gap:8px;align-items:center;padding:3px 0;font-size:11px;cursor:pointer;border-radius:4px}
+.fun:hover,.fun.sel{background:#EAF3F4}
+.fun .bar{background:#EEF1F5;border-radius:3px;height:16px;position:relative}.fun .bar i{display:block;height:100%;border-radius:3px}.fun .bar span{position:absolute;left:6px;top:1px;font-weight:800;font-size:10.5px;color:#fff;mix-blend-mode:normal;text-shadow:0 0 2px #0006}
+.fh{font-weight:800;font-size:11px;color:#10394E;margin-bottom:4px}
+.heat{display:inline-block;min-width:30px;text-align:center;border-radius:3px;font-weight:700;font-size:10.5px;padding:1px 4px}
+.dt{background:#fff;border-radius:12px;box-shadow:0 1px 4px #0001;padding:12px 14px;position:sticky;top:60px}
+.dt h4{margin:0 0 2px;font-size:14px;color:#10394E}.dt .sb{font-size:11px;color:#6B7785;margin-bottom:10px}
+.st3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}.st3>div{background:#F4F7FA;border-radius:8px;padding:6px 8px}.st3 small{display:block;font-size:9.5px;color:#6B7785;font-weight:700;text-transform:uppercase}.st3 b{font-size:14px;color:#10394E}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.chip{border-radius:6px;padding:3px 8px;font-size:10.5px;font-weight:700;border:1px solid transparent}
+.chip.y{background:#DDEBFA;color:#1E4F8A}.chip.p{background:#FFF3DC;color:#8A5A00;border:1.5px dashed #E0A93A}.chip.g{background:#F4F6F9;color:#9AA4AF}
+.nav{display:flex;flex-direction:column;gap:8px}
+.nv{background:#fff;border-radius:10px;padding:10px 12px;box-shadow:0 1px 3px #0001;cursor:pointer;border-left:4px solid transparent;border:0;text-align:left;border-left:4px solid #D5DCE4}
+.nv.on{border-left-color:#0E5A63;background:#EAF3F4}.nv small{display:block;font-size:10px;font-weight:800;color:#6B7785;letter-spacing:.3px}.nv b{font-size:22px;color:#10394E;display:block;line-height:1.2}.nv span{font-size:10px;color:#6B7785}
+.inl{display:flex;gap:18px;font-size:11px;color:#4A5663;margin-bottom:8px;flex-wrap:wrap}.inl b{color:#10394E;font-size:12px}
+.tag{display:inline-block;font-size:9.5px;font-weight:800;border-radius:4px;padding:1px 6px;background:#10394E;color:#fff;margin-left:6px;vertical-align:1px}
+.hide{display:none!important}
+</style></head><body>
+<div class="top"><b>DSM · Rombak halaman Analisa (desktop)</b>
+<div class="seg" id="md"><button data-v="now">SEKARANG</button><button class="on" data-v="A">OPSI A</button><button data-v="B">OPSI B</button><button data-v="C">OPSI C</button></div>
+<span class="hint">Klik tab / baris / batang di dalam mockup untuk mencoba.</span></div>
+<div class="wrap"><div class="note" id="note"></div><div id="out"></div></div>
+<script>
+const BR=[['MOTOROLA','#1E5FB8','#E3EEFB'],['REALME','#2E7D32','#E5F4E6'],['TECNO','#B4204F','#FCE7EE'],['INFINIX','#7A5B00','#FFF4D6'],['ITEL','#0E6E64','#E2F4F1'],['SAMSUNG','#1B3F8F','#E4EAF7']];
+const BC={};BR.forEach(b=>BC[b[0]]=b);
+const D=[['D0412','Agres Info Teknologi','Jakarta Barat','Rina',42,[18,9,'p6',4,'-',2]],['D0377','Cahaya Cell','Cirebon','Dedi',31,[12,'p4',7,'p3',6,'-']],['D0520','Mitra Ponsel','Bandung','Sari',28,[10,8,'p5','-',5,'p2']],['D0198','Sinar Gadget','Tegal','Dedi',26,['p5',11,6,'-','-',3]],['D0633','Prima Komunika','Bekasi','Andi',22,[9,'p3',4,5,'-','-']],['D0289','Nusantara Cell','Kuningan','Dedi',19,[8,6,'p3','-',3,'-']],['D0710','Global Seluler','Depok','Sari',17,['p4','-',5,3,'p2',4]],['D0455','Bintang Phone','Majalengka','Dedi',15,[7,'p2','-',4,2,'-']],['D0561','Delta Mobile','Bogor','Andi',14,['-',5,'p3',3,'p2',1]],['D0302','Karya Telekom','Subang','Sari',12,[5,4,'-','p2',3,'-']]];
+const RE=[['D0233','Maju Jaya Cell','Indramayu','Dedi','ACTIVE',20,'12 Okt',37,18,[16,18,14]],['D0344','Sumber Rejeki','Cirebon','Dedi','ACTIVE',14,'20 Okt',29,12,[10,12,13]],['D0608','Toko Andalan','Bandung','Sari','PASSIVE',11,'28 Sep',52,8,[12,9,0]],['D0127','Duta Selular','Tegal','Dedi','PASSIVE',9,'30 Sep',50,6,[8,10,0]],['D0481','Era Gadget','Bekasi','Andi','IDLE',8,'14 Agu',97,0,[0,0,0]],['D0559','Fajar Ponsel','Bogor','Andi','IDLE',6,'2 Agu',109,0,[0,0,0]],['D0090','Sentosa Cell','Kuningan','Dedi','INACTIVE',5,'3 Mei',200,0,[0,0,0]],['D0712','Roxy Phone','Depok','Sari','INACTIVE',4,'11 Apr',222,0,[0,0,0]]];
+const BS={ACTIVE:['Active ⏳','b-warn'],PASSIVE:['Passive','b-warn'],IDLE:['Idle','b-vio'],INACTIVE:['Inactive','b-bad']};
+const KP={cross:[['Dealer aktif','96','order bulan ini / bulan lalu'],['Peluang terbuka','212','pasangan dealer × brand'],['Estimasi potensi','± 640 unit','per bulan jika 30% terkonversi'],['Rata-rata brand / dealer','3,1','dari 6 brand']],react:[['Perlu dihubungi','41','belum order bulan ini'],['Potensi hilang','± 380 unit','rata-rata/bulan mereka dulu'],['Paling mudah','12','status Aktif / Di Bawah Min'],['Berhasil aktif lagi','9','bulan ini order lagi setelah absen']],noo:[['Dealer baru Nov (MTD)','18','▼ 25% vs Okt (24)'],['Dealer baru Okt','24','sebulan penuh'],['Order lagi · Okt','63%','15 dari 24 order di Nov'],['Order lagi · Nov','39%','7 dari 18 order ulang']]};
+const KC=['#0E5A63','#C25A12','#12866A','#6D3FD8'];
+const S={mode:'A',tab:'cross',sel:0,re:'ALL',noo:'L1',rsel:0};
+const $=s=>document.querySelector(s);
+const NOTES={now:'<b>SEKARANG</b>: tab segmen, 5 dropdown berlabel di atas (makan 2 baris), 4 kartu KPI besar, lalu panel bertumpuk. Reaktivasi berupa kartu panjang (±70px per dealer), tabel header gradasi biru.',
+A:'<b>OPSI A · Tab + strip KPI + dua kolom</b> (paling aman, mirip DOS/Analisa yang sudah disetujui). Filter jadi 1 baris + <b>kolom cari dealer/sales</b>. KPI jadi 1 strip tipis. Cross-sell: matriks lebar + panel "Top peluang" di kanan (tanpa scroll jauh). Reaktivasi: kartu jadi <b>tabel padat</b> (status badge, tren mini, WA). Dealer Baru: 2 funnel sejajar, lalu Per Sales &amp; Cohort berdampingan.',
+B:'<b>OPSI B · Master–detail</b>: tabel di kiri, klik baris → rincian dealer di panel kanan (brand diambil/peluang, tren, tombol WhatsApp) tanpa pindah halaman atau buka popup. Cocok kalau kerjanya telepon dealer satu per satu. Dealer Baru: klik batang funnel → daftar dealernya muncul di kanan (menggantikan popup).',
+C:'<b>OPSI C · Navigasi kiri + isi lebar</b>: 3 analisa jadi menu vertikal di kiri, tiap menu menampilkan angka utamanya (jadi kelihatan sekaligus tanpa pindah tab). KPI 4 angka jadi 1 baris teks. Area kanan penuh untuk tabel/matriks (paling lebar).'};
+const spark=(a,c='#7A5AF8',w=70,h=20)=>{const mx=Math.max(1,...a);return `<svg width="${w}" height="${h}"><polyline fill="none" stroke="${c}" stroke-width="2" points="${a.map((v,i)=>`${(i/(a.length-1)*(w-4)+2)},${h-3-v/mx*(h-6)}`).join(' ')}"/></svg>`};
+const dn=(d)=>`<span class="dcode">${d[0]}</span><button class="lnk">${d[1]}</button><small>${d[2]} · ${d[3]}</small>`;
+/* ---------- bagian bersama ---------- */
+function tabs(){return `<div class="row" style="margin-bottom:10px"><div class="seg">${[['cross','⊞ Cross-sell Brand'],['react','↻ Reaktivasi Dealer'],['noo','★ Dealer Baru']].map(t=>`<button data-tab="${t[0]}" class="${S.tab===t[0]?'on':''}">${t[1]}</button>`).join('')}</div><span class="sp"></span><span class="hint">Data s.d. 18 Nov 2026 · sesuai cakupan</span></div>`}
+function oldFilter(){return `<div class="fb">${['Big Region','Region','RGM','ASM','Sales'].map(l=>`<label>${l}<select><option>Semua ${l}</option></select></label>`).join('')}<button class="rs" style="height:34px;border:1px solid #CBD5E0;border-radius:8px;background:#fff;padding:0 12px;font-weight:700">Reset</button></div>`}
+function newFilter(n){return `<div class="ff"><div class="s"><input placeholder="Cari dealer / kode / sales…"></div>${['Big Region','Region','RGM','ASM','Sales'].map(l=>`<select><option>Semua ${l}</option></select>`).join('')}<button class="rs">RESET</button><span class="sp"></span><span class="cnt">${n}</span></div>`}
+function oldKpi(){return `<div class="kp">${KP[S.tab].map(k=>`<div class="kpi"><small>${k[0]}</small><b>${k[1]}</b><small>${k[2]}</small></div>`).join('')}</div>`}
+function strip(){return `<div class="ks">${KP[S.tab].map((k,i)=>`<div style="--k:${KC[i]}"><small>${k[0]}</small><b>${k[1]}</b><i>${k[2]}</i></div>`).join('')}</div>`}
+function panel(t,sub,body){return `<div class="panel"><div class="ph"><h3>${t}</h3><small>${sub||''}</small></div><div class="pb">${body}</div></div>`}
+/* ---------- tabel ---------- */
+function matrix(rows,cls,sel){const head=cls==='now'?`<tr><th>Dealer</th><th class="n">Unit/bln</th>${BR.map(b=>`<th class="c">${b[0]}</th>`).join('')}<th>Brand</th></tr>`:`<tr><th>DEALER</th><th class="n">UNIT/BLN</th>${BR.map(b=>`<th class="bh c" style="--d:${b[1]};--l:${b[2]}">${b[0]}</th>`).join('')}<th class="c">BRAND</th></tr>`;
+ const body=rows.map((d,i)=>`<tr data-sel="${i}" class="${sel&&S.sel===i?'sel':''}"><td>${dn(d)}</td><td class="n"><b>${d[4]}</b></td>${d[5].map(c=>c==='-'?'<td class="mx g">–</td>':String(c)[0]==='p'?`<td class="mx p">+${String(c).slice(1)}</td>`:`<td class="mx y">${c}</td>`).join('')}<td class="c"><b>${d[5].filter(c=>c!=='-'&&String(c)[0]!=='p').length}</b>/6</td></tr>`).join('');
+ return `<div class="lg"><span><i style="background:#DDEBFA"></i>Sudah ambil (unit/bln)</span><span><i style="background:#FFF3DC;border:1.5px dashed #E0A93A"></i>Peluang (klik)</span><span><i style="background:#F4F6F9"></i>Belum ada pembanding</span></div><div style="overflow:auto"><table>${head}${body}</table></div><div class="hint" style="margin-top:6px">Menampilkan 10 dari 96 dealer (terbesar dulu).</div>`}
+function opps(n,compact){const L=[['Agres Info Teknologi','TECNO',6,'Rina'],['Mitra Ponsel','TECNO',5,'Sari'],['Sinar Gadget','MOTOROLA',5,'Dedi'],['Cahaya Cell','REALME',4,'Dedi'],['Global Seluler','MOTOROLA',4,'Sari'],['Cahaya Cell','INFINIX',3,'Dedi'],['Prima Komunika','REALME',3,'Andi'],['Nusantara Cell','TECNO',3,'Dedi']].slice(0,n);
+ return L.map((o,i)=>`<div class="opp"><span class="rk">${i+1}</span><div><button class="lnk">${o[0]}</button><small>Belum ambil <b style="color:${BC[o[1]][1]}">${o[1]}</b> · ${o[3]}</small></div><div style="text-align:right"><b>± ${o[2]} unit</b><br><span class="wa">WA</span></div></div>`).join('')}
+function reTable(rows){return `<div class="row" style="margin-bottom:8px"><div class="seg">${[['ALL','Semua'],['ACTIVE','Active ⏳'],['PASSIVE','Passive'],['IDLE','Idle'],['INACTIVE','Inactive']].map(t=>`<button data-re="${t[0]}" class="${S.re===t[0]?'on':''}">${t[1]}</button>`).join('')}</div><span class="hint">41 dealer · urut potensi terbesar · skor = rata-rata unit × peluang kembali</span></div>
+ <div style="overflow:auto"><table><tr><th class="c">#</th><th>DEALER</th><th>STATUS</th><th>TERAKHIR ORDER</th><th class="n">RATA2 DULU</th><th>TREN 3 BLN</th><th>AKSI</th></tr>${rows.map((r,i)=>`<tr data-rsel="${i}" class="${S.mode==='B'&&S.rsel===i?'sel':''}"><td class="c"><b>${i+1}</b></td><td>${dn(r)}</td><td><span class="bd ${BS[r[4]][1]}">${BS[r[4]][0]}</span></td><td>${r[6]}<small>${r[7]} hari lalu</small></td><td class="n"><b>${r[5]}</b> unit/bln</td><td>${spark(r[9])}</td><td><span class="wa">WA</span><span class="rh">Riwayat</span></td></tr>`).join('')}</table></div>`}
+function funnel(t,sub,steps,key){return `<div class="fh">${t} <span class="hint" style="font-weight:500">${sub}</span></div>`+steps.map((s,i)=>`<div class="fun ${S.mode==='B'&&S.noo===key+i?'sel':''}" data-noo="${key}${i}"><span>${s[0]}</span><div class="bar"><i style="width:${s[1]/steps[0][1]*100}%;background:${s[2]}"></i><span>${s[1]}</span></div><b style="text-align:right">${Math.round(s[1]/steps[0][1]*100)}%</b></div>`).join('')}
+const FL=[['Dealer baru',24,'#0A2E57'],['Order lagi di Nov',15,'#0B5CAD'],['SELL THRU ≥2 di Nov',11,'#12A86B'],['Ambil ≥2 brand',6,'#7A5AF8']],FC=[['Dealer baru',18,'#0A2E57'],['Order ulang bulan ini',7,'#0B5CAD'],['SELL THRU ≥2 bulan ini',9,'#12A86B'],['Ambil ≥2 brand',4,'#7A5AF8']];
+const PS=[['Rina','Jakarta',6,5,83,4,2],['Dedi','Cirebon',5,3,60,5,2],['Sari','Bandung',5,3,60,3,1],['Andi','Bekasi',4,2,50,3,1],['Eko','Tegal',3,1,33,2,1]];
+function perSales(cls){return `<div style="overflow:auto"><table><tr><th>SALES</th><th>REGION</th><th class="n">OKT · BARU</th><th class="n">ORDER LAGI</th><th class="n">% LAGI</th><th class="n">NOV · BARU</th><th class="n">ORDER LAGI</th><th class="n">SELISIH</th></tr>${PS.map(p=>{const d=p[5]-p[2];return `<tr><td><b>${p[0]}</b></td><td>${p[1]}</td><td class="n">${p[2]}</td><td class="n">${p[3]}</td><td class="n"><b>${p[4]}%</b></td><td class="n"><b>${p[5]}</b></td><td class="n">${p[6]}</td><td class="n"><b style="color:${d>=0?'#12866A':'#D2453F'}">${d>=0?'+':''}${d}</b></td></tr>`}).join('')}</table></div>`}
+function cohort(){const R=[['Jun 2026',21,[100,62,48,41,36]],['Jul 2026',19,[100,58,44,39]],['Agu 2026',26,[100,65,50]],['Sep 2026',22,[100,60]],['Okt 2026',24,[100]]];
+ return `<div style="overflow:auto"><table><tr><th>BULAN JADI DEALER BARU</th><th class="n">JUMLAH</th>${[0,1,2,3,4].map(k=>`<th class="c" style="padding:5px 5px">${k?'KE-'+k:'PERTAMA'}</th>`).join('')}</tr>${R.map(r=>`<tr><td>${r[0]}</td><td class="n">${r[1]}</td>${[0,1,2,3,4].map(k=>{const v=r[2][k];return v==null?'<td class="c hint">–</td>':`<td class="c"><span class="heat" style="background:rgba(18,168,107,${(.12+v/100*.8).toFixed(2)});color:${v>55?'#fff':'#0B5E45'}">${v}%</span></td>`}).join('')}</tr>`).join('')}</table></div><div class="hint" style="margin-top:6px">Baca per baris: dari dealer baru bulan itu, berapa % yang masih order di bulan-bulan berikutnya.</div>`}
+/* ---------- detail B ---------- */
+function detailCross(){const d=D[S.sel];const tk=d[5].filter(c=>c!=='-'&&String(c)[0]!=='p'),op=d[5].map((c,i)=>[c,i]).filter(x=>String(x[0])[0]==='p');
+ return `<div class="dt"><h4>${d[1]}</h4><div class="sb">${d[0]} · ${d[2]} · Sales ${d[3]}</div><div class="st3"><div><small>Order dealer</small><b>${d[4]} u/bln</b></div><div><small>Brand diambil</small><b>${tk.length}/6</b></div><div><small>Peluang</small><b>${op.length} brand</b></div></div>
+ <div class="fh">Status per brand</div><div class="chips">${d[5].map((c,i)=>c==='-'?`<span class="chip g">${BR[i][0]} –</span>`:String(c)[0]==='p'?`<span class="chip p">${BR[i][0]} +${String(c).slice(1)}</span>`:`<span class="chip y">${BR[i][0]} ${c}</span>`).join('')}</div>
+ <div class="fh">Estimasi potensi</div><div style="font-size:11px;color:#4A5663;margin-bottom:10px">± ${op.reduce((a,x)=>a+Number(String(x[0]).slice(1)),0)} unit/bln. Dasar: median dealer sejenis di Sub Region (min 5 dealer), maks 50% dari order dealer ini.</div>
+ <span class="wa" style="padding:5px 12px">✆ Tawarkan via WhatsApp</span><span class="rh" style="padding:5px 12px">Lihat detail dealer →</span></div>`}
+function detailRe(){const r=RE[S.rsel];return `<div class="dt"><h4>${r[1]} <span class="bd ${BS[r[4]][1]}">${BS[r[4]][0]}</span></h4><div class="sb">${r[0]} · ${r[2]} · Sales ${r[3]}</div><div class="st3"><div><small>Rata2 dulu</small><b>${r[5]} u/bln</b></div><div><small>Terakhir order</small><b>${r[6]}</b></div><div><small>Jeda</small><b>${r[7]} hr</b></div></div><div class="fh">Tren 3 bulan terakhir</div><div style="margin:4px 0 10px">${spark(r[9],'#7A5AF8',260,46)}<div class="hint">Agu · Sep · Okt</div></div><div class="fh">Saran tindakan</div><div style="font-size:11px;color:#4A5663;margin-bottom:10px">${r[4]==='ACTIVE'?'Masih rutin order — telepon minggu ini, tawarkan program berjalan.':r[4]==='PASSIVE'?'Mulai jarang order — tanya kendala stok / harga.':'Sudah lama diam — prioritas rendah, cukup kirim info program.'}</div><span class="wa" style="padding:5px 12px">✆ WhatsApp</span><span class="rh" style="padding:5px 12px">Riwayat →</span></div>`}
+function detailNoo(){const L={L:'Dealer baru Okt',C:'Dealer baru Nov'}[S.noo[0]];const idx=+S.noo[1];const st=(S.noo[0]==='L'?FL:FC)[idx];const list=PS.slice(0,5).map((p,i)=>[`Dealer ${['Baru Makmur','Citra Cell','Dua Saudara','Evo Phone','Fortuna Cell'][i]}`,p[0],p[1]]);
+ return `<div class="dt"><h4>${L}</h4><div class="sb">${st[0]} · ${st[1]} dealer</div>${list.map((l,i)=>`<div class="opp"><span class="rk">${i+1}</span><div><button class="lnk">${l[0]}</button><small>${l[2]} · Sales ${l[1]}</small></div><span class="wa">WA</span></div>`).join('')}<div class="hint" style="margin-top:6px">Menggantikan popup daftar dealer yang sekarang.</div></div>`}
+/* ---------- render per mode ---------- */
+function bodyA(){
+ if(S.tab==='cross')return `<div class="gmain"><div>${panel('Matriks dealer × brand','Klik kotak kuning untuk detail & WhatsApp',matrix(D,'new'))}</div><div>${panel('Top peluang minggu ini','Urut estimasi potensi',opps(8))}</div></div>`;
+ if(S.tab==='react')return panel('Daftar telepon · prioritas','Urut dari potensi terbesar',reTable(RE));
+ return `<div class="g2">${panel('Dealer baru Okt · sebulan penuh','klik batang untuk daftar',funnel('','',FL,'L'))}${panel('Dealer baru Nov · s.d. 18 Nov','klik batang untuk daftar',funnel('','',FC,'C'))}</div><div class="g2">${panel('Per sales · bulan lalu vs bulan ini','',perSales())}${panel('Dealer baru per bulan: masih order?','makin hijau makin bagus',cohort())}</div>`}
+function bodyB(){
+ if(S.tab==='cross')return `<div class="gmd">${panel('Matriks dealer × brand','Klik baris untuk rincian',matrix(D,'new',true))}${detailCross()}</div>`;
+ if(S.tab==='react')return `<div class="gmd">${panel('Daftar telepon · prioritas','Klik baris untuk rincian',reTable(RE))}${detailRe()}</div>`;
+ return `<div class="gmd"><div>${panel('Dealer baru Okt · sebulan penuh','',funnel('','',FL,'L'))}${panel('Dealer baru Nov · s.d. 18 Nov','',funnel('','',FC,'C'))}${panel('Per sales','',perSales())}</div><div>${detailNoo()}${panel('Cohort','',cohort())}</div></div>`}
+function inline(){return `<div class="inl">${KP[S.tab].map(k=>`<span>${k[0]} <b>${k[1]}</b> <span class="hint">· ${k[2]}</span></span>`).join('')}</div>`}
+function bodyC(){const nav=`<div class="nav">${[['cross','⊞ CROSS-SELL BRAND','212','peluang terbuka'],['react','↻ REAKTIVASI DEALER','41','dealer perlu dihubungi'],['noo','★ DEALER BARU','18','baru bulan ini · ▼25%']].map(n=>`<button class="nv ${S.tab===n[0]?'on':''}" data-tab="${n[0]}"><small>${n[1]}</small><b>${n[2]}</b><span>${n[3]}</span></button>`).join('')}</div>`;
+ let c;if(S.tab==='cross')c=`${inline()}${panel('Matriks dealer × brand','',matrix(D,'new'))}${panel('Top peluang minggu ini','',`<div class="g2">${opps(8)}</div>`)}`;
+ else if(S.tab==='react')c=`${inline()}${panel('Daftar telepon · prioritas','',reTable(RE))}`;
+ else c=`${inline()}<div class="g2">${panel('Okt · sebulan penuh','',funnel('','',FL,'L'))}${panel('Nov · s.d. 18 Nov','',funnel('','',FC,'C'))}</div><div class="g2">${panel('Per sales','',perSales())}${panel('Cohort','',cohort())}</div>`;
+ return `<div class="gc">${nav}<div>${newFilter(S.tab==='cross'?'96 dealer':S.tab==='react'?'41 dealer':'42 dealer baru')}${c}</div></div>`}
+function bodyNow(){
+ let b;if(S.tab==='cross')b=panel('Matriks dealer × brand','Klik kotak kuning',matrix(D,'now'))+panel('Top peluang minggu ini','Urut estimasi',opps(8));
+ else if(S.tab==='react')b=panel('Daftar telepon · prioritas','',RE.map((r,i)=>`<div class="dc"><div><span class="av">${i+1}</span><button class="lnk">${r[1]}</button> <span class="bd ${BS[r[4]][1]}" style="border-radius:20px;padding:3px 9px">${BS[r[4]][0]}</span><small class="hint" style="display:block;margin-left:36px">${r[2]} · Sales ${r[3]} · terakhir order ${r[6]} (${r[7]} hari lalu)</small></div><div><small class="hint">Rata-rata dulu</small> <b>${r[5]} unit/bln</b> ${spark(r[9])}</div><div><span class="wa">WA</span> <span class="rh">Riwayat →</span></div></div>`).join(''));
+ else b=panel('Dealer Baru: Order Lagi atau Nggak?','',`<div class="g2"><div>${funnel('Okt · sebulan penuh','',FL,'L')}</div><div>${funnel('Nov · berjalan','',FC,'C')}</div></div>`)+panel('Per sales','',perSales())+panel('Dealer baru per bulan','',cohort());
+ return b}
+function render(){
+ document.body.className=S.mode==='now'?'now':'new';$('#note').innerHTML=NOTES[S.mode]+'<br><span class="hint">Cakupan: halaman Analisa DESKTOP saja, isi data &amp; rumus tidak berubah, HP tetap. Filter bertingkat tetap 5 dropdown + <b>kolom cari dealer/sales (baru)</b>. Tabel pakai gaya padat yang sudah disetujui (judul abu muda, warna brand, 2 baris per dealer).</span>';
+ let h=`<h2 class="pt">Analisa</h2><div class="ps">Periode Nov 2026 · cakupan Nasional</div>`;
+ if(S.mode==='now')h+=tabs()+oldFilter()+oldKpi()+bodyNow();
+ else if(S.mode==='C')h+=bodyC();
+ else h+=tabs()+newFilter(S.tab==='cross'?'96 dealer':S.tab==='react'?'41 dealer':'42 dealer baru')+strip()+(S.mode==='A'?bodyA():bodyB());
+ $('#out').innerHTML=`<div class="${S.mode==='now'?'now':'new'}">${h}</div>`;
+ document.querySelectorAll('#md button').forEach(b=>b.classList.toggle('on',b.dataset.v===S.mode));
+}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-v],[data-tab],[data-re],[data-sel],[data-rsel],[data-noo]');if(!t)return;
+ if(t.closest('#md')){S.mode=t.dataset.v}else if(t.dataset.tab)S.tab=t.dataset.tab;else if(t.dataset.re)S.re=t.dataset.re;else if(t.dataset.sel!=null)S.sel=+t.dataset.sel;else if(t.dataset.rsel!=null)S.rsel=+t.dataset.rsel;else if(t.dataset.noo)S.noo=t.dataset.noo;render()});
+render();
+</script></body></html>

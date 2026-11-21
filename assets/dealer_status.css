@@ -147,7 +147,7 @@ td .dsStrip{display:inline-block;margin:0 0 0 4px;padding:2px 6px}
 .dsAg .fi,.dsAc input.fi{width:100%;box-sizing:border-box}
 
 /* HP: tab Status kartu baris 12 bulan (mockup 2026-11-19); desktop tidak berubah */
-.ds12x,.ds12r,.ds12l{display:none}
+.ds12x,.ds12r,.ds12l,.ds12h{display:none}
 @media(max-width:760px){
 .dsDet.has12 .dsDetHead,.dsDet.has12 .dsDetRow,.dsDet.has12 .dsLeg{display:none!important}
 .dsDet.has12 .ds12x{display:block;font-size:10.5px;color:#7C8899;margin:-2px 0 8px}.ds12x b{color:#10394E}
@@ -160,5 +160,25 @@ td .dsStrip{display:inline-block;margin:0 0 0 4px;padding:2px 6px}
 .ds12 i{height:11px;border-radius:3px;background:#E6ECF2}.ds12 i.y{background:#2E9B57}.ds12 i.b{background:#fff;border:1px dashed #C9D6E2}.ds12 i.w{box-shadow:0 2px 0 #10394E}
 .ds12y{display:grid;gap:3px;font-size:8.5px;font-weight:800;color:#8DA0B1;letter-spacing:.3px;margin-top:2px}.ds12y span+span{border-left:1px solid #D5DFE8;padding-left:4px}
 .ds12m{font-size:10px;font-weight:800;color:#8DA0B1;text-align:center;margin:1px 0 4px}.ds12m .w{color:#10394E}
+.ds12w{font-size:11px;color:#7C8899;padding:6px 0}
 .dsDet.has12 .ds12l{display:flex;gap:12px;font-size:10.5px;color:#7C8899;margin-top:2px}.ds12l i{display:inline-block;width:10px;height:10px;border-radius:3px;background:#E6ECF2;margin-right:4px;vertical-align:-1px}.ds12l i.y{background:#2E9B57}.ds12l i.b{background:#fff;border:1px dashed #C9D6E2}
 }
+/* Desktop: tab Status 12 bulan (mockup dsm-detail-dealer-desktop-v2) */
+@media(min-width:761px){
+.dsDet.has12 .dsDetHead,.dsDet.has12 .dsDetRow,.dsDet.has12 .dsLeg{display:none!important}
+.dsDet.has12{background:#fff;border:1px solid #E3E9F0;border-radius:14px;padding:12px 14px}
+.dsDet.has12 .ds12x{display:block;font-size:11px;color:#7C8899;margin:0 0 10px}.ds12x b{color:#10394E}
+.dsDet.has12 .ds12h,.dsDet.has12 .ds12r{display:grid;grid-template-columns:220px minmax(360px,1fr) 100px minmax(160px,1fr);gap:0 14px;align-items:center}
+.ds12h{font-size:10px;font-weight:800;color:#7C8899;letter-spacing:.4px;padding-bottom:4px;align-items:end!important}.ds12h>span:nth-of-type(2){text-align:right}
+.ds12r{padding:9px 0;border-top:1px solid #EEF2F6}.ds12r.tot{background:#F6F9FE}
+.ds12r .n{display:flex;align-items:center;gap:8px;grid-column:1;grid-row:1}.ds12r .n b{font-size:12.5px;color:#10394E;min-width:90px}
+.ds12r .p{grid-column:2;grid-row:1}.ds12r.tot .p .ds12y,.ds12r.tot .p .ds12m{display:none}
+.ds12r .q{grid-column:3;grid-row:1;text-align:right;font-weight:800;color:#10394E;font-size:13px}.ds12r .q small{font-size:10.5px;color:#7C8899;font-weight:700}
+.ds12r .t{grid-column:4;grid-row:1;font-size:11.5px;color:#5B6B7A}
+.ds12,.ds12m{display:grid;grid-template-columns:repeat(12,1fr);gap:4px}
+.ds12 i{height:16px;border-radius:4px;background:#E6ECF2}.ds12 i.y{background:#2E9B57}.ds12 i.b{background:#fff;border:1px dashed #C9D6E2}.ds12 i.w{box-shadow:0 2.5px 0 #10394E}
+.ds12y{display:grid;gap:4px;font-size:9px;font-weight:800;color:#8DA0B1}.ds12y span+span{border-left:1px solid #D5DFE8;padding-left:4px}
+.ds12m{font-size:10.5px;font-weight:800;color:#8DA0B1;text-align:center}.ds12m .w{color:#10394E}
+.dsDet.has12 .ds12l{display:flex;gap:14px;font-size:11px;color:#7C8899;margin-top:10px}.ds12l i{display:inline-block;width:11px;height:11px;border-radius:3px;background:#E6ECF2;margin-right:5px;vertical-align:-1px}.ds12l i.y{background:#2E9B57}.ds12l i.b{background:#fff;border:1px dashed #C9D6E2}
+}
+.dsDet.ld12 .dsDetHead,.dsDet.ld12 .dsDetRow,.dsDet.ld12 .dsLeg{display:none!important}

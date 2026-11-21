@@ -62,7 +62,21 @@ function apiEarlyWarning($token, $period, $level = null, $brand = null, $metric 
     }
     $brands = anaDeviceBrands_($meta); $wk = anaWork_($period, $c['cutoff'], $c['closed']); $days = $wk['days']; $run = $wk['run'];
     $last7 = array_slice($wk['runDates'], -7);
-    $rows = array_map(function ($g) use ($db, $period, $brand, $metric, $meta, $brands, $last7) {
+    /* tren sebulan penuh + mingguan (W1 1-7, W2 8-14, W3 15-21, W4 22-28, W5 29-akhir) dibanding bulan lalu (LMTD) */
+    $mdays = []; $weeks = []; $prevOk = false; $cmpP = [];
+    try {
+    $hol = anaHol_(); $lastDay = (int) substr(PortalCore::end($period), 8); $runSet = array_flip($wk['runDates']);
+    for ($i = 1; $i <= $lastDay; $i++) { $d = $period . '-' . js_pad2($i); $mdays[] = [$d, anaOff_($d, $hol) ? 1 : (isset($runSet[$d]) ? 0 : 2)]; }
+    $cutDay = truthy($c['closed']) ? $lastDay : min($lastDay, (int) substr((string) $c['cutoff'], 8));
+    $cmpP = PortalCore::comparisonPeriod($db, $period); $prevOk = !empty($cmpP['available']);
+    for ($w = 1; $w <= 5; $w++) {
+        $f = ($w - 1) * 7 + 1; if ($f > $lastDay) break; $t = $w === 5 ? $lastDay : min($w * 7, $lastDay);
+        $state = $f > $cutDay ? 'wait' : ($t > $cutDay ? 'run' : 'done'); $hkAll = 0; $hkRun = 0;
+        for ($i = $f; $i <= $t; $i++) { if ($mdays[$i - 1][1] === 1) continue; $hkAll++; if ($mdays[$i - 1][1] === 0) $hkRun++; }
+        $weeks[] = ['w' => $w, 'from' => $f, 'to' => $t, 'cap' => min($t, $cutDay), 'state' => $state, 'hk' => $hkAll, 'hkRun' => $hkRun];
+    }
+    } catch (Throwable $e) { $mdays = []; $weeks = []; $prevOk = false; }
+    $rows = array_map(function ($g) use ($db, $period, $brand, $metric, $meta, $brands, $last7, $mdays, $weeks, $cmpP, $prevOk) {
         $slice = PortalCore::slice($db, $period, $g['team']); $m = PortalCore::metrics($slice, $db, $period, $brand);
         $actual = $metric === 'QTY' ? $m['qty'] : ($metric === 'DA' ? $m['da'] : $m['noo']);
         $t = PortalCore::target($meta, $period, $g['team'], $brand, $metric);
@@ -72,10 +86,21 @@ function apiEarlyWarning($token, $period, $level = null, $brand = null, $metric 
             foreach ($parts as $x) foreach ($x['missing'] ?? [] as $id) if (!in_array($id, $t['missing'], true)) $t['missing'][] = $id;
         }
         $daily = array_map(function ($dt) use ($slice, $brand) { $n = 0; foreach ($slice as $r) if ($r['date'] === $dt && ($brand === 'ALL' || $r['brand'] === $brand)) $n += $r['q']; return $n; }, $last7);
+        $dm = []; $wk = []; $wkL = [];
+        try {
+        $byDay = []; foreach ($slice as $r) if ($brand === 'ALL' || $r['brand'] === $brand) { $k = (int) substr((string) $r['date'], 8); $byDay[$k] = ($byDay[$k] ?? 0) + $r['q']; }
+        foreach ($mdays as $i => $md) $dm[] = $md[1] === 0 ? ($byDay[$i + 1] ?? 0) : 0;
+        foreach ($weeks as $w) { $n = 0; for ($i = $w['from']; $i <= $w['cap']; $i++) $n += $byDay[$i] ?? 0; $wk[] = $w['state'] === 'wait' ? null : $n; }
+        if ($prevOk) {
+            $pslice = PortalCore::sliceCmp($db, $cmpP['period'], $g['team'], $cmpP['cutoff'], $period); $pby = [];
+            foreach ($pslice as $r) if ($brand === 'ALL' || $r['brand'] === $brand) { $k = (int) substr((string) $r['date'], 8); $pby[$k] = ($pby[$k] ?? 0) + $r['q']; }
+            foreach ($weeks as $w) { $n = 0; for ($i = $w['from']; $i <= $w['cap']; $i++) $n += $pby[$i] ?? 0; $wkL[] = $w['state'] === 'wait' ? null : $n; }
+        }
+        } catch (Throwable $e) { $dm = []; $wk = []; $wkL = []; }
         return ['nik' => $g['nik'], 'nama' => $g['nama'], 'role' => $g['role'], 'region' => $g['region'], 'big' => $g['big'], 'boss' => $g['boss'], 'bossRole' => $g['bossRole'], 'teamSize' => count($g['team']),
-            'actual' => $actual, 'target' => js_or($t['value'], 0), 'targetComplete' => truthy($t['exists']) && !($t['missing'] ?? []), 'daily7' => $daily, 'qtyMTD' => $m['qty']];
+            'actual' => $actual, 'target' => js_or($t['value'], 0), 'targetComplete' => truthy($t['exists']) && !($t['missing'] ?? []), 'daily7' => $daily, 'qtyMTD' => $m['qty'], 'dm' => $dm, 'wk' => $wk, 'wkL' => $wkL];
     }, $groups);
-    return ['period' => $period, 'cutoff' => $c['cutoff'], 'closed' => $c['closed'], 'days' => $days, 'run' => $run, 'level' => $level, 'brand' => $brand, 'metric' => $metric, 'brands' => $brands, 'last7' => $last7, 'rows' => $rows];
+    return ['period' => $period, 'cutoff' => $c['cutoff'], 'closed' => $c['closed'], 'days' => $days, 'run' => $run, 'level' => $level, 'brand' => $brand, 'metric' => $metric, 'brands' => $brands, 'last7' => $last7, 'mdays' => $mdays, 'weeks' => $weeks, 'prevPeriod' => $prevOk ? $cmpP['period'] : null, 'rows' => $rows];
 }
 
 /* ---------- MENU ANALISA ---------- */
@@ -118,7 +143,7 @@ function apiAnalisa($token, $period, $selection = null) {
             }
         }
         $cu = $cust($id);
-        return ['id' => $id, 'nama' => $cu['nama'] ?? null, 'kota' => js_or($cu['kota'] ?? null, ''), 'hp' => js_or($cu['hp'] ?? null, ''), 'nik' => $ownerNik($id), 'sales' => $ownerName($id), 'avg' => js_mround($total * 10) / 10, 'taken' => $taken, 'cells' => js_obj($cells)];
+        return ['id' => $id, 'nama' => $cu['nama'] ?? null, 'kota' => js_or($cu['kota'] ?? null, ''), 'sub' => js_str($area($id)['sub']), 'hp' => js_or($cu['hp'] ?? null, ''), 'nik' => $ownerNik($id), 'sales' => $ownerName($id), 'avg' => js_mround($total * 10) / 10, 'taken' => $taken, 'cells' => js_obj($cells)];
     }, $active);
     $dealers = js_sort($dealers, fn($a, $b) => $b['avg'] - $a['avg']);
     $crossSell = ['months' => $months3, 'brands' => $brands, 'dealers' => array_slice($dealers, 0, 3000)];

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><title>DSM · Popup dealer: tabel padat, Kontak, Tandai tutup</title>
+<style>
+*{box-sizing:border-box}
+button,input,textarea,small,summary{font-family:inherit}
+body{margin:0;font-family:Inter,"Segoe UI",system-ui,sans-serif;background:#DDE4EC;color:#15232E}
+.ctl{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid #DDE3EA;padding:8px 18px;display:flex;gap:18px;align-items:center;flex-wrap:wrap;font-size:12px}
+.ctl b{font-size:13px}.seg{display:inline-flex;background:#CBD5E0;border-radius:999px;padding:3px}
+.seg button{border:0;background:transparent;padding:6px 13px;border-radius:999px;font:700 11px Inter,'Segoe UI',system-ui,sans-serif;cursor:pointer;color:#33414D}
+.seg button.on{background:#fff;color:#10394E;box-shadow:0 1px 3px #0002}
+.lb{font:800 10px Inter,'Segoe UI',system-ui,sans-serif;letter-spacing:.5px;color:#6B7785;margin-right:6px}
+.note{max-width:1120px;margin:12px auto 0;background:#fff;border-left:4px solid #F0A400;padding:9px 14px;border-radius:8px;font-size:12px;line-height:1.55}
+.modal{width:1120px;max-width:calc(100% - 24px);margin:12px auto 40px;background:#F7F9FB;border-radius:18px;box-shadow:0 20px 60px #10394E40;overflow:hidden;display:flex;flex-direction:column;height:760px}
+.mh{background:#fff;padding:13px 18px 8px;position:relative}
+.mh h3{margin:0;font-size:16px;font-weight:900;color:#10394E}
+.mh .sub{font-size:11.5px;color:#7b8a98;margin-top:5px;display:flex;gap:8px;align-items:center}
+.mh .st{background:#E3F4EB;color:#12866A;font-weight:800;font-size:10px;border-radius:999px;padding:3px 9px}
+.mh .x{position:absolute;right:16px;top:12px;width:30px;height:30px;border-radius:9px;border:0;background:#f2f5f8;font-size:15px}
+.act{display:flex;gap:8px;align-items:center;background:#fff;padding:8px 18px 10px;border-bottom:1px solid #eef2f6;position:relative}
+.b{height:36px;border-radius:10px;border:0;font:800 11.5px Inter,'Segoe UI',system-ui,sans-serif;letter-spacing:.3px;padding:0 13px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap}
+.b.p{background:#10394E;color:#fff}.b.g{background:#F2FBF5;color:#137A44;border:1px solid #9ED9B6}
+.b.m{width:36px;justify-content:center;padding:0;background:#fff;border:1px solid #D5DEE7;color:#46586a;font-size:16px}
+.b.o{background:#fff;color:#10394E;border:1px solid #D5DEE7}
+.b.red{background:#fff;color:#B4332E;border:1px solid #E7B4B1}.b.red:hover{background:#FFF4F3}
+.sp{margin-left:auto;position:relative;display:flex;gap:8px}
+.menu{position:absolute;right:0;top:42px;background:#fff;border-radius:12px;box-shadow:0 10px 30px #10394E38;padding:6px;width:250px;z-index:20}
+.menu button{display:block;width:100%;text-align:left;border:0;background:none;padding:9px 10px;border-radius:8px;font:700 12px Inter,'Segoe UI',system-ui,sans-serif;color:#B4332E;cursor:pointer}
+.menu small{display:block;font-weight:400;color:#9aa7b3;font-size:10.5px}
+.tf{position:absolute;right:18px;top:50px;z-index:30;background:#fff;border:1px solid #E3E9F0;border-radius:12px;box-shadow:0 12px 30px #10394E30;width:340px;padding:12px 14px}
+.tf h4{margin:0 0 8px;font-size:12.5px;color:#B4332E}.tf label{display:block;font:700 11px Inter,'Segoe UI',system-ui,sans-serif;color:#46586a;margin-bottom:8px}
+.tf input,.tf textarea{display:block;width:100%;margin-top:3px;border:1px solid #D5DEE7;border-radius:8px;padding:6px 8px;font:12px Inter,'Segoe UI',system-ui,sans-serif}
+.tf textarea{height:54px;resize:none}.tf .r{display:flex;gap:8px;align-items:center}.tf small{color:#7b8a98;font-size:10.5px;display:block;margin-top:8px;line-height:1.4}
+.body{flex:1;overflow:auto;padding:0 18px 14px}
+.tabs{background:#CBD5E0;border-radius:12px;padding:4px;display:flex;gap:2px;margin:10px 0 12px;position:sticky;top:0;z-index:5}
+.tabs button{flex:1;border:0;background:transparent;border-radius:9px;padding:9px 10px;font:800 11px Inter,'Segoe UI',system-ui,sans-serif;letter-spacing:.4px;color:#3F5163;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px}.tabs svg{width:14px;height:14px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tabs button.on{background:#fff;color:#10394E;box-shadow:0 2px 8px #10394E1F}
+.foot{background:#fff;border-top:1px solid #E3E9F0;padding:10px 18px;display:flex;justify-content:flex-end}
+.kp{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px}
+.kp div{background:#fff;border-radius:13px;box-shadow:0 1px 6px #10394E12;border-left:4px solid var(--c);padding:9px 12px;font-size:10.5px;color:#7b8a98}
+.kp b{display:block;font-size:19px;color:var(--c);margin:2px 0}
+.pn{background:#F4F8FC;border:1px solid #DCE6F0;border-radius:14px;padding:12px 14px;margin-bottom:12px}
+.pn .ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.pn h5{margin:0;font-size:13px;letter-spacing:.3px}.pn small{color:#7b8a98;font-size:11px}
+table{border-collapse:separate;border-spacing:0;width:100%}
+.n{text-align:right}
+/* ===== SEKARANG ===== */
+.now .tt thead th{background:#0E5A63;color:#fff;font-size:11px;font-weight:800;letter-spacing:.4px;padding:14px 10px;text-align:left}
+.now .tt thead th.n{text-align:right}
+.now .tt thead th.bh{background:var(--l);color:var(--d);border-bottom:3px solid var(--d)}
+.now .tt td{padding:14px 10px;font-size:12.5px;border-bottom:1px solid #EEF0F5;background:#fff}
+.now .tt td.bc{background:var(--l2);font-size:13.5px}
+.now .tt td small{display:block;color:#7b8a98;font-size:11px}
+.now .tt tr.sel td:first-child{background:#FFF7E6}
+.now .tt tr.tot td{padding:14px 10px;font-weight:800;border-top:3px solid #1E5FB8;background:#EAF1FA}
+.now .tt td.t2{padding:12px 10px}
+.now .bd{font-weight:600}
+.now .hide-new{display:inline}
+.new .sb{display:none!important}.now .si{display:none}
+/* ===== USULAN: padat ===== */
+.new .tt thead th{background:#0E5A63;color:#fff;font-size:10.5px;font-weight:800;letter-spacing:.3px;padding:6px 10px;text-align:left;border-right:1px solid #ffffff22}
+.new .tt thead th.n{text-align:right}
+.new .tt thead th.bh{background:var(--l);color:var(--d);border-top:3px solid var(--d);border-right:1px solid #fff}
+.new .tt td{padding:3px 10px;font-size:12px;border-bottom:1px solid #E7EBF0;border-right:1px solid #EEF1F4;background:#fff;white-space:nowrap;font-variant-numeric:tabular-nums;line-height:1.3}
+.new .tt td.bc{background:var(--l2)}
+.new .tt td small{font-size:9.5px;color:#7b8a98;margin-left:6px}
+.new .tt tr.sel td:first-child{background:#FFF7E6;box-shadow:inset 4px 0 0 #E0A93A}
+.new .tt tr.tot td{padding:4px 10px;font-weight:800;border-top:2px solid #1E5FB8;background:#EAF1FA;font-size:12px}
+.new .tt tr:not(.tot):hover td{filter:brightness(.97)}
+.new .bd{border-radius:4px;padding:1px 6px;font-weight:800;font-size:9.5px;border:1px solid transparent}
+.dos-good{background:#e4f4ec;color:#176d48;border-color:#bce3cd}.dos-low{background:#fff3d6;color:#925c00;border-color:#efda9f}
+.dos-bad{background:#fce9e8;color:#b43138;border-color:#f1c0c1}.dos-high{background:#e9edfc;color:#485ca3;border-color:#cfd8f6}
+.dos-empty{background:#3b4250;color:#fff}.dos-still{background:#eef1f5;color:#637084;border-color:#dde2e8}
+.now .bd{background:none!important;border:0!important;color:#15232E!important}
+.bk{display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--d);margin-right:5px}
+.now .bk{display:none}
+.so{background:#FFF3E8!important}
+.dh{background:#fff;border:1px solid #E3E9F0;border-radius:12px;overflow:hidden}
+.new .tt tr.tot td.tc{background:var(--l);color:var(--d);border-top:3px solid var(--d)}
+.new .tt tr.tot td.tc0{background:#DCEBEC;color:#0E5A63;border-top:3px solid #0E5A63}
+.new .tt tr.tot td.tct{background:#EAF1FA;color:#1E5FB8;border-top:3px solid #1E5FB8}
+.now .tt tr.tot td.tc0{background:#EAF1FA}
+/* ===== Kontak ===== */
+.now .kt h3{margin:12px 0 4px;font-size:17px;font-weight:900}
+.now .kt p{margin:2px 0;font-size:14px}.now .kt .chip{background:#1E5FB8;color:#fff;border:0;border-radius:14px;padding:6px 12px;font:800 11px Inter,'Segoe UI',system-ui,sans-serif;margin:6px 0}
+.now .kt .cnew{display:none}
+.new .kt .cold{display:none}
+.kc{background:#fff;border-radius:14px;box-shadow:0 1px 6px #10394E12;overflow:hidden;margin-bottom:12px}
+.kc .kh{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid #EEF2F6;gap:10px}
+.kc .kh h5{margin:0;font-size:13px;letter-spacing:.3px;flex:1}
+.kc .row{display:grid;grid-template-columns:130px 1fr auto;gap:10px;align-items:center;padding:9px 16px;border-bottom:1px solid #F1F4F7;font-size:12.5px}
+.kc .row:last-child{border:0}.kc .row .l{font:800 10.5px Inter,'Segoe UI',system-ui,sans-serif;letter-spacing:.4px;color:#7b8a98}
+.kc .row .e{color:#9aa7b3;font-style:italic}
+.mini{height:28px;border-radius:8px;border:1px solid #D5DEE7;background:#fff;font:800 10.5px Inter,'Segoe UI',system-ui,sans-serif;padding:0 10px;cursor:pointer;margin-left:4px}
+.mini.wa{background:#E7F7EE;color:#12866A;border-color:#B9E4CB}.mini.tel{color:#10394E}
+.hist{padding:8px 16px;font-size:12px}
+.hist summary{cursor:pointer;display:flex;gap:8px;align-items:center}
+.pill{border-radius:4px;font:800 9.5px Inter,'Segoe UI',system-ui,sans-serif;padding:2px 7px}.pill.ok{background:#e4f4ec;color:#176d48}.pill.wt{background:#fff3d6;color:#925c00}.pill.no{background:#fce9e8;color:#b43138}
+.scope{background:#fff;border-radius:10px;padding:8px 12px;font-size:11.5px;color:#46586a;margin-bottom:10px}
+.hidden{display:none!important}
+.kb{background:#fff;border-radius:12px;box-shadow:0 1px 6px #10394E12;padding:10px 14px;font-size:12.5px}.kb .l{display:block;font:800 10.5px Inter,'Segoe UI',system-ui,sans-serif;letter-spacing:.4px;color:#7b8a98;margin-bottom:5px}.kb .e{color:#9aa7b3;font-style:italic}
+.k3 td.kl{width:140px;background:#F4F7FA;font:800 10.5px Inter,'Segoe UI',system-ui,sans-serif;letter-spacing:.4px;color:#46586a}.k3 td{padding:6px 10px!important;font-size:12px}
+.k3 .mini{height:22px;margin-left:4px}.kt td{font-variant-numeric:normal!important}
+</style></head><body>
+<div class="ctl"><b>DSM · Popup dealer desktop</b>
+<span><span class="lb">TAMPILAN</span><span class="seg" id="sv"><button data-v="now">SEKARANG</button><button data-v="new" class="on">USULAN</button></span></span>
+<span><span class="lb">KONTAK</span><span class="seg" id="sk"><button data-v="K1">K1 · KARTU</button><button data-v="K2">K2 · 3 KOTAK</button><button data-v="K3" class="on">K3 · TABEL RAPAT</button></span></span>
+<span><span class="lb">TANDAI TUTUP</span><span class="seg" id="st"><button data-v="A" class="on">A · TOMBOL TERLIHAT</button><button data-v="B">B · TETAP DI ⋯</button></span></span>
+</div>
+<div class="note" id="note"></div>
+<div class="modal" id="m"></div>
+<script>
+const BR={ITEL:['#0E6E64','#E2F4F1','#F1FAF8'],MOTOPAD:['#B33D0B','#FCEEE4','#FEF6F1'],MOTOROLA:['#1E5FB8','#E3EEFB','#F3F8FE'],VILLAON:['#455A64','#E9EEF1','#F5F7F8']};
+let kv='K3',ver='new',tab=0,tv='A',tfOpen=false,menuOpen=false;
+const H=[['September 2026','Periode dipilih',599,1005,43,0,'1.647',1],['Agustus 2026','',2918,500,40,0,'3.458'],['Juli 2026','',4100,396,1435,0,'5.931'],['Juni 2026','',7392,70,1622,0,'9.084'],['Mei 2026','',4200,20,1244,0,'5.464'],['April 2026','',5990,0,234,20,'6.244']];
+const f=n=>n?n.toLocaleString('id-ID'):'-';
+function bh(b){const c=BR[b];return `style="--d:${c[0]};--l:${c[1]}"`;}
+function histori(){const bs=Object.keys(BR);return `<div class="pn"><div class="ph"><div><h5>HISTORI PENJUALAN BULANAN PER BRAND</h5><small>Bandingkan kontribusi tiap brand dari bulan ke bulan.</small></div><div><span class="seg"><button class="on">SELL THRU</button><button>SELL OUT</button><button>OMZET</button></span></div></div>
+<div class="dh"><table class="tt"><thead><tr><th>BULAN</th>${bs.map(b=>`<th class="n bh" ${bh(b)}><i class="bk"></i>${b}</th>`).join('')}<th class="n" style="background:#EAF1FA;color:#1E3A5F;border-bottom:3px solid #1E5FB8">TOTAL</th></tr></thead><tbody>
+${H.map(r=>`<tr class="${r[7]?'sel':''}"><td>${r[0]}${r[1]?(ver==='now'?`<small>${r[1]}</small>`:`<small>· ${r[1]}</small>`):''}</td>${bs.map((b,i)=>`<td class="n bc" style="--l2:${BR[b][2]}">${f(r[2+i])}</td>`).join('')}<td class="n" style="font-weight:800">${r[6]}</td></tr>`).join('')}
+<tr class="tot"><td class="tc0">TOTAL 6 BULAN<small>rata-rata 5.305/bln</small></td>${bs.map((b,i)=>`<td class="n tc" ${bh(b)}>${['25.199','1.991','4.618','20'][i]}</td>`).join('')}<td class="n tct">31.828</td></tr></tbody></table></div></div>`;}
+const S=[['A100C 3GB 32GB',160,120,'40','CUKUP','good'],['A100C 3GB 64GB',2158,2086,'31','CUKUP','good'],['A100C 4GB 64GB',906,227,'119,7','STOK TINGGI','high'],['A200 3GB 128GB',317,221,'43','CUKUP','good'],['A200 4GB 64GB',688,322,'64,1','STOK TINGGI','high'],['A90 4GB 256GB',0,0,'—','TIDAK AKTIF','still'],['CITY 100 8GB 128GB',0,1,'-','HABIS','empty'],['CITY 200 4GB 128GB',180,71,'76,1','STOK TINGGI','high'],['S26 ULTRA 8GB 128GB',38,167,'6,8','MENIPIS','low'],['S26 ULTRA 8GB 256GB',25,51,'14,7','CUKUP','good'],['VISTAB 11 4GB 128GB - KOMPLIT',12,4,'90','STOK TINGGI','high'],['VISTAB 30GT 4GB 128GB',2,0,'—','BELUM BERGERAK','still'],['VISTAB 30GT 6GB 128GB',3,11,'8,2','CUKUP','good']];
+function stok(){const c=BR.ITEL;return `<div class="scope">ST 28 Sep 2026 · SO 28 Sep 2026 · Posisi 28 Sep 2026</div><div class="dh"><table class="tt"><thead><tr><th>BRAND</th><th>TYPE</th><th class="n">EST. STOK</th><th class="n">SO 30 HARI</th><th class="n">DOS</th><th>STATUS</th></tr></thead><tbody>
+${S.map(r=>`<tr><td><span class="bc" style="color:${c[0]};font-weight:800"><i class="bk" style="--d:${c[0]}"></i>ITEL</span></td><td>ITEL ${r[0]}</td><td class="n">${f(r[1])}</td><td class="n">${f(r[2])}</td><td class="n">${r[3]}</td><td><span class="bd dos-${r[5]}">${r[4]}</span></td></tr>`).join('')}</tbody></table></div>`;}
+const T=[['22 Sep 2026','2609019824','MOTOPAD','MOTOPAD 60 LITE 4GB 128GB',50,'102.000.000'],['22 Sep 2026','2609019824','MOTOPAD','MOTOPAD IDEA TAB 4GB 128GB',50,'114.000.000'],['22 Sep 2026','2609019825','MOTOPAD','MOTOPAD 60 LITE 4GB 128GB',100,'204.000.000'],['22 Sep 2026','2609019825','MOTOPAD','MOTOPAD IDEA TAB 4GB 128GB',160,'364.800.000'],['18 Sep 2026','2609017665','ITEL','ITEL A100C 3GB 32GB',180,'218.700.000'],['18 Sep 2026','2609017665','ITEL','ITEL A100C 3GB 64GB',106,'153.700.000'],['18 Sep 2026','2609017665','ITEL','ITEL A100C 4GB 64GB',73,'113.661.000'],['18 Sep 2026','2609017666','ITEL','ITEL A100C 3GB 32GB',100,'121.500.000'],['18 Sep 2026','2609017666','ITEL','ITEL A100C 3GB 64GB',80,'116.000.000']];
+function trx(){return `<div style="font:800 12px Inter,'Segoe UI',system-ui,sans-serif;margin:2px 0 8px;letter-spacing:.3px">RIWAYAT TRANSAKSI PERIODE INI</div><div class="dh"><table class="tt"><thead><tr><th>TANGGAL</th><th>NOMOR SJ</th><th>BRAND</th><th>TYPE</th><th class="n bh" style="--d:#1E5FB8;--l:#E3EEFB"><i class="bk"></i>QTY</th><th class="n bh" style="--d:#9A6400;--l:#FFEFC8"><i class="bk"></i>OMZET</th></tr></thead><tbody>
+${T.map(r=>`<tr><td>${r[0]}</td><td class="t2">${r[1]}<small class="sb" style="display:block">PT. MSI</small><small class="si">· PT. MSI</small></td><td>${r[2]}</td><td>${r[3]}</td><td class="n" style="background:#F6F9FD">${r[4]}</td><td class="n" style="background:#FFFBEF">Rp ${r[5]}</td></tr>`).join('')}</tbody></table></div>`;}
+function kontakK1(){return `<div class="kt">
+<div class="cold"><h3>KONTAK &amp; ALAMAT</h3><p>AGRES.ID JL. GUNUNG SAHARI RAYA 1, LT 2 MANGGA DUA</p><p><b>PIC:</b> —</p><button class="chip">✎ Edit kontak &amp; alamat</button><p style="font-size:12px;margin-top:10px">▸ Disetujui · 2026-11-19</p></div>
+<div class="cnew"><div class="kc"><div class="kh"><h5>KONTAK &amp; ALAMAT</h5><button class="b p" style="height:30px">✎ EDIT KONTAK &amp; ALAMAT</button></div>
+<div class="row"><span class="l">PIC</span><span class="e">Belum diisi</span><span></span></div>
+<div class="row"><span class="l">NOMOR HP</span><span>0812-3456-7890</span><span><button class="mini tel">📞 TELEPON</button><button class="mini wa">WHATSAPP</button></span></div>
+<div class="row"><span class="l">ALAMAT</span><span>AGRES.ID JL. GUNUNG SAHARI RAYA 1, LT 2 MANGGA DUA</span><span></span></div></div>
+<div class="kc"><div class="kh"><h5>RIWAYAT PERUBAHAN</h5></div><details class="hist"><summary><span class="pill ok">DISETUJUI</span>2026-11-19<span style="color:#7b8a98">· klik untuk lihat sebelum / sesudah</span></summary><div style="margin-top:8px;font-size:12px;color:#46586a">Alasan: koreksi alamat.</div></details></div></div></div>`;}
+const EDIT='<button class="b p" style="height:30px">✎ EDIT KONTAK &amp; ALAMAT</button>',HPB='<button class="mini tel">📞 TELEPON</button><button class="mini wa">WHATSAPP</button>';
+function kontakK2(){return `<div class="kt"><div style="display:flex;align-items:center;margin:2px 0 10px"><div style="font:800 12px Inter,'Segoe UI',system-ui,sans-serif;letter-spacing:.3px;flex:1">KONTAK &amp; ALAMAT</div>${EDIT}</div>
+<div style="display:grid;grid-template-columns:1fr 1.2fr 1.6fr;gap:10px;margin-bottom:12px">
+<div class="kb"><span class="l">PIC</span><div class="e">Belum diisi</div></div>
+<div class="kb"><span class="l">NOMOR HP</span><div>0812-3456-7890</div><div style="margin-top:8px">${HPB.replace(/margin-left:4px/g,'')}</div></div>
+<div class="kb"><span class="l">ALAMAT</span><div>AGRES.ID JL. GUNUNG SAHARI RAYA 1, LT 2 MANGGA DUA</div></div></div>
+<div class="kb" style="display:flex;gap:10px;align-items:center"><span class="l" style="margin:0">RIWAYAT</span><span class="pill ok">DISETUJUI</span><span style="font-size:12px">2026-11-19</span><span style="color:#7b8a98;font-size:11px">· koreksi alamat</span><a style="margin-left:auto;color:#1E5FB8;font:800 11px Inter">LIHAT SEBELUM / SESUDAH ▸</a></div></div>`;}
+function kontakK3(){return `<div class="kt"><div class="dh" style="margin-bottom:12px"><table class="tt k3"><thead><tr><th colspan="2">KONTAK &amp; ALAMAT</th><th style="text-align:right;padding:4px 8px"><button class="b" style="height:24px;background:#fff;color:#0E5A63;font-size:10.5px;padding:0 10px">✎ EDIT</button></th></tr></thead><tbody>
+<tr><td class="kl">PIC</td><td colspan="2" style="color:#9aa7b3;font-style:italic">Belum diisi</td></tr>
+<tr><td class="kl">NOMOR HP</td><td>0812-3456-7890</td><td style="text-align:right">${HPB}</td></tr>
+<tr><td class="kl">ALAMAT</td><td colspan="2">AGRES.ID JL. GUNUNG SAHARI RAYA 1, LT 2 MANGGA DUA</td></tr></tbody></table></div>
+<div style="font:800 11px Inter,'Segoe UI',system-ui,sans-serif;letter-spacing:.3px;margin:0 0 6px">RIWAYAT PERUBAHAN</div><div class="dh"><table class="tt"><thead><tr><th>TANGGAL</th><th>STATUS</th><th>ALASAN</th><th></th></tr></thead><tbody><tr><td>2026-11-19</td><td><span class="pill ok">DISETUJUI</span></td><td>Koreksi alamat</td><td style="text-align:right;color:#1E5FB8;font-weight:800;font-size:11px">LIHAT SEBELUM / SESUDAH ▸</td></tr></tbody></table></div></div>`;}
+function kontak(){return ver==='now'?kontakK1():kv==='K1'?kontakK1().replace('class="cold"','class="cold" style="display:none"'):kv==='K2'?kontakK2():kontakK3();}
+function tutBtn(){return (ver==='now'?'B':tv)==='A'?`<button class="b red" data-act="tf">⛔ TANDAI DEALER TUTUP</button>`:`<button class="b m" data-act="menu" aria-label="Aksi lain">⋯</button>${menuOpen?`<div class="menu"><button data-act="tf">⛔ Tandai dealer tutup<small>Perlu alasan · tidak bisa dibatalkan sendiri</small></button></div>`:''}`;}
+function form(){return tfOpen?`<div class="tf"><h4>⛔ TANDAI DEALER TUTUP</h4><label>Tanggal tutup<input type="date" value="2026-11-19"></label><label>Alasan<textarea placeholder="Contoh: toko tutup permanen, pindah usaha"></textarea></label><div class="r"><button class="b p" data-act="tf" style="height:32px">SIMPAN</button><button class="b o" data-act="tf" style="height:32px">BATAL</button></div><small>Admin: status langsung TUTUP. Non-admin tombolnya "AJUKAN DEALER TUTUP" dan menunggu persetujuan admin wilayah.</small></div>`:'';}
+const NAMES=['RINGKASAN','STATUS','STOK','TRANSAKSI','KONTAK'];
+const IC=['<path d="M3 11l9-7 9 7M5 10v10h14V10"/>','<path d="M4 20V4M4 20h16M8 15l4-5 3 3 5-6"/>','<path d="M12 3l9 5v8l-9 5-9-5V8zM3 8l9 5 9-5M12 13v8"/>','<path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6"/>','<path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/>'];
+function draw(){document.getElementById('m').className='modal '+ver;
+const bodies={0:`<div class="kp"><div style="--c:#9A6400">OMZET PERIODE<b>Rp 3,28 M</b>September 2026</div><div style="--c:#1E5FB8">UNIT DEVICE<b>1.647</b>Seluruh brand perangkat</div><div style="--c:#6D3FD8">NOO<b>0</b>September 2026</div><div style="--c:#C25A12">SELL OUT<b>3.683</b>s.d. 28 Sep 2026</div><div style="--c:#46586a">JEDA<b>6 hari</b>Dari cutoff data</div></div>`+histori(),1:`<div class="scope" style="margin-top:8px">Tab STATUS tidak diubah di mockup ini.</div>`,2:stok(),3:trx(),4:kontak()};
+document.getElementById('m').innerHTML=`<div class="mh"><h3>PT.AGRES INFO TEKNOLOGI</h3><div class="sub"><span class="st">DEALER ACTIVE</span>· Terakhir 22 Sep 2026 · 317.811</div><button class="x">×</button></div>
+<div class="act"><button class="b p">+ CATAT ORDER</button><button class="b g">📞 HUBUNGI ▾</button><div class="sp">${tutBtn()}</div>${form()}</div>
+<div class="body"><div class="tabs">${NAMES.map((n,i)=>`<button class="${i===tab?'on':''}" data-t="${i}"><svg viewBox="0 0 24 24">${IC[i]}</svg>${n}</button>`).join('')}</div>${bodies[tab]}</div>
+<div class="foot"><button class="b o">TUTUP</button></div>`;
+document.getElementById('note').innerHTML=ver==='now'?'<b>SEKARANG</b>: persis seperti screenshot. Baris tabel ±46px (Transaksi ±63px), Kontak polos, tombol tandai tutup tersembunyi di ⋯.':'<b>USULAN</b>: baris tabel ±24px (Transaksi satu baris, nama PT di samping nomor SJ). Warna brand, kotak indikator, header teal, dan TOTAL biru <b>tidak diubah</b>. Status stok jadi kotak kecil berwarna seperti di DOS. TOTAL tiap kolom ikut warna judul kolomnya. Tab pakai satu jenis font (Inter 11px tebal) + ikon sejajar. Kontak ada 3 opsi (K1 kartu, K2 tiga kotak, K3 tabel rapat gaya tabel yang sudah disetujui). Tandai tutup: pilih A atau B di atas, klik tombolnya untuk lihat formulirnya. Desktop saja, HP tidak diubah.';}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-t]');if(t){tab=+t.dataset.t;tfOpen=menuOpen=false;draw();return;}const a=e.target.closest('[data-act]');if(a){if(a.dataset.act==='menu'){menuOpen=!menuOpen;tfOpen=false;}else{tfOpen=!tfOpen;menuOpen=false;}draw();}});
+document.querySelectorAll('#sv button').forEach(b=>b.onclick=()=>{ver=b.dataset.v;document.querySelectorAll('#sv button').forEach(x=>x.classList.toggle('on',x===b));draw();});
+document.querySelectorAll('#st button').forEach(b=>b.onclick=()=>{tv=b.dataset.v;tfOpen=menuOpen=false;document.querySelectorAll('#st button').forEach(x=>x.classList.toggle('on',x===b));draw();});
+document.querySelectorAll('#sk button').forEach(b=>b.onclick=()=>{kv=b.dataset.v;document.querySelectorAll('#sk button').forEach(x=>x.classList.toggle('on',x===b));tab=4;draw();});
+draw();
+</script></body></html>

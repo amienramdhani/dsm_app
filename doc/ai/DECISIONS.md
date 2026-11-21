@@ -202,3 +202,10 @@ Rincian lengkap: `doc/ai/BRIEF_2026-11-16_PAKET_REVISI.md`. Mockup: `doc/mockup/
 - Periode lampau yang sudah dikunci tidak ikut berubah saat aturan diubah.
 
 - 2026-11-17 (user, ubah keputusan 11-10): sambungan Telegram berlaku 60 hari sejak terakhir dipakai (geser otomatis tiap dipakai, ditulis hanya bila maju > 1 hari), batas maksimal 180 hari sejak dihubungkan, semua role sama (Admin/Super Admin juga). Alasan: IT dan atasan tidak mau user sering hubungkan ulang; batas 180 hari menutup risiko HP hilang. Pemutusan lain (PIN diganti, akun nonaktif, putuskan manual) tetap. Tanpa kedaluwarsa DITOLAK.
+
+- 2026-11-21 (user, "oke cocok gas"): Klaim Perdin balik nota.
+  - Perdin boleh diajukan di muka (tanggal masa depan); lampiran/foto nota saat pengajuan OPSIONAL. Pengajuan petty cash juga tanpa foto nota.
+  - Foto nota WAJIB hanya di tahap pertanggungjawaban: balik nota Perdin dan lapor pemakaian petty cash.
+  - Tenggat balik nota = tanggal pulang + masa tenggang (pc_grace_days, sama dengan petty cash).
+  - Lewat tenggat = pengajuan klaim baru pemohon diblokir sampai nota dibawa balik (data Demo dan Produksi terpisah).
+  - Sisa dana disetor pemohon lalu dikonfirmasi Finance Transfer; kelebihan pemakaian otomatis jadi klaim reimburse.

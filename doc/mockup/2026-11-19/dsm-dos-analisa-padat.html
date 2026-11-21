@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><title>DSM · DOS & Analisa padat</title>
+<style>
+body{margin:0;font-family:Inter,system-ui,sans-serif;background:#F3F6FA;color:#15232E}
+.top{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid #DDE3EA;padding:10px 20px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.top b{font-size:14px}.seg{display:inline-flex;background:#CBD5E0;border-radius:999px;padding:3px}
+.seg button{border:0;background:transparent;padding:6px 14px;border-radius:999px;font:700 11px Inter,sans-serif;cursor:pointer;color:#33414D}
+.seg button.on{background:#fff;color:#10394E;box-shadow:0 1px 3px #0002}
+.wrap{max-width:1360px;margin:0 auto;padding:16px 20px 60px}
+.note{background:#fff;border-left:4px solid #F0A400;padding:10px 14px;border-radius:8px;font-size:12px;margin-bottom:14px;line-height:1.5}
+.panel{background:#fff;border-radius:12px;box-shadow:0 1px 4px #0001;margin-bottom:16px;overflow:hidden}
+.ph{padding:10px 14px;border-bottom:1px solid #EEF0F5;display:flex;align-items:baseline;gap:10px}
+.ph h3{margin:0;font-size:14px}.ph small{color:#6B7785;font-size:11px}
+.pb{padding:10px 14px;overflow:auto}
+table{border-collapse:separate;border-spacing:0;width:100%}
+.n{text-align:right}
+/* SEKARANG */
+.now th{background:linear-gradient(90deg,#0B5FC4,#3F4FD6) fixed;color:#fff;font-size:11px;font-weight:800;letter-spacing:.4px;padding:0 12px;height:36px;text-align:left;white-space:nowrap}
+.now td{padding:0 12px;height:34px;font-size:12.5px;border-bottom:1px solid #EEF0F5;white-space:nowrap}
+.now td small{display:block;font-size:11px;color:#6B7785}
+.now tr.tot td{font-weight:800}
+.now .bd{border-radius:20px;padding:6px 10px;font-weight:700;font-size:11.5px;border:1px solid transparent}
+.now .mx{padding:8px 10px}
+/* USULAN (gaya Daftar Dealer opsi C) */
+.new table{border:1px solid #D5DCE4}
+.new th{background:#E6EBF1;color:#15232E;font-size:10.5px;font-weight:800;letter-spacing:.3px;padding:5px 9px;text-align:left;white-space:nowrap;border-bottom:2px solid #15303F;border-right:1px solid #D5DCE4}
+.new td{padding:3px 9px;font-size:11px;border-bottom:1px solid #E7EBF0;border-right:1px solid #EEF1F4;white-space:nowrap;line-height:1.35}
+.new td.n,.new .num{font-variant-numeric:tabular-nums;font-size:11px}
+.new th.n,.now th.n{text-align:right}.new th.mx,.now th.mx{text-align:center}
+.new td small{display:block;font-size:9.5px;color:#6B7785;line-height:1.2}
+.new tr.tot td{background:#E6EBF1;font-weight:800;border-top:2px solid #15303F}
+.new .bd{border-radius:4px;padding:1px 6px;font-weight:700;font-size:9.5px;border:1px solid transparent}
+.new tbody tr:hover td{background:#F5F8FB}
+.optB .new tr[data-k] td:first-child{box-shadow:inset 4px 0 0 var(--k)}
+.leg{display:none;gap:12px;font-size:10.5px;color:#4A5663;margin:0 0 8px}
+.optB .leg{display:flex}.leg i{display:inline-block;width:4px;height:12px;vertical-align:-2px;margin-right:4px;border-radius:1px}
+.dos-good{background:#e4f4ec;color:#176d48;border-color:#bce3cd}.dos-low{background:#fff3d6;color:#925c00;border-color:#efda9f}
+.dos-bad{background:#fce9e8;color:#b43138;border-color:#f1c0c1}.dos-high{background:#e9edfc;color:#485ca3}.dos-empty{background:#3b4250;color:#fff}.dos-still{background:#eef1f5;color:#637084}
+.lnk{color:#1E5FB8;font-weight:700}
+/* matriks */
+.mx{text-align:center}.mx.y{background:#DDEBFA}.mx.p{background:#FFF3DC;outline:1.5px dashed #E0A93A;outline-offset:-3px;color:#8A5A00;font-weight:700}.mx.g{background:#F4F6F9;color:#9AA4AF}
+.new .mx{padding:2px 6px}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.lbl{font:800 11px Inter;letter-spacing:.5px;color:#6B7785;margin:0 0 6px}
+.hide{display:none!important}
+.bc{display:inline-flex;align-items:center;gap:5px;font-weight:800;color:var(--d)}
+.bc::before{content:"";width:8px;height:8px;border-radius:2px;background:var(--d)}
+.new tr.br td:first-child{box-shadow:inset 4px 0 0 var(--d)}
+.new tr.tot td.bt{background:var(--l)!important;color:var(--d)!important;border-top:3px solid var(--d)!important}
+.new th.bh{background:var(--l)!important;color:var(--d)!important;border-top:3px solid var(--d)}
+</style></head><body>
+<div class="top"><b>DSM · DOS & Analisa padat (desktop)</b>
+<div class="seg" id="pg"><button class="on" data-v="dos">DOS</button><button data-v="ana">ANALISA</button></div>
+<div class="seg" id="md"><button data-v="now">SEKARANG</button><button data-v="A">USULAN A</button><button class="on" data-v="A2">A + WARNA BRAND</button><button data-v="B">USULAN B</button><button data-v="cmp">BANDINGKAN</button></div>
+</div>
+<div class="wrap" id="wrap">
+<div class="note"><b>A + WARNA BRAND</b> (baru): gaya A, ditambah warna brand dari aplikasi. Kolom BRAND jadi kotak kecil berwarna + teks warna brand, baris ringkasan brand bergaris kiri 4px warna brand, judul kolom brand di Matriks pakai latar muda + garis atas warna brand (sama dengan Daftar Dealer), kotak isi matriks tetap biru/kuning/abu.<br><b>TOTAL</b>: kolom identitas & angka biasa → abu muda (sama dengan judulnya); kolom brand → latar muda + garis atas warna brand (sama dengan judul brand). Aturan: warna TOTAL = warna judul kolomnya.<br><b>USULAN A</b>: sama persis dengan gaya Daftar Dealer opsi C. Padding sel 3px 9px, huruf 11px, sub-info 9.5px, angka font biasa (Inter, digit sama lebar), judul angka rata kanan sejajar nilainya. Judul & TOTAL pakai abu muda #E6EBF1 teks hitam, garis 2px #15303F, semua sel bergaris. Badge kondisi jadi kotak kecil. Tinggi baris ±34–48px turun ke ±22–32px.<br>
+<b>USULAN B</b>: A + garis 4px di kiri baris sesuai kondisi DOS (dan legenda), meniru garis status di History Dealer. Matriks Analisa tidak dapat garis.<br>
+Warna kotak matriks (biru / kuning peluang / abu) dan warna badge kondisi DOS <b>tidak diubah</b>. Desktop saja, HP tetap. Isi dan kolom tidak diubah.</div>
+<div id="out"></div>
+</div>
+<template id="t-dos">
+<section class="panel"><div class="ph"><h3>DOS per wilayah dalam cakupan</h3></div><div class="pb"><table>
+<thead><tr><th>REGION INDUK</th><th>WILAYAH</th><th class="n">DEALER UNIK</th><th class="n">DEALER–TYPE MENIPIS/HABIS</th><th class="n">ESTIMASI STOK</th><th class="n">SO OKT</th><th class="n">RATA-RATA/HARI</th><th class="n">DOS</th></tr></thead><tbody>
+<tr><td>JABAR TIMUR</td><td><span class="lnk">CIREBON</span></td><td class="n">142</td><td class="n">37</td><td class="n">1.284</td><td class="n">1.905</td><td class="n">63,5</td><td class="n">20,2</td></tr>
+<tr><td>JABAR TIMUR</td><td><span class="lnk">KUNINGAN</span></td><td class="n">61</td><td class="n">19</td><td class="n">402</td><td class="n">688</td><td class="n">22,9</td><td class="n">17,5</td></tr>
+<tr><td>JABAR TIMUR</td><td><span class="lnk">INDRAMAYU</span></td><td class="n">88</td><td class="n">26</td><td class="n">611</td><td class="n">1.122</td><td class="n">37,4</td><td class="n">16,3</td></tr>
+<tr><td>JABAR TENGAH</td><td><span class="lnk">MAJALENGKA</span></td><td class="n">54</td><td class="n">22</td><td class="n">298</td><td class="n">640</td><td class="n">21,3</td><td class="n">14,0</td></tr>
+</tbody></table></div></section>
+<section class="panel"><div class="ph"><h3>DOS ringkasan brand</h3><small>Gabungan dealer sesuai filter</small></div><div class="pb"><table>
+<thead><tr><th>BRAND</th><th class="n">ESTIMASI STOK</th><th class="n">SO OKT</th><th class="n">RATA-RATA/HARI</th><th class="n">DOS</th></tr></thead><tbody>
+<tr><td>OPPO</td><td class="n">1.022</td><td class="n">1.610</td><td class="n">53,7</td><td class="n">19,0</td></tr>
+<tr><td>VIVO</td><td class="n">884</td><td class="n">1.402</td><td class="n">46,7</td><td class="n">18,9</td></tr>
+<tr><td>SAMSUNG</td><td class="n">431</td><td class="n">962</td><td class="n">32,1</td><td class="n">13,4</td></tr>
+<tr><td>XIAOMI</td><td class="n">258</td><td class="n">381</td><td class="n">12,7</td><td class="n">20,3</td></tr>
+<tr class="tot"><td>Total</td><td class="n">2.595</td><td class="n">4.355</td><td class="n">145,2</td><td class="n">17,9</td></tr>
+</tbody></table></div></section>
+<section class="panel"><div class="ph"><h3>Dealer + TYPE</h3></div><div class="pb">
+<div class="leg"><span><i style="background:#3b4250"></i>HABIS</span><span><i style="background:#E0A93A"></i>MENIPIS</span><span><i style="background:#2FA36B"></i>CUKUP</span><span><i style="background:#6F80C8"></i>STOK TINGGI</span><span><i style="background:#9AA4AF"></i>BELUM BERGERAK</span><span><i style="background:#D2453F"></i>PERLU CEK DATA</span></div>
+<table>
+<thead><tr><th>DEALER</th><th>SALES / WILAYAH</th><th>BRAND</th><th>TYPE</th><th class="n">ESTIMASI STOK</th><th class="n">SO OKT</th><th class="n">RATA-RATA/HARI</th><th class="n">DOS</th><th>KONDISI</th></tr></thead><tbody>
+<tr data-k style="--k:#3b4250"><td>SINAR JAYA CELL<small>CRB-0142</small></td><td>DEDI S<small>CIREBON</small></td><td>OPPO</td><td>A3X 4/64</td><td class="n">0</td><td class="n">18</td><td class="n">0,6</td><td class="n">0,0</td><td><span class="bd dos-empty">HABIS</span></td></tr>
+<tr data-k style="--k:#E0A93A"><td>BERKAH PONSEL<small>CRB-0088</small></td><td>DEDI S<small>CIREBON</small></td><td>VIVO</td><td>Y19S 6/128</td><td class="n">3</td><td class="n">21</td><td class="n">0,7</td><td class="n">4,3</td><td><span class="bd dos-low">MENIPIS</span></td></tr>
+<tr data-k style="--k:#2FA36B"><td>MITRA SELULAR<small>KNG-0031</small></td><td>RINA A<small>KUNINGAN</small></td><td>SAMSUNG</td><td>A06 4/64</td><td class="n">12</td><td class="n">30</td><td class="n">1,0</td><td class="n">12,0</td><td><span class="bd dos-good">CUKUP</span></td></tr>
+<tr data-k style="--k:#6F80C8"><td>GALAXY PHONE<small>IDM-0107</small></td><td>YUDI P<small>INDRAMAYU</small></td><td>XIAOMI</td><td>REDMI 14C</td><td class="n">25</td><td class="n">9</td><td class="n">0,3</td><td class="n">83,3</td><td><span class="bd dos-high">STOK TINGGI</span></td></tr>
+<tr data-k style="--k:#9AA4AF"><td>ANUGRAH CELL<small>MJL-0019</small></td><td>YUDI P<small>MAJALENGKA</small></td><td>OPPO</td><td>RENO 13F</td><td class="n">4</td><td class="n">0</td><td class="n">0,0</td><td class="n">—</td><td><span class="bd dos-still">BELUM BERGERAK</span></td></tr>
+<tr data-k style="--k:#D2453F"><td>TOP PHONE<small>CRB-0201</small></td><td>DEDI S<small>CIREBON</small></td><td>VIVO</td><td>V40 LITE</td><td class="n">-2</td><td class="n">7</td><td class="n">0,2</td><td class="n">—</td><td><span class="bd dos-bad">PERLU CEK DATA</span><small>Stok minus</small></td></tr>
+</tbody></table></div></section>
+<section class="panel"><div class="ph"><h3>Dealer + Brand</h3><small>Klik tab Dealer + TYPE untuk rincian produk</small></div><div class="pb"><table>
+<thead><tr><th>DEALER</th><th>BRAND</th><th class="n">ESTIMASI STOK</th><th class="n">SO OKT</th><th class="n">RATA-RATA/HARI</th><th class="n">DOS</th><th class="n">MENIPIS / HABIS</th></tr></thead><tbody>
+<tr><td>SINAR JAYA CELL<small>CRB-0142</small></td><td>OPPO</td><td class="n">31</td><td class="n">52</td><td class="n">1,7</td><td class="n">17,9</td><td class="n">2</td></tr>
+<tr><td>SINAR JAYA CELL<small>CRB-0142</small></td><td>VIVO</td><td class="n">18</td><td class="n">40</td><td class="n">1,3</td><td class="n">13,5</td><td class="n">1</td></tr>
+<tr><td>BERKAH PONSEL<small>CRB-0088</small></td><td>SAMSUNG</td><td class="n">9</td><td class="n">27</td><td class="n">0,9</td><td class="n">10,0</td><td class="n">3</td></tr>
+<tr><td>GALAXY PHONE<small>IDM-0107</small></td><td>XIAOMI</td><td class="n">25</td><td class="n">9</td><td class="n">0,3</td><td class="n">83,3</td><td class="n">0</td></tr>
+<tr class="tot"><td>Total</td><td>Seluruh hasil filter</td><td class="n">2.595</td><td class="n">4.355</td><td class="n">145,2</td><td class="n">17,9</td><td class="n">412</td></tr>
+</tbody></table></div></section>
+</template>
+<template id="t-ana">
+<section class="panel"><div class="ph"><h3>Matriks dealer × brand</h3><small>Klik kotak kuning untuk detail & WhatsApp</small></div><div class="pb"><table>
+<thead><tr><th>DEALER</th><th class="n">UNIT/BLN</th><th class="mx">OPPO</th><th class="mx">VIVO</th><th class="mx">SAMSUNG</th><th class="mx">XIAOMI</th><th class="mx">REALME</th><th class="mx">INFINIX</th><th>BRAND</th></tr></thead><tbody>
+<tr><td>SINAR JAYA CELL<small>CIREBON · DEDI S</small></td><td class="n">64,0</td><td class="mx y">22</td><td class="mx y">18</td><td class="mx p">+9</td><td class="mx y">7</td><td class="mx p">+5</td><td class="mx g">·</td><td class="n">4</td></tr>
+<tr><td>BERKAH PONSEL<small>CIREBON · DEDI S</small></td><td class="n">41,0</td><td class="mx y">15</td><td class="mx p">+8</td><td class="mx y">10</td><td class="mx g">·</td><td class="mx y">3</td><td class="mx p">+3</td><td class="n">3</td></tr>
+<tr><td>MITRA SELULAR<small>KUNINGAN · RINA A</small></td><td class="n">33,0</td><td class="mx p">+7</td><td class="mx y">12</td><td class="mx y">9</td><td class="mx y">6</td><td class="mx g">·</td><td class="mx g">·</td><td class="n">3</td></tr>
+<tr><td>GALAXY PHONE<small>INDRAMAYU · YUDI P</small></td><td class="n">28,0</td><td class="mx y">11</td><td class="mx y">8</td><td class="mx g">·</td><td class="mx p">+4</td><td class="mx y">4</td><td class="mx y">2</td><td class="n">4</td></tr>
+<tr class="tot mxt"><td>TOTAL<small>BARU · belum ada di aplikasi</small></td><td class="n">166,0</td><td class="mx" data-b="OPPO">48<small>+7</small></td><td class="mx" data-b="VIVO">38<small>+8</small></td><td class="mx" data-b="SAMSUNG">19<small>+9</small></td><td class="mx" data-b="XIAOMI">13<small>+4</small></td><td class="mx" data-b="REALME">7<small>+5</small></td><td class="mx" data-b="INFINIX">2<small>+3</small></td><td class="n">—</td></tr>
+</tbody></table><div style="font-size:10.5px;color:#6B7785;margin-top:6px">TOTAL per brand = jumlah unit/bln yang sudah ambil, angka kecil = total peluang (kuning). Baris ini usulan baru, bisa dibuang.</div></div></section>
+<section class="panel"><div class="ph"><h3>Per sales · bulan lalu vs bulan ini</h3></div><div class="pb"><table>
+<thead><tr><th>SALES</th><th>REGION</th><th class="n">SEP · BARU</th><th class="n">ORDER LAGI</th><th class="n">% ORDER LAGI</th><th class="n">OKT · BARU</th><th class="n">ORDER LAGI</th><th class="n">SELISIH BARU</th></tr></thead><tbody>
+<tr><td>DEDI S</td><td>CIREBON</td><td class="n">9</td><td class="n">6</td><td class="n">66,7%</td><td class="n">11</td><td class="n">3</td><td class="n">+2</td></tr>
+<tr><td>RINA A</td><td>KUNINGAN</td><td class="n">5</td><td class="n">2</td><td class="n">40,0%</td><td class="n">4</td><td class="n">1</td><td class="n">-1</td></tr>
+<tr><td>YUDI P</td><td>INDRAMAYU</td><td class="n">7</td><td class="n">5</td><td class="n">71,4%</td><td class="n">8</td><td class="n">2</td><td class="n">+1</td></tr>
+<tr class="tot"><td>Total</td><td></td><td class="n">21</td><td class="n">13</td><td class="n">61,9%</td><td class="n">23</td><td class="n">6</td><td class="n">+2</td></tr>
+</tbody></table></div></section>
+<section class="panel"><div class="ph"><h3>Dealer Baru per Bulan: Masih Order Sampai Sekarang?</h3></div><div class="pb"><table>
+<thead><tr><th>BULAN JADI DEALER BARU</th><th class="n">JUMLAH</th><th class="n">BULAN PERTAMA</th><th class="n">BULAN KE-1</th><th class="n">BULAN KE-2</th><th class="n">BULAN KE-3</th></tr></thead><tbody>
+<tr><td>Jul 2026</td><td class="n">18</td><td class="n">100%</td><td class="n">61%</td><td class="n">50%</td><td class="n">44%</td></tr>
+<tr><td>Agu 2026</td><td class="n">22</td><td class="n">100%</td><td class="n">55%</td><td class="n">41%</td><td class="n">—</td></tr>
+<tr><td>Sep 2026</td><td class="n">21</td><td class="n">100%</td><td class="n">62%</td><td class="n">—</td><td class="n">—</td></tr>
+<tr><td>Okt 2026</td><td class="n">23</td><td class="n">100%</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr>
+</tbody></table></div></section>
+</template>
+<script>
+let pg='dos',md='A2';
+function draw(){const t=document.getElementById('t-'+pg).innerHTML,o=document.getElementById('out');
+if(md==='cmp'){o.innerHTML=`<div class="cmp"><div><p class="lbl">SEKARANG</p><div class="now">${t}</div></div><div><p class="lbl">USULAN A</p><div class="new">${t}</div></div></div>`;}
+else o.innerHTML=`<div class="${md==='now'?'now':'new'}">${t}</div>`;
+document.getElementById('wrap').classList.toggle('optB',md==='B');if(md==='A2')brand(o);}
+const BC={OPPO:['#1C7A4A','#E3F4EB'],VIVO:['#2149A8','#E5EBF9'],SAMSUNG:['#1B3F8F','#E4EAF7'],XIAOMI:['#C2410C','#FDEDE3'],REALME:['#2E7D32','#E5F4E6'],INFINIX:['#7A5B00','#FFF4D6']};
+function brand(o){o.querySelectorAll('td[data-b]').forEach(c=>{const k=BC[c.dataset.b];c.style.setProperty('--d',k[0]);c.style.setProperty('--l',k[1]);c.classList.add('bt');});o.querySelectorAll('td,th').forEach(c=>{if(c.dataset.b)return;const b=c.textContent.trim(),k=BC[b];if(!k)return;c.style.setProperty('--d',k[0]);c.style.setProperty('--l',k[1]);
+ if(c.tagName==='TH')c.classList.add('bh');else if(c.cellIndex===0){c.innerHTML='<span class="bc">'+b+'</span>';c.parentNode.classList.add('br');}else c.innerHTML='<span class="bc">'+b+'</span>';});}
+function seg(id,f){document.querySelectorAll('#'+id+' button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#'+id+' button').forEach(x=>x.classList.toggle('on',x===b));f(b.dataset.v);draw();});}
+seg('pg',v=>pg=v);seg('md',v=>md=v);draw();
+</script></body></html>

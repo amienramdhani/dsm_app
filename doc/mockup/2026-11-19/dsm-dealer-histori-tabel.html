@@ -1,0 +1,50 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><title>Mockup · Tabel histori popup dealer + tombol TUTUP</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:13px/1.45 Inter,Segoe UI,Arial,sans-serif;background:#E9EEF3;color:#15303F;padding:20px}
+h1{font-size:18px;margin:0 0 4px;color:#10394E}.lead{color:#5B6B7A;margin:0 0 14px}
+.row{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
+.lab{font-weight:800;color:#10394E;margin:0 0 6px;font-size:12px;letter-spacing:.4px}
+.modal{width:760px;background:#F7F9FB;border-radius:18px;box-shadow:0 20px 50px rgba(16,57,78,.18);overflow:hidden;display:flex;flex-direction:column}
+.bd{padding:14px 18px}
+.card{background:#fff;border:1px solid #E3E9F0;border-radius:14px;overflow:hidden}
+.ch{display:flex;justify-content:space-between;align-items:center;padding:12px 14px}.ch b{color:#10394E;font-size:13.5px;letter-spacing:.3px}.ch small{display:block;color:#7C8899;font-size:11px}
+.seg{display:flex;background:#E9EEF3;border-radius:10px;padding:3px}.seg span{padding:5px 10px;border-radius:8px;font-size:11px;font-weight:800;color:#5B6B7A}.seg .on{background:#fff;color:#10394E;box-shadow:0 1px 4px rgba(16,57,78,.12)}
+table{border-collapse:collapse;width:100%}
+th{background:#10394E;color:#fff;font-size:11px;font-weight:800;letter-spacing:.5px;padding:9px 12px;text-align:right}th:first-child{text-align:left}
+th i{display:inline-block;width:8px;height:8px;border-radius:1px;margin-right:6px;vertical-align:0}
+td{padding:9px 12px;text-align:right;border-top:1px solid #EEF2F6;font-variant-numeric:tabular-nums}td:first-child{text-align:left}
+td.tc,th.tc{background:#F3F7FB}th.tc{background:#0C2C3D}
+tr.cur td{background:#FFF8EC}tr.cur td.tc{background:#FBF0DC}tr.cur td:first-child{box-shadow:inset 3px 0 #F0A400}
+td small{display:block;color:#7C8899;font-size:10.5px}
+.z{color:#B7C2CD}
+tfoot td{background:#10394E;color:#fff;font-weight:800;border-top:0}tfoot td.tc{background:#0C2C3D}tfoot td small{color:#A9BDCB}
+.peluang{margin:10px 14px;background:#FFF8EC;border:1px solid #F5DDAE;border-radius:10px;padding:8px 12px;font-size:12px;color:#7A5200}
+.note{font-size:11px;color:#7C8899;padding:0 14px 12px}
+.ft{position:sticky;bottom:0;background:#fff;border-top:1px solid #E3E9F0;padding:10px 18px;display:flex;justify-content:flex-end}
+.btn{height:38px;padding:0 22px;border-radius:11px;font-weight:800;font-size:12.5px;letter-spacing:.4px;border:1.5px solid #CFDAE5;background:#fff;color:#10394E}
+.side{max-width:760px;margin-top:14px;background:#fff;border-radius:14px;padding:12px 16px;border:1px solid #E3E9F0}.side ul{margin:6px 0 0;padding-left:18px}
+.old{opacity:.9}
+</style></head><body>
+<h1>Mockup · Tabel histori di popup dealer (desktop) + tombol TUTUP</h1>
+<p class="lead">Satu tema petrol DSM. Warna brand cuma titik kecil di judul kolom, bukan blok warna per kolom. Baris TOTAL satu warna (petrol).</p>
+<div class="modal"><div class="bd"><div class="card">
+<div class="ch"><div><b>HISTORI PENJUALAN BULANAN PER BRAND</b><small>Bandingkan kontribusi tiap brand dari bulan ke bulan.</small></div><div class="seg"><span class="on">SELL THRU</span><span>SELL OUT</span><span>OMZET</span></div></div>
+<table><thead><tr><th>BULAN</th><th><i style="background:#2FB38A"></i>ITEL</th><th><i style="background:#F07A0C"></i>MOTOPAD</th><th class="tc">TOTAL</th></tr></thead>
+<tbody>
+<tr class="cur"><td>September 2026<small>Periode dipilih</small></td><td>230</td><td>55</td><td class="tc"><b>285</b></td></tr>
+<tr><td>Agustus 2026</td><td class="z">–</td><td class="z">–</td><td class="tc z">–</td></tr>
+<tr><td>Juli 2026</td><td>830</td><td>10</td><td class="tc"><b>840</b></td></tr>
+<tr><td>Juni 2026</td><td>200</td><td class="z">–</td><td class="tc"><b>200</b></td></tr>
+<tr><td>Mei 2026</td><td>480</td><td class="z">–</td><td class="tc"><b>480</b></td></tr>
+<tr><td>April 2026</td><td class="z">–</td><td class="z">–</td><td class="tc z">–</td></tr>
+</tbody><tfoot><tr><td>TOTAL 6 BULAN<small>rata-rata 301/bln</small></td><td>1.740</td><td>65</td><td class="tc">1.805</td></tr></tfoot></table>
+<div class="peluang">Belum pernah ambil (6 bulan terakhir): <b>IPHONE, MOTOROLA, REALME, TECNO, VILLAON</b></div>
+<div class="note">SELL THRU per brand dalam unit. – berarti tidak ada / belum tersedia.</div>
+</div></div>
+<div class="ft"><button class="btn">TUTUP</button></div></div>
+<div class="side"><b>Catatan</b><ul>
+<li>Berlaku untuk tabel di popup dealer desktop (Histori, Stok, Transaksi) supaya satu gaya: header petrol, baris putih, kolom TOTAL abu tipis, baris TOTAL petrol.</li>
+<li>Baris periode dipilih: kuning lembut + garis amber di kiri.</li>
+<li>Tombol <b>TUTUP</b> menempel di bawah popup (desktop), × di pojok tetap ada.</li>
+<li>HP tidak berubah.</li></ul></div>
+</body></html>

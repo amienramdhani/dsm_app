@@ -1,0 +1,50 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><title>TIM · TOTAL bisa diklik, default rincian area saya</title><style>
+*{box-sizing:border-box}body{margin:0;font:12px Inter,system-ui,sans-serif;background:#F3F6F9;color:#10394E}
+.note{margin:12px 16px;padding:10px 14px;background:#E8F7EF;border:1px solid #CFEBDC;border-radius:10px;color:#0F4F3B;line-height:1.55;max-width:1000px}
+.pick{margin:0 16px 10px;display:flex;gap:8px;align-items:center;font-weight:800;font-size:10px;color:#6B7785}
+.seg{display:inline-flex;border:1px solid #CBD5E0;border-radius:8px;overflow:hidden}.seg button{border:0;background:#fff;padding:6px 12px;font:800 10px Inter,system-ui,sans-serif;color:#6B7785;cursor:pointer}.seg button+button{border-left:1px solid #CBD5E0}.seg button.on{background:#10394E;color:#fff}
+.wrap{margin:0 16px 40px;display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+.card{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(16,57,78,.08);padding:14px 16px}
+.dsk{width:1000px;max-width:100%}.ph{width:390px;background:#fff;border:8px solid #10394E;border-radius:30px;padding:12px;flex:none}
+.md{display:grid;grid-template-columns:300px 1fr;gap:14px}
+h3{margin:0 0 2px;font-size:15px}h4{margin:0 0 6px;font-size:11px;color:#6B7785;letter-spacing:.4px}.sub{color:#6B7785;font-size:10.5px}
+.li{display:flex;justify-content:space-between;padding:6px 8px;border-bottom:1px solid #EEF1F5;font-weight:700;cursor:pointer}.li.on{background:#E6EFFA;box-shadow:inset 3px 0 #1E5FB8}
+.pill{border-radius:99px;padding:1px 8px;font-size:9.5px;font-weight:800;background:#FCE9E8;color:#b43138}.pill.m{background:#FFF3D6;color:#8a5a00}
+.kc{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0}.kc div{border:1px solid #E3E9EF;border-radius:10px;padding:7px 10px}.kc small{display:block;font-size:9px;font-weight:800;color:#6B7785}.kc b{font-size:16px}
+.back{display:inline-block;border:1px solid #1E5FB8;color:#1E5FB8;border-radius:8px;padding:3px 10px;font-size:10px;font-weight:800;cursor:pointer;background:#fff}
+.tot{background:#E6EBF1;color:#10394E;border-radius:6px;padding:1px 8px;font-size:9.5px;font-weight:800}
+table{border-collapse:collapse;width:100%;margin-top:6px}th{background:#E6EBF1;font-size:9.5px;font-weight:800;padding:5px 8px;text-align:left;border-bottom:2px solid #15303F;white-space:nowrap}td{padding:4px 8px;border-top:1px solid #E3E9EF;font-size:11.5px;white-space:nowrap}.n{text-align:right}
+tr.cl{cursor:pointer}tr.cl:hover td{background:#F4F8FC}tr.sel td{background:#E6EFFA}
+tfoot td{background:#E6EBF1;font-weight:800;border-top:2px solid #15303F;cursor:pointer}tfoot tr.sel td{background:#CFE0F5;box-shadow:inset 0 -3px #1E5FB8}
+.hint{font-size:9.5px;color:#1E5FB8;font-weight:700}
+.bars{display:flex;align-items:flex-end;gap:14px;height:70px;margin:8px 0 2px;padding:0 12px;border-bottom:1px solid #D5DDE6}.bars div{display:flex;gap:2px;align-items:flex-end}.bars i{display:block;width:22px;border-radius:2px 2px 0 0}
+.lbl{font-size:10px;font-weight:800;color:#6B7785;margin:10px 0 2px}
+</style></head><body>
+<div class="note"><b>TOTAL bisa diklik + default rincian "area saya".</b> (1) Baris <b>TOTAL</b> di tabel lengkap (menempel di bawah) <b>bisa diklik</b> → panel rincian berubah jadi rincian gabungan seluruh Sales di cakupan filter (kartu TARGET/AKTUAL/PROYEKSI/RUN RATE/BUTUH-HARI, tren per hari/minggu, tabel per brand versi TOTAL). (2) <b>Pas pertama buka halaman, panel rincian langsung menampilkan TOTAL = area saya</b> (bukan Sales paling berisiko lagi); tidak ada baris daftar yang menyala. (3) Klik nama Sales → rincian Sales itu, dan muncul tombol <b>← AREA SAYA</b> di pojok kanan atas panel untuk balik. Kalau filter diganti (misal Big Region / Region), "TOTAL" ikut mengikuti cakupan filter dan judulnya menyesuaikan. Klik tombol di bawah buat ganti kondisi.<br><b>Satu hal yang gue asumsikan:</b> judul default = "AREA SAYA" + nama cakupan (contoh "RGM TOYO · 10 Sales"); kalau filter dipersempit jadi "TOTAL · JAKARTA · 3 Sales".</div>
+<div class="pick">KONDISI: <div class="seg"><button id="b1" class="on" onclick="S=0;r()">PERTAMA BUKA (area saya)</button><button id="b2" onclick="S=1;r()">SETELAH KLIK NAMA</button></div></div>
+<div class="wrap" id="o"></div>
+<script>
+let S=0;
+const L=[['VACANT MADURA','5,0%','t'],['ARIFIN SORMANDANI','14,4%','t'],['RIDHO ALFIAN','23,3%','t'],['DEDE PUJI IMAN FAUZI','32,0%','t'],['KHOIRUR ROZIQIN','41,1%','t']];
+const bars=(a,b)=>a.map((v,i)=>`<div><i style="height:${b[i]/9}px;background:#C5CDD6"></i><i style="height:${v/9}px;background:#D2453F"></i></div>`).join('');
+function r(){
+ document.getElementById('b1').className=S?'':'on';document.getElementById('b2').className=S?'on':'';
+ const tot=!S;
+ const list=L.map((x,i)=>`<div class="li ${S&&i===0?'on':''}"><span>${i+1} &nbsp; ${x[0]}</span><span>${x[1]} <span class="pill">Tertinggal</span></span></div>`).join('');
+ const head=tot?`<h3>AREA SAYA <span class="tot">TOTAL</span></h3><div class="sub">RGM TOYO · 10 Sales</div>`:`<div style="display:flex;justify-content:space-between"><div><h3>VACANT MADURA</h3><div class="sub">ASM RIDHO · JAWA TIMUR 1</div></div><span class="back" onclick="S=0;r()">← AREA SAYA</span></div>`;
+ const kc=tot?[['TARGET','1.950'],['AKTUAL','1.112'],['PROYEKSI','62,7%','#B43138'],['RUN RATE','55,6'],['BUTUH / HARI','419']]:[['TARGET','60'],['AKTUAL','3'],['PROYEKSI','5,5%','#B43138'],['RUN RATE','0,2'],['BUTUH / HARI','29']];
+ const a=tot?[210,295,330,499,0]:[10,12,15,20,0],b=tot?[180,250,300,330,0]:[8,10,14,16,0];
+ const brand=tot?`<tr><td><b>TOTAL AREA</b></td><td class="n">1.950</td><td class="n">1.112</td><td class="n">57,0%</td><td class="n">1.060</td><td class="n">▲ 4,9%</td><td class="n">…</td></tr>`:`<tr><td><b>VACANT MADURA</b></td><td class="n">50</td><td class="n">3</td><td class="n">6,0%</td><td class="n">8</td><td class="n">▼ 62,5%</td><td class="n">…</td></tr>`;
+ const rows=[['VACANT MADURA',60,3,'5,0%'],['ARIFIN SORMANDANI',90,13,'14,4%'],['RIDHO ALFIAN',120,28,'23,3%']].map((x,i)=>`<tr class="cl ${S&&i===0?'sel':''}"><td>${i+1}</td><td><b>${x[0]}</b></td><td class="n">${x[1]}</td><td class="n">${x[2]}</td><td class="n">${x[3]}</td></tr>`).join('');
+ const detail=`${head}<div class="kc">${kc.map(k=>`<div><small>${k[0]}</small><b style="${k[2]?'color:'+k[2]:''}">${k[1]}</b></div>`).join('')}</div>
+ <div class="lbl">TREN · PER MINGGU · BATANG <span style="font-weight:600">(sama seperti yang sudah disetujui; angka = gabungan ${tot?'seluruh Sales':'Sales ini'})</span></div><div class="bars">${bars(a,b)}</div>
+ <div class="lbl">PER BRAND · SELL THRU</div><table><thead><tr><th>${tot?'CAKUPAN':'SALES'}</th><th class="n">TARGET</th><th class="n">AKTUAL</th><th class="n">%ACHV</th><th class="n">LMTD</th><th class="n">GROWTH</th><th class="n">brand lain →</th></tr></thead><tbody>${brand}</tbody></table>`;
+ const tf=`<tfoot><tr class="${tot?'sel':''}" onclick="S=0;r()"><td></td><td>TOTAL · 10 Sales &nbsp;<span class="hint">klik → rincian area saya</span></td><td class="n">1.950</td><td class="n">1.112</td><td class="n">57,0%</td></tr></tfoot>`;
+ const full=`<h4 style="margin-top:14px">SEMUA SALES · TABEL LENGKAP <span class="hint">klik nama atau TOTAL → rincian muncul di atas</span></h4><table><thead><tr><th>#</th><th>SALES</th><th class="n">TARGET</th><th class="n">AKTUAL</th><th class="n">ACH</th></tr></thead><tbody onclick="S=1;r()">${rows}</tbody>${tf}</table>`;
+ const hpTf=`<tr class="${tot?'sel':''}" onclick="S=0;r()"><td>Total</td><td class="n">1.950</td><td class="n">1.112</td><td class="n">57,0%</td></tr>`;
+ document.getElementById('o').innerHTML=`<div class="card dsk"><h4>DESKTOP · Early Warning</h4><div class="md"><div><h4>URUT RISIKO</h4>${list}</div><div>${detail}</div></div>${full}</div>
+ <div class="ph"><h4>HP · Early Warning</h4><div style="border:1px solid #E3E9EF;border-radius:10px;padding:8px;margin-bottom:8px;background:#E8F7EF;font-size:10.5px">${tot?'<b>HP:</b> lembar dari bawah tidak dibuka otomatis (menutupi layar). Sebagai gantinya, <b>baris TOTAL</b> dan <b>strip mint ringkasan</b> di atas bisa diketuk → lembar rincian area saya.':'Lembar rincian Sales dari bawah, ada tombol <b>← AREA SAYA</b> di pojok kanan atas.'}</div>
+ <table><thead><tr><th>SALES</th><th class="n">TARGET</th><th class="n">AKTUAL</th><th class="n">ACH</th></tr></thead><tbody>${L.slice(0,3).map(x=>`<tr class="cl"><td><b>${x[0].slice(0,14)}</b></td><td class="n">60</td><td class="n">3</td><td class="n">${x[1]}</td></tr>`).join('')}</tbody><tfoot>${hpTf.replace('<td>Total</td>','<td>TOTAL <span class="hint">ketuk</span></td>')}</tfoot></table>
+ <div class="sub" style="margin-top:8px">${tot?'Ketuk TOTAL → lembar rincian area saya (kartu, tren, tabel per brand), sama dengan desktop.':'Ketuk nama atau TOTAL → lembar rincian dari bawah.'}</div></div>`}
+r();
+</script></body></html>

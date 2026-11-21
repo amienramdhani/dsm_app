@@ -99,9 +99,9 @@ function owner_can_edit(array $u, array $c): bool {
   return false;
 }
 function pc_blocked(int $uid): ?array {
-  $pn = one("SELECT * FROM claims WHERE claimant_id=? AND nota_state IN ('WAIT','REV') AND nota_due IS NOT NULL AND nota_due<? ORDER BY nota_due LIMIT 1", [$uid, date('Y-m-d')]); // Perdin lewat tenggat balik nota
+  $pn = one("SELECT * FROM claims WHERE claimant_id=? AND nota_state IN ('WAIT','REV') AND nota_due IS NOT NULL AND nota_due<? AND is_demo=? ORDER BY nota_due LIMIT 1", [$uid, date('Y-m-d'), demo_ctx()]); // Perdin lewat tenggat balik nota
   if ($pn) return $pn + ['deadline' => $pn['nota_due']];
-  $p = one("SELECT * FROM claim_pc WHERE claimant_id=? AND (status='DANA' OR (status='SETOR' AND setoran_no IS NULL)) ", [$uid]);
+  $p = one("SELECT * FROM claim_pc WHERE claimant_id=? AND (status='DANA' OR (status='SETOR' AND setoran_no IS NULL)) AND is_demo=?", [$uid, demo_ctx()]);
   if (!$p) return null;
   $grace = (int) (current_rule()['pc_grace_days'] ?? 0);
   $deadline = date('Y-m-d', strtotime($p['p_end'] . " +$grace days"));
@@ -252,7 +252,7 @@ function sync_files(array $u, int $claimId, ?int $noteId, array $ids, string $sl
     if (!$f) continue;
     if ($f['ref_type'] === null && (int) $f['uploader'] !== (int) $u['id'] && !sa_free($u)) fail('Berkas tidak valid.', 403);
     if ($f['ref_type'] !== null && !($f['ref_type'] === 'claim' && (int) $f['ref_id'] === $claimId)) fail('Berkas milik klaim lain.', 403);
-    link_files([$fid], 'claim', $claimId, $noteId, $slot);
+    link_files($u, [$fid], 'claim', $claimId, $noteId, $slot);
   }
 }
 
@@ -489,7 +489,7 @@ function ba_create(array $u, array $c, array $trigs, string $explain, string $cr
   $snap = $bi ? ['period' => $period, 'avail_before' => $bi['available'], 'claim_amount' => (int) $c['total'], 'over' => max(0, (int) $c['total'] - max(0, $bi['available']))] : null;
   $id = ins('claim_ba', ['number' => next_number('BA', $c['entity']), 'claim_id' => $c['id'], 'creator_id' => $u['id'], 'creator_role' => $creatorRole,
     'triggers' => jenc($trigs), 'explanation' => $explain, 'snapshot' => jenc($snap), 'extra' => $extra ? jenc($extra) : null, 'version_no' => max(1, (int) $c['current_version']), 'created_at' => now()]);
-  link_files($fileIds, 'ba', $id, null, 'ba');
+  link_files($u, $fileIds, 'ba', $id, null, 'ba');
   $ba = one("SELECT * FROM claim_ba WHERE id=?", [$id]);
   ba_sign($ba, $creatorRole === 'PEMOHON' ? 'PEMOHON' : 'ADMIN', $u);
   ex("UPDATE claims SET ba_required=1 WHERE id=?", [$c['id']]);
@@ -599,13 +599,18 @@ function claim_act(array $u, int $id, array $in, bool $auto = false): array {
     if ($c['ba_required'] && !ba_complete($c)) fail('Transfer tidak dapat dicatat: tanda tangan BA belum lengkap untuk versi terbaru.', 422);
     $no = trim($in['transfer_no'] ?? ''); $proof = array_map('intval', $in['proof'] ?? []);
     if ($no === '') fail('Nomor transfer wajib.'); if (!$proof) fail('Bukti transfer wajib diunggah.');
-    ins('claim_transfers', ['ref_type' => 'claim', 'ref_id' => $id, 'transfer_no' => $no, 'amount' => $c['total'], 'user_id' => $u['id'], 'entity' => $c['entity'], 'created_at' => now()]);
-    link_files($proof, 'claim', $id, null, 'transfer');
-    ins('claim_approvals', ['ref_type' => 'claim', 'ref_id' => $id, 'version_no' => $ver, 'stage' => 'FT', 'user_id' => $u['id'], 'action' => 'transfer', 'notes' => $no, 'created_at' => now()]);
-    ex("UPDATE claims SET status='DONE', stage=NULL, done_at=?, updated_at=? WHERE id=?", [now(), now(), $id]);
-    hist('claim', $id, 'Transfer dicatat' . $star, $u, $no, null, rp((int) $c['total']), 'FT');
-    notify((int) $c['claimant_id'], 'selesai', "Klaim {$c['number']} sudah ditransfer (" . rp((int) $c['total']) . ").", 'claim', $id);
-    pn_start(get_claim($id), $u); // Perdin: lanjut ke balik nota
+    $own = !db()->inTransaction(); if ($own) db()->beginTransaction();
+    try { // status DONE + mulai balik nota Perdin harus jadi bersama, atau tidak sama sekali
+      lock_row('claims', $id);
+      if (ex("UPDATE claims SET status='DONE', stage=NULL, done_at=?, updated_at=? WHERE id=? AND status='WAIT' AND stage='FT'", [now(), now(), $id]) !== 1) fail('Transfer klaim ini sudah dicatat.', 409);
+      ins('claim_transfers', ['ref_type' => 'claim', 'ref_id' => $id, 'transfer_no' => $no, 'amount' => $c['total'], 'user_id' => $u['id'], 'entity' => $c['entity'], 'created_at' => now()]);
+      link_files($u, $proof, 'claim', $id, null, 'transfer');
+      ins('claim_approvals', ['ref_type' => 'claim', 'ref_id' => $id, 'version_no' => $ver, 'stage' => 'FT', 'user_id' => $u['id'], 'action' => 'transfer', 'notes' => $no, 'created_at' => now()]);
+      hist('claim', $id, 'Transfer dicatat' . $star, $u, $no, null, rp((int) $c['total']), 'FT');
+      notify((int) $c['claimant_id'], 'selesai', "Klaim {$c['number']} sudah ditransfer (" . rp((int) $c['total']) . ").", 'claim', $id);
+      pn_start(get_claim($id), $u); // Perdin: lanjut ke balik nota
+      if ($own) db()->commit();
+    } catch (Throwable $e) { if ($own && db()->inTransaction()) db()->rollBack(); throw $e; }
     return ['ok' => 1];
   }
   if ($act !== 'approve') fail('Aksi tidak dikenal.');

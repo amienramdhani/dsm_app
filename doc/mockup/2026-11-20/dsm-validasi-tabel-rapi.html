@@ -1,0 +1,39 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><title>Validasi · tabel dealer rapi</title><style>
+*{box-sizing:border-box}body{margin:0;font:13px Inter,system-ui,sans-serif;background:#F3F6F9;color:#10394E}
+.top{background:#fff;padding:10px 16px;display:flex;gap:10px;align-items:center;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.top button{border:1px solid #CBD5E0;background:#fff;border-radius:8px;padding:6px 14px;font-weight:800;font-size:11px;cursor:pointer}.top button.on{background:#10394E;color:#fff;border-color:#10394E}
+.note{margin:12px 16px;padding:10px 14px;background:#E8F7EF;border:1px solid #CFEBDC;border-radius:10px;color:#0F4F3B}
+.modal{margin:0 16px 30px;background:#fff;border-radius:16px;box-shadow:0 8px 28px rgba(0,0,0,.15);padding:14px 18px;max-width:1100px}
+.sum{display:flex;justify-content:space-between;align-items:center;margin:8px 0 8px;font-size:12px}
+.chip{border:1px solid #CBD5E0;border-radius:99px;padding:3px 10px;font-weight:800;font-size:10.5px;background:#fff}.chip.on{background:#1E5FB8;color:#fff;border-color:#1E5FB8}
+.sc{max-height:330px;overflow:auto;border:1px solid #D5DDE6;border-radius:8px}
+table{border-collapse:collapse;width:100%}
+/* SEKARANG */
+.old th{background:#0E5A63;color:#fff;font-size:10.5px;letter-spacing:.4px;text-align:left;padding:12px 10px;position:sticky;top:0}.old td{padding:14px 10px;border-top:1px solid #EEF1F5;font-size:14px}.old td small{display:block;font-size:11px;color:#556}.old .t{border:1px solid #CBD5E0;border-radius:99px;padding:4px 10px;font-size:11px}
+/* USULAN */
+.new th{background:#E6EBF1;color:#10394E;font-size:10px;font-weight:800;letter-spacing:.4px;text-align:left;padding:5px 8px;position:sticky;top:0;border-bottom:2px solid #15303F;border-right:1px solid #D5DDE6}
+.new td{padding:3px 8px;font-size:11.5px;border-top:1px solid #E3E9EF;border-right:1px solid #EEF1F5;white-space:nowrap}
+.new tr:nth-child(even) td{background:#FAFBFD}.new td.n,.new td.q,.new th.r{text-align:right}.new td.q,.new td.v{font-family:ui-monospace,Menlo,monospace;font-size:11px}
+.new td.k{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#4A5663}.new td.d b{font-size:11.5px}.new td.d i{font-style:normal;color:#6B7785;font-size:10px;margin-left:6px}
+.new td.v{text-align:right}.new .t{display:inline-block;border-radius:5px;padding:0 6px;background:#E3EEFB;color:#1E5FB8;font-weight:800;font-size:10px;margin-right:3px}.new .t.m{background:#FCEEE4;color:#B33D0B}
+.new tfoot td{position:sticky;bottom:0;background:#E6EBF1;font-weight:800;border-top:2px solid #15303F}
+.new tr.tot td{background:#E6EBF1}
+.hb{display:flex;gap:6px;align-items:center;margin:8px 0;flex-wrap:wrap}.sp{flex:1}.pill{border:1px solid #D5DDE6;border-radius:99px;padding:3px 10px;font-size:11px;font-weight:700;background:#fff}.pill.pv{background:#EFEAFD;border-color:#DCD2F7;color:#5B3FC2}.pill.ok{background:#E5F6EE;color:#12866A;border-color:#BCE3CD}.hb2{display:flex;align-items:center;gap:18px;margin:8px 0;padding:8px 12px;background:#F6F8FB;border-radius:10px}.hb2 .st{display:flex;gap:18px;align-items:center;flex:1}.hb2 small{display:block;font-size:9px;font-weight:800;color:#6B7785;letter-spacing:.4px}.hb2 .bar{flex:0 0 120px;height:6px;background:#DDE5EC;border-radius:3px}.hb2 .bar i{display:block;height:100%;background:#12866A;border-radius:3px}</style></head><body>
+<div class="top"><b>Validasi · tabel dealer</b><button data-m="old">SEKARANG</button><button data-m="new" class="on">TABEL USULAN</button><button data-m="h1">+ HEADER H1</button><button data-m="h2">+ HEADER H2</button></div>
+<div class="note" id="n"></div>
+<div class="modal"><b>Validasi · ST ITEL</b><div id="hd"></div><div class="sum" id="sum"><span><span class="chip on">Terhitung · 11</span> <span class="chip">Sudah order, belum memenuhi · 2</span></span><span>13 dealer · 169 unit · Rp 254.673.000 &nbsp;<span class="chip">Buka Semua</span> <span class="chip">Export dealer indikator ini</span></span></div>
+<div class="sc"><table id="tb"></table></div></div>
+<script>
+const R=[['CV. MAHAMERU ROMA','010.343',42,64088,'7 · VILLAON',['VILLAON','ITEL',5]],['MAHARGYO CELL','010.025',8,12986,'2 · MOTOPAD',['MOTOPAD','ITEL',5]],['OTOKO CELL','010.151',5,7661,'2 · MOTOPAD',['MOTOPAD','ITEL',4]],['JK PONSEL TRENGGALEK','321.138',8,10759,'2 · MOTOPAD',['MOTOPAD','ITEL',3]],['ROMEO STORE & SERVICE','321.079',2,2802,'—',['ITEL',1]],['CV. BRP CELLULAR SHOP','010.363',65,100709,'—',['ITEL',5]],['SYAHIRA CELL KEDIRI','321.075',3,4764,'—',['ITEL',1]],['CV. NUANSA GROUP','010.302',17,24538,'—',['ITEL',3]],['MAKMUR JAYA SHOP TULUNGAGUNG','010.266',4,6166,'—',['ITEL',2]],['LANGGENG CELL - TULUNGAGUNG','010.076',12,16260,'—',['ITEL',2]],['SABAR SUBUR CELL TRENGGALEK','321.011',3,3940,'—',['ITEL',2]]];
+const rp=v=>'Rp '+v.toLocaleString('id-ID').replace(/,/g,'.')+'.000'.slice(0,0);
+const fm=v=>'Rp '+(v*1000).toLocaleString('id-ID');
+function ty(a){return a.slice(0,-1).map(x=>`<span class="t ${x==='MOTOPAD'?'m':''}">${x}</span>`).join('')+'<span style="color:#6B7785;font-size:10px">'+a[a.length-1]+' type</span>'}
+const HD={
+h1:`<div class="hb"><span class="pill pv">Dilihat sebagai: FENDI ERYANTORO · SALES · 2026-09 · kroscek, hanya baca</span><span class="pill">Target 205</span><span class="pill">Aktual 169</span><span class="pill ok">Capaian 82,4%</span><span class="sp"></span><button class="chip">← Kembali ke KPI</button></div>`,
+h2:`<div class="hb2"><div><b>FENDI ERYANTORO</b> <small>SALES · 2026-09 · kroscek, hanya baca</small></div><div class="st"><div><small>TARGET</small><b>205</b></div><div><small>AKTUAL</small><b>169</b></div><div><small>CAPAIAN</small><b style="color:#12866A">82,4%</b></div><div class="bar"><i style="width:82%"></i></div></div><button class="chip">← Kembali ke KPI</button></div>`};
+function r(m){document.querySelectorAll('.top button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));const t=document.getElementById('tb');document.getElementById('hd').innerHTML=HD[m]||'';m=(m==='h1'||m==='h2')?'new':m;
+if(m==='old'){t.className='old';t.innerHTML='<thead><tr><th>NO</th><th>DEALER</th><th>SALES</th><th>QTY ITEL (UNIT)</th><th>NILAI ITEL</th><th>BRAND LAIN (UNIT)</th><th>TYPE ORDER</th></tr></thead><tbody>'+R.map((x,i)=>`<tr><td>${i+1}</td><td><b>${x[0]}</b><small>${x[1]}</small></td><td>FENDI ERYANTORO</td><td>${x[2]}</td><td>${fm(x[3])}</td><td>${x[4]}</td><td><span class="t">${x[5].slice(-2,-1)} · ${x[5][x[5].length-1]} type</span></td></tr>`).join('')+'</tbody>';}
+else{t.className='new';t.innerHTML='<thead><tr><th>#</th><th>KODE</th><th>DEALER</th><th>SALES</th><th class="r">QTY ITEL</th><th class="r">NILAI ITEL</th><th>BRAND LAIN</th><th>TYPE ORDER</th></tr></thead><tbody>'+R.map((x,i)=>`<tr><td class="n">${i+1}</td><td class="k">${x[1]}</td><td class="d"><b>${x[0]}</b></td><td>FENDI ERYANTORO</td><td class="q">${x[2]}</td><td class="v">${fm(x[3])}</td><td>${x[4]}</td><td>${ty(x[5])}</td></tr>`).join('')+'</tbody><tfoot><tr><td></td><td></td><td>Total · 11 dealer</td><td></td><td class="q" style="text-align:right">169</td><td class="v">Rp 254.673.000</td><td>13</td><td></td></tr></tfoot>';}
+document.getElementById('n').innerHTML=m==='new'?'<b>USULAN</b>: baris jadi 1 baris (~24px, tadinya ~55px) sehingga 11 dealer muat tanpa scroll banyak. Kode dealer jadi kolom sendiri di kiri nama dealer, semua sel bergaris, angka monospace, header abu muda gaya tabel history dengan garis tebal 2px di bawah, TOTAL menempel di bawah dengan garis tebal 2px. Type order jadi kotak kecil berwarna brand (ITEL biru, MOTOPAD oranye), bukan kapsul besar. Hanya tabel di popup Validasi.':'<b>SEKARANG</b>: 2 baris per dealer, font besar, header teal tua, kapsul type order besar. 11 dealer sudah memenuhi layar.';}
+document.querySelectorAll('.top button').forEach(b=>b.onclick=()=>r(b.dataset.m));r('new');
+</script></body></html>

@@ -1,0 +1,24 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><title>Peringkat · Kroscek KPI ke bawah</title><style>
+body{margin:0;font:13px Inter,system-ui,sans-serif;background:#F3F6F9;color:#10394E}
+.top{background:#fff;padding:10px 16px;display:flex;gap:10px;align-items:center;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.top button{border:1px solid #CBD5E0;background:#fff;border-radius:8px;padding:6px 14px;font-weight:800;font-size:11px;cursor:pointer}.top button.on{background:#10394E;color:#fff;border-color:#10394E}
+.note{margin:12px 16px;padding:10px 14px;background:#E8F7EF;border:1px solid #CFEBDC;border-radius:10px;color:#0F4F3B}
+.wrap{margin:0 16px 30px}.card{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(16,57,78,.08);margin-bottom:12px;overflow:hidden}
+.ph{padding:12px 16px;font-weight:800}.in{padding:0 16px 14px;display:flex;gap:8px}.in i{flex:1;height:32px;border:1px solid #CBD5E0;border-radius:8px;display:block;color:#98A4B3;font-style:normal;padding:8px 10px;box-sizing:border-box}
+.info{background:#EAF2FB;border-left:4px solid #1E5FB8;border-radius:8px;padding:9px 12px;margin-bottom:12px}
+.bar{display:flex;gap:10px;align-items:center;margin-bottom:12px}.bar span{background:#fff;border:1px solid #CBD5E0;border-radius:8px;padding:7px 12px;font-size:11px;font-weight:700}
+.tb{padding:0 0 4px}.tb div{display:grid;grid-template-columns:50px 1.4fr 1fr 1fr 1fr 1fr;padding:7px 16px;border-top:1px solid #EEF1F5;font-size:12px}.tb .h{background:#E6EBF1;font-weight:800;font-size:11px}
+.tag{font-size:10px;font-weight:800;color:#C25A12;margin:0 0 6px}
+</style></head><body>
+<div class="top"><b>Peringkat · posisi Cari &amp; Kroscek KPI</b><button data-m="now">SEKARANG</button><button data-m="a" class="on">A · DI BAWAH FILTER</button><button data-m="new">B · PALING BAWAH</button></div>
+<div class="note" id="n"></div><div class="wrap" id="o"></div>
+<script>
+const K='<div class="card"><div class="ph">CARI &amp; KROSCEK KPI ⓘ</div><div class="in"><i>Cari nama atau NIK, mis. fendi / 2024.12</i><i style="flex:0 0 130px">SEMUA JABATAN</i></div></div>';
+const I='<div class="info">Peringkat individu tersedia untuk Sales dan ASM. Pilih cakupan Sales atau ASM untuk melihat posisinya.</div>';
+const B='<div class="bar"><span>DALAM CAKUPAN SAYA</span><span>NASIONAL</span><span>PERINGKAT: ASM</span><span>DASAR: KPI Akhir</span><span>REGION: SEMUA</span><span>RESET</span></div>';
+const T='<div class="card"><div class="ph">PAPAN PERINGKAT · ASM</div><div class="tb"><div class="h"><b>#</b><b>NAMA</b><b>BIG REGION</b><b>SUB REGION</b><b>KPI AKHIR</b><b>STATUS</b></div><div><b>🥇</b><span>IMAM FAISAL</span><span>JABODEBEK</span><span>BOGOR-DEPOK</span><span>78,7%</span><span>SEMENTARA</span></div><div><b>🥈</b><span>M. NOVRIAN</span><span>JABODEBEK</span><span>JAKARTA</span><span>76,9%</span><span>SEMENTARA</span></div><div><b>🥉</b><span>FENDI E.</span><span>JABODEBEK</span><span>JATIM 1</span><span>76,8%</span><span>SEMENTARA</span></div></div></div>';
+function r(m){document.querySelectorAll('.top button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
+document.getElementById('o').innerHTML=m==='a'?'<div class="tag">OPSI A</div>'+I+B+K+T:m==='new'?'<div class="tag">URUTAN BARU</div>'+I+B+T+K:'<div class="tag">URUTAN SEKARANG</div>'+K+I+B+T;
+document.getElementById('n').innerHTML=m==='a'?'<b>OPSI A</b>: Cari &amp; Kroscek KPI turun ke <b>tepat di bawah baris filter</b> (tab cakupan, PERINGKAT, DASAR, REGION, RESET), di atas papan peringkat. Info biru tetap paling atas.':m==='new'?'<b>OPSI B</b>: panel Cari &amp; Kroscek KPI dipindah ke <b>paling bawah</b>, di bawah papan peringkat. Isi panel tidak berubah. Papan peringkat jadi langsung kelihatan di atas. Hanya halaman Peringkat desktop.':'<b>SEKARANG</b>: Cari &amp; Kroscek KPI ada paling atas, mendorong papan peringkat ke bawah.';}
+document.querySelectorAll('.top button').forEach(b=>b.onclick=()=>r(b.dataset.m));r('a');
+</script></body></html>

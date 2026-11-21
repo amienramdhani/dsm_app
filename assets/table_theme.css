@@ -1,0 +1,87 @@
+/* TEMA TABEL SATU WARNA, KHUSUS POPUP (2026-11-19, mockup dsm-dealer-histori-tabel.html).
+   Semua halaman (mockup dsm-tabel-global.html): MENUNGGU mockup History Dealer per Brand disetujui. */
+html body .modal #mbody table.tpT.tpT.tpT.tpT thead th.tpH,
+html body .modal #mbody table.tpT.tpT.tpT.tpT thead tr:first-child>th:first-child,
+html body .modal #mbody table.tpT.tpT.tpT.tpT.tpNoStick thead tr:first-child>th:nth-child(2){background:#10394E!important;color:#fff!important;border-bottom:0!important;box-shadow:none!important}
+html body .modal #mbody table.tpT.tpT.tpT.tpT thead th.tpH *{color:#fff!important}
+html body .modal #mbody table.tpT.tpT.tpT.tpT thead th.tpG{background:#0C2C3D!important;border-left:1px solid rgba(255,255,255,.18)!important;border-bottom:3px solid var(--d)!important}
+html body .modal #mbody table.tpT.tpT.tpT.tpT thead th.tpG2{background:#163F55!important;border-left:1px solid rgba(255,255,255,.18)!important;border-bottom:2px solid var(--d)!important}
+html body .modal #mbody table.tpT.tpT.tpT.tpT thead th.tpL{background:#10394E!important;border-bottom:0!important}
+html body .modal #mbody table.tpT.tpT.tpT.tpT thead th.tpS{border-left:1px solid rgba(255,255,255,.18)!important}
+html body .modal #mbody table.tpT.tpT.tpT.tpT thead th:is(.tpG,.tpG2)>.tpLbl::before,
+html body .modal #mbody table.tpT.tpT.tpT.tpT thead th.tpL::before{content:'';display:inline-block;width:9px;height:9px;background:var(--d);margin-right:6px;vertical-align:0;border-radius:0;box-shadow:0 0 0 1.5px rgba(255,255,255,.9)}
+html body .modal #mbody table.tpT.tpT.tpT.tpT td.tpC{background-color:#fff!important}
+html body .modal #mbody table.tpT.tpT.tpT.tpT td.tpC.tpS{border-left:1px solid #E3E9F0!important}
+html body .modal #mbody table.tpT.tpT.tpT.tpT tbody tr:nth-child(even)>td:is(.tpC,:first-child){background-color:#FAFCFD!important}
+html body .modal #mbody table.tpT.tpT.tpT.tpT tbody tr:hover>td{background-color:#F1F6FA!important}
+/* baris TOTAL: satu warna petrol */
+html body .modal #mbody table.tpT.tpT.tpT.tpT tr.tpTot>td,
+html body .modal #mbody table.tpT.tpT.tpT.tpT tr.tpTot>td.tpC,
+html body .modal #mbody table.tpT.tpT.tpT.tpT tr.tpTot>td:first-child,
+html body .modal #mbody table.tpT.tpT.tpT.tpT tfoot tr>:first-child{background-color:#10394E!important;color:#fff!important;border-top:0!important;border-left-color:rgba(255,255,255,.15)!important}
+html body .modal #mbody table.tpT.tpT.tpT.tpT tr.tpTot>td *{color:inherit!important}
+html body .modal #mbody table.tpT.tpT.tpT.tpT tr.tpTot>td small{opacity:.75}
+/* histori bulanan popup dealer: periode dipilih + kolom TOTAL */
+html body .modal #mbody .cmhTable.cmhTable tr.cmhCurrent>td{background-color:#FFF8EC!important}
+html body .modal #mbody .cmhTable.cmhTable tr.cmhCurrent>td:first-child{box-shadow:inset 3px 0 #F0A400!important}
+html body .modal #mbody .cmhTable.cmhTable tbody td.cmhTotal{background-color:#F3F7FB!important;color:#10394E!important}
+
+/* HISTORY DEALER PER BRAND + SUMMARY (2026-11-19, mockup dsm-tabel-gaya.html "Gabungan 1 + 7 + 9", disetujui).
+   Kotak garis + garis status di kiri baris + padat (angka monospace, garis tebal judul & TOTAL). Warna brand & indikator tetap. */
+html body #app#app#app :is(#dealerHistoryRows,#historySummaryPanel) table.tpT.tpT :is(th,td){padding:5px 8px!important;font-size:11px!important;border-right:1px solid #E3E9F0!important;border-bottom:1px solid #E3E9F0!important}
+html body #app#app#app :is(#dealerHistoryRows,#historySummaryPanel) table.tpT.tpT thead th.tpH:not(.tpG):not(.tpG2):not(.tpL),
+html body #app#app#app :is(#dealerHistoryRows,#historySummaryPanel) table.tpT.tpT thead tr:first-child>th:first-child{background:#E6EBF1!important;color:#15303F!important;border-bottom:2px solid #15303F!important;box-shadow:none!important}
+html body #app#app#app :is(#dealerHistoryRows,#historySummaryPanel) table.tpT.tpT thead th.tpH:not(.tpG):not(.tpG2):not(.tpL) *{color:#15303F!important}
+html body #app#app#app :is(#dealerHistoryRows,#historySummaryPanel) table.tpT.tpT thead th.tpL{border-bottom:2px solid var(--d)!important}
+html body #app#app#app :is(#dealerHistoryRows,#historySummaryPanel) table.tpT.tpT tbody td:not(.tpC){background-color:#fff!important}
+html body #app#app#app :is(#dealerHistoryRows,#historySummaryPanel) table.tpT.tpT tbody td.tpC{font-family:ui-monospace,Consolas,monospace}
+html body #app#app#app #dealerHistoryRows table.tpT.tpT tbody tr>td:first-child{box-shadow:inset 4px 0 var(--a,#E3E9F0)!important;padding-left:11px!important}
+html body #app#app#app :is(#dealerHistoryRows,#historySummaryPanel) table.tpT.tpT tr.tpTot>td{border-top:2px solid #15303F!important;font-weight:800!important}
+html body #app#app#app :is(#dealerHistoryRows,#historySummaryPanel) table.tpT.tpT tr.tpTot>td:not(.tpC),
+html body #app#app#app :is(#dealerHistoryRows,#historySummaryPanel) table.tpT.tpT tr.tpTot>td:first-child,
+html body #app#app#app :is(#dealerHistoryRows,#historySummaryPanel) table.tpT.tpT tfoot tr>:first-child{background-color:#E6EBF1!important;color:#15303F!important;box-shadow:none!important}
+html body #app#app#app :is(#dealerHistoryRows,#historySummaryPanel) table.tpT.tpT tr.tpTot>td.tpC{background-color:var(--l)!important;color:var(--d)!important;border-top-color:var(--d)!important}
+.v7hLeg{display:flex;flex-wrap:wrap;gap:12px;font-size:10.5px;font-weight:600;color:#5B6B7A;padding:6px 10px;border:1px solid #E3E9F0;border-top:0;background:#FAFBFC}.v7hLeg i{display:inline-block;width:4px;height:11px;margin-right:5px;vertical-align:-1px}.v7hLeg .r{margin-left:auto}
+html body #app#app#app :is(#dealerHistoryRows,#historySummaryPanel) table.tpT.tpT thead tr>th:is(:first-child,:nth-child(2)):not(.tpG):not(.tpG2):not(.tpL){background:#E6EBF1!important;color:#15303F!important;border-bottom:2px solid #15303F!important}
+html body #app#app#app :is(#dealerHistoryRows,#historySummaryPanel) table.tpT.tpT tbody td :is(a,button,b,strong,span):not(.chip){font-size:11px!important}
+
+/* DAFTAR DEALER PADAT (2026-11-19, mockup doc/mockup/2026-11-19/dsm-daftar-dealer-padat.html opsi C, disetujui). Desktop saja.
+   Dua baris tetap, jarak & huruf dikecilkan (11px / info kedua 9.5px). Judul & TOTAL kolom non-brand abu muda; kolom brand tetap warna brand. */
+@media (min-width:761px){
+html body #app#app#app :is(#customerRows,#customerTableRows) table :is(td,th){padding:3px 9px!important;line-height:1.25!important}
+html body #app#app#app :is(#customerRows,#customerTableRows) table td{font-size:11px!important}
+html body #app#app#app :is(#customerRows,#customerTableRows) table td :is(a,button,b,strong){font-size:11px!important}
+html body #app#app#app :is(#customerRows,#customerTableRows) table td :is(small,.cellsub,.sub){font-size:9.5px!important;line-height:1.1!important;margin-top:1px!important}
+html body #app#app#app :is(#customerRows,#customerTableRows) table td :is(.dsPill,.statusBadge,[class*="pill"]){font-size:8.5px!important;padding:0 5px!important;line-height:1.5!important}
+html body #app#app#app :is(#customerRows,#customerTableRows) table td :is(.v6pct,[class*="pct"],.chip){font-size:9.5px!important}
+html body #app#app#app :is(#customerRows,#customerTableRows) table thead th{font-size:10px!important;padding:7px 9px!important}
+html body #app#app#app :is(#customerRows,#customerTableRows) table thead th:not(.tpG):not(.tpG2):not(.tpL),
+html body #app#app#app :is(#customerRows,#customerTableRows) table thead tr>th:first-child{background:#E6EBF1!important;color:#15303F!important;border-bottom:2px solid #15303F!important}
+html body #app#app#app :is(#customerRows,#customerTableRows) table thead th:not(.tpG):not(.tpG2):not(.tpL) *{color:#15303F!important}
+html body #app#app#app :is(#customerRows,#customerTableRows) table tr.tpTot>td:not(.tpC),
+html body #app#app#app :is(#customerRows,#customerTableRows) table tr.tpTot>td:first-child{background:#E6EBF1!important;color:#15303F!important;border-top:2px solid #15303F!important}
+html body #app#app#app :is(#customerRows,#customerTableRows) table tr.tpTot>td.tpC{background:var(--l)!important;color:var(--d)!important;border-top:3px solid var(--d)!important}
+html body #app#app#app :is(#customerRows,#customerTableRows) table tr.tpTot>td{font-size:11.5px!important}
+}
+
+/* v8 2026-11-19 — DOS & Analisa padat ("A + WARNA BRAND", mockup doc/mockup/2026-11-19/dsm-dos-analisa-padat.html).
+   Hanya table.v8pad (ditandai v8PadTag di dsm.js), desktop. Gaya = Daftar Dealer opsi C + warna brand. Angka Inter (digit sama lebar), bukan monospace. */
+@media (min-width:761px){
+html body #app#app#app#app#app table.v8pad{border-collapse:separate!important;border-spacing:0!important;border:1px solid #D5DCE4!important}
+html body #app#app#app#app#app table.v8pad :is(th,td){padding:3px 9px!important;height:auto!important;line-height:1.35!important;font-family:Inter,"Segoe UI",system-ui,sans-serif!important;font-variant-numeric:tabular-nums;white-space:nowrap;border-right:1px solid #EEF1F4!important;text-align:right!important}
+html body #app#app#app#app#app table.v8pad :is(th,td).v8t{text-align:left!important}
+html body #app#app#app#app#app table.v8pad td{font-size:11px!important;font-weight:500!important;border-bottom:1px solid #E7EBF0!important;background:#fff!important}
+html body #app#app#app#app#app table.v8pad td :is(a,button,b,strong){font-size:11px!important}
+html body #app#app#app#app#app table.v8pad td :is(small,.cellsub){display:block;font-size:9.5px!important;line-height:1.2!important;margin-top:1px!important;color:#6B7785!important}
+html body #app#app#app#app#app table.v8pad tbody tr:hover td{background:#F5F8FB!important}
+html body #app#app#app#app#app table.v8pad thead th{background:#E6EBF1!important;color:#15232E!important;font-size:10.5px!important;font-weight:800!important;letter-spacing:.3px;padding:5px 9px!important;border:0!important;border-right:1px solid #D5DCE4!important;border-bottom:2px solid #15303F!important}
+html body #app#app#app#app#app table.v8pad thead th *{color:inherit!important}
+html body #app#app#app#app#app table.v8pad thead th.v8bh{background:var(--l)!important;color:var(--d)!important;border-top:3px solid var(--d)!important;text-align:center!important}
+html body #app#app#app#app#app table.v8pad tr.totalRow td{background:#E6EBF1!important;color:#15232E!important;font-weight:800!important;border-top:2px solid #15303F!important}
+html body #app#app#app#app#app table.v8pad td .dosBadge{border-radius:4px!important;padding:1px 6px!important;font-size:9.5px!important;line-height:1.5!important}
+html body #app#app#app#app#app table.v8pad .v8bc{display:inline-flex;align-items:center;gap:5px;font-weight:800;color:var(--d)}
+html body #app#app#app#app#app table.v8pad .v8bc::before{content:"";width:8px;height:8px;border-radius:2px;background:var(--d)}
+html body #app#app#app#app#app table.v8pad td.v8br{box-shadow:inset 4px 0 0 var(--d)!important}
+html body #app#app#app#app#app table.v8pad td .v6ws{height:20px!important;min-width:32px!important;padding:0 6px!important;font-size:10.5px!important;border-radius:5px!important}
+html body #app#app#app#app#app table.v8pad td:has(> .v6ws){text-align:center!important}
+}

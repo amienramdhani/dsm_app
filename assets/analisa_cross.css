@@ -1,0 +1,59 @@
+/* ANALISA · CROSS-SELL BRAND + kartu mint halaman Brand (2026-11-20). Kartu mint (.kpis.v6mint) dipakai Cross-sell & halaman Brand. Mockup disetujui: dsm-cross-sell-matriks-split.html + dsm-analisa-filter.html (F1).
+   Cakupan: tab Cross-sell saja. Kartu mint tanpa ikon, filter F1 1 baris (desktop), ⓘ penjelas, kolom matriks dipisah, kolom BRAND badge warna. */
+/* kartu atas */
+html body #app #view .kpis.v6mint{gap:10px}
+html body #app #view .kpis.v6mint .kpi{background:#E8F7EF!important;border:1px solid #CFEBDC!important;border-radius:12px!important;box-shadow:none!important;padding:9px 14px!important;display:block!important;cursor:default;text-align:left}
+html body #app #view .kpis.v6mint .kpi::before{display:none!important;content:none!important}
+html body #app #view .kpis.v6mint .kpi .kic{display:none!important}
+html body #app #view .kpis.v6mint .kpi .ktx{display:block!important;padding:0!important}
+html body #app #view .kpis.v6mint .kpi .klab{font-size:10px!important;font-weight:800!important;letter-spacing:.3px;text-transform:uppercase;color:#3F6F58!important}
+html body #app #view .kpis.v6mint .kpi .kval{font-size:20px!important;line-height:1.2!important;color:#0F4F3B!important;margin:1px 0!important}
+html body #app #view .kpis.v6mint .kpi .ksub{font-size:10.5px!important;color:#4E7A66!important}
+/* filter F1 (desktop) */
+.v6f1{display:flex;align-items:center;gap:8px;background:#fff;border-radius:10px;padding:6px 10px;box-shadow:0 1px 3px rgba(0,0,0,.08);margin-bottom:10px}
+.v6f1s{position:relative;flex:0 0 250px}
+.v6f1s::before{content:"⌕";position:absolute;left:9px;top:5px;color:#6B7785;font-size:15px;pointer-events:none}
+.v6f1 .v6f1s input{height:32px;width:100%;border:1px solid #CBD5E0;border-radius:8px;padding:0 26px 0 28px;font-size:12px;font-family:inherit;background:#fff}
+.v6f1x{position:absolute;right:6px;top:7px;border:0;background:#E6EBF1;border-radius:50%;width:18px;height:18px;font-size:10px;line-height:18px;padding:0;cursor:pointer}
+.v6f1x[hidden]{display:none}
+html body #app .v6f1 select.fi{height:32px;border:1px solid #CBD5E0;border-radius:8px;padding:0 6px;font-size:12px;background:#fff;width:auto;min-width:0;flex:1 1 0;max-width:170px;text-transform:none}
+.v6f1r{height:32px;border:1px solid #CBD5E0;border-radius:8px;background:#fff;font:800 10.5px Inter,system-ui,sans-serif;padding:0 12px;color:#4A5663;cursor:pointer;white-space:nowrap}
+.v6f1c{margin-left:auto;font-weight:700;color:#10394E;white-space:nowrap}
+/* ⓘ */
+.v6info{position:relative;margin-left:auto}
+.v6ibtn{border:1px solid #BFE3D0;background:#E8F7EF;color:#14664A;border-radius:999px;padding:5px 12px;font:800 10.5px Inter,system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+.v6ipop{position:absolute;right:0;top:34px;z-index:30;width:460px;max-width:92vw;background:#fff;border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.2);padding:12px 14px;line-height:1.55;font-size:12px;text-align:left}
+.v6ipop[hidden]{display:none}.v6ipop h5{margin:0 0 6px;font-size:12px;color:#10394E}
+.v6ipop table{width:100%;border:0}.v6ipop td{border:0;border-top:1px solid #EEF1F5;padding:5px 6px;vertical-align:top;font-size:12px}.v6ipop td:first-child{width:92px;font-weight:800;color:#10394E;white-space:nowrap}
+mark{background:#FFE58F;border-radius:2px;padding:0 1px}
+/* matriks: kolom teks */
+.v6csTable .v6kd{color:#6B7785;font-size:10px}
+html body #app #view .v6csTable table td:nth-child(-n+4),html body #app #view .v6csTable table th:nth-child(-n+4){text-align:left!important}
+html body #app #view .v6csTable table td:nth-child(2){max-width:190px;overflow:hidden;text-overflow:ellipsis}
+html body #app #view .v6csTable table td:nth-child(4){max-width:130px;overflow:hidden;text-overflow:ellipsis}
+html body #app #view .v6csTable table td:nth-child(3){white-space:nowrap}
+.v6bdg{display:inline-block;min-width:34px;text-align:center;border-radius:5px;padding:1px 7px;font-weight:800;font-size:10.5px;border:1px solid}
+.v6bdg.g{background:#E5F6EE;color:#176d48;border-color:#bce3cd}.v6bdg.y{background:#FFF3D6;color:#925c00;border-color:#EFDA9F}.v6bdg.r{background:#FCE9E8;color:#b43138;border-color:#F1C0C1}
+/* HP: KODE disembunyikan, kolom DEALER menempel kiri (nama penuh) */
+@media(max-width:760px){
+ html body #app #view .v6csTable table :is(td,th){font-size:10.5px!important;padding:4px 8px!important;line-height:1.3!important;white-space:nowrap}
+ html body #app #view .v6csTable table td :is(a,button,b){font-size:10.5px!important}
+ html body #app #view .v6csTable table td button.textlink{min-height:0!important;height:auto!important;padding:0!important;line-height:1.3!important}
+ html body #app #view .v6csTable table td.v6ws,html body #app #view .v6csTable table .v6ws{height:22px!important;min-width:30px!important;font-size:10.5px!important}
+ html body #app #view .v6csTable table td:nth-child(1),html body #app #view .v6csTable table th:nth-child(1){display:none}
+ html body #app #view .v6csTable table td:nth-child(2),html body #app #view .v6csTable table th:nth-child(2){position:sticky;left:0;z-index:2;background:#fff;box-shadow:2px 0 3px rgba(0,0,0,.08);max-width:none;overflow:visible;white-space:nowrap}
+ html body #app #view .v6csTable table th:nth-child(2){background:#E6EBF1;z-index:3}
+ html body #app #view .v6csTable table td:nth-child(4){max-width:none;overflow:visible;white-space:nowrap}
+ html body #app #view .kpis.v6mint{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .v6info{display:none}
+}
+
+/* Beranda: kartu mint + progress tipis + chip growth (2026-11-20, mockup tab A) */
+html body #app #view .kpis.v6mintH .kpi .v6mb{height:4px;background:#CFEBDC;border-radius:3px;margin-top:6px;position:relative;overflow:visible}
+html body #app #view .kpis.v6mintH .kpi .v6mb i{display:block;height:100%;border-radius:3px}
+html body #app #view .kpis.v6mintH .kpi .v6mb em{position:absolute;top:-2px;width:2px;height:8px;background:#0F4F3B;opacity:.55}
+html body #app #view .kpis.v6mintH .kpi .ksub .v6gr{display:inline-block;margin-left:6px;padding:0 6px;border-radius:99px;background:#fff;color:#12866A;font-size:9.5px;font-weight:800;border:1px solid #BFE3D0}
+html body #app #view .kpis.v6mintH .kpi .ksub .v6gr.n{color:#D2453F;border-color:#F1C0C1}
+html body #app #view .kpis.v6mintH .kpi .ksub{min-height:0!important;display:block!important}
+html body #app #view .kpis.v6mintH .kpi{min-height:0!important;height:auto!important}
+@media(max-width:760px){html body #app #view .kpis.v6mintH .kpi{padding:8px 10px!important}html body #app #view .kpis.v6mintH .kpi .kval{font-size:17px!important}html body #app #view .kpis.v6mintH .kpi:last-child:nth-child(odd){grid-column:1/-1}}

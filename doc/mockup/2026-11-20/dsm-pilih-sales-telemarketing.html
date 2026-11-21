@@ -1,0 +1,39 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><title>Pemilih Sales / Telemarketing</title><style>
+*{box-sizing:border-box}body{margin:0;font:13px Inter,system-ui,sans-serif;background:#F3F6F9;color:#10394E}
+.top{background:#fff;padding:10px 16px;display:flex;gap:8px;align-items:center;box-shadow:0 1px 3px rgba(0,0,0,.08);flex-wrap:wrap}
+.top button{border:1px solid #CBD5E0;background:#fff;border-radius:8px;padding:6px 14px;font-weight:800;font-size:11px;cursor:pointer}.top button.on{background:#10394E;color:#fff;border-color:#10394E}
+.note{margin:12px 16px;padding:10px 14px;background:#E8F7EF;border:1px solid #CFEBDC;border-radius:10px;color:#0F4F3B}
+.wrap{margin:0 16px 30px}.lab{font-size:10px;font-weight:800;letter-spacing:.5px;color:#6B7785;margin:14px 0 6px}
+.card{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(16,57,78,.08);padding:12px 16px;margin-bottom:10px}
+.pg{display:flex;align-items:center;gap:12px;margin-bottom:10px}.pg h2{margin:0;font-size:15px}.sp{flex:1}
+/* sekarang */
+.cur{background:#F7F8FD;border-radius:12px;padding:10px 12px;display:flex;gap:8px}.cur span{border:1px solid #E3E7EE;background:#fff;border-radius:10px;padding:8px 12px;font-weight:700;font-size:11px}.cur span.on{background:#0D5BA8;color:#fff;border-color:#0D5BA8}
+/* S1 segmen kapsul */
+.s1{display:inline-flex;background:#CBD5E0;border-radius:999px;padding:3px}.s1 span{padding:6px 20px;border-radius:999px;font-weight:800;font-size:11px;letter-spacing:.3px;color:#4A5663;cursor:pointer}.s1 span.on{background:#fff;color:#10394E;box-shadow:0 1px 3px rgba(0,0,0,.18)}
+/* S2 underline */
+.s2{display:flex;gap:22px;border-bottom:2px solid #E3E9EF}.s2 span{padding:8px 2px;font-weight:800;font-size:12px;color:#7C8899;cursor:pointer;margin-bottom:-2px;border-bottom:3px solid transparent;display:flex;gap:7px;align-items:center}.s2 span.on{color:#10394E;border-color:#1E5FB8}.s2 i{font-style:normal;width:18px;height:18px;border-radius:50%;background:#E6EBF1;font-size:10px;display:inline-flex;align-items:center;justify-content:center}.s2 .on i{background:#1E5FB8;color:#fff}
+/* S3 kartu pilih */
+.s3{display:grid;grid-template-columns:repeat(2,minmax(0,260px));gap:10px}.s3 div{background:#fff;border:1.5px solid #E3E9EF;border-radius:12px;padding:9px 14px;box-shadow:inset 4px 0 0 var(--c);cursor:pointer}.s3 b{display:block;font-size:12px;color:var(--c)}.s3 small{color:#6B7785;font-size:10.5px}.s3 .on{background:var(--l);border-color:var(--c)}
+/* S4 toggle di judul */
+.s4{display:inline-flex;align-items:center;border:1px solid #CBD5E0;border-radius:8px;overflow:hidden;background:#fff}.s4 span{padding:5px 14px;font-size:10.5px;font-weight:800;color:#6B7785;cursor:pointer}.s4 span+span{border-left:1px solid #CBD5E0}.s4 span.on{background:#10394E;color:#fff}
+.fake{height:60px;border-radius:10px;background:repeating-linear-gradient(45deg,#fff,#fff 8px,#F3F6F9 8px,#F3F6F9 16px);border:1px dashed #CBD5E0;display:flex;align-items:center;justify-content:center;color:#98A4B3;font-size:11px}
+</style></head><body>
+<div class="top"><b>Pemilih Sales / Telemarketing</b><span id="bt"></span></div>
+<div class="note" id="n"></div><div class="wrap" id="o"></div>
+<script>
+const O={now:['SEKARANG','Kotak abu-biru lebar penuh dengan dua tombol, memakan satu baris sendiri.'],s1:['S1 · KAPSUL SEGMEN','Kapsul abu gelap, tab aktif putih (gaya yang sama dengan tab popup dealer). Kecil, kompak, tidak lebar penuh.'],s2:['S2 · TAB GARIS BAWAH','Dua tab dengan ikon bulat dan garis biru di bawah tab aktif, menyatu dengan judul halaman.'],s3:['S3 · KARTU PILIH','Dua kartu kecil berwarna (Sales biru, Telemarketing tosca) dengan keterangan singkat. Paling jelas, tapi makan tinggi paling banyak.'],s4:['S4 · TOGGLE DI JUDUL','Toggle kecil ditaruh sejajar judul halaman di kanan, jadi tidak makan satu baris sendiri. Paling hemat tempat.']};
+function ctl(k,pg){const on=(a)=>a?'on':'';
+const A=[['Sales','S'],['Telemarketing','T']];
+if(k==='now')return '<div class="cur"><span class="on">Sales</span><span>Telemarketing</span></div>';
+if(k==='s1')return '<div class="s1"><span class="on">SALES</span><span>TELEMARKETING</span></div>';
+if(k==='s2')return '<div class="s2"><span class="on"><i>S</i>SALES</span><span><i>T</i>TELEMARKETING</span></div>';
+if(k==='s3')return '<div class="s3"><div class="on" style="--c:#1E5FB8;--l:#E3EEFB"><b>SALES</b><small>ASM &amp; Sales lapangan</small></div><div style="--c:#0E7C6B;--l:#E2F4F1"><b>TELEMARKETING</b><small>Tim telepon &amp; order</small></div></div>';
+return '';}
+function page(k,name){if(k==='s4')return `<div class="lab">${name}</div><div class="card"><div class="pg"><h2>${name}</h2><span class="sp"></span><div class="s4"><span class="on">SALES</span><span>TELEMARKETING</span></div></div><div class="fake">isi halaman ${name}</div></div>`;
+return `<div class="lab">${name}</div><div class="card">${k==='s2'?'':''}<div class="pg"><h2>${name}</h2></div>${ctl(k)}<div style="height:10px"></div><div class="fake">isi halaman ${name}</div></div>`;}
+function r(k){document.getElementById('bt').innerHTML=Object.keys(O).map(x=>`<button data-k="${x}" class="${x===k?'on':''}">${O[x][0]}</button>`).join('');
+document.querySelectorAll('#bt button').forEach(b=>b.onclick=()=>r(b.dataset.k));
+document.getElementById('n').innerHTML='<b>'+O[k][0]+'</b>: '+O[k][1]+' Berlaku untuk halaman <b>KPI</b> dan <b>Peringkat</b> (desktop); fungsi pindah tab tidak berubah.';
+document.getElementById('o').innerHTML=page(k,'KPI')+page(k,'Peringkat');}
+r('s1');
+</script></body></html>

@@ -223,6 +223,71 @@ t('perdin balik nota: muncul di "perlu tindakan saya" pemohon, Admin, dan FT ses
   pn_review($rina, $id, ['action' => 'approve']); eq($tag($dewi), 'Setor sisa dana');
   pn_setoran($dewi, $id, ['setoran_no' => 'S1', 'files' => [fakefile($dewi, 'setoran')]]); eq($tag($ft), 'Konfirmasi setoran');
 });
+echo "== Balik nota: temuan review Amien ==\n";
+$mk = function (string $d) use ($dewi, $rina, $perdin, $pnFlow) { $p = $perdin($dewi); $p['meta']['tgl_berangkat'] = $d; $p['meta']['tgl_pulang'] = date('Y-m-d', strtotime("$d +2 days")); foreach ($p['notes'] as &$nn) $nn['date'] = $d; unset($nn);
+  $id = claim_save($dewi, $p); claim_submit($dewi, $id, []); claim_act($rina, $id, ['entity' => 'RISM', 'action' => 'approve', 'perdin_check' => ['titik' => 1, 'jarak' => 1, 'durasi' => 1]]); $pnFlow($id); return $id; };
+t('uji 1-2: Perdin telat di Demo tidak memblokir Produksi, dan sebaliknya', function () use ($dewi, $mk) {
+  $id = $mk('2026-09-01'); ex("UPDATE claims SET nota_due='2026-09-05' WHERE id=?", [$id]);
+  eq(pc_blocked((int) $dewi['id']) !== null, true);
+  $GLOBALS['CLAIM_DEMO'] = 1; eq(pc_blocked((int) $dewi['id']), null); $GLOBALS['CLAIM_DEMO'] = 0;
+  ex("UPDATE claims SET is_demo=1 WHERE id=?", [$id]); eq(pc_blocked((int) $dewi['id']), null);
+  $GLOBALS['CLAIM_DEMO'] = 1; eq(pc_blocked((int) $dewi['id']) !== null, true); $GLOBALS['CLAIM_DEMO'] = 0;
+  ex("UPDATE claims SET is_demo=0, nota_state='OK' WHERE id=?", [$id]);
+});
+t('uji 3: tidak bisa memakai file milik pengguna lain', function () use ($dewi, $rina, $mk) {
+  $id = $mk('2026-09-04'); $pl = pn_out($dewi, get_claim($id))['plan'];
+  throws(fn() => pn_submit($dewi, $id, ['notes' => [['plan_id' => $pl[0]['id'], 'komponen' => 'T', 'nominal' => 1000, 'date' => '2026-09-04', 'files' => [fakefile($rina, 'rnota')]]]]), 'bukan milik');
+  throws(fn() => pn_submit($dewi, $id, ['notes' => [['plan_id' => $pl[0]['id'], 'komponen' => 'T', 'nominal' => 1000, 'date' => '2026-09-04', 'files' => [999999]]]]), 'tidak ditemukan');
+  eq(get_claim($id)['nota_state'], 'WAIT');
+});
+t('uji 4: file yang sudah terpakai di dokumen lain tidak bisa dipakai ulang', function () use ($dewi, $mk) {
+  $a = $mk('2026-09-08'); $b = $mk('2026-09-12'); $f = fakefile($dewi, 'rnota');
+  $pa = pn_out($dewi, get_claim($a))['plan']; pn_submit($dewi, $a, ['notes' => [['plan_id' => $pa[0]['id'], 'komponen' => 'T', 'nominal' => 1000, 'date' => '2026-09-08', 'files' => [$f]]]]);
+  $pb = pn_out($dewi, get_claim($b))['plan'];
+  throws(fn() => pn_submit($dewi, $b, ['notes' => [['plan_id' => $pb[0]['id'], 'komponen' => 'T', 'nominal' => 1000, 'date' => '2026-09-12', 'files' => [$f]]]]), 'dokumen lain');
+  throws(fn() => link_files($dewi, [$f], 'pc', 1, null, 'pcnota'), 'dokumen lain');
+  eq((int) val("SELECT ref_id FROM claim_files WHERE id=?", [$f]), $a);
+});
+t('uji 5: setujui berulang tidak membuat klaim reimburse ganda', function () use ($dewi, $rina, $mk) {
+  $id = $mk('2026-09-16'); $c = get_claim($id); $pl = pn_out($dewi, $c)['plan'];
+  pn_submit($dewi, $id, ['notes' => [['plan_id' => $pl[0]['id'], 'komponen' => 'T', 'nominal' => (int) $c['total'] + 50000, 'date' => '2026-09-16', 'files' => [fakefile($dewi, 'rnota')]]]]);
+  pn_review($rina, $id, ['action' => 'approve']);
+  throws(fn() => pn_review($rina, $id, ['action' => 'approve']));
+  eq((int) val("SELECT COUNT(*) FROM claims WHERE refnote=? AND type_id=?", [$c['number'], typeid('Reimburse petty cash')]), 1);
+  // tiruan request kedua yang sempat membaca status CEK: kunci status atomik tetap menolak
+  ex("UPDATE claims SET nota_state='OK' WHERE id=?", [$id]);
+  eq(ex("UPDATE claims SET nota_state='SETOR', updated_at=? WHERE id=? AND nota_state='CEK'", [now(), $id]), 0);
+});
+t('uji 6: seluruh foto nota ikut tersalin ke klaim reimburse', function () use ($dewi, $rina, $mk) {
+  $id = $mk('2026-09-20'); $c = get_claim($id); $pl = pn_out($dewi, $c)['plan'];
+  pn_submit($dewi, $id, ['notes' => [
+    ['plan_id' => $pl[0]['id'], 'komponen' => 'T', 'nominal' => (int) $c['total'], 'date' => '2026-09-20', 'files' => [fakefile($dewi, 'rnota'), fakefile($dewi, 'rnota')]],
+    ['plan_id' => $pl[1]['id'], 'komponen' => 'P', 'nominal' => 70000, 'date' => '2026-09-21', 'files' => [fakefile($dewi, 'rnota')]]]]);
+  pn_review($rina, $id, ['action' => 'approve']); $ex = (int) get_claim($id)['nota_excess_id'];
+  eq((int) val("SELECT COUNT(*) FROM claim_files WHERE ref_type='claim' AND ref_id=? AND slot='pcref'", [$ex]), 3);
+});
+t('uji 7: setoran lalu konfirmasi FT normal, dan tidak bisa diulang', function () use ($dewi, $rina, $ft, $mk) {
+  $id = $mk('2026-09-24'); $pl = pn_out($dewi, get_claim($id))['plan'];
+  pn_submit($dewi, $id, ['notes' => [['plan_id' => $pl[0]['id'], 'komponen' => 'T', 'nominal' => 1000, 'date' => '2026-09-24', 'files' => [fakefile($dewi, 'rnota')]]]]);
+  pn_review($rina, $id, ['action' => 'approve']); eq(get_claim($id)['nota_state'], 'SETOR');
+  throws(fn() => pn_setoran($dewi, $id, ['setoran_no' => 'S9', 'files' => [fakefile($ft, 'setoran')]]), 'bukan milik');
+  pn_setoran($dewi, $id, ['setoran_no' => 'S9', 'files' => [fakefile($dewi, 'setoran')]]);
+  throws(fn() => pn_setoran($dewi, $id, ['setoran_no' => 'S10', 'files' => [fakefile($dewi, 'setoran')]]));
+  pn_close($ft, $id); eq(get_claim($id)['nota_state'], 'OK'); throws(fn() => pn_close($ft, $id));
+});
+t('uji 6b: transfer ganda ditolak, status DONE + balik nota terbentuk bersama', function () use ($dewi, $rina, $maya, $ft, $perdin) {
+  $p = $perdin($dewi); $p['meta']['tgl_berangkat'] = '2026-09-28'; $p['meta']['tgl_pulang'] = '2026-09-30'; foreach ($p['notes'] as &$nn) $nn['date'] = '2026-09-28'; unset($nn);
+  $id = claim_save($dewi, $p); claim_submit($dewi, $id, []); claim_act($rina, $id, ['entity' => 'RISM', 'action' => 'approve', 'perdin_check' => ['titik' => 1, 'jarak' => 1, 'durasi' => 1]]); claim_act($maya, $id, ['entity' => 'RISM', 'action' => 'approve']);
+  claim_act($ft, $id, ['action' => 'transfer', 'transfer_no' => 'X1', 'proof' => [fakefile($ft, 'tf')]]); $c = get_claim($id); eq($c['status'], 'DONE'); eq($c['nota_state'], 'WAIT');
+  throws(fn() => claim_act($ft, $id, ['action' => 'transfer', 'transfer_no' => 'X2', 'proof' => [fakefile($ft, 'tf')]]));
+  eq((int) val("SELECT COUNT(*) FROM claim_transfers WHERE ref_type='claim' AND ref_id=?", [$id]), 1);
+  ex("UPDATE claims SET nota_state='OK' WHERE id=?", [$id]);
+});
+t('uji 8: migrasi aman diulang, indeks ix_rnotes_claim ada tanpa duplikat', function () {
+  migrate_schema(); eq(migrate_schema(), []);
+  eq((int) val("SELECT COUNT(*) FROM sqlite_master WHERE type='index' AND name='ix_rnotes_claim'"), 1);
+  db()->exec("DROP INDEX ix_rnotes_claim"); eq(in_array('index ix_rnotes_claim', migrate_schema(), true), true); eq(migrate_schema(), []);
+});
 t('perdin balik nota: lewat tenggat memblokir pengajuan baru', function () use ($dewi, $perdin, $rina, $pnFlow) {
   $p = $perdin($dewi); foreach ($p['notes'] as &$nn) $nn['date'] = '2026-10-22'; unset($nn); $id = claim_save($dewi, $p); claim_submit($dewi, $id, []); claim_act($rina, $id, ['entity' => 'RISM', 'action' => 'approve', 'perdin_check' => ['titik' => 1, 'jarak' => 1, 'durasi' => 1]]); $pnFlow($id);
   eq(pc_blocked((int) $dewi['id']), null); ex("UPDATE claims SET nota_due=? WHERE id=?", [date('Y-m-d', time() - 86400), $id]);

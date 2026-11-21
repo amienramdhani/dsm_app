@@ -1,0 +1,60 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><title>Mockup · Daftar Dealer padat</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:13px/1.45 Inter,Segoe UI,Arial,sans-serif;background:#F3F6F9;color:#15303F;padding:20px}
+h1{font-size:18px;margin:0 0 4px;color:#10394E}.lead{color:#5B6B7A;margin:0 0 12px;max-width:1200px}
+.pick{display:flex;gap:8px;margin:0 0 6px}.pick button{border:1.5px solid #CBD6E1;background:#fff;border-radius:10px;padding:8px 12px;font-weight:800;font-size:12px;color:#10394E;cursor:pointer}.pick button.on{background:#10394E;color:#fff;border-color:#10394E}
+.desc{color:#5B6B7A;font-size:12px;margin:0 0 10px}
+.wrap{background:#fff;border:1px solid #E3E9F0;border-radius:12px;overflow:auto;max-width:1500px}
+table{border-collapse:collapse;width:100%;min-width:1350px;font-variant-numeric:tabular-nums}
+th{background:#0E5A63;color:#fff;font-size:10.5px;letter-spacing:.5px;text-align:left;padding:9px 10px;white-space:nowrap}
+th.b{color:var(--c);background:var(--l);border-bottom:3px solid var(--c)}th.r{text-align:right}
+td{border-top:1px solid #EEF2F6;padding:var(--pad);vertical-align:middle;white-space:nowrap;font-size:var(--fs)}
+td.r{text-align:right}td.bc{background:var(--x)}
+.nm{color:#0B5CAD;font-weight:800}.sub{display:block;color:#5B6B7A;font-size:11px}
+.q{font-weight:800}.pill{font-size:9.5px;font-weight:800;padding:1px 6px;border-radius:6px;margin-left:6px}.ACTIVE{background:#E3F5EA;color:#1D7A45}.PASSIVE{background:#FFF3D6;color:#9A6400}.IDLE{background:#FFE9DA;color:#C25A12}.INACTIVE{background:#FDE4E2;color:#B42318}.PROSPECT{background:#E4EEFB;color:#1E5FB8}
+.pot{display:block;font-size:11px;color:#8A97A6}
+.pct{font-size:10px;font-weight:800;padding:2px 7px;border-radius:999px;background:#E4EEFB;color:#1E5FB8}.pct.g{background:#E3F5EA;color:#1D7A45}.pct.y{background:#FFF3D6;color:#9A6400}.pct.rd{background:#FDE4E2;color:#B42318}
+.gap{color:#B42318;font-weight:800}
+tr.t td{background:#EAF2FB;font-weight:800;border-top:2px solid #0B5CAD}
+/* padat */
+.P .sub{display:inline;margin-left:6px;font-size:10.5px;color:#8A97A6}.P .pot{display:inline;margin-left:6px;font-size:10px}
+.P .pill{padding:0 5px}
+/* C: dua baris rapat */
+.C .sub,.C .pot{font-size:9.5px;line-height:1.1}.C th{font-size:10px;padding:7px 9px}.C .pill{font-size:8.5px}.C .pct{font-size:9.5px}.C .nm{line-height:1.2}.C .q{line-height:1.2}.C .pill{padding:0 5px}
+/* D: ultra padat, info kedua disembunyikan (muncul saat kursor) */
+.D .sub,.D .pot{display:none}.D .pill{display:inline-block;width:8px;height:8px;padding:0;border-radius:50%;font-size:0;margin-left:6px;vertical-align:middle;line-height:0}
+.D .ACTIVE{background:#12866A}.D .PASSIVE{background:#D49A1E}.D .IDLE{background:#E07A2E}.D .INACTIVE{background:#B42318}.D .PROSPECT{background:#1E5FB8}
+/* E: status jadi warna angka */
+.E .sub{display:inline;margin-left:6px;font-size:10.5px;color:#8A97A6}.E .pot{display:none}.E .pill{display:none}
+.E td.st-ACTIVE .q{color:#12866A}.E td.st-PASSIVE .q{color:#9A6400}.E td.st-IDLE .q{color:#C25A12}.E td.st-INACTIVE .q{color:#B42318}.E td.st-PROSPECT .q{color:#1E5FB8}.E td.st- .q{color:#9AA6B6}
+.lgD{display:none;gap:12px;font-size:11px;color:#5B6B7A;padding:6px 10px;border-top:1px solid #E3E9F0}.lgD i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}.D .lgD,.E .lgD{display:flex}.E .lgD i{border-radius:2px}
+/* TOTAL nyambung dengan header: kolom teal = TOTAL teal, kolom brand = TOTAL warna brand */
+.C th:not(.b){background:#E6EBF1;color:#15303F;border-bottom:2px solid #15303F}.C tr.t td{background:#E6EBF1;color:#15303F;border-top:2px solid #15303F}.C tr.t td.tb{background:var(--l);color:var(--c);border-top:3px solid var(--c)}
+.side{max-width:1500px;margin-top:14px;background:#fff;border-radius:14px;padding:12px 16px;border:1px solid #E3E9F0}.side ul{margin:6px 0 0;padding-left:18px}.side li{margin:3px 0}
+</style></head><body>
+<h1>Mockup · Tabel daftar dealer dibikin padat</h1>
+<p class="lead">Isi & kolom sama. Yang diubah cuma tinggi baris: jarak dalam sel dikecilin, info kedua (kode·kota, pot/peluang) dipindah ke samping di baris yang sama.</p>
+<div class="pick" id="pk"></div><p class="desc" id="ds"></p><div id="o"></div>
+<div class="side"><b>Catatan</b><ul>
+<li>Tinggi baris: Sekarang ±60px · B ±34px · C ±42px · D ±28px · E ±30px. Per layar: ±10 · ±18 · ±14 · ±22 · ±20 dealer.</li><li><b>C</b>: judul & TOTAL kolom non-brand (DEALER, REGION, TERAKHIR ORDER, TOTAL SELLTHRU, SELL OUT, %, GAP) abu muda teks hitam — sama dengan History Dealer. Kolom brand: judul & TOTAL warna brand masing-masing.</li><li>B paling seimbang (semua info tetap kelihatan). C paling mirip sekarang. D & E paling padat tapi sebagian info baru muncul saat kursor.</li>
+<li>Kode & kota tetap ada, cuma di sebelah nama (abu kecil). "pot / peluang" di sebelah angka brand.</li>
+<li>Berlaku di semua tabel berisi daftar dealer: Daftar Dealer, Brand › daftar dealer, History Dealer, DOS per dealer, Early Warning (desktop). HP tetap seperti sekarang.</li>
+<li>Kalau ada nama dealer yang sangat panjang, nama dipotong "…" dan lengkapnya muncul saat kursor diarahkan.</li></ul></div>
+<script>
+const BR=[['ITEL','#0E7C6B','#DDF3EE','#F3FBF9'],['MOTOPAD','#C25A12','#FDEBDD','#FFF8F2'],['MOTOROLA','#1E5FB8','#E3EEFB','#F5F9FE'],['VILLAON','#455A64','#E9EEF1','#F7F9FA']];
+const D=[['PT.AGRES INFO TEKNOLOGI','317.811 · JAKARTA','JABODETABEK','22 Sep 2026',[[599,'ACTIVE','pot 4.803'],[1005,'ACTIVE','pot 322'],[43,'ACTIVE','pot 1.032'],[0,'IDLE','peluang ~1']],1647,3683,['224%',''],'+4.746'],
+['RISM JAYA BARU','RISM2 · PURWAKARTA','JAWA BARAT','26 Sep 2026',[[720,'ACTIVE','pot 928'],[5,'ACTIVE','pot 12'],[0,'ACTIVE','pot 169'],[126,'ACTIVE','pot 65']],851,884,['104%',''],'+299'],
+['CV MANDIRI JAYA MAKMUR','005.094 · JAKARTA','JABODETABEK','16 Sep 2026',[[835,'ACTIVE','pot 1.727'],[0,'','peluang ~3'],[0,'','peluang ~6'],[0,'','peluang ~1']],835,1386,['166%',''],'+768'],
+['RISM SINARMAS','RISM4 · SEMARANG','JAWA TENGAH','25 Sep 2026',[[517,'ACTIVE','pot 493'],[20,'ACTIVE','pot 8'],[0,'','peluang ~2'],[100,'PASSIVE','pot 67']],637,554,['87%','g'],'+2'],
+['CV. PRIMA GALERI PHONE SHOP','033.001 · SERANG','JABODETABEK','23 Sep 2026',[[530,'PASSIVE','pot 167'],[0,'','peluang ~3'],[0,'','peluang ~6'],[48,'PROSPECT','pot 1']],578,489,['85%','g'],'+8'],
+['PT. DISTRIBUTOR GADGET INDONESIA','005.091 · JAKARTA PUSAT','JABODETABEK','23 Sep 2026',[[0,'PASSIVE','pot 33'],[524,'ACTIVE','pot 97'],[0,'PASSIVE','pot 50'],[0,'','peluang ~1']],524,204,['39%','rd'],'+78'],
+['CV. INDAH PONSEL TAMORA','029.182 · DELI SERDANG','SUMATERA BAG. UTARA','7 Sep 2026',[[0,'','peluang ~5'],[0,'PASSIVE','pot 3'],[0,'','peluang ~2'],[300,'ACTIVE','pot 408']],300,209,['70%','y'],'+86']];
+const V=[['Sekarang','Dua baris per dealer.',{pad:'10px 10px',fs:'13px'},''],['B · Satu baris','Satu baris per dealer, info kedua di samping. ±34px.',{pad:'5px 10px',fs:'12px'},'P'],['C · Dua baris rapat','Tetap dua baris (kode·kota & pot di bawah), jarak & huruf dikecilin (11px, info kedua 9.5px). ±36px.',{pad:'3px 9px',fs:'11px'},'C'],['D · Ultra padat','Satu baris, kode·kota & pot disembunyikan (muncul saat kursor), status jadi titik warna. ±28px.',{pad:'3px 10px',fs:'12px'},'D'],['E · Status = warna angka','Satu baris, label status hilang, angka brand diwarnai sesuai status. Pot muncul saat kursor. ±30px.',{pad:'4px 10px',fs:'12px'},'E']];
+let S=2;const f=n=>n.toLocaleString('id-ID');
+function draw(){const v=V[S],st=`--pad:${v[2].pad};--fs:${v[2].fs}`;
+document.getElementById('pk').innerHTML=V.map((x,i)=>`<button class="${i===S?'on':''}" data-s="${i}">${x[0]}</button>`).join('');document.getElementById('ds').textContent=v[1];
+document.getElementById('o').innerHTML=`<div class="wrap ${v[3]}" style="${st}"><table><tr><th>DEALER</th><th>REGION PIC</th><th>TERAKHIR ORDER</th>${BR.map(b=>`<th class="b" style="--c:${b[1]};--l:${b[2]}">${b[0]}</th>`).join('')}<th class="r">TOTAL SELLTHRU</th><th class="r">SELL OUT</th><th class="r">% SO/ST</th><th class="r">GAP POTENSI</th></tr>
+${D.map(d=>`<tr><td title="${d[1]}"><span class="nm">${d[0]}</span><span class="sub">${d[1]}</span></td><td>${d[2]}</td><td>${d[3]}</td>${d[4].map((x,i)=>`<td class="bc st-${x[1]}" style="--x:${BR[i][3]}" title="${x[1]?x[1]+' · ':''}${x[2]}"><span class="q">${f(x[0])}</span>${x[1]?`<span class="pill ${x[1]}">${x[1]}</span>`:''}<span class="pot">${x[2]}</span></td>`).join('')}<td class="r">${f(d[5])}</td><td class="r">${f(d[6])}</td><td class="r"><span class="pct ${d[7][1]}">${d[7][0]}</span></td><td class="r gap">${d[8]}</td></tr>`).join('')}
+<tr class="t"><td>Total</td><td>3.831 dealer</td><td></td>${[16212,3179,320,10361].map((x,i)=>`<td class="tb" style="--c:${BR[i][1]};--l:${BR[i][2]}">${f(x)}</td>`).join('')}<td class="r">30.072</td><td class="r">29.898</td><td class="r">99%</td><td class="r">+27.077</td></tr></table><div class="lgD"><span><i style="background:#12866A"></i>ACTIVE</span><span><i style="background:#D49A1E"></i>PASSIVE</span><span><i style="background:#E07A2E"></i>IDLE</span><span><i style="background:#B42318"></i>INACTIVE</span><span><i style="background:#1E5FB8"></i>PROSPECT</span><span><i style="background:#C5CED8"></i>tidak ada status</span></div></div>`;}
+document.getElementById('pk').onclick=e=>{const b=e.target.closest('[data-s]');if(b){S=+b.dataset.s;draw();}};draw();
+</script></body></html>

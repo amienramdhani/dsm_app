@@ -1,0 +1,75 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><title>Mockup · Transaksi Harian + OMZET</title><style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:#DCE6F8;color:#15232E;font-size:12px}
+.top{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid #DDE3EA;padding:8px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.seg{display:inline-flex;background:#CBD5E0;border-radius:999px;padding:3px}.seg button{border:0;background:transparent;padding:6px 14px;border-radius:999px;font:700 11px Inter,sans-serif;cursor:pointer;color:#33414D}.seg button.on{background:#fff;color:#10394E;box-shadow:0 1px 3px #0002}
+.note{margin:10px auto;max-width:1500px;background:#fff;border-left:4px solid #F0A400;padding:9px 12px;border-radius:8px;line-height:1.55}
+.wrap{max-width:1500px;margin:0 auto;padding:0 14px 30px}
+.panel{background:#fff;border-radius:14px;box-shadow:0 1px 4px #0001;margin-bottom:14px;overflow:hidden}
+.ph{padding:10px 16px;border-bottom:1px solid #EEF0F5}.ph h3{margin:0;font-size:14px;color:#10394E;letter-spacing:.3px}.ph small{color:#6B7785;font-size:11px}
+.pb{padding:12px 14px}.sc{overflow:auto;max-height:560px;border:1px solid #D5DCE4;border-radius:8px}
+table{border-collapse:separate;border-spacing:0;width:100%}.n{text-align:right}.c{text-align:center}
+.lnk{color:#1E5FB8;font-weight:700}
+/* SEKARANG */
+.now th{background:linear-gradient(90deg,#0B5FC4,#3F4FD6);color:#fff;font-size:11px;font-weight:800;padding:0 12px;height:34px;text-align:left;white-space:nowrap;position:sticky;top:0;z-index:3}
+.now td{padding:0 12px;height:31px;font-size:12px;border-bottom:1px solid #EEF0F5;white-space:nowrap}
+.now td.h{text-align:center}.pill{display:inline-block;min-width:42px;text-align:center;border-radius:8px;padding:2px 8px;font-weight:800;font-size:11px;background:#B9D0EE;color:#0F2D55}
+.now tr.tot td{background:#EEF2FB;color:#2B3FBF;font-weight:800}
+.now .fl{display:flex;gap:10px;align-items:center;margin-bottom:10px}.now .fl .bx{border:1px solid #DDE3EA;border-radius:8px;padding:8px 12px;font-weight:700;font-size:11px}
+/* USULAN */
+.new th{background:#E6EBF1;color:#15232E;font-size:10.5px;font-weight:800;letter-spacing:.3px;padding:5px 9px;text-align:left;white-space:nowrap;border-bottom:2px solid #15303F;border-right:1px solid #D5DCE4;position:sticky;top:0;z-index:3}
+.new th.bh{background:var(--l);color:var(--d);border-top:3px solid var(--d);text-align:center;border-bottom:2px solid var(--d)}
+.new td{padding:3px 9px;height:24px;font-size:11px;border-bottom:1px solid #E7EBF0;border-right:1px solid #EEF1F4;white-space:nowrap;font-variant-numeric:tabular-nums}
+.new td.k{color:#6B7785;font-size:10px}.new td.hm{text-align:center;font-weight:700;padding:0}
+.new tbody tr:hover td{filter:brightness(.97)}
+.new tr.off td{color:#B0413E;position:relative}.new tr.off td::after{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(135deg,#0000 0 5px,#D2453F40 5px 6px)}.new tr.off td.k{color:#B0413E}
+.new tr.tot td{position:sticky;bottom:0;z-index:2;background:#E6EBF1;font-weight:800;border-top:2px solid #15303F}
+.new tr.tot td.bt{background:var(--l);color:var(--d);border-top:3px solid var(--d)}
+.bs{display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--d);margin-right:5px}
+.bc{font-weight:800;color:var(--d)}
+.new .ql{background:#F3F8FE;color:#1E5FB8;font-weight:800}.new .om{background:#FFFAEC;color:#7A5200;font-weight:700}
+.ff{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.ff .f{display:flex;align-items:center;gap:6px;height:32px;border:1px solid #CBD5E0;border-radius:8px;padding:0 10px;background:#fff;font-size:11.5px}.ff .f span{font-size:9.5px;font-weight:800;color:#6B7785;letter-spacing:.3px}
+.ff .btn{height:32px;border:1px solid #CBD5E0;border-radius:8px;background:#fff;font-weight:800;font-size:10.5px;padding:0 12px;color:#4A5663;cursor:pointer}
+.ff .sg{display:inline-flex;background:#CBD5E0;border-radius:999px;padding:2px}.ff .sg b{padding:6px 12px;border-radius:999px;font-size:10.5px;color:#33414D}.ff .sg b.on{background:#0B5CAD;color:#fff}
+.ff .dl{margin-left:auto;border-color:#0B5CAD;color:#0B5CAD}
+.lg{font-size:10.5px;color:#4A5663;margin-bottom:6px;display:flex;gap:14px;align-items:center}.lg i{display:inline-block;width:46px;height:9px;border-radius:2px;background:linear-gradient(90deg,#0E6E6422,#0E6E64);vertical-align:-1px;margin-right:4px}
+table.new.hd{table-layout:fixed}table.new.hd th:nth-child(1){width:104px}table.new.hd th:nth-child(2){width:74px}table.new.hd th:nth-child(3){width:150px}
+table.new.rd{table-layout:fixed}table.new.rd th:nth-child(1){width:104px}table.new.rd th:nth-child(2){width:170px}table.new.rd th:nth-child(3){width:70px}table.new.rd th:nth-child(4){width:230px}table.new.rd th:nth-child(5){width:110px}table.new.rd th:nth-child(7){width:70px}table.new.rd th:nth-child(8){width:140px}
+table.new.rd td,table.new.hd td{overflow:hidden;text-overflow:ellipsis}
+
+.top2{position:sticky;top:0;z-index:9;background:#fff;border-bottom:1px solid #DDE3EA;padding:8px 14px;display:flex;gap:12px;align-items:center}
+.seg2{display:inline-flex;background:#CBD5E0;border-radius:99px;padding:3px}.seg2 button{border:0;background:none;padding:5px 12px;border-radius:99px;font:700 11px Inter,sans-serif;cursor:pointer}.seg2 button.on{background:#fff}
+table.new.hd.w{table-layout:fixed}
+.new th.omh{background:#FFF4D6;color:#7A5200;border-top:3px solid #9A6400;text-align:right}.new td.om{background:#FFFAEC;color:#7A5200;font-weight:700}
+.new tr.tot td.omt{background:#FFF4D6;color:#7A5200;border-top:3px solid #9A6400}
+.bsep{border-left:1px solid color-mix(in srgb,var(--d) 55%,#fff)!important}
+</style></head><body>
+<div class="top2"><b>Transaksi Harian · tambah OMZET (desktop)</b><div class="seg2" id="m2"><button data-v="now">SEKARANG</button><button data-v="new" class="on">USULAN</button></div><span style="font-size:11px;color:#6B7785">Omzet per brand:</span><div class="seg2" id="o2"><button data-o="o0">O0 · TANPA</button><button data-o="o1" class="on">O1 · SUB-KOLOM + GARIS</button><button data-o="o2">O2 · 2 BARIS</button><button data-o="o3">O3 · TOGGLE UNIT/OMZET</button></div></div>
+<div class="note" id="note"></div><div class="wrap" id="out"></div>
+<script>
+const B=[['ITEL','#0E6E64','#E2F4F1'],['MOTOPAD','#B33D0B','#FCEEE4'],['MOTOROLA','#1E5FB8','#E3EEFB'],['VILLAON','#455A64','#E9EEF1']];
+const H=[['1 Sep 2026','Selasa',192,[1205,15,6,495],1721,1850000000],['2 Sep 2026','Rabu',96,[553,5,8,261],827,903000000],['3 Sep 2026','Kamis',89,[377,108,11,195],691,788000000],['4 Sep 2026','Jumat',97,[747,16,30,274],1067,1140000000],['5 Sep 2026','Sabtu',85,[360,2,16,268],646,702000000],['7 Sep 2026','Senin',187,[1248,70,40,1908],3266,3560000000],['13 Sep 2026','Minggu',4,[7,0,0,8],15,16500000],['14 Sep 2026','Senin',122,[429,506,17,445],1397,1620000000],['18 Sep 2026','Jumat',134,[1735,16,6,309],2066,2230000000],['20 Sep 2026','Minggu',2,[36,0,0,0],36,38000000]];
+const f=n=>n.toLocaleString('id-ID'),ms=n=>'Rp '+(n>=1e9?(n/1e9).toLocaleString('id-ID',{maximumFractionDigits:2})+' M':(n/1e6).toLocaleString('id-ID',{maximumFractionDigits:1})+' jt');
+const mx=B.map((_,i)=>Math.max(...H.map(r=>r[3][i])));
+let M='new';
+const PR=[1.1e6,3.2e6,4.5e6,1.6e6];let O='o1',TG='unit';
+const mshort=n=>n>=1e9?(n/1e9).toLocaleString('id-ID',{maximumFractionDigits:2})+' M':n>=1e6?(n/1e6).toLocaleString('id-ID',{maximumFractionDigits:1})+' jt':n>=1e3?Math.round(n/1e3)+' rb':'0';
+function tbl(om){const st=b=>`style="--d:${b[1]};--l:${b[2]}"`,o=om?O:'o0',TOT=[16212,3179,320,10361];
+const head=`<th style="width:104px">TANGGAL</th><th style="width:74px">HARI</th><th class="n" style="width:${om?118:150}px;background:#E2F4F1;color:#0E7C6B;border-top:3px solid #0E7C6B;text-align:right">DEALER PRODUKTIF</th>`+B.map(b=>o==='o1'?`<th class="bh bsep" colspan="2" ${st(b)}><span class="bs" ${st(b)}></span>${b[0]}</th>`:`<th class="bh" ${st(b)}><span class="bs" ${st(b)}></span>${b[0]}${o==='o3'?' <small style="font-weight:600">· '+(TG==='unit'?'UNIT':'OMZET')+'</small>':''}</th>`).join('')+`<th class="n bsep" style="--d:#1E5FB8;background:#E3EEFB;color:#1E5FB8;border-top:3px solid #1E5FB8;text-align:right">TOTAL SELLTHRU</th>${om?'<th class="omh bsep" style="--d:#9A6400;width:112px">OMZET</th>':''}`;
+const sub=o==='o1'?`<tr><th></th><th></th><th></th>${B.map(b=>`<th class="bh bsep" style="--d:${b[1]};--l:${b[2]};top:27px;border-top:0;font-size:9.5px;text-align:right">UNIT</th><th class="bh" style="--d:${b[1]};--l:${b[2]};top:27px;border-top:0;font-size:9.5px;text-align:right">OMZET</th>`).join('')}<th></th>${om?'<th></th>':''}</tr>`:'';
+const cell=(r,i,v)=>{const pk=v>0&&v===mx[i],c=B[i],om_=v*PR[i];const sty=pk?'background:'+c[1]+';color:#fff;font-weight:800':'background:'+c[2]+'99;color:'+(v?'#15232E':'#A7B0BA');
+ if(o==='o1')return `<td class="n bsep" style="--d:${c[1]};${sty}">${pk?'▲ ':''}${f(v)}</td><td class="n" style="background:${c[2]}99;color:${v?c[1]:'#A7B0BA'};font-size:10.5px">${v?mshort(om_):'-'}</td>`;
+ if(o==='o2')return `<td class="n" style="${sty};line-height:1.15;padding-top:2px;padding-bottom:2px;height:34px">${pk?'▲ ':''}${f(v)}<div style="font-size:9.5px;font-weight:600;opacity:${pk?.9:.75};color:${pk?'#fff':c[1]}">${v?mshort(om_):'-'}</div></td>`;
+ if(o==='o3'&&TG==='omzet')return `<td class="n" style="${sty}">${pk?'▲ ':''}${v?mshort(om_):'0'}</td>`;
+ return `<td class="n" style="${sty}">${pk?'▲ ':''}${f(v)}</td>`;};
+const body=H.map(r=>{const off=r[1]==='Minggu';return `<tr class="${off?'off':''}"><td>${r[0]}</td><td class="k">${r[1]}</td><td class="n">${r[2]}</td>${r[3].map((v,i)=>cell(r,i,v)).join('')}<td class="n bsep" style="--d:#1E5FB8"><b>${f(r[4])}</b></td>${om?`<td class="n om bsep" style="--d:#9A6400">${ms(r[5])}</td>`:''}</tr>`}).join('');
+const tcell=(b,i)=>{const t=TOT[i];if(o==='o1')return `<td class="n bt bsep" ${st(b)}>${f(t)}</td><td class="n bt" ${st(b)}>${mshort(t*PR[i])}</td>`;if(o==='o3'&&TG==='omzet')return `<td class="n bt" ${st(b)}>${mshort(t*PR[i])}</td>`;return `<td class="n bt" ${st(b)}>${f(t)}</td>`;};
+const tot=`<tr class="tot"><td>TOTAL</td><td class="k">sebulan</td><td class="n bt" style="--d:#0E7C6B;--l:#E2F4F1">1.327</td>${B.map(tcell).join('')}<td class="n bt bsep" style="--d:#1E5FB8;--l:#E3EEFB">30.072</td>${om?'<td class="n omt bsep" style="--d:#9A6400">Rp 33,9 M</td>':''}</tr>`;
+const tg=(om&&o==='o3')?`<div style="margin-bottom:8px;display:flex;gap:8px;align-items:center"><span style="font-size:11px;color:#6B7785">Tampilkan di kolom brand:</span><div class="seg2" id="tg"><button data-t="unit" class="${TG==='unit'?'on':''}">UNIT</button><button data-t="omzet" class="${TG==='omzet'?'on':''}">OMZET</button></div></div>`:'';
+return tg+`<div class="sc"><table class="new hd w" style="table-layout:auto;width:100%"><thead><tr>${head}</tr>${sub}</thead><tbody>${body}${tot}</tbody></table></div>`}
+function render(){document.getElementById('note').innerHTML=M==='now'?'<b>SEKARANG</b>: 7 kolom, tiap kolom brand melebar sampai angka berjauhan dengan tepi.':'<b>USULAN</b>: kolom <b>OMZET</b> ditambah di kanan TOTAL SELLTHRU (format singkat rb/jt/M, header cokelat sama seperti Rincian Transaksi, baris TOTAL = omzet sebulan, Minggu tetap arsir merah). Kolom Dealer Produktif sedikit dirapatkan; sisanya otomatis lebih sempit karena ada 1 kolom lagi. Hanya desktop; HP tidak berubah. <b>Omzet per brand</b> (permintaan baru): pilih O1/O2/O3 di bar atas. O1 = tiap brand punya 2 sub-kolom UNIT|OMZET (paling lengkap, paling lebar); O2 = omzet kecil di bawah angka unit dalam sel yang sama (baris ±34px); O3 = tombol UNIT/OMZET menukar isi kolom brand (paling hemat tempat). Angka omzet per brand = contoh.';
+document.getElementById('out').innerHTML=`<div class="panel"><div class="ph"><h3>TRANSAKSI HARIAN</h3></div><div class="pb">${tbl(M==='new')}</div></div>`}
+document.getElementById('o2').onclick=e=>{const b=e.target.closest('button');if(!b)return;O=b.dataset.o;document.querySelectorAll('#o2 button').forEach(x=>x.classList.toggle('on',x===b));render()};
+document.addEventListener('click',e=>{const b=e.target.closest('#tg button');if(!b)return;TG=b.dataset.t;render()});
+document.getElementById('m2').onclick=e=>{const b=e.target.closest('button');if(!b)return;M=b.dataset.v;document.querySelectorAll('#m2 button').forEach(x=>x.classList.toggle('on',x===b));render()};render();
+</script></body></html>

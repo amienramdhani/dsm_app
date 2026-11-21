@@ -1,0 +1,66 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><title>TIM · tren per minggu</title><style>
+*{box-sizing:border-box}body{margin:0;font:12px Inter,system-ui,sans-serif;background:#F3F6F9;color:#10394E}
+.note{margin:12px 16px;padding:10px 14px;background:#E8F7EF;border:1px solid #CFEBDC;border-radius:10px;color:#0F4F3B;line-height:1.5;max-width:980px}
+.wrap{margin:0 16px 40px;display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+.card{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(16,57,78,.08);padding:14px 16px;width:760px;max-width:100%}
+.ph{width:390px;background:#fff;border:8px solid #10394E;border-radius:30px;padding:14px;flex:none}
+h3{margin:0 0 2px;font-size:15px}.sub{color:#6B7785;font-size:10.5px}
+.kc{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0}.kc div{border:1px solid #E3E9EF;border-radius:10px;padding:7px 10px}.kc small{display:block;font-size:9px;font-weight:800;color:#6B7785}.kc b{font-size:16px}
+.tg{display:flex;align-items:center;gap:6px 8px;margin:6px 0;flex-wrap:wrap}.tg b{font-size:10px;color:#6B7785;font-weight:800}.tg small{color:#6B7785;font-size:10px}
+.seg{display:inline-flex;border:1px solid #CBD5E0;border-radius:8px;overflow:hidden}.seg button{white-space:nowrap;border:0;background:#fff;padding:5px 12px;font:800 10px Inter,system-ui,sans-serif;color:#6B7785;cursor:pointer}.seg button+button{border-left:1px solid #CBD5E0}.seg button.on{background:#10394E;color:#fff}
+table{border-collapse:collapse;width:100%;margin-top:8px}th{background:#E6EBF1;font-size:9.5px;font-weight:800;padding:5px 8px;text-align:left;border-bottom:2px solid #15303F;border-right:1px solid #D5DDE6;white-space:nowrap}td{padding:4px 8px;border-top:1px solid #E3E9EF;border-right:1px solid #EEF1F5;font-size:11.5px;white-space:nowrap}td.n,th.n{text-align:right}
+tr.run td{color:#6B7785;font-style:italic;background:#FAFBFD}tfoot td{background:#E6EBF1;font-weight:800;border-top:2px solid #15303F}
+.gch{border-radius:99px;padding:0 7px;font-size:10px;font-weight:800}.u{background:#E5F6EE;color:#176d48}.d{background:#FCE9E8;color:#b43138}
+.lbl{font-size:10px;font-weight:800;color:#6B7785;margin:12px 0 4px}h4{margin:0 0 6px;font-size:11px;color:#6B7785;letter-spacing:.4px}
+.lg{display:flex;gap:14px;font-size:10px;color:#6B7785;margin:2px 0 4px}.lg span{display:flex;align-items:center;gap:5px}.lg i{display:inline-block;width:16px;height:2px}.hnt{font-size:9.5px;color:#6B7785;margin:2px 0}</style></head><body>
+<div class="note"><b>Tren di rincian Sales (Early Warning).</b> Sekarang ada pilihan <b>BATANG | GARIS</b> (default BATANG, rekomendasi gue) supaya bisa dibandingkan.  Toggle <b>PER HARI | PER MINGGU</b>. <b>PER HARI</b> = sebulan penuh (tgl 1 sampai akhir bulan, satu titik per hari, angka kecil di atas titik; Minggu dan hari libur ditandai abu "libur"; hari yang belum jalan ditandai "belum"), tanpa pembanding bulan lalu. <b>PER MINGGU</b> = W1–W5 dengan <b>dua garis</b>: bulan ini (merah, solid) dan <b>bulan lalu (abu, putus-putus)</b> untuk pembanding; tabel kecil di bawahnya sekarang memuat kolom BULAN LALU dan VS BULAN LALU (menggantikan "vs minggu lalu"). Pembagian minggu sama dengan menu lain (W1 1–7, W2 8–14, W3 15–21, W4 22–28, W5 29–akhir). Data contoh (September 2026, cutoff 28 Sep). Butuh tambahan field harian sebulan + mingguan bulan lalu di API Early Warning (belum ada).</div>
+<div class="wrap" id="o"></div>
+<script>
+const f=n=>n.toLocaleString('id-ID');
+const col='#D2453F',gy='#8C99A6';
+const OFF=null;
+/* September 2026: tgl 1 = Selasa; Minggu: 6,13,20,27 libur */
+const DAILY=[30,35,38,32,40,OFF,35, 45,50,52,48,50,OFF,50, 52,55,58,50,60,OFF,55, 80,85,88,78,90,OFF,78, undefined,undefined];
+const dn=['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+const WK=[['W1','1–7 Sep',6,210,180],['W2','8–14 Sep',6,295,250],['W3','15–21 Sep',6,330,300],['W4','22–28 Sep',6,499,330],['W5','29–30 Sep',2,null,null]];
+function daily(W,h){const n=DAILY.length,pad=26,x=i=>pad+i*(W-2*pad)/(n-1),mx=90,y=v=>64-v/mx*44;
+ const pts=[];DAILY.forEach((v,i)=>{if(typeof v==='number')pts.push(x(i)+','+y(v))});
+ let g='';DAILY.forEach((v,i)=>{const d=new Date(2026,8,i+1),lb=(d.getDay()===0?'Min':'')+' ';
+  if(v===undefined)g+=`<circle cx="${x(i)}" cy="64" r="2" fill="#fff" stroke="#C5CDD6" stroke-dasharray="1.5 1.5"/>`;
+  else if(v===null)g+=`<circle cx="${x(i)}" cy="64" r="2" fill="#E3E9EF" stroke="#C5CDD6"/><text x="${x(i)}" y="57" text-anchor="middle" font-size="7" fill="#9AA6B2">libur</text>`;
+  else g+=`<circle cx="${x(i)}" cy="${y(v)}" r="${i===27?3.2:2.2}" fill="${i===27?col:'#fff'}" stroke="${col}" stroke-width="1.4"/><text x="${x(i)}" y="${y(v)-6}" text-anchor="middle" font-size="8" font-weight="700" fill="#10394E">${v}</text>`;
+  g+=`<text x="${x(i)}" y="84" text-anchor="middle" font-size="8" fill="${d.getDay()===0?'#C0392B':'#6B7785'}">${i+1}</text><text x="${x(i)}" y="94" text-anchor="middle" font-size="6.5" fill="#9AA6B2">${dn[d.getDay()]}</text>`;});
+ return `<div style="overflow-x:auto"><svg width="${h?W:'100%'}" viewBox="0 0 ${W} 100" style="display:block;min-width:${h?W:0}px"><polyline fill="none" stroke="${col}" stroke-width="1.4" points="${pts.join(' ')}"/>${g}</svg></div>`}
+function weekly(W){const pad=50,n=5,x=i=>pad+i*(W-2*pad)/(n-1),mx=520,y=v=>60-v/mx*40;
+ const a=WK.filter(w=>w[3]!=null).map((w,i)=>x(i)+','+y(w[3])).join(' '),b=WK.filter(w=>w[4]!=null).map((w,i)=>x(i)+','+y(w[4])).join(' ');
+ let g='';WK.forEach((w,i)=>{
+  if(w[4]!=null)g+=`<circle cx="${x(i)}" cy="${y(w[4])}" r="2.2" fill="#fff" stroke="${gy}"/><text x="${x(i)}" y="${y(w[4])+11}" text-anchor="middle" font-size="9" fill="${gy}">${f(w[4])}</text>`;
+  if(w[3]!=null)g+=`<circle cx="${x(i)}" cy="${y(w[3])}" r="${i===3?3.6:2.6}" fill="${i===3?col:'#fff'}" stroke="${col}" stroke-width="1.6"/><text x="${x(i)}" y="${y(w[3])-7}" text-anchor="middle" font-size="10" font-weight="700" fill="#10394E">${f(w[3])}</text>`;
+  else g+=`<circle cx="${x(i)}" cy="60" r="2.6" fill="#fff" stroke="#C5CDD6" stroke-dasharray="2 2"/><text x="${x(i)}" y="53" text-anchor="middle" font-size="9" fill="#9AA6B2">belum</text>`;
+  g+=`<text x="${x(i)}" y="86" text-anchor="middle" font-size="9.5" fill="#6B7785">${w[0]}${W>500?' · '+w[1]:''}</text>`;});
+ return `<svg width="100%" viewBox="0 0 ${W} 94" style="display:block"><polyline fill="none" stroke="${gy}" stroke-width="1.4" stroke-dasharray="4 3" points="${b}"/><polyline fill="none" stroke="${col}" stroke-width="1.6" points="${a}"/>${g}</svg><div class="lg"><span><i style="background:${col}"></i>Bulan ini</span><span><i style="background:${gy};height:0;border-top:2px dashed ${gy}"></i>Bulan lalu (Agustus)</span></div>`}
+const gr=(a,l)=>{if(!l)return '—';const p=(a-l)/l*100,u=p>=0;return `<span class="gch ${u?'u':'d'}">${u?'▲':'▼'} ${Math.abs(p).toFixed(0)}%</span>`};
+function tbl(hp){return `<div style="overflow-x:auto"><table><thead><tr><th>MINGGU</th><th>TANGGAL</th><th class="n">${hp?'HK':'HARI KERJA'}</th><th class="n">UNIT</th><th class="n">RATA / HARI</th><th class="n">BULAN LALU</th><th>VS BULAN LALU</th></tr></thead><tbody>${WK.map(w=>w[3]==null?`<tr class="run"><td>${w[0]}</td><td>${w[1]}</td><td class="n">${w[2]}</td><td class="n" colspan="4">belum berjalan (cutoff 28 Sep)</td></tr>`:`<tr><td><b>${w[0]}</b></td><td>${w[1]}</td><td class="n">${w[2]}</td><td class="n"><b>${f(w[3])}</b></td><td class="n">${(w[3]/w[2]).toFixed(1).replace('.',',')}</td><td class="n">${f(w[4])}</td><td>${gr(w[3],w[4])}</td></tr>`).join('')}</tbody><tfoot><tr><td>Bulan ini</td><td>1–28 Sep</td><td class="n">24</td><td class="n">1.334</td><td class="n">55,6</td><td class="n">1.060</td><td>${gr(1334,1060)}</td></tr></tfoot></table></div>`}
+
+function weeklyBar(W){const pad=30,n=5,band=(W-2*pad)/n,bw=Math.min(34,band/2.6),mx=520,H=60,y=v=>H-v/mx*44;let g='';
+ WK.forEach((w,i)=>{const cx=pad+band*i+band/2;
+  if(w[4]!=null)g+=`<rect x="${cx-bw-1}" y="${y(w[4])}" width="${bw}" height="${H-y(w[4])}" rx="2" fill="#C5CDD6"/><text x="${cx-bw/2-1}" y="${y(w[4])-3}" text-anchor="middle" font-size="9" fill="${gy}">${f(w[4])}</text>`;
+  if(w[3]!=null)g+=`<rect x="${cx+1}" y="${y(w[3])}" width="${bw}" height="${H-y(w[3])}" rx="2" fill="${col}"/><text x="${cx+bw/2+1}" y="${y(w[3])-3}" text-anchor="middle" font-size="10" font-weight="700" fill="#10394E">${f(w[3])}</text>`;
+  else g+=`<text x="${cx+bw/2+1}" y="${H-4}" text-anchor="middle" font-size="9" fill="#9AA6B2">belum</text>`;
+  g+=`<text x="${cx}" y="76" text-anchor="middle" font-size="9.5" fill="#6B7785">${w[0]}${W>500?' · '+w[1]:''}</text>`;});
+ return `<svg width="100%" viewBox="0 0 ${W} 82" style="display:block"><line x1="${pad-6}" x2="${W-pad+6}" y1="${H}" y2="${H}" stroke="#D5DDE6"/>${g}</svg><div class="lg"><span><i style="background:${col};height:8px"></i>Bulan ini</span><span><i style="background:#C5CDD6;height:8px"></i>Bulan lalu (Agustus)</span></div>`}
+function dailyBar(W,h){const n=DAILY.length,pad=16,band=(W-2*pad)/n,bw=band*.62,mx=90,H=64,y=v=>H-v/mx*46;let g='';
+ DAILY.forEach((v,i)=>{const cx=pad+band*i+band/2,d=new Date(2026,8,i+1),off=d.getDay()===0;
+  if(typeof v==='number')g+=`<rect x="${cx-bw/2}" y="${y(v)}" width="${bw}" height="${H-y(v)}" rx="1.5" fill="${i===27?col:'#E88A85'}"/><text x="${cx}" y="${y(v)-3}" text-anchor="middle" font-size="8" font-weight="700" fill="#10394E">${v}</text>`;
+  else if(v===null)g+=`<rect x="${cx-bw/2}" y="${H-10}" width="${bw}" height="10" rx="1.5" fill="#EEF1F5"/><text x="${cx}" y="${H-14}" text-anchor="middle" font-size="7" fill="#9AA6B2">libur</text>`;
+  g+=`<text x="${cx}" y="${H+11}" text-anchor="middle" font-size="8" fill="${off?'#C0392B':'#6B7785'}">${i+1}</text><text x="${cx}" y="${H+20}" text-anchor="middle" font-size="6.5" fill="#9AA6B2">${dn[d.getDay()]}</text>`;});
+ return `<div style="overflow-x:auto"><svg width="${h?W:'100%'}" viewBox="0 0 ${W} 88" style="display:block;min-width:${h?W:0}px"><line x1="${pad}" x2="${W-pad}" y1="${H}" y2="${H}" stroke="#D5DDE6"/>${g}</svg></div>`}
+let C='b';
+let M='w';
+function r(){
+const tg=`<div class="tg"><b>TREN</b><div class="seg"><button class="${M==='d'?'on':''}" onclick="M='d';r()">PER HARI</button><button class="${M==='w'?'on':''}" onclick="M='w';r()">PER MINGGU</button></div><div class="seg"><button class="${C==='b'?'on':''}" onclick="C='b';r()">BATANG</button><button class="${C==='l'?'on':''}" onclick="C='l';r()">GARIS</button></div><small>${M==='d'?'unit per hari · sebulan penuh · tanpa pembanding':'unit per minggu · dibanding bulan lalu'}</small></div>`;
+const body=M==='d'?(C==='b'?dailyBar(900,false):daily(900,false)):(C==='b'?weeklyBar(700):weekly(700))+tbl(false);
+const bodyHp=M==='d'?(C==='b'?dailyBar(900,true):daily(900,true))+'<div class="hnt">↔ geser ke samping untuk melihat seluruh tanggal</div>':(C==='b'?weeklyBar(340):weekly(340))+tbl(true);
+document.getElementById('o').innerHTML=`<div class="card"><h4>DESKTOP · panel rincian Sales</h4><h3>RIDHO ALFIAN</h3><div class="sub">RGM TOYO · JAKARTA</div><div class="kc"><div><small>TARGET</small><b>8.500</b></div><div><small>AKTUAL</small><b>1.334</b></div><div><small>PROYEKSI</small><b style="color:#B43138">17,0%</b></div><div><small>RUN RATE</small><b>55,6</b></div><div><small>BUTUH / HARI</small><b>3.583</b></div></div>${tg}${body}</div><div class="ph"><h4>HP · lembar rincian</h4><h3>RIDHO ALFIAN</h3><div class="sub">RGM TOYO · JAKARTA</div>${tg}${bodyHp}</div>`}
+r();
+</script></body></html>

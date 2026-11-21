@@ -170,3 +170,19 @@
  html body #app #view .ptGen>label select,html body #app #view .ptGen>label input{height:32px;min-height:32px;width:auto;border:0!important;background-color:transparent!important;box-shadow:none!important;font:700 12px Inter,Arial,sans-serif;text-transform:none;letter-spacing:0;color:#153D50;padding:0 4px;margin:0;min-width:80px}
  html body #app #view .ptGen>input.fi,html body #app #view .ptGen>select.fi{height:36px;border:1px solid #DCE6EE!important;border-radius:9px;background-color:#fff!important;font:700 12px Inter,Arial,sans-serif;color:#153D50}
 }
+
+/* Daftar Dealer: filter satu baris & lebih rapat (2026-11-19, mockup doc/mockup/2026-11-19/dsm-daftar-dealer-filter-rapat.html). Desktop saja. */
+@media (min-width:821px){
+ html body #app .customerFilterCard.ptTidy{padding-top:8px!important;padding-bottom:6px!important;margin-top:0!important}
+ html body #app .customerFilterCard .ptFb{flex-wrap:nowrap;gap:8px;margin:0 0 8px}
+ html body #app .customerFilterCard .ptFb .ptFi .fi,html body #app .customerFilterCard .ptFb .ptFi select,html body #app .customerFilterCard .ptFb .ptFi input{height:32px!important;min-height:32px!important}
+ html body #app .customerFilterCard .ptFb .pt-cq{flex:1.4 1 180px;max-width:none}
+ html body #app .customerFilterCard .ptFb :is(.pt-cregion,.pt-cbrand,.pt-corder){flex:1 1 120px}
+ html body #app .customerFilterCard .ptFb :is(.pt-cregion,.pt-cbrand,.pt-corder) select{min-width:0;width:100%}
+ html body #app .customerFilterCard .ptFb .ptMore{height:32px!important;min-height:32px!important;flex:0 0 auto}
+ html body #app .customerFilterCard .ptFb .ptAct{order:5;flex:0 0 auto;display:flex;gap:6px;margin:0 0 0 6px!important;width:auto!important}
+ html body #app .customerFilterCard .ptFb .ptAct :is(button,.chip){height:32px!important;min-height:32px!important;padding:0 12px!important}
+ html body #app .customerFilterCard .ptFb .ptSum{order:6;margin-left:4px!important}
+ html body #app .customerFilterCard .ptFb .ptChips{order:7;flex:0 1 auto}
+ html body #app .customerFilterCard .ptFb .ptChips:empty{display:none}
+}

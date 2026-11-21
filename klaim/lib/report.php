@@ -359,6 +359,7 @@ function claim_pdf_html(array $u, int $id): string {
     $p1 .= '<tr><td>' . ($i + 1) . '</td><td>' . tgl($n['nota_date']) . '</td><td>' . $ket . '</td><td class="r">' . rp((int) $n['nominal']) . '</td></tr>';
   }
   $p1 .= '<tr style="background:#FFF4D6"><td></td><td></td><td><b>Total ' . count($d['notes']) . ' nota</b></td><td class="r" style="font-size:15px"><b>' . rp((int) $c['total']) . '</b></td></tr></table>';
+  $p1 .= pn_pdf_html($d);
   if ($d['budget']) { $b = $d['budget']; $before = (int) ($c['avail_before'] ?? $b['available']);
     $p1 .= '<div class="sh">Dampak budget ' . e($c['category']) . '</div>' . kv_rows([['Sisa sebelum klaim', rp($before)], ['Klaim ini', rp((int) $c['total'])], ['Sisa jika selesai', rp($before - (int) $c['total'])], ['Over budget', (int) $c['over_budget_amount'] > 0 ? '<span class="bad">' . rp((int) $c['over_budget_amount']) . '</span>' : '-']]); }
   $p1 .= '<div class="sh">Rekening tujuan</div>' . kv_rows([['Rekening tujuan', e($c['acct_bank']) . ' ' . e(mask_none((string) $c['acct_no'])) . ' a.n. ' . e($c['acct_name']) . ($c['acct_own'] ? ' (rekening pemohon)' : ' (BUKAN rekening pemohon: ' . e($c['acct_reason']) . ')')]]);
@@ -503,4 +504,30 @@ function pc_pdf_html(array $u, int $id): string {
     $pgs[] = $p4;
   }
   return pdf_shell('Lembar Petty Cash', $pgs, $u, $p['entity'] ?: 'DSM', (string) $p['number'], date('d M Y H.i'));
+}
+
+/** Bagian Balik nota di PDF klaim Perdin (mockup doc/mockup/2026-11-20/dsm-klaim-pdf-balik-nota.html). */
+function pn_pdf_html(array $d): string {
+  $n = $d['nota'] ?? null; if (!$n) return '';
+  $st = $n['state'] === 'OK' ? 'SELESAI' : strtoupper($n['label']);
+  $pill = '<span style="display:inline-block;padding:1px 8px;border-radius:9px;background:' . ($n['state'] === 'OK' ? '#E3F5EE;color:#12866A' : '#FFF4D6;color:#9A6400') . ';font-weight:700;font-size:10px;margin-left:6px">' . e($st) . '</span>';
+  if (!$n['rnotes']) return '<div class="sh">Balik nota' . $pill . '</div><div class="tx">Balik nota: ' . e($n['label']) . ($n['due'] ? ' (tenggat ' . tgl($n['due']) . ')' : '') . '.</div>';
+  $plan = []; foreach ($n['plan'] as $p) $plan[$p['id']] = $p;
+  $h = '<div class="sh">Balik nota' . $pill . '</div><table><tr><th>Komponen</th><th>Tgl nota</th><th class="r">Rencana</th><th class="r">Realisasi</th><th class="r">Selisih</th><th>Foto</th></tr>';
+  $tr = 0; $tl = 0; $used = [];
+  foreach ($n['rnotes'] as $r) {
+    $p = $plan[(int) ($r['plan_note_id'] ?? 0)] ?? null; $rc = $p && !isset($used[$p['id']]) ? $p['nominal'] : null; if ($p) $used[$p['id']] = 1;
+    $nm = trim(($r['komponen'] ?: 'Nota') . ($p && $p['jenis'] ? ' · ' . $p['jenis'] : '') . ($r['uraian'] ? ' · ' . $r['uraian'] : '')) . ($p ? '' : ' (di luar rencana)');
+    $tr += (int) $rc; $tl += (int) $r['nominal'];
+    $h .= '<tr><td>' . e($nm) . '</td><td>' . tgl($r['nota_date']) . '</td><td class="r">' . ($rc === null ? '-' : rp($rc)) . '</td><td class="r">' . rp((int) $r['nominal']) . '</td><td class="r">' . ($rc === null ? '-' : rp((int) $r['nominal'] - $rc)) . '</td><td>' . count($r['files']) . '</td></tr>';
+  }
+  foreach ($plan as $pid => $p) if (!isset($used[$pid])) { $tr += $p['nominal']; $h .= '<tr><td>' . e($p['komponen'] . ($p['jenis'] ? ' · ' . $p['jenis'] : '')) . '</td><td>-</td><td class="r">' . rp($p['nominal']) . '</td><td class="r">' . rp(0) . '</td><td class="r">' . rp(-$p['nominal']) . '</td><td>-</td></tr>'; }
+  if ($n['makan']) { $tr += $n['makan']; $tl += $n['makan']; $h .= '<tr><td>Uang makan (tanpa nota)</td><td>-</td><td class="r">' . rp($n['makan']) . '</td><td class="r">' . rp($n['makan']) . '</td><td class="r">' . rp(0) . '</td><td>-</td></tr>'; }
+  $h .= '<tr style="background:#FFF4D6"><td colspan="2"><b>TOTAL</b></td><td class="r"><b>' . rp($tr) . '</b></td><td class="r"><b>' . rp($tl) . '</b></td><td class="r"><b>' . rp($tl - $tr) . '</b></td><td></td></tr></table>';
+  $sisa = (int) $n['sisa']; $ket = '-';
+  if ($sisa > 0) $ket = $n['setoran_no'] ? 'No. ' . e($n['setoran_no']) . ($n['state'] === 'OK' ? ' · dikonfirmasi Finance Transfer' : ' · menunggu konfirmasi Finance Transfer') : 'Belum disetor';
+  $h .= '<table style="margin-top:6px"><tr><th class="r">Dana</th><th class="r">Terpakai</th><th class="r">' . ($sisa < 0 ? 'Kelebihan' : 'Sisa disetor') . '</th><th>' . ($sisa < 0 ? 'Klaim reimburse' : 'Bukti setoran') . '</th></tr><tr><td class="r">' . rp($n['dana']) . '</td><td class="r">' . rp((int) $n['terpakai']) . '</td><td class="r">' . rp(abs($sisa)) . '</td><td>'
+    . ($sisa < 0 ? ($n['excess_claim_id'] ? e((string) val("SELECT number FROM claims WHERE id=?", [$n['excess_claim_id']])) : 'Menunggu persetujuan Admin') : $ket) . '</td></tr></table>';
+  foreach ($d['history'] as $x) if (($x['action'] ?? '') === 'Balik nota disetujui Admin') $h .= '<div class="tx">Diperiksa Admin: ' . e($x['actor_name'] ?? $x['uname'] ?? '-') . ', ' . wkt($x['created_at']) . '.</div>';
+  return $h;
 }
