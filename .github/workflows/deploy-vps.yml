@@ -1,0 +1,61 @@
+name: Deploy DSM ke VPS
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dsm-production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Validasi dan deploy ke production
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: none
+          coverage: none
+
+      - name: PHP syntax check
+        shell: bash
+        run: |
+          set -euo pipefail
+          find . -type f -name '*.php' \
+            ! -path './_DSM_RECOVERY_*/*' \
+            ! -path './vendor/*' \
+            -print0 | xargs -0 -r -n1 php -l
+
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          DEPLOY_SHA: ${{ github.sha }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          fingerprint: ${{ secrets.SSH_FINGERPRINT }}
+          timeout: 30s
+          command_timeout: 20m
+          envs: DEPLOY_SHA
+          script: |
+            set -eu
+            if [ "$DEPLOY_SHA" = "" ]; then
+              echo "DEPLOY_SHA kosong"
+              exit 1
+            fi
+            sudo -n /usr/local/sbin/dsm-deploy.sh "$DEPLOY_SHA"
