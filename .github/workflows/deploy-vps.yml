@@ -37,7 +37,35 @@ jobs:
           find . -type f -name '*.php' \
             ! -path './_DSM_RECOVERY_*/*' \
             ! -path './vendor/*' \
+            ! -path './storage/*' \
             -print0 | xargs -0 -r -n1 php -l
+
+      - name: Build release archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          tar -czf dsm-release.tar.gz \
+            --exclude='./.git' \
+            --exclude='./.github' \
+            --exclude='./storage' \
+            --exclude='./vendor' \
+            --exclude='./config.php' \
+            --exclude='./database_dsm.sql' \
+            --exclude='./_DSM_RECOVERY_*' \
+            --exclude='./ROLLBACK_DSM_REVISION_SAFE.bat' \
+            .
+
+      - name: Copy release archive to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          fingerprint: ${{ secrets.SSH_FINGERPRINT }}
+          source: dsm-release.tar.gz
+          target: /tmp/
+          overwrite: true
 
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v1.2.0
@@ -54,8 +82,5 @@ jobs:
           envs: DEPLOY_SHA
           script: |
             set -eu
-            if [ "$DEPLOY_SHA" = "" ]; then
-              echo "DEPLOY_SHA kosong"
-              exit 1
-            fi
-            sudo -n /usr/local/sbin/dsm-deploy.sh "$DEPLOY_SHA"
+            test -s /tmp/dsm-release.tar.gz
+            sudo -n /usr/local/sbin/dsm-deploy.sh "$DEPLOY_SHA" /tmp/dsm-release.tar.gz
