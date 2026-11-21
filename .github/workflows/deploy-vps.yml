@@ -1,0 +1,86 @@
+name: Deploy DSM ke VPS
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dsm-production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Validasi dan deploy ke production
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: none
+          coverage: none
+
+      - name: PHP syntax check
+        shell: bash
+        run: |
+          set -euo pipefail
+          find . -type f -name '*.php' \
+            ! -path './_DSM_RECOVERY_*/*' \
+            ! -path './vendor/*' \
+            ! -path './storage/*' \
+            -print0 | xargs -0 -r -n1 php -l
+
+      - name: Build release archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          tar -czf dsm-release.tar.gz \
+            --exclude='./.git' \
+            --exclude='./.github' \
+            --exclude='./storage' \
+            --exclude='./vendor' \
+            --exclude='./config.php' \
+            --exclude='./database_dsm.sql' \
+            --exclude='./_DSM_RECOVERY_*' \
+            --exclude='./ROLLBACK_DSM_REVISION_SAFE.bat' \
+            .
+
+      - name: Copy release archive to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          fingerprint: ${{ secrets.SSH_FINGERPRINT }}
+          source: dsm-release.tar.gz
+          target: /tmp/
+          overwrite: true
+
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          DEPLOY_SHA: ${{ github.sha }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          fingerprint: ${{ secrets.SSH_FINGERPRINT }}
+          timeout: 30s
+          command_timeout: 20m
+          envs: DEPLOY_SHA
+          script: |
+            set -eu
+            test -s /tmp/dsm-release.tar.gz
+            sudo -n /usr/local/sbin/dsm-deploy.sh "$DEPLOY_SHA" /tmp/dsm-release.tar.gz
