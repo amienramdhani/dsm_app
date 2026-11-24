@@ -1,0 +1,35 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Baris aktif · Order Lagi atau Nggak</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eef2f6;font-family:Inter,"Segoe UI",system-ui,sans-serif;color:#0f172a;padding:18px;font-size:11.5px}
+.pk{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}.pk button{border:1px solid #cbd5e1;background:#fff;border-radius:8px;padding:7px 12px;font-size:11.5px;font-weight:600;cursor:pointer}.pk button.on{background:#0F4C3A;color:#fff;border-color:#0F4C3A}
+.lbl{color:#64748b;margin:0 0 10px;max-width:420px}
+.cd{width:420px;border:1px solid #bfe8d5;background:#f2fbf7;border-radius:12px;padding:12px 14px}
+.hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}.hd b{font-size:13px;font-weight:600;color:#0B6A46}.tg{font-size:10px;font-weight:600;background:#FFF1D6;color:#A86400;border-radius:999px;padding:2px 9px}
+.sb{font-size:10.5px;color:#64748b;margin-bottom:8px}
+.r{display:grid;grid-template-columns:100px 1fr 80px;gap:8px;align-items:center;padding:6px 8px;border-radius:8px;cursor:pointer;margin:1px 0;transition:.15s}
+.r b{font-size:11.5px;font-weight:600}.bar{height:18px;background:#EEF2F7;border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;border-radius:6px;background:var(--c)}
+.v{text-align:right;font-weight:600}.v small{font-weight:400;color:#64748b;font-size:10px;margin-left:4px}
+/* SEKARANG (lama) */
+.m0 .r.on{box-shadow:0 0 0 1.5px #0F4C3A;background:#fff}
+/* A: mint + garis kiri */
+.mA .r.on{background:#DDF1E7;box-shadow:inset 4px 0 0 #0F4C3A}.mA .r.on b{color:#0F4C3A}.mA .r:not(.on){opacity:.72}
+/* B: latar warna kategori tipis + bar penuh warna, lainnya pudar */
+.mB .r.on{background:color-mix(in srgb,var(--c) 11%,#fff)}.mB .r.on b{color:var(--c)}.mB .r.on .bar{background:color-mix(in srgb,var(--c) 18%,#fff)}.mB .r:not(.on){opacity:.55}
+/* C: tanpa kotak, penanda segitiga + label tebal + bar lebih tinggi */
+.mC .r{position:relative}.mC .r.on::before{content:"";position:absolute;left:-2px;top:50%;margin-top:-5px;border:5px solid transparent;border-left:7px solid var(--c);border-right:0}
+.mC .r.on{padding-left:14px}.mC .r.on .bar{height:24px;border-radius:8px}.mC .r.on .bar i{border-radius:8px}.mC .r.on .v{font-size:13px}.mC .r:not(.on){opacity:.6}
+/* D: kapsul penuh warna kategori (seperti kartu terpilih di HP) */
+.mD .r.on{background:linear-gradient(160deg,color-mix(in srgb,var(--c) 88%,#fff),color-mix(in srgb,var(--c) 100%,#000 20%));box-shadow:0 4px 10px color-mix(in srgb,var(--c) 30%,transparent)}.mD .r.on b,.mD .r.on .v,.mD .r.on .v small{color:#fff}.mD .r.on .bar{background:rgba(255,255,255,.28)}.mD .r.on .bar i{background:#fff}
+/* E: garis bawah warna kategori + angka ditebalkan */
+.mE .r.on{background:#fff;box-shadow:0 1px 6px rgba(15,23,42,.1);border-bottom:3px solid var(--c);border-radius:8px 8px 4px 4px}.mE .r.on b{color:var(--c)}.mE .r:not(.on){opacity:.65}
+.mF .r.on{background:color-mix(in srgb,var(--c) 11%,#fff);box-shadow:0 1px 6px rgba(15,23,42,.12);border-bottom:3px solid var(--c);border-radius:8px 8px 4px 4px}.mF .r.on b{color:var(--c)}.mF .r.on .bar{background:color-mix(in srgb,var(--c) 18%,#fff)}.mF .r:not(.on){opacity:.58}
+</style></head><body>
+<div class="pk" id="pk"><button class="on" data-m="m0">SEKARANG</button><button data-m="mA">A · mint + garis kiri</button><button data-m="mB">B · warna kategori tipis</button><button data-m="mC">C · penanda panah + bar tinggi</button><button data-m="mD">D · kapsul penuh warna</button><button data-m="mE">E · kartu putih + garis bawah</button><button data-m="mF">F · gabungan B + E (dipasang)</button></div>
+<p class="lbl">Klik baris untuk memindahkan pilihan. Pilih huruf yang paling cocok.</p>
+<div class="cd m0" id="cd"><div class="hd"><b>Dealer baru September 2026</b><span class="tg">berjalan · 24 hari</span></div><div class="sb">Aktivitasnya dicek di bulan yang sama</div>
+<div class="r" style="--c:#0A2E57"><b>Dealer baru</b><div class="bar"><i style="width:100%"></i></div><span class="v">368<small>100,0%</small></span></div>
+<div class="r" style="--c:#0B5CAD"><b>Order lagi</b><div class="bar"><i style="width:21%"></i></div><span class="v">78<small>21,2%</small></span></div>
+<div class="r" style="--c:#12A86B"><b>SELL THRU ≥2</b><div class="bar"><i style="width:90%"></i></div><span class="v">330<small>89,7%</small></span></div>
+<div class="r on" style="--c:#7A5AF8"><b>Ambil ≥2 brand</b><div class="bar"><i style="width:41%"></i></div><span class="v">151<small>41,0%</small></span></div></div>
+<script>const cd=document.getElementById('cd');document.querySelectorAll('#pk button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#pk button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cd.className='cd '+b.dataset.m});
+cd.querySelectorAll('.r').forEach(r=>r.onclick=()=>{cd.querySelectorAll('.r').forEach(x=>x.classList.remove('on'));r.classList.add('on')})</script></body></html>

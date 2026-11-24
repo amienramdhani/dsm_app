@@ -448,6 +448,17 @@ function apiDOS($token, $period = null, $selection = null, $filter = null, $page
     if (!truthy($r['ready'] ?? null)) return $r;
     if (($f['view'] ?? null) === 'BRAND') { $r['brands'] = sortRecords_($r['brands'], $f['sort'] ?? null, [fn($t) => $t['nama'], fn($t) => $t['brand'], fn($t) => $t['stock'], fn($t) => $t['sellout'], fn($t) => $t['avg'], fn($t) => $t['dos'], fn($t) => $t['low']]); $count = count($r['brands']); }
     else { $r['rows'] = sortRecords_($r['rows'], $f['sort'] ?? null, [fn($t) => $t['nama'], fn($t) => $t['sales'], fn($t) => $t['brand'], fn($t) => $t['type'], fn($t) => $t['stock'], fn($t) => $t['sellout'], fn($t) => $t['avg'], fn($t) => $t['dos'], fn($t) => $t['status']]); $count = count($r['rows']); }
+    /* v7 DOS HP: rincian per brand untuk tiap wilayah di tab WILAYAH (kunci = nama yang tampil di r.regions) */
+    $rb = []; $soD = max(1, (int) ($r['soDays'] ?? 30)); $wr = truthy($r['windowReady'] ?? null); $cov = truthy($r['covered'] ?? null);
+    foreach ($r['rows'] as $x) { $rk = (string) ($top ? $x['big'] : $x['region']); $b = (string) $x['brand']; if (!isset($rb[$rk][$b])) $rb[$rk][$b] = ['brand' => $b, 'stock' => 0, 'sellout' => 0, 'ok' => 0, 'okSo' => 0, 'low' => 0, 'd' => []];
+        $a = &$rb[$rk][$b]; $a['stock'] += $x['stock']; $a['sellout'] += $x['sellout']; if (($x['status'] ?? '') !== 'PERLU CEK DATA') { $a['ok'] += $x['stock']; $a['okSo'] += $x['sellout']; } if (in_array($x['status'] ?? '', ['MENIPIS', 'HABIS'], true)) $a['low']++; $a['d'][(string) $x['customer']] = 1; unset($a); }
+    $out = []; foreach ($rb as $rk => $bs) { $out[$rk] = array_values(array_map(fn($a) => ['brand' => $a['brand'], 'stock' => $a['stock'], 'sellout' => $a['sellout'], 'avg' => $wr ? $a['sellout'] / $soD : null, 'dos' => $cov && $wr && $a['okSo'] > 0 ? $a['ok'] / ($a['okSo'] / $soD) : null, 'low' => $a['low'], 'dealerCount' => count($a['d'])], $bs)); }
+    $r['regionBrands'] = js_obj($out);
+    if (($f['view'] ?? null) !== 'BRAND') {
+        /* v7 DOS (mockup 2026-11-24 dsm-dos-opsi): jumlah per kondisi + urutan bawaan kondisi terparah dulu */
+        $sc = []; foreach ($r['rows'] as $t) { $k = (string) ($t['status'] ?? ''); if ($k !== '') $sc[$k] = ($sc[$k] ?? 0) + 1; } $r['statusCount'] = js_obj($sc);
+        if (!truthy($f['sort'] ?? null)) { $ord = ['HABIS' => 0, 'PERLU CEK DATA' => 1, 'MENIPIS' => 2, 'STOK TINGGI' => 3, 'BELUM BERGERAK' => 4, 'CUKUP' => 5, 'TIDAK AKTIF' => 6]; usort($r['rows'], function ($a, $b) use ($ord) { $x = ($ord[$a['status'] ?? ''] ?? 9) <=> ($ord[$b['status'] ?? ''] ?? 9); if ($x) return $x; $x = strcmp((string) ($a['nama'] ?? ''), (string) ($b['nama'] ?? '')); return $x ?: (($a['dos'] ?? 1e9) <=> ($b['dos'] ?? 1e9)); }); }
+    }
     $n = pageIdx_($page, $count, $size); $r['count'] = $count; $r['page'] = $n; $r['pageSize'] = $size; $r['rows'] = array_slice($r['rows'], $n * $size, $size);
     if ($u['role'] === 'SALES') $r['regions'] = [];
     return $r;

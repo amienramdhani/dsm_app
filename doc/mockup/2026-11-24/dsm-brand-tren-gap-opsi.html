@@ -1,0 +1,29 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Brand · Tren SELL THRU · arsir gap target</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;background:#EDF0F5;color:#0f172a;font-size:13px}
+.wrap{max-width:1000px;margin:0 auto;padding:16px}.pn{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:12px 14px;margin-bottom:10px}.pn h4{margin:0 0 4px;font-size:12px;text-transform:uppercase;color:#334155}.pn p{margin:0 0 8px;color:#475569;font-size:11.5px}
+.opt{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.opt button{border:1px solid #cbd5e1;background:#fff;border-radius:6px;padding:6px 12px;font-weight:600;font-size:12px;cursor:pointer;font-family:inherit}.opt button.on{background:#0B5CAD;color:#fff;border-color:#0B5CAD}
+.leg{display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:#334155;margin:0 0 6px}.leg i{display:inline-block;vertical-align:middle;margin-right:5px}
+svg{width:100%;height:auto;display:block}.foot{border-top:1px solid #e5e7eb;margin-top:8px;padding-top:8px;font-size:12px;color:#334155}
+</style></head><body><div class="wrap">
+<div class="pn"><h4>Tren SELL THRU · ITEL</h4><p>Garis growth tetap. Batang bulan berjalan (Sep 26) diberi arsir untuk gap ke target: dari aktual 16.212 sampai target 35.351. Garis-garis lain tidak ditambahkan.</p>
+<div class="opt" id="opt"></div><div class="leg" id="leg"></div><svg id="sv" viewBox="0 0 900 330"></svg>
+<div class="foot"><b>September 2026</b> · 16.212 unit (MTD s.d. 28 Sep 2026) · target 35.351 · gap 19.139 unit<br>-2,9% · -490 unit · vs LMTD Agustus 2026 tanggal 1–28</div></div></div>
+<script>
+const M=['Des 25','Jan 26','Feb 26','Mar 26','Apr 26','Mei 26','Jun 26','Jul 26','Agu 26','Sep 26'],U=[2066,6879,7586,33144,28765,20046,33227,33354,20507,16212],G=[null,233.0,35.8,336.9,-12.2,-30.3,65.8,0.4,-38.5,-2.9],TG=35351;
+const f=x=>x.toLocaleString('id-ID'),n=x=>String(x).replace('.',',');let st='A';
+const OP=[['A','A · Arsir diagonal biru'],['B','B · Arsir merah muda'],['C','C · Arsir + garis target']];
+function draw(){const L=64,R=840,T=30,Bt=250,W=R-L,H=Bt-T,bw=40,step=W/10,MX=TG;const yU=v=>Bt-v/MX*H,yG=g=>Bt-(g+38.5)/(336.9+38.5)*H,cx=i=>L+step*i+step/2;let s=`<defs><pattern id="pa" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" fill="#fff"/><line x1="0" y1="0" x2="0" y2="7" stroke="#6F9BD1" stroke-width="3"/></pattern><pattern id="pb" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" fill="#FFF1F0"/><line x1="0" y1="0" x2="0" y2="7" stroke="#E8908A" stroke-width="3"/></pattern></defs>`;
+[0,MX/3,MX*2/3,MX].forEach(v=>s+=`<text x="${L-8}" y="${yU(v)+3}" font-size="10" text-anchor="end" fill="#475569">${f(Math.round(v))}</text>`);
+[-38.5,86.6,211.8,336.9].forEach(g=>s+=`<text x="${R+8}" y="${yG(g)+3}" font-size="10" fill="#475569">${n(g)}%</text>`);
+U.forEach((v,i)=>{const h=v/MX*H;s+=`<rect x="${cx(i)-bw/2}" y="${Bt-h}" width="${bw}" height="${h}" rx="3" fill="${i===9?'#0B5CAD':'#8DB4E2'}"/><text x="${cx(i)}" y="${Bt-h-6}" font-size="11" font-weight="700" text-anchor="middle" fill="#0f172a">${f(v)}</text><text x="${cx(i)}" y="${Bt+16}" font-size="10" text-anchor="middle" fill="#334155">${M[i]}</text><text x="${cx(i)}" y="${Bt+29}" font-size="9.5" font-weight="700" text-anchor="middle" fill="#9A6400">MTD</text>`});
+const x9=cx(9),top=yU(U[9]),tt=yU(TG),pat=st==='B'?'url(#pb)':'url(#pa)',stroke=st==='B'?'#E8908A':'#6F9BD1';
+s+=`<rect x="${x9-bw/2}" y="${tt}" width="${bw}" height="${top-tt}" rx="3" fill="${pat}" stroke="${stroke}" stroke-width="1.2" stroke-dasharray="4 3"/>`;
+if(st==='C')s+=`<line x1="${L}" x2="${R}" y1="${tt}" y2="${tt}" stroke="#D2453F" stroke-width="1.6" stroke-dasharray="6 4"/>`;
+s+=`<text x="${st==='C'?R-4:x9}" y="${tt-6}" font-size="10.5" font-weight="700" text-anchor="${st==='C'?'end':'middle'}" fill="#B3322C">Target ${f(TG)}</text>`;
+const p=G.map((g,i)=>g==null?null:`${cx(i)},${yG(g)}`).filter(Boolean).join(' ');s+=`<polyline points="${p}" fill="none" stroke="#D2693B" stroke-width="1.8" stroke-dasharray="5 4"/>`+G.map((g,i)=>g==null?'':`<circle cx="${cx(i)}" cy="${yG(g)}" r="4" fill="#D2693B"/><text x="${cx(i)}" y="${yG(g)+(g<0?16:-8)}" font-size="9.5" font-weight="600" text-anchor="middle" fill="#B4501F" paint-order="stroke" stroke="#fff" stroke-width="3">${g>0?'+':''}${n(g)}%</text>`).join('');
+document.getElementById('sv').innerHTML=s;
+document.getElementById('leg').innerHTML=`<span><i style="width:11px;height:11px;background:#8DB4E2;border-radius:2px"></i>Unit device · sumbu kiri</span><span><i style="width:12px;height:12px;border-radius:50%;background:#D2693B"></i>Growth · sumbu kanan</span><span><i style="width:14px;height:11px;background:${st==='B'?'#FFF1F0':'#fff'};border:1px dashed ${stroke}"></i>Gap ke target bulan berjalan</span>`;
+document.getElementById('opt').innerHTML=OP.map(o=>`<button data-k="${o[0]}" class="${o[0]===st?'on':''}">${o[1]}</button>`).join('');document.querySelectorAll('#opt button').forEach(b=>b.onclick=()=>{st=b.dataset.k;draw()})}
+draw();
+</script></body></html>

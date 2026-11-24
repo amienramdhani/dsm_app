@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSM · Analisa · Reaktivasi Dealer (usulan HP)</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0}body{font:13px/1.45 Inter,Segoe UI,Arial,sans-serif;background:#DDE5EE;color:#14233A;display:flex;justify-content:center;padding:18px}
+.ph{position:relative;width:390px;height:844px;background:#F3F6FA;border-radius:28px;box-shadow:0 10px 40px rgba(10,46,87,.25);overflow:hidden;border:6px solid #10202F}
+.sc{height:100%;overflow-y:auto;overflow-x:hidden;padding-bottom:76px}
+@media(max-width:430px){body{padding:0}.ph{width:100vw;height:100vh;border:0;border-radius:0}}
+.bar{position:sticky;top:0;z-index:5;background:#0A2E57;color:#fff;padding:10px 14px;display:flex;align-items:center;gap:10px}.bar b{font-size:15px}.bar small{opacity:.75;margin-left:auto}.av{width:28px;height:28px;border-radius:50%;background:#2E6E9E;display:grid;place-items:center;font-size:11px;font-weight:700}
+.pad{padding:12px}.hint{color:#6B7A8F;font-size:11.5px}
+.seg{display:flex;background:#fff;border:1px solid #D8E0EA;border-radius:10px;padding:3px;margin-bottom:10px}.seg button{flex:1;border:0;background:none;padding:9px 4px;border-radius:8px;font:600 12px inherit;color:#4B5B70}.seg button.on{background:#0A2E57;color:#fff}
+.fbtn{width:100%;height:44px;border:0;border-radius:12px;background:linear-gradient(90deg,#FFB020,#F07A0C);color:#fff;font:800 13px inherit;letter-spacing:.4px;display:flex;align-items:center;justify-content:center;gap:8px;margin:8px 0;box-shadow:0 3px 10px rgba(240,122,12,.3)}
+.fbtn svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.fbtn em{font-style:normal;background:rgba(255,255,255,.28);border-radius:999px;padding:1px 9px;font-size:11px}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.kpi{background:#E9F7EF;border:1px solid #CDE6D8;border-radius:12px;padding:10px 12px}.kpi small{display:block;color:#0F4C3A;font-size:10px;font-weight:800;line-height:1.25;text-transform:uppercase;letter-spacing:.2px;min-height:25px}.kpi b{display:block;color:#0F4C3A;font-size:21px;font-weight:800;line-height:1.15;margin:3px 0 1px}.kpi span{display:block;font-size:10.5px;color:#5B6B66;line-height:1.25}
+.panel{background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(10,46,87,.08);overflow:hidden;margin-bottom:12px}
+.hC{padding:11px 12px 9px;border-left:5px solid #6D3FD8}.hC h3{margin:0;font-size:12.5px;letter-spacing:.2px}.sub{font-size:11px;color:#6B7A8F;margin-top:1px}
+.sr{padding:8px 12px}.sr input{width:100%;height:36px;padding:0 11px;border:1px solid #D8E0EA;border-radius:10px;font:inherit}
+.sts{display:flex;gap:5px;overflow-x:auto;padding:0 12px 10px;scrollbar-width:none}.sts::-webkit-scrollbar{display:none}
+.sts button{flex:none;height:28px;border:1px solid #E1E7EE;background:#fff;border-radius:8px;padding:0 10px;font:700 11px inherit;color:#14233A}.sts button.on{border-color:#6D3FD8;background:#F3EEFF;color:#4B2AA8}.sts small{font-weight:500;color:#6B7A8F;margin-left:3px}
+.tw{overflow-x:auto}
+table.t{border-collapse:collapse;width:100%;font-size:11px}
+.t th,.t td{border-bottom:1px solid #EAEFF4;padding:6px 9px;white-space:nowrap}
+.t thead th{background:#E6EBF1;font-weight:700;font-size:10px;letter-spacing:.3px;text-align:left;border-bottom:2px solid #15303F}
+.t td.n,.t th.n{text-align:right;font-variant-numeric:tabular-nums}
+.t td.kd{position:sticky;left:0;z-index:1;background:#fff;color:#4B5B70;border-left:4px solid var(--s);font-variant-numeric:tabular-nums}.t th.kd{position:sticky;left:0;z-index:2;background:#E6EBF1}
+.t td.dn{font-weight:700}.t tbody tr{cursor:pointer}.t tbody tr:active td{background:#F3EEFF}
+.pill{display:inline-block;font-size:9.5px;font-weight:800;letter-spacing:.3px;padding:1px 7px;border-radius:6px}
+.p-ACTIVE{background:#FFF1D6;color:#A86400}.p-PASSIVE{background:#FFE7D1;color:#B04A00}.p-IDLE{background:#EFEAFF;color:#5B3CC4}.p-INACTIVE{background:#FDE3E3;color:#C0352B}
+.sp{display:inline-flex;align-items:flex-end;gap:2px;height:16px;vertical-align:middle}.sp i{display:block;width:6px;border-radius:2px;background:#7A5AF8}.sp i.z{height:2px!important;background:#D0D8E2}
+.more{text-align:center;padding:8px}.more button{border:1px solid #D8E0EA;background:#fff;border-radius:999px;padding:6px 14px;font:600 11.5px inherit}
+.lg{display:flex;gap:10px;font-size:10.5px;color:#6B7A8F;padding:7px 12px;background:#FAFBFD;border-top:1px solid #EAEFF4;flex-wrap:wrap}.lg i{display:inline-block;width:4px;height:11px;vertical-align:-2px;margin-right:4px}
+.nav{position:absolute;left:0;right:0;bottom:0;height:64px;background:#fff;border-top:1px solid #E1E7EE;display:grid;grid-template-columns:repeat(5,1fr);z-index:8}
+.nav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10px;font-weight:600;color:#6B7A8F;text-decoration:none}.nav svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.nav a.on{color:#0A2E57}
+.ov{position:absolute;inset:0;background:rgba(10,20,35,.45);z-index:20;display:none}.ov.on{display:block}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:20px 20px 0 0;padding:8px 14px 16px;z-index:21;transform:translateY(105%);transition:transform .25s}.sheet.on{transform:none}
+.grab{width:38px;height:4px;border-radius:2px;background:#D0D8E2;margin:0 auto 10px}
+.sheet h4{margin:0;font-size:14px}.sheet .m{color:#6B7A8F;font-size:11.5px;margin:2px 0 10px}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}.kv div{background:#F5F8FC;border-radius:10px;padding:7px 10px}.kv small{display:block;color:#6B7A8F;font-size:10.5px}.kv b{font-size:12.5px}
+.bars{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;align-items:end;height:84px;margin:6px 0 4px}.bars div{text-align:center;font-size:10.5px;color:#6B7A8F;display:flex;flex-direction:column;justify-content:flex-end;height:100%}.bars i{display:block;border-radius:4px;background:#7A5AF8;margin:2px auto 3px;width:70%}.bars i.z{height:3px!important;background:#D0D8E2}.bars b{color:#14233A;font-size:11.5px}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.acts button{height:40px;border-radius:10px;font:700 12px inherit;border:1px solid #D8E0EA;background:#fff}.acts .p{background:#25D366;color:#fff;border-color:#25D366}
+</style></head><body>
+<div class="ph"><div class="sc">
+<div class="bar"><b>DSM</b><small>Analisa</small><span class="av">AH</span></div>
+<div class="pad">
+<div class="seg"><button>Cross-sell</button><button class="on">Reaktivasi</button><button>Dealer Baru</button></div>
+<div class="hint">Data s.d. 23 Nov 2026 · sesuai cakupan</div>
+<button class="fbtn"><svg viewBox="0 0 24 24"><path d="M3 5h18l-7 8v6l-4-2v-4z"/></svg>FILTER <em>0 aktif · 412 dealer</em></button>
+<div class="kpis">
+<div class="kpi"><small>Dealer perlu dihubungi</small><b>412</b><span>belum order bulan ini</span></div>
+<div class="kpi"><small>Potensi hilang</small><b>± 1.860 unit</b><span>rata-rata/bulan dulu</span></div>
+<div class="kpi"><small>Paling mudah</small><b>138</b><span>status ACTIVE, belum order</span></div>
+<div class="kpi"><small>Berhasil aktif lagi</small><b>57</b><span>order lagi bulan ini setelah absen</span></div>
+</div>
+<div class="panel"><div class="hC"><h3>DAFTAR TELEPON · PRIORITAS</h3><div class="sub">Urut potensi terbesar · skor = rata-rata unit × peluang kembali</div></div>
+<div class="sr"><input placeholder="Cari kode / nama dealer…"></div>
+<div class="sts"><button class="on">SEMUA<small>412</small></button><button>ACTIVE<small>138</small></button><button>PASSIVE<small>118</small></button><button>IDLE<small>100</small></button><button>INACTIVE<small>56</small></button></div>
+<div class="tw"><table class="t"><thead><tr><th class="kd">KODE</th><th>NAMA DEALER</th><th>REGION</th><th>SALES</th><th>STATUS</th><th class="n">JEDA (HARI)</th><th class="n">RATA² DULU</th><th>6 BLN</th></tr></thead><tbody id="tb"></tbody></table></div>
+<div class="more"><button>Tampilkan lebih banyak (80 dari 412)</button></div>
+<div class="lg"><span><i style="background:#D97706"></i>ACTIVE</span><span><i style="background:#E8590C"></i>PASSIVE</span><span><i style="background:#6D3FD8"></i>IDLE</span><span><i style="background:#C0352B"></i>INACTIVE</span><span>Geser tabel ke samping · ketuk baris untuk rincian</span></div></div>
+</div></div>
+<div class="nav"><a href="#"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>Beranda</a><a href="#"><svg viewBox="0 0 24 24"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-7h6v7"/></svg>Dealer</a><a href="#"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Brand</a><a href="#"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>Transaksi</a><a href="#" class="on"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>Lainnya</a></div>
+<div class="ov" id="ov"></div>
+<div class="sheet" id="sh"><div class="grab"></div><h4 id="shN"></h4><div class="m" id="shM"></div><div class="kv" id="shK"></div><div class="hint">UNIT PER BULAN · JUN–NOV</div><div class="bars" id="shB"></div><div class="acts"><button>Riwayat dealer</button><button class="p">WhatsApp</button></div></div>
+</div>
+<script>
+const SC={ACTIVE:'#D97706',PASSIVE:'#E8590C',IDLE:'#6D3FD8',INACTIVE:'#C0352B'},MN=['Jun','Jul','Agu','Sep','Okt','Nov'];
+const R=[["Cell Jaya Abadi","CJ0142","Cirebon","Dedi S.","ACTIVE","18 Okt 2026",36,[38,45,40,44,41,0]],["Sinar Ponsel","SP0881","Kuningan","Rina A.","PASSIVE","2 Sep 2026",83,[32,36,31,28,0,0]],["Mega Phone Center","MP0217","Indramayu","Yoga P.","IDLE","11 Jul 2026",136,[26,28,0,0,0,0]],["Berkah Selular","BS1022","Majalengka","Dedi S.","ACTIVE","25 Okt 2026",29,[20,24,22,21,23,0]],["Galaxy Cell","GC0450","Brebes","Andi K.","INACTIVE","3 Mei 2026",205,[0,0,0,0,0,0]],["Toko Maju Ponsel","TM0521","Indramayu","Yoga P.","IDLE","20 Agu 2026",96,[18,17,19,0,0,0]],["Putra Gadget","PG0309","Cirebon","Rina A.","PASSIVE","14 Sep 2026",71,[14,16,15,16,0,0]],["Nusantara Cell","NR0777","Kuningan","Rina A.","ACTIVE","30 Okt 2026",25,[12,14,13,15,12,0]]];
+const avg=a=>{const n=a.filter(x=>x>0);return n.length?Math.round(n.reduce((x,y)=>x+y,0)/n.length):19};
+const sp=a=>{const m=Math.max(...a,1);return `<span class="sp">${a.map(v=>v?`<i style="height:${Math.max(3,v/m*16)}px"></i>`:'<i class="z"></i>').join('')}</span>`};
+tb.innerHTML=R.map((r,i)=>`<tr data-i="${i}"><td class="kd" style="--s:${SC[r[4]]}">${r[1]}</td><td class="dn">${r[0]}</td><td>${r[2]}</td><td>${r[3]}</td><td><span class="pill p-${r[4]}">${r[4]}</span></td><td class="n">${r[6]}</td><td class="n"><b>${avg(r[7])}</b></td><td>${sp(r[7])}</td></tr>`).join('');
+const sh=document.getElementById('sh'),ov=document.getElementById('ov');
+tb.onclick=e=>{const tr=e.target.closest('tr');if(!tr)return;const r=R[tr.dataset.i],m=Math.max(...r[7],1);shN.textContent=r[0];shM.textContent=r[1]+' · '+r[2]+' · '+r[3];
+shK.innerHTML=`<div><small>Status</small><b>${r[4]}</b></div><div><small>Terakhir order</small><b>${r[5]}</b></div><div><small>Jeda</small><b>${r[6]} hari</b></div><div><small>Rata-rata dulu</small><b>${avg(r[7])} unit/bln</b></div>`;
+shB.innerHTML=r[7].map((v,k)=>`<div>${v?`<b>${v}</b><i style="height:${Math.max(6,v/m*52)}px"></i>`:'<b>0</b><i class="z"></i>'}${MN[k]}</div>`).join('');
+sh.classList.add('on');ov.classList.add('on')};
+ov.onclick=()=>{sh.classList.remove('on');ov.classList.remove('on')};
+</script></body></html>

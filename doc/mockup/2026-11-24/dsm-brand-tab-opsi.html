@@ -1,0 +1,33 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Brand · Tab opsi</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;background:#F3F5F8;color:#0f172a;font-size:13px}
+.wrap{max-width:1100px;margin:0 auto;padding:16px}h2{font-size:15px;margin:22px 0 4px}p.n{margin:0 0 10px;color:#64748b;font-size:11.5px}
+.pick{display:flex;gap:6px;margin-bottom:12px}.pick button{border:1px solid #cbd5e1;background:#fff;border-radius:6px;padding:6px 14px;font-weight:600;cursor:pointer}.pick button.on{background:#0B5CAD;color:#fff;border-color:#0B5CAD}
+.opt{display:none}.opt.on{display:block}
+.kpi{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:10px}.kpi div{background:#fff;border-radius:8px;padding:8px 10px;border:1px solid #e5e7eb}.kpi b{font-size:17px;display:block}.kpi span{font-size:10px;color:#64748b;text-transform:uppercase}
+.bar{background:#fff;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:10px}
+/* A underline */
+.tA{display:flex;gap:2px;padding:0 8px;border-bottom:1px solid #e5e7eb;overflow:auto}.tA span{padding:10px 14px;font-size:11.5px;font-weight:600;color:#64748b;text-transform:uppercase;white-space:nowrap;border-bottom:3px solid transparent;cursor:pointer}.tA span.on{color:#0B5CAD;border-color:#0B5CAD}
+/* B segmen */
+.tB{display:flex;gap:2px;background:#CBD5E0;border-radius:8px;padding:3px;margin:8px;overflow:auto}.tB span{flex:1;text-align:center;padding:7px 12px;border-radius:6px;font-size:11.5px;font-weight:600;color:#334155;text-transform:uppercase;white-space:nowrap;cursor:pointer}.tB span.on{background:#fff;color:#0B5CAD;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+/* C chip */
+.tC{display:flex;gap:6px;padding:8px;overflow:auto}.tC span{padding:6px 12px;border:1px solid #cbd5e1;border-radius:6px;font-size:11.5px;font-weight:600;color:#334155;text-transform:uppercase;white-space:nowrap;cursor:pointer;background:#fff}.tC span.on{background:#0B5CAD;border-color:#0B5CAD;color:#fff}
+.pn{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:10px 12px;margin-bottom:8px}.pn h4{margin:0 0 6px;font-size:11.5px;text-transform:uppercase;color:#334155}.pn i{display:block;height:34px;border-radius:4px;background:repeating-linear-gradient(90deg,#EEF2F6 0 40px,#F8FAFC 40px 80px);margin-top:4px}
+.m{max-width:390px;border:1px solid #cbd5e1;border-radius:14px;padding:8px;background:#F3F5F8;margin-top:10px}.m .tA span{padding:9px 11px}
+ul{margin:6px 0 0 16px;padding:0;font-size:12px;color:#334155}
+</style></head><body><div class="wrap">
+<h2>Brand · pembagian TAB (mockup, belum dipasang)</h2>
+<p class="n">Panel sekarang ditumpuk panjang ke bawah. Usulan: kartu KPI atas tetap, sisanya dibagi tab. Pilih gaya tab A / B / C, lalu isi tabnya sama.</p>
+<div class="pick"><button class="on" data-o="A">A · Garis bawah</button><button data-o="B">B · Segmen abu</button><button data-o="C">C · Chip kotak</button></div>
+<div class="kpi"><div><span>Sellthru</span><b>12.840</b></div><div><span>Dealer aktif</span><b>1.204</b></div><div><span>NOO</span><b>96</b></div><div><span>Sell out</span><b>11.902</b></div><div><span>Omzet aksesori</span><b>Rp 1,2 M</b></div></div>
+<div id="o"></div>
+<h2>Isi tiap tab (dari panel yang sudah ada, tidak ada yang dihapus)</h2>
+<ul><li><b>RINGKASAN</b>: Summary pencapaian per brand (tabel)</li><li><b>GROWTH</b>: insight + KPI + tabel growth MTD vs LMTD (grafik per type &amp; Top/Bottom 3 tetap disembunyikan)</li><li><b>DETAIL BRAND</b>: pilih brand, hero, Tren SELL THRU, kumulatif</li><li><b>MINGGUAN</b>: panel mingguan brand</li><li><b>DEALER</b>: daftar dealer brand (tidak muncul untuk role Top)</li><li><b>TIM &amp; INDIKATOR</b>: tim per brand, indikator, ambang status dealer</li></ul>
+<ul><li>Tab terakhir dibuka diingat per perangkat. Tab di HP bisa digeser ke samping, dan menempel di atas saat scroll.</li></ul>
+<div class="m"><div class="bar"><div class="tA"><span class="on">RINGKASAN</span><span>GROWTH</span><span>DETAIL BRAND</span><span>MINGGUAN</span><span>DEALER</span></div></div><div class="pn"><h4>Summary pencapaian per brand</h4><i></i><i></i></div></div>
+<script>
+const T=['RINGKASAN','GROWTH','DETAIL BRAND','MINGGUAN','DEALER','TIM & INDIKATOR'];
+function draw(o){const c={A:'tA',B:'tB',C:'tC'}[o];const w=o==='A'?'bar':'bar';document.getElementById('o').innerHTML=`<div class="${w}"><div class="${c}">${T.map((t,i)=>`<span class="${i?'':'on'}">${t}</span>`).join('')}</div></div><div class="pn"><h4>Summary pencapaian per brand</h4><i></i><i></i><i></i></div>`;
+document.querySelectorAll('#o .'+c+' span').forEach(s=>s.onclick=()=>{document.querySelectorAll('#o .'+c+' span').forEach(x=>x.classList.remove('on'));s.classList.add('on');document.querySelector('#o .pn h4').textContent=s.textContent==='RINGKASAN'?'Summary pencapaian per brand':s.textContent});}
+draw('A');document.querySelectorAll('.pick button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.pick button').forEach(x=>x.classList.remove('on'));b.classList.add('on');draw(b.dataset.o)});
+</script></div></body></html>

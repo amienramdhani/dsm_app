@@ -1,0 +1,45 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reaktivasi · opsi judul kolom (desktop)</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eef2f6;font-family:Inter,"Segoe UI",system-ui,sans-serif;color:#0f172a;padding:18px;font-size:11.5px}
+.pk{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.pk button{border:1px solid #cbd5e1;background:#fff;border-radius:8px;padding:7px 12px;font-size:11.5px;font-weight:600;cursor:pointer}.pk button.on{background:#0F4C3A;color:#fff;border-color:#0F4C3A}
+.lbl{color:#64748b;margin:0 0 10px;max-width:900px}
+.dist{display:flex;gap:3px;height:34px;margin-bottom:8px}.dist div{background:var(--s);color:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center;gap:6px;font-weight:600;font-size:11.5px}.dist span{font-size:10px;font-weight:500;opacity:.9}
+.bd{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.col{background:color-mix(in srgb,var(--s) 6%,#fff);border:1px solid color-mix(in srgb,var(--s) 22%,#fff);border-radius:10px;padding:8px}
+.card{background:#fff;border:1px solid #e5e9ef;border-left:4px solid var(--s);border-radius:8px;padding:8px 10px;margin-top:6px}.card b{font-size:13px;font-weight:600}.card small{display:block;color:#64748b;font-size:10px;margin-top:3px}
+.v{display:none}.v.on{display:block}
+/* SEKARANG */
+.s0 .h{padding:2px 2px 6px}.s0 .h1{display:flex;justify-content:space-between;align-items:baseline}.s0 .h1 b{font-size:13px;font-weight:600;color:var(--s)}.s0 .h1 em{font-style:normal;font-size:17px;font-weight:500;color:var(--s)}.s0 .h2,.s0 .h3{font-size:10px;color:#64748b;margin-top:2px}.s0 .h3 b{color:#0f172a;font-weight:600}
+/* A satu baris */
+.A .h{display:flex;align-items:center;gap:8px;padding:2px 2px 6px}.A .h b{font-size:13px;font-weight:600;color:var(--s)}.A .h em{font-style:normal;font-size:11px;font-weight:600;background:var(--s);color:#fff;border-radius:999px;padding:1px 9px}.A .h i{margin-left:auto;font-style:normal;font-size:10px;color:#64748b}.A .h i b{color:#0f172a;font-weight:600;font-size:10px}.A .h2{display:none}
+/* B bar warna penuh */
+.B .col{padding:0;overflow:hidden}.B .h{background:var(--s);color:#fff;padding:9px 12px}.B .h1{display:flex;justify-content:space-between;align-items:center}.B .h1 b{font-size:13px;font-weight:600}.B .h1 em{font-style:normal;font-size:12px;font-weight:600;background:rgba(255,255,255,.22);border-radius:999px;padding:1px 10px}.B .h2{font-size:10px;opacity:.9;margin-top:2px}.B .h3{font-size:10px;opacity:.95;margin-top:1px}.B .h3 b{font-weight:600}.B .cs{padding:0 8px 8px}
+/* C garis atas + angka besar */
+.C .col{border-top:4px solid var(--s)}.C .h{display:flex;align-items:flex-end;justify-content:space-between;padding:2px 2px 6px}.C .h1 b{display:block;font-size:12px;font-weight:600;color:var(--s)}.C .h2{font-size:10px;color:#64748b;margin-top:1px}.C .h1 em{font-style:normal;font-size:24px;font-weight:500;color:var(--s);line-height:1}.C .h3{font-size:10px;color:#64748b;text-align:right}.C .h3 b{display:block;font-weight:600;color:#0f172a;font-size:11px}
+/* D gradasi seperti kartu status HP */
+.D .col{padding:0;overflow:hidden}.D .h{background:linear-gradient(160deg,color-mix(in srgb,var(--s) 88%,#fff),color-mix(in srgb,var(--s) 100%,#000 20%));color:#fff;padding:10px 12px;display:flex;justify-content:space-between;align-items:center}.D .h1 b{display:block;font-size:13px;font-weight:600}.D .h2{font-size:10px;opacity:.9;margin-top:1px}.D .h1 em{font-style:normal;font-size:20px;font-weight:500;order:2}.D .h3{display:none}.D .cs{padding:0 8px 8px}
+/* E ringkas: judul penuh, saat menempel jadi satu baris (ditampilkan di bawah) */
+.E .h{background:color-mix(in srgb,var(--s) 12%,#fff);border-radius:8px;padding:6px 10px;display:flex;align-items:center;gap:8px;margin-bottom:2px}.E .h1{display:flex;align-items:center;gap:8px;flex:1}.E .h1 b{font-size:12px;font-weight:600;color:var(--s)}.E .h1 em{font-style:normal;font-size:12px;font-weight:600;color:var(--s)}.E .h2{display:none}.E .h3{font-size:10px;color:#64748b}.E .h3 b{color:#0f172a;font-weight:600}
+.note{margin-top:10px;font-size:10.5px;color:#64748b}
+.F .h{background:color-mix(in srgb,var(--s) 12%,#fff);border-radius:8px;padding:7px 10px;margin-bottom:2px}.F .h1{display:flex;justify-content:space-between;align-items:baseline}.F .h1 b{font-size:13px;font-weight:800;letter-spacing:.3px;color:var(--s)}.F .h1 em{font-style:normal;font-size:17px;font-weight:500;color:var(--s)}.F .h2,.F .h3{font-size:10px;color:#64748b;margin-top:2px}.F .h3 b{color:#0f172a;font-weight:600}
+.F.stk .h{padding:5px 10px}.F.stk .h2{display:none}.F.stk .h3{display:none}
+</style></head><body>
+<div class="pk" id="pk"><button data-v="s0">SEKARANG</button><button data-v="A" class="on">A · satu baris + pil jumlah</button><button data-v="B">B · bar warna penuh</button><button data-v="C">C · garis atas + angka besar</button><button data-v="D">D · gradasi</button><button data-v="E">E · pita tipis (ringkas)</button><button data-v="F">F · sekarang + E (pita berisi lengkap)</button></div>
+<p class="lbl">Ini judul kolom yang ikut menempel saat scroll. Di bawah tiap judul ada 2 kartu contoh. Semua opsi memakai huruf yang sama dan warna status tetap.</p>
+<div id="w"></div>
+<script>
+const S=[['ACTIVE','312','#D97706','masih rutin order · paling mudah','4.280'],['PASSIVE','480','#E8590C','1 dari 3 bulan closing order','3.892'],['IDLE','186','#6D3FD8','tidak order 3–5 bulan berturut','1.105'],['INACTIVE','669','#C0352B','tidak order ≥ 6 bulan','0']];
+const dist=S.map((x,i)=>'<div style="--s:'+x[2]+';flex:'+x[1]+'"><span>'+x[0]+'</span>'+['18,9%','29,1%','11,3%','40,6%'][i]+'</div>').join('');
+function col(c,x){const cards='<div class="card"><b>PT. NIAGARA ONE GRUP</b><small>BIG SEMARANG · HAMZAH FANZURI</small></div><div class="card"><b>CV. KANA MATARAM</b><small>GROSS NAS JATIM · ROBBY AGUSTINA</small></div>';
+const h={s0:'<div class="h"><div class="h1"><b>'+x[0]+'</b><em>'+x[1]+'</em></div><div class="h2">'+x[3]+'</div><div class="h3">Potensi <b>± '+x[4]+' unit/bln</b></div></div>',
+A:'<div class="h"><b>'+x[0]+'</b><em>'+x[1]+'</em><i>Potensi <b>± '+x[4]+' unit/bln</b></i></div>',
+B:'<div class="h"><div class="h1"><b>'+x[0]+'</b><em>'+x[1]+'</em></div><div class="h2">'+x[3]+'</div><div class="h3">Potensi <b>± '+x[4]+' unit/bln</b></div></div>',
+C:'<div class="h"><div class="h1"><b>'+x[0]+'</b><div class="h2">'+x[3]+'</div></div><div style="text-align:right"><em class="h1" style="display:block;font-style:normal;font-size:24px;font-weight:500;color:'+x[2]+';line-height:1">'+x[1]+'</em><div class="h3">Potensi <b>± '+x[4]+'</b></div></div></div>',
+D:'<div class="h"><div class="h1"><b>'+x[0]+'</b><div class="h2">'+x[3]+'</div></div><em>'+x[1]+'</em></div>',
+F:'<div class="h"><div class="h1"><b>'+x[0]+'</b><em>'+x[1]+'</em></div><div class="h2">'+x[3]+'</div><div class="h3">Potensi <b>± '+x[4]+' unit/bln</b></div></div>',
+E:'<div class="h"><div class="h1"><b>'+x[0]+'</b><em>'+x[1]+'</em></div><div class="h3">Potensi <b>± '+x[4]+' unit/bln</b></div></div>'}[c];
+return '<div class="col" style="--s:'+x[2]+'">'+h+(c==='B'||c==='D'?'<div class="cs">'+cards+'</div>':cards)+'</div>';}
+const modes=['s0','A','B','C','D','E','F'];
+document.getElementById('w').innerHTML=modes.map(c=>'<div class="v '+c+(c==='A'?' on':'')+'" id="v'+c+'"><div class="dist">'+dist+'</div><div class="bd">'+S.map(x=>col(c,x)).join('')+'</div>'+(c==='E'?'<div class="note">E: judul hanya satu pita tipis berisi nama, jumlah, dan potensi. Keterangan arti status dipindah ke ikon ⓘ di bar atas.</div>':'')+(c==='F'?'<div class="note">F: pita berwarna tipis berisi lengkap (nama, jumlah, keterangan, potensi) seperti sekarang. Saat menempel di atas saat scroll, pita otomatis mengecil jadi satu baris (nama + jumlah) supaya hemat tempat.</div>':'')+(c==='A'?'<div class="note">A: keterangan arti status (mis. "masih rutin order · paling mudah") dipindah ke tooltip saat kursor di atas nama status.</div>':'')+'</div>').join('');
+document.querySelectorAll('#pk button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#pk button').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.querySelectorAll('.v').forEach(v=>v.classList.toggle('on',v.id==='v'+b.dataset.v))});
+</script></body></html>

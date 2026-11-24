@@ -1,0 +1,222 @@
+/* ANALISA rombak 2026-11-24: Reaktivasi (papan per status) + Dealer Baru (daftar NOO, cohort).
+   Mockup: doc/mockup/2026-11-24/dsm-analisa-reaktivasi-papan*.html, dsm-analisa-dealer-baru-full/mobile.html
+   Font: Inter, ukuran 10/11.5/13/17, bobot 400/500/600. Prefix ar*. */
+.arP{padding:14px 16px;font-family:Inter,"Segoe UI",system-ui,sans-serif}
+.arP *{font-family:inherit}
+.arH{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.arH h3{margin:0;font-size:13px;font-weight:600;letter-spacing:.3px;color:#0F4C3A}
+.arS{font-size:11.5px;font-weight:400;color:#64748b;margin-top:2px}
+.arBd{display:flex;gap:12px;font-size:11.5px;color:#64748b}.arBd b{font-weight:600;color:#0f172a}.arBd .g b{color:#6D3FD8}
+.arSr{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.arSr input{flex:1;min-width:180px;height:32px;border:1px solid #d9e0e8;border-radius:8px;padding:0 10px;font-size:11.5px;background:#fff}
+.arBrs{display:flex;gap:5px;flex-wrap:wrap}
+.arBrs button{height:26px;padding:0 9px;border:1px solid #d9e0e8;background:#fff;border-radius:7px;font-size:10px;font-weight:600;color:#475569;cursor:pointer}
+.arBrs button.on{background:#0F4C3A;border-color:#0F4C3A;color:#fff}
+.arLg{display:flex;gap:14px;flex-wrap:wrap;font-size:10px;font-weight:400;color:#64748b;margin-top:10px}
+.arLg i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px}
+.arMore{display:block;width:100%;margin-top:8px;height:30px;border:1px dashed #cbd5e1;background:#fff;border-radius:8px;font-size:11.5px;font-weight:500;color:#475569;cursor:pointer}
+.arMoreW{margin-top:8px}
+/* distribusi */
+.arDist{display:flex;gap:3px;margin-bottom:10px;height:34px}
+.arDist>div{background:var(--s);color:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:11.5px;font-weight:600;min-width:0;overflow:hidden;white-space:nowrap}
+.arDist>div span{font-size:10px;font-weight:500;opacity:.9}
+/* papan */
+.arBoard{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:start}
+.arCol{background:color-mix(in srgb,var(--s) 6%,#fff);border:1px solid color-mix(in srgb,var(--s) 22%,#fff);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px}
+.arCol.mute{opacity:.92}
+.arCh{padding:2px 2px 6px}
+.arCh1{display:flex;justify-content:space-between;align-items:baseline}
+.arCh1 b{font-size:13px;font-weight:600;color:var(--s)}.arCh1 em{font-style:normal;font-size:17px;font-weight:500;color:var(--s)}
+.arCh2{font-size:10px;color:#64748b;margin-top:1px}.arCh3{font-size:10px;color:#64748b;margin-top:3px}.arCh3 b{font-weight:600;color:#0f172a}
+.arEmpty{font-size:11.5px;color:#94a3b8;text-align:center;padding:10px}
+/* kartu dealer */
+.arCard{background:#fff;border:1px solid #e5e9ef;border-left:4px solid var(--s);border-radius:8px;padding:7px 9px;cursor:pointer;display:block}
+.arC1{display:flex;align-items:center;gap:7px;min-width:0}
+.arRk{flex:none;width:18px;height:18px;border-radius:50%;background:#e2e8f0;color:#475569;font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center}
+.arRk.hot{background:#FF7A1A;color:#fff}
+.arT1{flex:1;min-width:0;display:flex;align-items:center;gap:6px}
+.arKd{flex:none;font-size:10px;font-weight:500;background:#f1f5f9;color:#475569;border-radius:5px;padding:1px 5px}
+.arNm{font-size:13px;font-weight:600;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.arRs{font-size:10px;color:#64748b;margin:3px 0 0 25px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.arC3{display:flex;justify-content:space-between;gap:8px;margin:5px 0 0 25px;font-size:11.5px;font-weight:400;color:#0f172a}
+.arC3 small{display:block;font-size:10px;font-weight:500;color:#94a3b8;letter-spacing:.3px}
+.arC3 em{font-style:normal;color:var(--s);font-size:10px;margin-left:3px}
+.arC3 .arR{text-align:right;flex:none}
+.arCard .v6wa{flex:none}
+/* mobile selector (opsi E) */
+.arTabsE{margin-bottom:10px}
+.arBarE{display:flex;gap:3px;height:22px;margin-bottom:8px}
+.arBarE button{border:0;border-radius:5px;background:var(--s);color:#fff;font-size:10px;font-weight:600;min-width:0;padding:0;cursor:pointer;opacity:.45}
+.arBarE button.on{opacity:1}
+.arCardsE{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.arCardsE button{border:1px solid color-mix(in srgb,var(--s) 30%,#fff);border-radius:10px;background:linear-gradient(180deg,color-mix(in srgb,var(--s) 17%,#fff),color-mix(in srgb,var(--s) 5%,#fff));color:var(--s);padding:7px 2px 6px;font-size:10px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px}
+.arCardsE button em{font-style:normal;font-size:17px;font-weight:500}
+.arCardsE button small{font-size:10px;font-weight:400;opacity:.85}
+.arCardsE button.on{background:linear-gradient(160deg,color-mix(in srgb,var(--s) 88%,#fff),color-mix(in srgb,var(--s) 100%,#000 20%));border-color:transparent;color:#fff;box-shadow:0 4px 10px color-mix(in srgb,var(--s) 35%,transparent)}
+.arSh{font-size:11.5px;color:#64748b;margin:0 0 8px}.arSh b{font-weight:600;color:var(--s)}.arSh>div{margin-top:2px}.arSh>div b{color:#0f172a}
+.arList{display:flex;flex-direction:column;gap:6px}
+/* tabel */
+.arTw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.arTb{width:100%;border-collapse:collapse;font-size:11.5px;color:#0f172a}
+.arTb th{background:#E6EBF1;color:#0f172a;font-size:10px;font-weight:600;letter-spacing:.3px;text-align:left;padding:6px 8px;white-space:nowrap;border:1px solid #d3dbe4}
+.arTb td{padding:5px 8px;border:1px solid #e5e9ef;white-space:nowrap;vertical-align:middle}
+.arTb tbody tr{cursor:pointer}.arTb tbody tr:hover{background:#f6faf8}
+.arTb .n{text-align:right}
+.arTb td.kd{font-weight:500;border-left:4px solid #6D3FD8}.arTb td.kd.old{border-left-color:#C9D3DF}
+.arTb td.dn{font-weight:600}.arTb td.dt{color:#475569}
+.arBt{display:inline-block;font-size:10px;font-weight:600;border-radius:5px;padding:2px 6px;margin-right:4px}
+.arJm{display:inline-block;min-width:20px;text-align:center;font-weight:600}
+/* cohort */
+.arCoh .kd2{background:#fff;white-space:nowrap}
+.arCoh .kd2 b{font-weight:600;display:block}
+.arCohN{display:none;font-size:10px;color:#64748b}
+.arCoh td.cc,.arCoh th{text-align:center}
+.arCoh td.cc{padding:3px}
+.arCoh tfoot td{border-top:2px solid #15303F}
+.arHc{border-radius:6px;padding:4px 6px;display:flex;align-items:baseline;justify-content:center;gap:6px;min-width:78px}
+.arHc b{font-size:11.5px;font-weight:600}.arHc small{font-size:10px;font-weight:400;opacity:.85;padding-left:6px;border-left:1px solid currentColor}
+.arHc.l4{background:#12A86B;color:#fff}.arHc.l3{background:#5CC79B;color:#073d29}.arHc.l2{background:#A6E0C4;color:#073d29}.arHc.l1{background:#D9F2E6;color:#073d29}
+.arHc.run{outline:1.5px dashed #0F4C3A;outline-offset:-2px}
+.arLgd{display:flex;align-items:center;gap:4px;font-size:10px;color:#64748b}
+.arLgd i{width:14px;height:10px;border-radius:3px;display:inline-block}
+.arLgd i.l1{background:#D9F2E6}.arLgd i.l2{background:#A6E0C4}.arLgd i.l3{background:#5CC79B}.arLgd i.l4{background:#12A86B}.arLgd i.r{background:#fff;outline:1.5px dashed #0F4C3A;margin-left:8px}
+@media(max-width:760px){
+ .arP{padding:12px}
+ .arCoh td.kd2,.arCoh th.kd{position:sticky;left:0;z-index:2;background:#fff;min-width:78px}
+ .arCoh th.kd{background:#E6EBF1}
+ .arCohN{display:block}.arCohB{display:none}
+ .arHc{min-width:70px;padding:4px}
+}
+/* 2026-11-24: menang atas aturan tabel global (ukuran huruf terlalu besar) */
+html body #app#app#app table.arTb td{font-size:11.5px!important;font-weight:400!important;padding:5px 8px!important;line-height:1.25!important}
+html body #app#app#app table.arTb td.dn,html body #app#app#app table.arTb td.kd{font-weight:600!important}
+html body #app#app#app table.arTb td.kd{font-weight:500!important}
+html body #app#app#app table.arTb td .arBt{font-size:10px!important;font-weight:600!important;padding:2px 6px!important;line-height:1.3!important}
+html body #app#app#app table.arTb td .arJm{font-size:11.5px!important;font-weight:600!important}
+html body #app#app#app table.arTb th{font-size:10px!important;padding:6px 8px!important}
+html body #app#app#app table.arTb td .arHc b{font-size:11.5px!important;font-weight:600!important}
+html body #app#app#app table.arTb td .arHc small{font-size:10px!important}
+/* header tabel sesuai mockup: abu muda #E6EBF1, teks gelap (menang atas table_head.css teal) */
+html body #app#app#app #view table.arTb thead th{background:#E6EBF1!important;color:#0f172a!important;border:1px solid #d3dbe4!important;border-bottom:2px solid #15303F!important;font-size:10px!important;font-weight:600!important;letter-spacing:.3px!important;text-shadow:none!important}
+html body #app#app#app #view table.arTb thead th *{color:#0f172a!important}
+html body #app#app#app #view table.arTb tfoot td{background:#fff!important}
+/* font lebih kecil + kolom tidak melebar */
+html body #app#app#app table.arTb td{font-size:11px!important;padding:4px 7px!important}
+html body #app#app#app table.arTb td .arJm{font-size:11px!important}
+html body #app#app#app table.arTb td .arBt{font-size:9.5px!important;padding:1px 5px!important}
+html body #app#app#app #view table.arTb thead th{font-size:9.5px!important;padding:5px 7px!important}
+table.arTb td.dn{max-width:230px;overflow:hidden;text-overflow:ellipsis}
+table.arTb td.rg{max-width:150px;overflow:hidden;text-overflow:ellipsis}
+table.arTb td.sl{max-width:150px;overflow:hidden;text-overflow:ellipsis}
+.arTb:not(.arCoh){width:auto;min-width:100%}
+/* cohort: tidak full width, biar rapi */
+.arCoh{width:auto!important;min-width:0}
+.arCoh th.kd{min-width:150px}.arCoh .arCohB{min-width:110px}
+.arCoh td.cc,.arCoh th:not(.kd):not(.arCohB){min-width:118px}
+/* Order Lagi + Per Bulan satu baris di desktop lebar */
+.arRow2{display:block}
+@media(min-width:1300px){
+ .arRow2{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:14px;align-items:start}
+ .arRow2>.panel{margin:0}
+ .arRow2 .v6cmp2{grid-template-columns:1fr;gap:12px}
+ .arRow2 .v6cmpBox .v6fr{grid-template-columns:120px 1fr 90px}
+}
+/* kiri dipadatkan supaya tingginya sama dengan Per Bulan */
+@media(min-width:1300px){
+ .arRow2 .v6cmp2{gap:8px}
+ .arRow2 .v6cmpBox{padding:8px 12px;border-radius:10px}
+ .arRow2 .v6cmpBox .v6funHead{font-size:12px;margin-bottom:0}
+ .arRow2 .v6cmpBox .v6funSub{font-size:10px;margin-bottom:5px}
+ .arRow2 .v6cmpBox .v6funnel{gap:1px}
+ .arRow2 .v6cmpBox .v6fr{min-height:20px;grid-template-columns:105px 1fr 84px;gap:8px}
+ .arRow2 .v6cmpBox .v6fr>b{font-size:11px}
+ .arRow2 .v6cmpBox .v6fb{height:12px;border-radius:4px}.arRow2 .v6cmpBox .v6fb i{border-radius:4px}
+ .arRow2 .v6cmpBox .v6fv b{font-size:11.5px}.arRow2 .v6cmpBox .v6fv small{font-size:10px}
+ .arRow2 .v6cmpBox .v6frBtn{padding:1px 4px;margin:0 -4px}
+ .arRow2 .v6funTag{font-size:10px;padding:1px 7px}
+}
+/* dua kartu sejajar ke samping */
+@media(min-width:1300px){
+ .arRow2 .v6cmp2{grid-template-columns:1fr 1fr;gap:10px}
+ .arRow2 .v6cmpBox .v6fr{grid-template-columns:82px 1fr 70px;gap:6px}
+ .arRow2 .v6cmpBox .v6fr>b{font-size:10.5px}
+ .arRow2 .v6cmpBox .v6fv small{margin-left:3px}
+}
+/* tinggi kiri = kanan */
+@media(min-width:1300px){
+ .arRow2{align-items:stretch}
+ .arRow2>.panel{display:flex;flex-direction:column}
+ .arRow2>.panel>.arBody{flex:1;display:flex;flex-direction:column}
+ .arRow2 .arBody>.v6cmp2{flex:1}
+ .arRow2 .v6cmpBox{display:flex;flex-direction:column}
+ .arRow2 .v6cmpBox .v6funnel{flex:1;justify-content:space-around;gap:0}
+}
+@media(min-width:1300px){
+ .arRow2 .v6cmpBox .v6fb{height:18px;border-radius:6px}.arRow2 .v6cmpBox .v6fb i{border-radius:6px}
+}
+/* klik baris Order Lagi = saring tabel bawah */
+.arChip{display:flex;align-items:center;gap:8px;background:#E9F8F1;border:1px solid #BFE8D5;border-radius:8px;padding:6px 10px;margin-bottom:10px;font-size:11.5px;color:#0B6A46}
+.arChip b{font-weight:600}.arChip button{margin-left:auto;border:1px solid #0F4C3A;background:#fff;color:#0F4C3A;border-radius:6px;font-size:10px;font-weight:600;padding:3px 9px;cursor:pointer}
+.arRow2 .v6frBtn.on,.v6frBtn.on{background:#fff;box-shadow:0 0 0 1.5px #0F4C3A}
+/* ===== bottom sheet (Reaktivasi HP + Dealer Baru HP) ===== */
+.arBk{position:fixed;inset:0;z-index:9000;background:rgba(15,23,42,.38);opacity:0;pointer-events:none;transition:opacity .2s;display:flex;align-items:flex-end;justify-content:center}
+.arBk.on{opacity:1;pointer-events:auto}
+.arSheet{width:100%;max-width:520px;max-height:86vh;overflow-y:auto;background:#fff;border-radius:18px 18px 0 0;padding:8px 16px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -8px 24px rgba(15,23,42,.2);transform:translateY(100%);transition:transform .25s;font-family:Inter,"Segoe UI",system-ui,sans-serif;font-size:11.5px;color:#0f172a}
+.arBk.on .arSheet{transform:translateY(0)}
+.arGr{width:38px;height:4px;border-radius:2px;background:#cbd5e1;margin:0 auto 10px}
+.arHd{display:flex;gap:10px;align-items:center;margin-bottom:12px}
+.arAv{width:42px;height:42px;border-radius:12px;color:#fff;font-weight:600;font-size:14px;display:flex;align-items:center;justify-content:center;flex:none}
+.arHx b{display:block;font-size:14px;font-weight:600;line-height:1.2}
+.arHx span{display:flex;gap:6px;align-items:center;margin-top:4px;flex-wrap:wrap}.arHx i{font-style:normal}
+.arPl{font-size:9px;font-weight:600;border-radius:999px;padding:2px 8px;letter-spacing:.2px}
+.arTl{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:6px;margin-bottom:10px}
+.arTl>div{background:#E8F7EF;border:1px solid #CFEBDC;border-radius:10px;padding:7px 9px}
+.arTl small{display:block;font-size:8.5px;font-weight:700;color:#0F4C3A;letter-spacing:.3px}
+.arTl b{font-size:19px;font-weight:500}.arTl b.dt{font-size:14px;font-weight:600}.arTl i{font-style:normal;font-size:9.5px;color:#64748b;margin-left:3px}
+.arLc{display:flex;flex-direction:column;gap:5px;background:#f8fafc;border-radius:10px;padding:8px 10px;margin-bottom:6px;font-size:11px}
+.arLc small{display:inline-block;width:78px;font-size:9px;font-weight:500;color:#94a3b8;letter-spacing:.3px}
+.arDh{font-size:9px;font-weight:600;color:#64748b;letter-spacing:.3px;margin:8px 0 4px}
+.arBr2{display:grid;grid-template-columns:76px 1fr 38px;gap:8px;align-items:center;padding:3px 0}
+.arBb{height:10px;background:#EEF2F7;border-radius:5px;overflow:hidden}.arBb i{display:block;height:100%;border-radius:5px}.arBr2 b{text-align:right;font-weight:600;font-size:11.5px}
+.arCh6{display:flex;align-items:flex-end;gap:6px;height:70px;padding:0 2px}
+.arCh6>div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:2px}
+.arCh6 i{width:100%;border-radius:4px 4px 0 0;min-height:3px}.arCh6 i.z{background:#e2e8f0}.arCh6 b{font-size:9.5px;font-weight:500}.arCh6 span{font-size:9px;color:#94a3b8}
+.arAc{display:flex;gap:6px;margin-top:12px}
+.arAc .v6wa{flex:none;padding:9px 16px;font-size:11px}
+.arOp{flex:1;border:0;font-family:inherit;font-size:10.5px;font-weight:600;color:#fff;background:#0F4C3A;border-radius:8px;padding:9px;cursor:pointer}
+/* Dealer Baru HP: pilih bulan + kategori */
+.arSeg{display:flex;gap:4px;margin-bottom:8px}
+.arSeg button{flex:1;border:0;font-family:inherit;font-size:9.5px;font-weight:500;color:#475569;background:#f1f5f9;border-radius:8px;padding:7px 3px;cursor:pointer}
+.arSeg button.on{background:#0F4C3A;color:#fff;font-weight:600}
+.arCe{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:8px}
+.arCe button{border:1px solid color-mix(in srgb,var(--s) 30%,#fff);border-radius:10px;background:linear-gradient(180deg,color-mix(in srgb,var(--s) 17%,#fff),color-mix(in srgb,var(--s) 5%,#fff));color:var(--s);padding:6px 2px;font-family:inherit;font-size:9.5px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer}
+.arCe button em{font-style:normal;font-size:17px;font-weight:500}.arCe button small{font-size:9.5px;font-weight:400;opacity:.85}
+.arCe button.on{background:linear-gradient(160deg,color-mix(in srgb,var(--s) 88%,#fff),color-mix(in srgb,var(--s) 100%,#000 20%));border-color:transparent;color:#fff;box-shadow:0 4px 10px color-mix(in srgb,var(--s) 35%,transparent)}
+.arShd{font-size:10.5px;color:#64748b;margin-bottom:6px}.arShd b{font-weight:600;color:#0f172a}
+.arBrsH{flex-wrap:nowrap;overflow-x:auto;margin-bottom:8px;-webkit-overflow-scrolling:touch}.arBrsH button{flex:none}
+.arNc .arRs{margin-left:0}.arNc .arC3{margin-left:0;align-items:center}.arNc .arTg{display:flex;gap:4px;flex-wrap:wrap}
+.arNc .arR small{font-size:9px}
+/* baris aktif Order Lagi atau Nggak: gabungan B + E (latar warna kategori tipis + kartu bergaris bawah) */
+html body #app#app .v6frBtn.on,html body #app#app .arRow2 .v6frBtn.on{background:color-mix(in srgb,var(--c,#0F4C3A) 11%,#fff)!important;box-shadow:0 1px 6px rgba(15,23,42,.12)!important;border-bottom:3px solid var(--c,#0F4C3A)!important;border-radius:8px 8px 4px 4px}
+.v6frBtn.on>b{color:var(--c,#0F4C3A)}
+.v6frBtn.on .v6fb{background:color-mix(in srgb,var(--c,#0F4C3A) 18%,#fff)}
+.v6cmpBox:has(.v6frBtn.on) .v6frBtn:not(.on){opacity:.58}
+.v6cmpBox:has(.v6frBtn.on) .v6frBtn:not(.on):hover{opacity:1}
+/* judul kartu dan label kategori Order Lagi atau Nggak: kapital semua */
+.v6cmpBox .v6funHead>span:first-child,.v6cmpBox .v6fr>b,.arCe button,.arSeg button{text-transform:uppercase}
+/* freeze bar distribusi + judul kolom (desktop), bar % + kartu status (HP) */
+:root{--arTop:62px}
+.arDist{position:sticky;top:var(--arTop);z-index:6;background:#fff;padding:6px 0;margin:0 0 4px;height:46px}
+.arCh{position:sticky;top:calc(var(--arTop) + 46px);z-index:5;background:color-mix(in srgb,var(--s) 6%,#fff);margin:0 -8px;padding:6px 10px}
+.arTabsE{position:sticky;top:var(--arTop);z-index:6;background:#fff;padding:6px 0 4px;margin:0 0 6px;border-bottom:1px solid transparent;transition:border-color .15s}
+.arTabsE.stuck{border-bottom-color:#e5e9ef;box-shadow:0 4px 8px -6px rgba(15,23,42,.25)}
+.arTabsE.stuck .arBarE{height:12px;margin-bottom:5px}
+.arTabsE.stuck .arCardsE button{padding:3px 2px 3px;flex-direction:row;gap:5px;justify-content:center;flex-wrap:wrap}
+.arTabsE.stuck .arCardsE button small{display:none}
+.arTabsE.stuck .arCardsE button em{font-size:13px}
+/* panel bawaan DSM memakai overflow:hidden (membuat sticky mati); panel Analisa dibuat visible supaya freeze jalan */
+html body #app#app#app .panel.arP{overflow:visible!important}
+/* judul kolom Reaktivasi: pita warna status tipis, nama status bold (opsi F, mockup dsm-analisa-reaktivasi-header-kolom-opsi.html) */
+.arCh{background:color-mix(in srgb,var(--s) 12%,#fff);border-radius:8px;margin:0;padding:7px 10px}
+.arCh1 b{font-weight:800;letter-spacing:.3px}
+/* 2026-11-24: saat menempel TIDAK mengecil, isi judul kolom (nama, jumlah, keterangan, potensi) tetap lengkap */

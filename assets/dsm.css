@@ -3617,3 +3617,12 @@ html body #app#app#app details.v7hpc.v7hpc table thead th,html body #app#app#app
 html body #app#app#app details.v7hpc.v7hpc table thead th *{color:#15303F!important}
 html body #app#app#app details.v7hpc.v7hpc table tbody tr.tot>td,html body #app#app#app details.v7hpc.v7hpc table tbody tr.tot>td:first-child{background:#DCE6F2!important;color:#15303F!important;font-weight:800;border-top:2px solid #1E3A5F!important}
 html body #app#app#app details.v7hpc.v7hpc table tbody tr:not(.tot):not(.dif)>td:first-child{box-shadow:inset 4px 0 #6D3FD8!important;padding-left:14px!important}
+
+/* 2026-11-24 Dealer Baru funnel rapi (opsi A, dsm-analisa-noo-funnel-rapi.html) */
+.v6cmpBox .v6funHead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:2px}
+.v6funTag{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;background:#E9F8F1;color:#0B7A50;white-space:nowrap}.v6funTag.run{background:#FFF1D6;color:#A86400}
+.v6funSub{font-size:11.5px;color:#6B7A8F;margin-bottom:10px}
+.v6cmpBox .v6funnel{gap:4px}.v6cmpBox .v6fr{grid-template-columns:110px 1fr 92px;min-height:30px}.v6cmpBox .v6fr>b{white-space:nowrap}
+.v6cmpBox .v6fb{height:20px;border-radius:6px}.v6cmpBox .v6fb i{border-radius:6px;min-width:4px}
+.v6fv{text-align:right;white-space:nowrap}.v6fv b{font-size:13px}.v6fv small{color:#6B7A8F;margin-left:4px;font-size:11.5px}
+@media(max-width:760px){.v6cmpBox .v6fr{grid-template-columns:96px 1fr 84px}}

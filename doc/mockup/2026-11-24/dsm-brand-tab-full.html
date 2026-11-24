@@ -1,0 +1,53 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Brand · Tab full</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;background:#F3F5F8;color:#0f172a;font-size:13px}
+.top{position:sticky;top:0;z-index:5;background:#F3F5F8;padding:8px 0 0}
+.mode{display:flex;gap:6px;padding:10px 16px;background:#fff;border-bottom:1px solid #e5e7eb}.mode button{border:1px solid #cbd5e1;background:#fff;border-radius:6px;padding:6px 14px;font-weight:600;cursor:pointer}.mode button.on{background:#0B5CAD;color:#fff;border-color:#0B5CAD}
+.frame{margin:14px auto;max-width:1180px;padding:0 16px}.frame.mob{max-width:390px;border:1px solid #cbd5e1;border-radius:18px;padding:8px;background:#F3F5F8}
+.kpi{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:8px}.mob .kpi{grid-template-columns:repeat(2,1fr)}.kpi div{background:#fff;border-radius:8px;padding:8px 10px;border:1px solid #e5e7eb}.kpi b{font-size:17px;display:block;font-weight:600}.kpi span{font-size:10px;color:#64748b;text-transform:uppercase}
+.tabs{position:sticky;top:0;z-index:4;background:#fff;border:1px solid #e5e7eb;border-radius:8px 8px 0 0;display:flex;gap:2px;padding:0 8px;overflow:auto}.tabs span{padding:11px 14px;font-size:11.5px;font-weight:600;color:#64748b;text-transform:uppercase;white-space:nowrap;border-bottom:3px solid transparent;cursor:pointer}.tabs span.on{color:#0B5CAD;border-color:#0B5CAD}
+.body{background:#fff;border:1px solid #e5e7eb;border-top:0;border-radius:0 0 8px 8px;padding:12px}
+.pn{border:1px solid #e5e7eb;border-radius:8px;padding:10px 12px;margin-bottom:10px}.pn h4{margin:0 0 8px;font-size:11.5px;text-transform:uppercase;color:#334155;letter-spacing:.2px}.pn h4 small{font-weight:400;color:#64748b;text-transform:none;margin-left:6px}
+table{width:100%;border-collapse:collapse;font-size:11.5px}th{background:#E6EBF1;text-align:left;padding:6px 8px;font-size:10px;text-transform:uppercase;font-weight:600;border:1px solid #d5dce5}td{padding:5px 8px;border:1px solid #e5e7eb;font-variant-numeric:tabular-nums}td.r,th.r{text-align:right}.up{color:#0E7C6B;font-weight:600}.dn{color:#D2453F;font-weight:600}tr.tot td{background:#E6EBF1;font-weight:600}
+.ins{background:#EEF4FB;border-left:4px solid #0B5CAD;padding:8px 10px;border-radius:4px;font-size:12px;margin-bottom:10px}
+.sel{display:flex;gap:8px;align-items:center;margin-bottom:10px;font-size:11px;text-transform:uppercase;color:#64748b;font-weight:600}.sel b{border:1px solid #cbd5e1;border-radius:6px;padding:6px 12px;background:#fff;color:#0f172a;text-transform:none;font-weight:500;font-size:12px}
+.hero{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}.mob .hero{grid-template-columns:repeat(2,1fr)}.hero div{border-left:4px solid #0B5CAD;background:#F8FAFC;padding:8px 10px;border-radius:4px}.hero b{display:block;font-size:17px;font-weight:600}.hero span{font-size:10px;color:#64748b;text-transform:uppercase}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mob .two{grid-template-columns:1fr}
+.bars{display:flex;align-items:flex-end;gap:8px;height:110px;padding-top:6px}.bars i{flex:1;background:#0B5CAD;border-radius:3px 3px 0 0;position:relative}.bars i:nth-child(odd){background:#C9D5E3}.lab{display:flex;gap:8px;font-size:10px;color:#64748b;margin-top:3px}.lab span{flex:1;text-align:center}
+.note{font-size:11px;color:#64748b;margin:4px 0 12px}.pane{display:none}.pane.on{display:block}.scroll{overflow:auto}
+.mini{margin:12px 0 0;padding:8px 12px;background:#FFF7E6;border-left:4px solid #F0A400;font-size:11.5px;border-radius:4px}
+</style></head><body>
+<div class="mode"><button class="on" data-m="d">Desktop</button><button data-m="m">HP</button><span style="margin-left:auto;font-size:11.5px;color:#64748b;align-self:center">Mockup · data contoh · belum dipasang ke app</span></div>
+<div class="frame" id="f">
+<div class="kpi"><div><span>Sellthru</span><b>12.840</b></div><div><span>Dealer aktif</span><b>1.204</b></div><div><span>NOO</span><b>96</b></div><div><span>Sell out</span><b>11.902</b></div><div><span>Omzet aksesori</span><b>Rp 1,2 M</b></div></div>
+<div class="tabs" id="tabs"></div>
+<div class="body">
+<div class="pane on" data-t="0"><div class="pn"><h4>Summary pencapaian per brand</h4><div class="scroll"><table><tr><th>Brand</th><th class="r">ST target</th><th class="r">ST aktual</th><th class="r">%Achv</th><th class="r">Growth</th><th class="r">DA target</th><th class="r">DA aktual</th><th class="r">%Achv</th><th class="r">NOO</th></tr>
+<tr><td>BRAND A</td><td class="r">5.000</td><td class="r">4.820</td><td class="r">96%</td><td class="r up">+8%</td><td class="r">500</td><td class="r">470</td><td class="r">94%</td><td class="r">41</td></tr>
+<tr><td>BRAND B</td><td class="r">4.000</td><td class="r">3.610</td><td class="r">90%</td><td class="r dn">-3%</td><td class="r">400</td><td class="r">372</td><td class="r">93%</td><td class="r">30</td></tr>
+<tr><td>BRAND C</td><td class="r">3.500</td><td class="r">3.040</td><td class="r">87%</td><td class="r up">+2%</td><td class="r">350</td><td class="r">362</td><td class="r">103%</td><td class="r">25</td></tr>
+<tr class="tot"><td>TOTAL</td><td class="r">12.500</td><td class="r">11.470</td><td class="r">92%</td><td class="r">+3%</td><td class="r">1.250</td><td class="r">1.204</td><td class="r">96%</td><td class="r">96</td></tr></table></div></div></div>
+
+<div class="pane" data-t="1"><div class="ins">MTD lebih tinggi dari LMTD +3%. Brand A paling mendorong naik, Brand B paling menahan.</div>
+<div class="pn"><h4>Growth MTD vs LMTD <small>per brand</small></h4><div class="scroll"><table><tr><th>Brand</th><th class="r">MTD</th><th class="r">LMTD</th><th class="r">Selisih</th><th class="r">Growth</th></tr><tr><td>BRAND A</td><td class="r">4.820</td><td class="r">4.460</td><td class="r up">+360</td><td class="r up">+8%</td></tr><tr><td>BRAND B</td><td class="r">3.610</td><td class="r">3.720</td><td class="r dn">-110</td><td class="r dn">-3%</td></tr><tr><td>BRAND C</td><td class="r">3.040</td><td class="r">2.980</td><td class="r up">+60</td><td class="r up">+2%</td></tr></table></div></div>
+<p class="note">Grafik per Type dan Top 3 / Bottom 3 tetap disembunyikan.</p></div>
+
+<div class="pane" data-t="2"><div class="sel">Brand detail <b>BRAND A ▾</b></div>
+<div class="hero"><div><span>Sellthru</span><b>4.820</b></div><div><span>Dealer aktif</span><b>470</b></div><div><span>NOO</span><b>41</b></div><div><span>Growth</span><b class="up">+8%</b></div></div>
+<div class="two"><div class="pn"><h4>Tren SELL THRU · BRAND A <small>histori bulanan</small></h4><div class="bars"><i style="height:55%"></i><i style="height:62%"></i><i style="height:58%"></i><i style="height:74%"></i><i style="height:70%"></i><i style="height:90%"></i></div><div class="lab"><span>Apr</span><span>Mei</span><span>Jun</span><span>Jul</span><span>Agu</span><span>Sep</span></div></div>
+<div class="pn"><h4>Kumulatif <small>MTD vs LMTD</small></h4><div class="bars"><i style="height:30%"></i><i style="height:36%"></i><i style="height:50%"></i><i style="height:58%"></i><i style="height:72%"></i><i style="height:84%"></i></div><div class="lab"><span>M1</span><span>M2</span><span>M3</span><span>M4</span><span>M5</span><span>M6</span></div></div></div></div>
+
+<div class="pane" data-t="3"><div class="pn"><h4>Mingguan · BRAND A</h4><div class="scroll"><table><tr><th>Minggu</th><th class="r">Sellthru</th><th class="r">LMTD</th><th class="r">Growth</th></tr><tr><td>W1</td><td class="r">1.050</td><td class="r">980</td><td class="r up">+7%</td></tr><tr><td>W2</td><td class="r">1.210</td><td class="r">1.100</td><td class="r up">+10%</td></tr><tr><td>W3</td><td class="r">1.320</td><td class="r">1.240</td><td class="r up">+6%</td></tr><tr><td>W4</td><td class="r">1.240</td><td class="r">1.140</td><td class="r up">+9%</td></tr></table></div></div></div>
+
+<div class="pane" data-t="4"><div class="pn"><h4>Dealer · BRAND A <small>470 dealer</small></h4><div class="scroll"><table><tr><th>Kode</th><th>Nama dealer</th><th>Region</th><th>Sales</th><th class="r">Sellthru</th><th class="r">Growth</th></tr><tr><td>D0012</td><td>Dealer Contoh 1</td><td>Region 1</td><td>Sales 1</td><td class="r">120</td><td class="r up">+12%</td></tr><tr><td>D0045</td><td>Dealer Contoh 2</td><td>Region 2</td><td>Sales 2</td><td class="r">96</td><td class="r dn">-4%</td></tr><tr><td>D0078</td><td>Dealer Contoh 3</td><td>Region 1</td><td>Sales 3</td><td class="r">88</td><td class="r up">+3%</td></tr></table></div></div><div class="mini">Tab ini tidak muncul untuk role Top (sama seperti sekarang).</div></div>
+
+<div class="pane" data-t="5"><div class="pn"><h4>Tim per brand</h4><div class="scroll"><table><tr><th>Sales</th><th class="r">Sellthru</th><th class="r">%Achv</th></tr><tr><td>Sales 1</td><td class="r">520</td><td class="r">98%</td></tr><tr><td>Sales 2</td><td class="r">410</td><td class="r">91%</td></tr></table></div></div>
+<div class="pn"><h4>Indikator per brand</h4><div class="scroll"><table><tr><th>Region</th><th class="r">ST</th><th class="r">DA</th><th class="r">NOO</th></tr><tr><td>Region 1</td><td class="r">1.900</td><td class="r">210</td><td class="r">18</td></tr><tr><td>Region 2</td><td class="r">1.480</td><td class="r">190</td><td class="r">14</td></tr></table></div></div>
+<div class="pn"><h4>Brand · Ambang status dealer</h4><div class="scroll"><table><tr><th>Brand</th><th class="r">Aktif</th><th class="r">Pasif</th><th class="r">Tidak aktif</th></tr><tr><td>BRAND A</td><td class="r">1 bln</td><td class="r">2 bln</td><td class="r">3 bln</td></tr></table></div></div></div>
+</div></div>
+<script>
+const T=['RINGKASAN','GROWTH','DETAIL BRAND','MINGGUAN','DEALER','TIM & INDIKATOR'];
+const tb=document.getElementById('tabs');tb.innerHTML=T.map((t,i)=>`<span class="${i?'':'on'}" data-i="${i}">${t}</span>`).join('');
+tb.onclick=e=>{const s=e.target.closest('span');if(!s)return;tb.querySelectorAll('span').forEach(x=>x.classList.toggle('on',x===s));document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.dataset.t===s.dataset.i))};
+document.querySelectorAll('.mode button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.mode button').forEach(x=>x.classList.toggle('on',x===b));document.getElementById('f').classList.toggle('mob',b.dataset.m==='m')});
+</script></body></html>

@@ -1,0 +1,63 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Brand · GROWTH · sort per kolom</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;background:#EDF0F5;color:#0f172a;font-size:12px}
+.mode{position:sticky;top:0;z-index:60;display:flex;gap:6px;padding:8px 14px;background:#fff;border-bottom:1px solid #e5e7eb;align-items:center;flex-wrap:wrap}.mode button{border:1px solid #cbd5e1;background:#fff;border-radius:6px;padding:5px 11px;font-weight:600;cursor:pointer;font-family:inherit;font-size:11.5px}.mode button.on{background:#0B5CAD;color:#fff;border-color:#0B5CAD}.mode small{margin-left:auto;color:#334155}
+.frame{margin:12px auto;max-width:1400px;padding:0 14px}.frame.mob{max-width:390px;border:1px solid #b8c2cf;border-radius:22px;padding:10px;background:#F3F5F8}
+.cap{font-size:10.5px;font-weight:700;color:#B4501F;margin:12px 0 6px}
+.fa{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:8px 10px;display:flex;gap:6px;flex-wrap:wrap;align-items:flex-end;margin-bottom:10px}
+.fa label{display:flex;flex-direction:column;gap:3px;font-size:9.5px;font-weight:700;color:#0B3F78}.fa select{height:30px;border:1px solid #cbd5e1;border-radius:6px;padding:0 6px;font:500 11px inherit;min-width:100px;background:#fff}
+.fa .x{opacity:.35;text-decoration:line-through}
+.seg{display:inline-flex;background:#F1F5F9;border-radius:7px;padding:2px;height:30px}.seg span{padding:0 9px;display:grid;place-items:center;font-size:10.5px;font-weight:700;color:#475569;border-radius:5px}.seg span.on{background:#fff;color:#0B5CAD;box-shadow:0 1px 2px rgba(15,23,42,.12)}.sep{width:1px;align-self:stretch;background:#e5e7eb}
+.ck{display:flex;align-items:center;gap:5px;font-size:11px;height:30px}
+.tip{background:#EEF4FB;border:1px solid #D6E3F3;border-radius:8px;padding:7px 12px;margin-bottom:8px;font-size:11.5px}.tip b{color:#0B3F78}
+.tw{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:auto}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:11.5px}th,td{white-space:nowrap}
+td{padding:4px 8px;border-bottom:1px solid #EEF2F6;text-align:right;font-variant-numeric:tabular-nums}td.l{text-align:left}
+th{font-size:10px;font-weight:700;padding:6px 8px;text-align:right}
+thead tr:first-child th{background:color-mix(in srgb,var(--c) 14%,#fff);color:color-mix(in srgb,var(--c) 85%,#000);border-top:4px solid var(--c);text-align:center}
+thead tr:nth-child(2) th{background:color-mix(in srgb,var(--c) 6%,#fff);color:color-mix(in srgb,var(--c) 80%,#000);border-bottom:2px solid var(--c);cursor:pointer;user-select:none}
+thead tr:nth-child(2) th:hover{background:color-mix(in srgb,var(--c) 16%,#fff)}
+th.id{background:#E6EBF1!important;color:#0f172a!important;border-top:4px solid #94A3B8!important;border-bottom:2px solid #15303F!important;text-align:left;cursor:pointer}
+th .ar{display:inline-block;width:10px;margin-left:3px;color:#94A3B8;font-size:9px}
+th.on{outline:2px solid var(--c);outline-offset:-2px}th.on .ar{color:inherit}
+td.on{background:color-mix(in srgb,var(--c) 7%,#fff)!important;font-weight:700}
+.gs{border-left:1px solid #E2E8F0}td.tot{background:#FFF8E8}
+tr.grp td{background:#F4F7FB;font-weight:700}tr.grp td.tot{background:#FBF1D8}tr.sub td.l:first-child{padding-left:22px}
+tr.tt td{background:#E6EBF1;font-weight:700;border-top:2px solid #15303F}
+.g{display:inline-block;min-width:54px;text-align:center;border-radius:5px;padding:1px 6px;font-weight:700;font-size:10.5px}.g.up{background:#E3F4EE;color:#0E7C6B}.g.dn{background:#FBE7E5;color:#C0322C}.g.bn{background:#EEF2FF;color:#4F46E5}.g.hl{background:#FFF1DB;color:#B45309}.mu{color:#94A3B8}
+.mob td{padding:4px 6px}.jump{display:flex;gap:5px;overflow:auto;margin-bottom:6px}.jump span{flex:none;border:1px solid var(--c);color:var(--c);background:color-mix(in srgb,var(--c) 8%,#fff);border-radius:6px;padding:4px 9px;font-size:10.5px;font-weight:700}.jump span.on{background:var(--c);color:#fff}
+</style></head><body>
+<div class="mode"><button data-m="d" class="on">Desktop</button><button data-m="m">HP</button><small>Klik judul kolom (baris kedua) atau SALES · data contoh</small></div>
+<div class="frame" id="f"></div>
+<script>
+const T=[['A100C 3GB 64GB','#1E5FB8'],['A100C 4GB 64GB','#0E7C6B'],['A100C 3GB 32GB','#6D3FD8'],['P80 4GB 128GB','#C25A12']],TC='#9A6400';
+const G=[['ASM BUDI',[['EKO PRASETYO','BIG SEMARANG',[[348,174],[14,20],[36,42],[18,3]]],['TOYO','BIG SOLO',[[187,25],[3,0],[22,10],[1,0]]],['RINI','BIG JOGJA',[[90,120],[30,28],[5,9],[0,4]]]]],
+['ASM DEDI',[['SUSILA SODIKIN','BIG CIREBON',[[209,121],[15,0],[80,38],[2,58]]],['AZWAR','JAMBI',[[121,76],[0,0],[18,0],[3,1]]]]],
+['ASM RUDI',[['EKI HERDIYAN','RIAU',[[607,614],[35,0],[106,57],[28,21]]],['JOHAN ARIF','LAMPUNG',[[287,237],[0,9],[30,0],[1,0]]],['NIKO','BEKASI',[[2,16],[108,16],[11,3],[18,0]]]]]];
+const f=x=>x.toLocaleString('id-ID'),n=x=>x.toLocaleString('id-ID',{maximumFractionDigits:1});
+let mob=false,sc=null,sd=-1,jt=0; // sc: {t:index|'T'|'N', k:0 MTD/1 LMTD/2 GROWTH}
+const sum=rs=>T.map((_,i)=>rs.reduce((a,r)=>[a[0]+r[2][i][0],a[1]+r[2][i][1]],[0,0]));
+const tot=v=>v.reduce((a,x)=>[a[0]+x[0],a[1]+x[1]],[0,0]);
+const gch=(a,b)=>!a&&!b?'<span class="g mu">—</span>':!b?'<span class="g bn">BARU</span>':!a?'<span class="g hl">HILANG</span>':`<span class="g ${a>=b?'up':'dn'}">${a>=b?'▲ +':'▼ '}${n((a-b)/b*100)}%</span>`;
+const key=(v)=>{if(!sc)return v.tot[0]-v.tot[1];if(sc.t==='N')return 0;const x=sc.t==='T'?v.tot:v.c[sc.t];return sc.k===0?x[0]:sc.k===1?x[1]:(x[1]?(x[0]-x[1])/x[1]*100:(x[0]?1e9:-1e9));};
+const cmp=(a,b,na,nb)=>{if(sc&&sc.t==='N')return sd*-1*na.localeCompare(nb);const x=key(a),y=key(b);return sc?(sd<0?y-x:x-y):x-y;};
+const cel=v=>v?f(v):'<span class="mu">-</span>';
+const arr=(t,k)=>sc&&sc.t===t&&sc.k===k?(sd<0?'▼':'▲'):'↕';
+const on=(t,k)=>sc&&sc.t===t&&sc.k===k?' on':'';
+function rowCells(c,tt,cols){return cols.map(i=>{const v=c[i];return `<td class="gs${on(i,0)}" style="--c:${T[i][1]}">${cel(v[0])}</td><td class="${on(i,1).trim()}" style="--c:${T[i][1]}">${cel(v[1])}</td><td class="${on(i,2).trim()}" style="--c:${T[i][1]}">${gch(v[0],v[1])}</td>`}).join('')+(mob?'':`<td class="gs tot${on('T',0)}" style="--c:${TC}"><b>${f(tt[0])}</b></td><td class="tot${on('T',1)}" style="--c:${TC}">${f(tt[1])}</td><td class="tot${on('T',2)}" style="--c:${TC}">${gch(tt[0],tt[1])}</td>`);}
+function draw(){const F=document.getElementById('f');F.className='frame'+(mob?' mob':'');const cols=mob?[jt]:T.map((_,i)=>i);
+ const gs=G.map(([g,rs])=>{const c=sum(rs);return {g,rs:rs.map(r=>({r,c:r[2],tot:tot(r[2])})),c,tot:tot(c)};});
+ gs.sort((a,b)=>cmp(a,b,a.g,b.g));gs.forEach(x=>x.rs.sort((a,b)=>cmp(a,b,a.r[0],b.r[0])));
+ const allC=sum(G.flatMap(x=>x[1])),AT=tot(allC);
+ const lbl=sc?(sc.t==='N'?'Nama '+(sd<0?'Z–A':'A–Z'):`${sc.t==='T'?'TOTAL ITEL':T[sc.t][0]} · ${['MINGGU INI','MINGGU LALU','GROWTH'][sc.k]} ${sd<0?'terbesar dulu':'terkecil dulu'}`):'Bawaan: penurunan terbesar (TOTAL)';
+ let h=`<div class="fa"><label>BRAND<select><option>ITEL</option></select></label><span class="sep"></span><label>PEMBANDING<select><option>Minggu ini vs minggu lalu</option></select></label><label>INDIKATOR<select><option>SELL THRU</option></select></label><span class="sep"></span><label>REGION<select><option>Semua</option></select></label><label>SUB REGION<select><option>Semua</option></select></label><label>ASM<select><option>Semua</option></select></label><span class="sep"></span><span class="seg"><span class="on">PER VARIAN</span><span>PER MODEL</span></span><span class="seg"><span class="on">GROWTH %</span><span>SELISIH</span></span><label class="x">URUTKAN<select disabled><option>dihapus</option></select></label><span class="ck"><input type="checkbox">tampilkan 0 vs 0</span></div>`;
+ h+=`<div class="tip">Urutan: <b>${lbl}</b> · grup ASM ikut diurutkan pakai subtotalnya, sales tetap di dalam grupnya ${sc?'· <a href="#" id="rs">kembali ke bawaan</a>':''}</div>`;
+ if(mob)h+=`<div class="jump">${T.map((t,i)=>`<span data-j="${i}" class="${i===jt?'on':''}" style="--c:${t[1]}">${t[0]}</span>`).join('')}</div>`;
+ h+=`<div class="tw"><table><thead><tr><th class="id" rowspan="2" data-s="N" data-k="0">SALES <span class="ar">${arr('N',0)}</span></th>${mob?'':'<th class="id" rowspan="2">SUB REGION</th>'}${cols.map(i=>`<th class="gs" colspan="3" style="--c:${T[i][1]}">${T[i][0]}</th>`).join('')}${mob?'':`<th class="gs" colspan="3" style="--c:${TC}">TOTAL ITEL</th>`}</tr><tr>${cols.map(i=>['MINGGU INI','MINGGU LALU','GROWTH'].map((x,k)=>`<th class="${k?'':'gs'}${on(i,k)}" data-s="${i}" data-k="${k}" style="--c:${T[i][1]}">${x}<span class="ar">${arr(i,k)}</span></th>`).join('')).join('')}${mob?'':['MINGGU INI','MINGGU LALU','GROWTH'].map((x,k)=>`<th class="${k?'':'gs'}${on('T',k)}" data-s="T" data-k="${k}" style="--c:${TC}">${x}<span class="ar">${arr('T',k)}</span></th>`).join('')}</tr></thead><tbody>`;
+ gs.forEach(x=>{h+=`<tr class="grp"><td class="l">▾ ${x.g}</td>${mob?'':`<td class="l">${[...new Set(x.rs.map(r=>r.r[1]))].join(', ')}</td>`}${rowCells(x.c,x.tot,cols)}</tr>`;x.rs.forEach(r=>h+=`<tr class="sub"><td class="l">${r.r[0]}</td>${mob?'':`<td class="l">${r.r[1]}</td>`}${rowCells(r.c,r.tot,cols)}</tr>`)});
+ h+=`<tr class="tt"><td class="l">TOTAL</td>${mob?'':'<td class="l">Semua</td>'}${rowCells(allC,AT,cols)}</tr></tbody></table></div>`;
+ F.innerHTML=h;
+ F.querySelectorAll('[data-s]').forEach(e=>e.onclick=()=>{const t=e.dataset.s==='N'||e.dataset.s==='T'?e.dataset.s:+e.dataset.s,k=+e.dataset.k;if(sc&&sc.t===t&&sc.k===k){if(sd<0)sd=1;else sc=null;}else{sc={t,k};sd=-1;}draw();});
+ F.querySelectorAll('[data-j]').forEach(e=>e.onclick=()=>{jt=+e.dataset.j;draw()});const r=document.getElementById('rs');if(r)r.onclick=e=>{e.preventDefault();sc=null;draw()};}
+document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{mob=b.dataset.m==='m';document.querySelectorAll('[data-m]').forEach(x=>x.classList.toggle('on',x===b));draw()});draw();
+</script></body></html>

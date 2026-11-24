@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSM · Analisa · Reaktivasi Dealer (usulan desktop)</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:13px/1.45 Inter,Segoe UI,Arial,sans-serif;background:#F3F6FA;color:#14233A}
+.top{background:#0A2E57;color:#fff;padding:10px 20px;display:flex;gap:16px;align-items:center}.top b{font-size:15px}.top small{opacity:.75}
+.wrap{max-width:1240px;margin:0 auto;padding:18px}
+.banner{background:#FFF7E6;border:1px solid #F5C978;border-radius:10px;padding:8px 12px;margin-bottom:14px;font-size:12px}
+.head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.seg{display:inline-flex;background:#fff;border:1px solid #D8E0EA;border-radius:10px;padding:3px}.seg button{border:0;background:none;padding:7px 14px;border-radius:8px;font:600 12.5px inherit;color:#4B5B70}.seg button.on{background:#0A2E57;color:#fff}
+.hint{color:#6B7A8F;font-size:12px}
+.filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.filter select{height:32px;padding:0 10px;border:1px solid #D8E0EA;border-radius:8px;background:#fff;font:inherit}.chip{height:32px;border:1px solid #D8E0EA;background:#fff;border-radius:999px;padding:0 14px;font:700 12px inherit}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.kpi{background:#E9F7EF;border:1px solid #CDE6D8;border-radius:12px;padding:12px 16px}.kpi small{display:block;color:#0F4C3A;font-size:11px;font-weight:800;line-height:1.3;text-transform:uppercase;letter-spacing:.3px}.kpi b{display:block;color:#0F4C3A;font-size:24px;font-weight:800;line-height:1.15;margin:4px 0 2px}.kpi span{display:block;font-size:11.5px;color:#5B6B66}
+.panel{background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(10,46,87,.08);overflow:hidden;margin-bottom:16px}
+.hC{display:flex;align-items:center;gap:12px;padding:12px 14px;border-left:5px solid #6D3FD8;flex-wrap:wrap}.hC h3{margin:0;font-size:14px;letter-spacing:.2px}.sub{font-size:11.5px;color:#6B7A8F}
+.bdg{margin-left:auto;display:flex;gap:8px}.bdg span{background:#F3EEFF;color:#4B2AA8;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:600}.bdg b{font-size:14px;margin-right:3px}
+.fC{display:flex;gap:8px;align-items:center;padding:0 14px 10px;flex-wrap:wrap}.fC input{height:32px;width:230px;padding:0 10px;border:1px solid #D8E0EA;border-radius:8px;font:inherit}
+.sts{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}.sts button{height:28px;border:1px solid #E1E7EE;background:#fff;border-radius:7px;padding:0 10px;font:700 11px inherit;color:#14233A}.sts button.on{border-color:#6D3FD8;background:#F3EEFF;color:#4B2AA8}.sts button small{font-weight:500;color:#6B7A8F;margin-left:3px}
+.tw{overflow-x:auto}
+table.t{border-collapse:collapse;width:100%;font-size:11.5px}
+.t th,.t td{border-bottom:1px solid #EAEFF4;padding:5px 10px;white-space:nowrap}
+.t thead th{background:#E6EBF1;color:#14233A;font-weight:700;font-size:10.5px;letter-spacing:.3px;text-align:left;border-bottom:2px solid #15303F}
+.t td.n,.t th.n{text-align:right;font-variant-numeric:tabular-nums}
+.t tbody tr:hover td{background:#F7F4FF}.t tbody tr{cursor:pointer}
+.t td.kd{color:#4B5B70;border-left:4px solid var(--s);font-variant-numeric:tabular-nums}
+.t td.dn{font-weight:700}
+.pill{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.3px;padding:1px 8px;border-radius:6px}
+.p-ACTIVE{background:#FFF1D6;color:#A86400}.p-PASSIVE{background:#FFE7D1;color:#B04A00}.p-IDLE{background:#EFEAFF;color:#5B3CC4}.p-INACTIVE{background:#FDE3E3;color:#C0352B}
+.sp{display:inline-flex;align-items:flex-end;gap:2px;height:18px;vertical-align:middle;margin-right:8px}.sp i{display:block;width:6px;border-radius:2px;background:#7A5AF8}.sp i.z{height:2px!important;background:#D0D8E2}
+.nums{color:#6B7A8F;font-size:10.5px;font-variant-numeric:tabular-nums}
+.wa{background:#25D366;color:#fff;border:0;border-radius:7px;padding:3px 9px;font:700 11px inherit}
+.lg{display:flex;gap:14px;font-size:11px;color:#6B7A8F;padding:8px 14px;background:#FAFBFD;border-top:1px solid #EAEFF4;flex-wrap:wrap}.lg i{display:inline-block;width:4px;height:12px;vertical-align:-2px;margin-right:5px}
+.more{text-align:center;padding:10px}.more button{border:1px solid #D8E0EA;background:#fff;border-radius:999px;padding:6px 14px;font:600 12px inherit}
+@media(max-width:1000px){.kpis{grid-template-columns:1fr 1fr}}
+</style></head><body>
+<div class="top"><b>DSM</b><small>Analisa (saat ini disembunyikan)</small></div>
+<div class="wrap">
+<div class="banner"><b>Usulan tab ↻ Reaktivasi Dealer (desktop).</b> Angka dummy. Perubahan vs sekarang: kartu dealer jadi tabel padat · tambah KODE & urutan KODE | NAMA | REGION | SALES · istilah status seragam · grafik 6 bulan dilengkapi angka. Aturan status, rumus, dan tombol WhatsApp tidak diubah. Versi sekarang: <i>dsm-analisa-reaktivasi-noo-saat-ini.html</i>.</div>
+<div class="head"><div class="seg"><button>⊞ Cross-sell Brand</button><button class="on">↻ Reaktivasi Dealer</button><button>★ Dealer Baru</button></div><span class="hint">Data s.d. 23 Nov 2026 · sesuai cakupan</span></div>
+<div class="filter"><select><option>Semua Big Region</option></select><select><option>Semua Region</option></select><select><option>Semua ASM</option></select><select><option>Semua Sales</option></select><button class="chip">RESET</button></div>
+<div class="kpis">
+<div class="kpi"><small>Dealer perlu dihubungi</small><b>412</b><span>belum order bulan ini</span></div>
+<div class="kpi"><small>Potensi hilang</small><b>± 1.860 unit</b><span>rata-rata/bulan mereka dulu</span></div>
+<div class="kpi"><small>Paling mudah</small><b>138</b><span>status ACTIVE, belum order</span></div>
+<div class="kpi"><small>Berhasil aktif lagi</small><b>57</b><span>bulan ini order lagi setelah absen</span></div>
+</div>
+<div class="panel"><div class="hC"><div><h3>DAFTAR TELEPON · PRIORITAS</h3><div class="sub">Urut dari potensi terbesar · skor = rata-rata unit × peluang kembali</div></div><div class="bdg"><span><b>412</b>dealer</span><span><b>± 1.860</b>unit/bln</span></div></div>
+<div class="fC"><input placeholder="Cari kode / nama dealer…"><div class="sts"><button class="on">SEMUA<small>412</small></button><button>ACTIVE<small>138</small></button><button>PASSIVE<small>118</small></button><button>IDLE<small>100</small></button><button>INACTIVE<small>56</small></button></div></div>
+<div class="tw"><table class="t"><thead><tr><th class="n">#</th><th>KODE</th><th>NAMA DEALER</th><th>REGION</th><th>SALES</th><th>STATUS</th><th>TERAKHIR ORDER</th><th class="n">JEDA (HARI)</th><th class="n">RATA² DULU (UNIT/BLN)</th><th>6 BULAN TERAKHIR (JUN–NOV)</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>
+<div class="more"><button>Tampilkan lebih banyak (80 teratas dari 412)</button></div>
+<div class="lg"><span><i style="background:#D97706"></i>ACTIVE</span><span><i style="background:#E8590C"></i>PASSIVE</span><span><i style="background:#6D3FD8"></i>IDLE</span><span><i style="background:#C0352B"></i>INACTIVE</span><span style="margin-left:auto">Status = status terkunci (pola 3 bulan closing). Semua dealer di sini belum order bulan ini. Rata-rata dihitung dari bulan yang ada order-nya. Klik baris untuk buka detail dealer.</span></div></div>
+</div>
+<script>
+const SC={ACTIVE:'#D97706',PASSIVE:'#E8590C',IDLE:'#6D3FD8',INACTIVE:'#C0352B'};
+const R=[["Cell Jaya Abadi","CJ0142","Cirebon","Dedi S.","ACTIVE","18 Okt 2026",36,[38,45,40,44,41,0]],["Sinar Ponsel","SP0881","Kuningan","Rina A.","PASSIVE","2 Sep 2026",83,[32,36,31,28,0,0]],["Mega Phone Center","MP0217","Indramayu","Yoga P.","IDLE","11 Jul 2026",136,[26,28,0,0,0,0]],["Berkah Selular","BS1022","Majalengka","Dedi S.","ACTIVE","25 Okt 2026",29,[20,24,22,21,23,0]],["Galaxy Cell","GC0450","Brebes","Andi K.","INACTIVE","3 Mei 2026",205,[0,0,0,0,0,0]],["Toko Maju Ponsel","TM0521","Indramayu","Yoga P.","IDLE","20 Agu 2026",96,[18,17,19,0,0,0]],["Putra Gadget","PG0309","Cirebon","Rina A.","PASSIVE","14 Sep 2026",71,[14,16,15,16,0,0]],["Nusantara Cell","NR0777","Kuningan","Rina A.","ACTIVE","30 Okt 2026",25,[12,14,13,15,12,0]]];
+const avg=a=>{const n=a.filter(x=>x>0);return n.length?Math.round(n.reduce((x,y)=>x+y,0)/n.length):19};
+const sp=a=>{const m=Math.max(...a,1);return `<span class="sp">${a.map(v=>v?`<i style="height:${Math.max(3,v/m*18)}px"></i>`:'<i class="z"></i>').join('')}</span><span class="nums">${a.join(' · ')}</span>`};
+tb.innerHTML=R.map((r,i)=>`<tr><td class="n">${i+1}</td><td class="kd" style="--s:${SC[r[4]]}">${r[1]}</td><td class="dn">${r[0]}</td><td>${r[2]}</td><td>${r[3]}</td><td><span class="pill p-${r[4]}">${r[4]}</span></td><td>${r[5]}</td><td class="n">${r[6]}</td><td class="n"><b>${avg(r[7])}</b></td><td>${sp(r[7])}</td><td><button class="wa">WA</button></td></tr>`).join('');
+</script></body></html>

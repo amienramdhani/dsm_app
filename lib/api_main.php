@@ -51,6 +51,15 @@ function apiDashboard($token, $period, $selection) {
     $result['so'] = StockCore::monthly($db, $period, $ids); $result['total']['sellout'] = $result['so']['qty'];
     foreach ($result['brands'] as &$b) $b['current']['sellout'] = StockCore::monthly($db, $period, $ids, null, $b['brand'])['qty'];
     unset($b);
+    // v6 Brand RINGKASAN: sell out LMTD per brand (tanggal 1 s.d. hari yang sama bulan lalu; bulan penuh = LM)
+    $soPrevP = $result['previousPeriod'] ?? null;
+    if ($soPrevP && ($result['previousAvailable'] ?? false) && $result['so']['cutoff']) {
+        $last = date('t', strtotime($soPrevP . '-01')); $day = min((int) substr($result['so']['cutoff'], 8), (int) $last);
+        $soPrevCut = $result['so']['complete'] && ($result['coverage']['closed'] ?? false) ? null : $soPrevP . '-' . str_pad((string) $day, 2, '0', STR_PAD_LEFT);
+        $result['previous']['sellout'] = StockCore::monthly($db, $soPrevP, $ids, null, null, null, $soPrevCut)['qty'];
+        foreach ($result['brands'] as &$b) $b['previous']['sellout'] = StockCore::monthly($db, $soPrevP, $ids, null, $b['brand'], null, $soPrevCut)['qty'];
+        unset($b);
+    }
     $knownCustomers = []; foreach ($result['customers'] as $c) $knownCustomers[(string) $c['id']] = true;
     $knownTypes = []; foreach ($result['types'] as $t) $knownTypes[jkey([$t['brand'], $t['type']])] = true;
     $soCut = $result['so']['cutoff'];
@@ -295,4 +304,18 @@ function apiRankDetail($token, $period, $nik) {
     $ids = in_array($p['role'], ['ASM', 'RGM'], true) ? PortalCore::scope($source['meta']['people'], $nik) : [$nik];
     $db = coverageView_($source, $period, $ids, 'ST', $u); audit_($u['nik'], 'RANK_KPI', $nik);
     return ['nama' => $p['nama'], 'role' => $p['role'], 'region' => $p['wilayah'] ?? null, 'kpi' => PortalCore::kpi($db, $period, $ids, $p['wilayah'] ?? null, $p)];
+}
+
+/* v7 Transaksi (mockup 2026-11-24 dsm-transaksi-kalender-opsi B2): data harian untuk filter Big Region / Region di atas kalender.
+   Cakupan tetap dari pilihan scope; filter hanya mempersempit ke sales di wilayah itu. */
+function apiTrxDaily($token, $period, $selection = null, $f = null) {
+    $source = snapshot_(); $u = guard_($token, false, false, $source); $period = js_str($period); $f = is_array($f) ? $f : [];
+    $ids = allowed_($source, $u, $selection); $big = text_(js_or($f['big'] ?? null, '')); $reg = text_(js_or($f['region'] ?? null, '')); $asm = text_(js_or($f['asm'] ?? null, '')); $sales = text_(js_or($f['sales'] ?? null, ''));
+    $db = coverageView_($source, $period, $ids, 'ST', $u);
+    $ids = array_values(js_filter($ids, function ($id) use ($db, $big, $reg, $asm, $sales) { $p = person_($db, $id); if (!$p) return false; if ($big !== '' && ($p['wilayah'] ?? '') !== $big) return false; if ($reg !== '' && js_or($p['portfolio'] ?? null, $p['region'] ?? '') !== $reg) return false; if ($sales !== '' && (string) $id !== $sales) return false;
+        if ($asm !== '') { $x = $p; $g = 0; $ok = false; while ($x && $g++ < 10) { if ((string) $x['nik'] === $asm) { $ok = true; break; } $x = person_($db, $x['atasan'] ?? null); } if (!$ok) return false; } return true; }));
+    $rep = PortalCore::report($db, $period, $ids, null);
+    $so = StockCore::monthly($db, $period, $ids); $rep['total']['sellout'] = $so['qty'];
+    foreach ($rep['brands'] as &$b) $b['current']['sellout'] = StockCore::monthly($db, $period, $ids, null, $b['brand'])['qty']; unset($b);
+    return ['period' => $period, 'daily' => $rep['daily'], 'total' => $rep['total'], 'brands' => array_map(fn($b) => ['brand' => $b['brand'], 'current' => $b['current'], 'previous' => $b['previous'] ?? [], 'target' => $b['target'] ?? null, 'targetDA' => $b['targetDA'] ?? null, 'targetNOO' => $b['targetNOO'] ?? null], $rep['brands']), 'count' => count($ids)];
 }

@@ -3,10 +3,11 @@
 (function () {
   'use strict';
   var mq = window.matchMedia('(min-width:821px)');
-  var SKIP = { tim: 1, beranda: 1, admin: 1, ai: 1, klaim: 1 };
+  var SKIP = { beranda: 1, admin: 1, ai: 1, klaim: 1 };
   var SUB = {
     customer: 'Daftar dan status dealer sesuai cakupan Anda',
     brand: 'Pencapaian per brand dan perbandingan periode',
+    tim: 'Pencapaian tim dan perbandingan periode · sesuai hak akses',
     kpi: 'KPI dan pencapaian sesuai hak akses Anda',
     analisa: 'Analisa sell thru, sell out, dan peluang',
     transaksi: 'Rincian transaksi harian dan pola penjualan',

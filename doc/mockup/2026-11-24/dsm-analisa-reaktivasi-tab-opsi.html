@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSM · Reaktivasi · opsi pemilih status (HP)</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:13px/1.45 Inter,Segoe UI,Arial,sans-serif;font-weight:400;background:#DDE5EE;color:#14233A;display:flex;justify-content:center;padding:18px}
+.col{width:390px}
+.banner{background:#FFF7E6;border:1px solid #F5C978;border-radius:10px;padding:8px 12px;margin-bottom:12px;font-size:12px}
+.box{background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(10,46,87,.08);padding:12px 12px 14px;margin-bottom:14px}
+.ttl{font-size:11px;letter-spacing:.3px;color:#6B7A8F;margin-bottom:10px;display:flex;justify-content:space-between}.ttl i{font-style:normal;color:#0B5CAD}
+.desc{margin-top:10px;padding:7px 10px;border-left:4px solid var(--s);background:#F5F8FC;border-radius:0 10px 10px 0;font-size:11.5px;color:#4B5B70}.desc span{color:var(--s)}
+/* sekarang */
+.now{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.now button{border:1px solid #E1E7EE;border-top:4px solid var(--s);background:#fff;border-radius:10px;padding:5px 2px 6px;font:700 9.5px inherit;color:var(--s)}.now em{display:block;font-style:normal;font-size:17px;color:#14233A}.now small{display:block;font-size:9px;color:#8895A7}.now button.on{background:var(--s);color:#fff}.now button.on em,.now button.on small{color:#fff}
+/* A segmented */
+.segA{display:grid;grid-template-columns:repeat(4,1fr);background:#EEF2F7;border-radius:12px;padding:3px;gap:2px}
+.segA button{border:0;background:none;border-radius:9px;height:36px;font:500 11px inherit;color:#4B5B70;display:flex;align-items:center;justify-content:center;gap:4px}.segA button span{color:#8895A7}
+.segA button.on{background:#fff;color:var(--s);box-shadow:0 1px 4px rgba(10,46,87,.15)}.segA button.on span{color:var(--s)}
+/* B underline */
+.tbB{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid #E1E7EE}
+.tbB button{border:0;background:none;padding:4px 0 8px;font:500 11px inherit;color:#6B7A8F;border-bottom:3px solid transparent;margin-bottom:-1px}.tbB em{display:block;font-style:normal;font-size:17px;font-weight:500;color:#14233A;margin-top:1px}
+.tbB button.on{color:var(--s);border-bottom-color:var(--s)}
+/* C chips */
+.chC{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}.chC::-webkit-scrollbar{display:none}
+.chC button{flex:none;display:flex;align-items:center;gap:6px;height:34px;border:1px solid #E1E7EE;background:#fff;border-radius:999px;padding:0 12px;font:500 11.5px inherit;color:#4B5B70}.chC i{width:8px;height:8px;border-radius:50%;background:var(--s)}.chC span{color:#8895A7}
+.chC button.on{background:color-mix(in srgb,var(--s) 12%,#fff);border-color:var(--s);color:var(--s)}.chC button.on span{color:var(--s)}
+/* D bar + baris */
+.bar{display:flex;height:10px;border-radius:6px;overflow:hidden;gap:2px;margin-bottom:10px}.bar i{display:block;background:var(--s);opacity:.35}.bar i.on{opacity:1}
+.rowsD button{width:100%;display:grid;grid-template-columns:12px 1fr auto auto;gap:8px;align-items:center;border:0;background:none;padding:8px 8px;border-radius:10px;font:400 12px inherit;text-align:left;color:#14233A}
+.rowsD i{width:10px;height:10px;border-radius:3px;background:var(--s)}.rowsD small{color:#6B7A8F;font-size:11px}.rowsD span{font-size:13px}
+.rowsD button.on{background:color-mix(in srgb,var(--s) 10%,#fff);box-shadow:inset 3px 0 0 var(--s)}
+/* E gabungan: bar proporsi + kartu sekarang + persen */
+.barE{display:flex;height:22px;border-radius:7px;overflow:hidden;gap:2px;margin-bottom:8px}.barE button{border:0;padding:0;background:var(--s);opacity:.38;color:#fff;font:500 10.5px inherit;cursor:pointer}.barE button.on{opacity:1}
+.cardsE{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.cardsE button{border:1px solid #E1E7EE;border-top:4px solid var(--s);background:#fff;border-radius:10px;padding:5px 2px 6px;font:500 9.5px inherit;color:var(--s);box-shadow:0 1px 3px rgba(10,46,87,.06)}
+.cardsE em{display:block;font-style:normal;font-size:17px;font-weight:500;color:#14233A;line-height:1.2}.cardsE small{display:block;font-size:10.5px;color:#6B7A8F}
+.cardsE button.on{background:var(--s);border-color:var(--s);color:#fff;box-shadow:0 4px 12px color-mix(in srgb,var(--s) 40%,transparent)}.cardsE button.on em,.cardsE button.on small{color:#fff}
+.cardsE button{border:1px solid color-mix(in srgb,var(--s) 30%,#fff);border-top:1px solid color-mix(in srgb,var(--s) 30%,#fff);background:linear-gradient(180deg,color-mix(in srgb,var(--s) 17%,#fff),color-mix(in srgb,var(--s) 5%,#fff));padding:7px 2px 8px;color:var(--s);box-shadow:none}
+.cardsE em{margin-top:1px}
+.cardsE button.on{border-color:var(--s);background:linear-gradient(160deg,color-mix(in srgb,var(--s) 88%,#fff),color-mix(in srgb,var(--s) 100%,#000 20%));color:#fff;box-shadow:0 5px 14px color-mix(in srgb,var(--s) 45%,transparent)}
+.cardsE button.on em{color:#fff}
+.cardsE small{display:block;font-size:10px;font-weight:400;color:#6B7A8F;letter-spacing:0;line-height:1.2}.cardsE button.on small{color:rgba(255,255,255,.9)}
+.cardsE button{font-weight:600;letter-spacing:.3px}
+</style></head><body><div class="col">
+<div class="banner"><b>Pemilih status Reaktivasi (HP) · 5 opsi.</b> E = permintaan lu (kartu sekarang + bar proporsi D; persen cuma di bar, kartu gradasi tint, yang aktif lebih tajam, tanpa garis atas). Semua tanpa bold, font Inter satu bobot. Klik tiap opsi buat coba ganti status. "Sekarang" ditaruh paling atas buat pembanding. Di desktop, header kolom papan tetap (opsi ini khusus HP).</div>
+<div class="box"><div class="ttl">SEKARANG</div><div id="o0"></div></div>
+<div class="box"><div class="ttl">E · GABUNGAN SEKARANG + BAR D <i>ada persen tiap status</i></div><div id="oE"></div></div>
+<div class="box"><div class="ttl">A · SEGMENTED <i>1 baris, paling ramping</i></div><div id="oA"></div></div>
+<div class="box"><div class="ttl">B · TAB GARIS BAWAH <i>flat, angka besar</i></div><div id="oB"></div></div>
+<div class="box"><div class="ttl">C · CHIP <i>geser ke samping, ada titik warna</i></div><div id="oC"></div></div>
+<div class="box"><div class="ttl">D · BAR PROPORSI + DAFTAR <i>paling informatif</i></div><div id="oD"></div></div>
+</div>
+<script>
+const S={ACTIVE:{c:'#D97706',ket:'masih rutin order · paling mudah',n:138,pot:700},PASSIVE:{c:'#E8590C',ket:'1 dari 3 bulan closing order',n:118,pot:520},IDLE:{c:'#6D3FD8',ket:'tidak order 3–5 bulan berturut',n:100,pot:400},INACTIVE:{c:'#C0352B',ket:'tidak order ≥ 6 bulan',n:56,pot:240}};
+const K=Object.keys(S),TOT=K.reduce((a,k)=>a+S[k].n,0);let cur='ACTIVE';
+const desc=()=>{const s=S[cur];return `<div class="desc" style="--s:${s.c}"><span>${cur}</span> · ${s.ket} · potensi ± ${s.pot} unit/bln</div>`};
+const R={
+o0:()=>`<div class="now">${K.map(k=>`<button data-k="${k}" class="${k===cur?'on':''}" style="--s:${S[k].c}">${k}<em>${S[k].n}</em><small>dealer</small></button>`).join('')}</div>`+desc(),
+oE:()=>{const P=k=>(S[k].n/TOT*100).toFixed(1).replace('.',',')+'%';return `<div class="barE">${K.map(k=>`<button data-k="${k}" class="${k===cur?'on':''}" style="--s:${S[k].c};flex:${S[k].n}">${P(k)}</button>`).join('')}</div><div class="cardsE">${K.map(k=>`<button data-k="${k}" class="${k===cur?'on':''}" style="--s:${S[k].c}">${k}<em>${S[k].n}</em><small>dealer</small></button>`).join('')}</div>`+desc()},
+oA:()=>`<div class="segA">${K.map(k=>`<button data-k="${k}" class="${k===cur?'on':''}" style="--s:${S[k].c}">${k}<span>${S[k].n}</span></button>`).join('')}</div>`+desc(),
+oB:()=>`<div class="tbB">${K.map(k=>`<button data-k="${k}" class="${k===cur?'on':''}" style="--s:${S[k].c}">${k}<em>${S[k].n}</em></button>`).join('')}</div>`+desc(),
+oC:()=>`<div class="chC">${K.map(k=>`<button data-k="${k}" class="${k===cur?'on':''}" style="--s:${S[k].c}"><i></i>${k}<span>${S[k].n}</span></button>`).join('')}</div>`+desc(),
+oD:()=>`<div class="bar">${K.map(k=>`<i data-k="${k}" class="${k===cur?'on':''}" style="--s:${S[k].c};flex:${S[k].n}"></i>`).join('')}</div><div class="rowsD">${K.map(k=>`<button data-k="${k}" class="${k===cur?'on':''}" style="--s:${S[k].c}"><i></i><span>${k}</span><small>± ${S[k].pot} unit/bln</small><span>${S[k].n}</span></button>`).join('')}</div>`
+};
+const draw=()=>Object.keys(R).forEach(id=>document.getElementById(id).innerHTML=R[id]());
+document.addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;cur=b.dataset.k;draw()});draw();
+</script></body></html>

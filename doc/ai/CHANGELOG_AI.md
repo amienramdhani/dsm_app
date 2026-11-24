@@ -1090,3 +1090,75 @@ Validation:
 ## 2026-11-20 Menu TIM SEMUA BRAND + TOTAL klik
 - assets/tim_v2.js, assets/tim_v2.css: opsi SEMUA BRAND (default), rincian TOTAL/area saya + tombol ← AREA SAYA.
 - lib/api_menu.php: `teamTarget_` + `apiTeam` mendukung brand 'ALL'. Tanpa perubahan skema DB.
+
+## 2026-11-24
+- Analisa > Dealer Baru: panel funnel bulan lalu vs bulan ini dirapikan (label pendek seragam, bulan di judul kotak, tag "sebulan penuh"/"berjalan · N hari", angka + % digabung, tinggi baris seragam). Data & popup klik tidak berubah. File: assets/dsm.js, assets/dsm.css.
+
+### 2026-11-24 - Analisa tampil lagi: rombak Reaktivasi + Dealer Baru
+- Files: assets/dsm.js, assets/analisa_rombak.css (baru), index.php (link CSS), lib/api_analisa.php (field `df` di pairs NOO), doc/mockup/2026-11-24/*.
+- Menu Analisa dibuka, tab Cross-sell tetap disembunyikan. Reaktivasi jadi papan per status; Dealer Baru dapat daftar dealer NOO bulan ini dan cohort baru.
+- Tidak dites dengan data asli.
+
+### 2026-11-24 - Analisa: hapus teks "Data s.d. ... sesuai cakupan" di samping tab (keterangan MTD/LMTD sudah ada di ujung)
+
+### 2026-11-24 - Analisa Dealer Baru: klik baris "Order Lagi atau Nggak?" menyaring Daftar Dealer Baru (tanpa popup)
+- assets/dsm.js (`v6NooSel`, `v6NooListData(n,key)`, `v6NooListDraw`, `v6NooListBind`), assets/analisa_rombak.css. `v6NooPopup` masih ada tapi tidak dipanggil. Tabel tetap 1 baris per dealer; angka chip = jumlah dealer sebenarnya. Mockup: doc/mockup/2026-11-24/dsm-analisa-klik-filter-tabel.html. Belum dites data asli.
+
+### 2026-11-24 - Analisa HP: bottom sheet Reaktivasi + Dealer Baru (kartu kategori menyatu dengan daftar kartu)
+- assets/dsm.js, assets/analisa_rombak.css. Belum dites di HP/data asli.
+
+### 2026-11-24 - Dropdown desktop standar (biru #0B5CAD) di seluruh DSM kecuali DSM Klaim
+- assets/dropdown_std.css (baru), assets/dropdown_std.js (baru), index.php (link), assets/analisa_rombak.css (blok dropdown hijau dihapus).
+
+### 2026-11-24 - Reaktivasi: bar distribusi + judul kolom (desktop) dan bar % + kartu status (HP) menempel saat scroll
+- assets/dsm.js (`v6StickBind`, `v6StickTick`, var `--arTop` diukur dari menu atas), assets/analisa_rombak.css. Di HP saat menempel kartu status mengecil (satu baris, tanpa tulisan "dealer"). Belum dites di app asli.
+
+### 2026-11-24 - Reaktivasi desktop: judul kolom opsi F (pita warna status tipis, nama bold, mengecil saat menempel)
+- assets/dsm.js (`v6StickTick` toggle kelas `stk` di .arBoard), assets/analisa_rombak.css. Mockup: doc/mockup/2026-11-24/dsm-analisa-reaktivasi-header-kolom-opsi.html (opsi F).
+
+## 2026-11-24 — Brand: sembunyikan grafik growth per Type / Top-Bottom 3
+- `assets/dsm.js`: flag `V6GT_HIDE_CHARTS=true` di atas `V6CMP`; blok `.v6gtcharts` di `v6CmpDraw` dilewati (kode tidak dihapus). Balikin: ubah flag jadi `false`.
+
+## 2026-11-24 — Brand: halaman dibagi tab (gaya A, garis bawah)
+- `assets/dsm.js`: marker `.brMk` di `brands()` + `v6BrandTabs(v)` (pindah node saja, handler utuh) → tab RINGKASAN / GROWTH / DETAIL BRAND / MINGGUAN / DEALER (DEALER hilang untuk role Top, GROWTH hilang saat tmIsMe). Tab terakhir diingat (`sp-brtab`); klik nama brand di Ringkasan membuka DETAIL BRAND. `v6BrTick` set `--arTop` supaya tab menempel.
+- `assets/brand_tabs.css` baru + link di `index.php`.
+- Panel "Tim per brand/Indikator" tidak dirender di halaman Brand saat ini, jadi tidak ada tab TIM & INDIKATOR. "Ambang Status Dealer" ada di Admin.
+- Tes: Chromium dengan DOM tiruan + CSS asli; belum dites dengan data/app asli.
+
+## 2026-11-24 · Brand RINGKASAN dirombak (mockup dsm-brand-ringkasan-full + tren gap A)
+- Tab DETAIL BRAND dilebur ke RINGKASAN. Isi RINGKASAN: chip brand (SEMUA BRAND default, diingat `sp-brall`) → hero → Tren SELL THRU (garis growth + arsir gap ke target di bulan berjalan) + Proyeksi → TABEL LENGKAP PER BRAND.
+- Desktop: tabel G2 (header biru muda bold, doughnut %, target | aktual, LMTD + selisih, Sell Out & Omzet + growth), terbuka otomatis. HP: kartu M3d gradasi per pencapaian, terlipat default (diingat `sp-brtbl`), ketuk kartu → bottom sheet (v6Sheet).
+- Tab MINGGUAN & DEALER dapat chip brand sendiri (pengganti dropdown "Brand detail" yang dihapus).
+- Backend: `StockCore::monthly()` dapat param opsional `$cutMax`; `api_main.php` mengisi `previous.sellout` total & per brand (LMTD, tanggal disejajarkan dengan cutoff SO).
+- File: assets/dsm.js (v6Br*, qtyTrend, selectTrend, brands), assets/brand_tabs.css, lib/stock.php, lib/api_main.php.
+- Dites di Chromium pakai data contoh + CSS asli (desktop 1440 & HP 390). BELUM dites dengan data asli / server.
+
+## 2026-11-24 · Brand tab GROWTH dirombak (mockup dsm-brand-growth-opsi: Filter A, Ringkasan A, Tabel A; HP dsm-brand-growth-hp-full)
+- `v6CmpDraw` cabang baru `if(isT){...}` (hanya GROWTH brand, bukan ST vs SO dan bukan Perbandingan Tim). Kode lama HP (v12gt) dan desktop dibiarkan, tidak terpakai untuk GT.
+- Desktop: filter satu baris, ringkasan satu strip (MTD vs LMTD + growth, 3 insight), tabel warna type tipis (tabel kelas `v7gtT`, dikecualikan dari `v7TblStyle` di index.php, th pakai background inline supaya lolos table_head.css).
+- HP: tombol FILTER oren → bottom sheet (Periode & Indikator, Organisasi, Urutan, RESET / LIHAT HASIL), chip filter aktif (urutan & organisasi bisa dilepas), toggle tampilan, kartu ringkasan, chip loncat per type + TOTAL, tabel satu type, ketuk sales → rincian semua type.
+- File: assets/dsm.js, assets/brand_tabs.css, index.php (1 baris pengecualian v7TblStyle, 2 tempat).
+- Dites Chromium dengan data contoh + CSS asli (desktop 1440, HP 390, sheet filter & rincian). BELUM dites data asli.
+- 2026-11-24 (lanjutan): filter BRAND ditambah di GROWTH (desktop paling kiri, HP di sheet + chip). Ganti brand = set `brandChoice` lalu render() (ikut tab MINGGUAN/DEALER). Kotak filter desktop dirapatkan supaya muat satu baris di 1920 walau pilih "Minggu ke-X vs ke-Y".
+- 2026-11-24 (lanjutan): GROWTH bisa diurutkan lewat klik judul kolom (mockup dsm-brand-growth-sort). Kolom angka per type & TOTAL (terbesar → terkecil → bawaan), SALES & REGION (A–Z → Z–A → bawaan). Grup ASM ikut diurutkan pakai subtotal, sales tetap di dalam grup. Dropdown URUTKAN dihapus dari GROWTH (desktop & sheet HP); bawaan = penurunan terbesar. State di `V6CMP.GT.st.sc/sd`.
+
+## 2026-11-24 · Brand tab MINGGUAN dirombak (mockup dsm-brand-mingguan-opsi: tabel A + toggle PER TYPE/PER SALES + filter organisasi)
+- Backend baru `apiWeeklySales($token,$period,$selection,$brand)` di lib/api_analisa.php (+ DSM_ALLOWED di api.php): ST & SO mingguan per sales × TYPE untuk 1 brand. SO dikreditkan ke sales pemilik dealer (beda dengan weeklyPair_ lama yang pakai canSee dealer, jadi total SO bisa sedikit beda).
+- Frontend `V7WK` / `v7WkLoad` / `v7WkDraw` di assets/dsm.js menggantikan `weeklyPanels()` di halaman Brand (fungsi lama tetap disimpan). Isi: filter Region/Sub Region/RGM/ASM (HP: tombol FILTER + sheet), ringkasan strip, chart mingguan, tabel 3 blok (ST · SO · % SO/ST) gaya warna tipis, toggle PER TYPE / PER SALES (diingat `sp-wkview`), HP: toggle indikator + tombol › untuk rincian per minggu.
+- Panel diberi `data-v2-skip-fold` supaya tidak dilipat otomatis oleh foldDesktopPanels.
+- Dites Chromium dengan data contoh. BELUM dites data asli / server (terutama apiWeeklySales).
+- 2026-11-24 (lanjutan MINGGUAN): chip SEMUA BRAND (default, diingat `sp-wkall`; `apiWeeklySales` brand 'ALL' = semua brand + `typeBrand`). Layout 3 panel (mockup dsm-brand-mingguan-chart-samping): Tren mingguan (batang lebih lebar, + TOTAL MTD) | Kontribusi ST per model (per brand saat SEMUA BRAND, maks 5 + Lainnya) | Sales naik/turun C3 (ST minggu berjalan vs minggu lalu pada jumlah hari yang sama, dari `rows[].wk` backend). HP: 3 panel ditumpuk.
+
+## 2026-11-24 · Menu DOS dirombak (mockup dsm-dos-opsi: desktop tabel A, HP kartu per brand)
+- Backend apiDOS: `statusCount` (jumlah pasangan dealer–TYPE per kondisi, sesuai filter) + urutan bawaan kondisi terparah dulu (HABIS → PERLU CEK DATA → MENIPIS → STOK TINGGI → BELUM BERGERAK → CUKUP → TIDAK AKTIF) bila tidak ada sort.
+- Frontend `v7DosRender` + helper (V7DK, v7DosApply/Reset, v7DosSheetType). dosView memakai render baru; id filter lama (dosRegion..dosQuery, dosApply, dosReset, dosByType/Brand, data-dosb/n, data-dos-region, pager) tetap.
+- Desktop: filter satu baris + TERAPKAN/RESET + basis SO segmen (BULAN BERJALAN/7/14/30/60), strip ringkasan + bar kondisi (chip kotak rounded, klik = filter), DOS per wilayah | per brand berdampingan, tabel rincian A (garis kiri = kondisi, chip DOS berwarna).
+- HP: tombol FILTER → sheet, kartu hijau mint, bar kondisi geser, cari dealer dengan tombol CARI (tidak otomatis), kartu per dealer isi per brand → ketuk = sheet rincian per type + tombol buka detail dealer. HP selalu mode TYPE, tanpa pager (tampil info jumlah). Panel per wilayah/brand HP lama (v12) tetap di bawah.
+- Dites Chromium dengan data contoh. BELUM dites data asli.
+- 2026-11-24 (lanjutan DOS HP): 3 tab DEALER | WILAYAH | BRAND (diingat `sp-dostab`, SALES tanpa tab wilayah), mockup dsm-dos-hp-wilayah-brand. Tab DEALER: cari + tombol CARI, per halaman 10/25/50/Semua (`sp-dosper`), navigasi ‹ Sebelumnya · Hal x dari y · Berikutnya › (lanjut ke halaman server berikutnya bila data dimuat habis). Tab WILAYAH/BRAND: tabel 4 kolom gaya baru + pilihan urut; ketuk wilayah = sheet rincian + "Tampilkan dealer di …" (set filter, pindah tab DEALER). Panel v12 lama di HP tidak dipakai lagi.
+
+## 2026-11-24 · Transaksi bagian atas dirombak (mockup dsm-transaksi-kalender-opsi, kalender B2)
+- `v7TrxTop` menggantikan kartu + `v6Calendar` + `v6DowPanel` di halaman Transaksi (fungsi lama disimpan; popup tanggal `v6DayPopup` tetap).
+- Filter BIG REGION / REGION / ASM / SALES / BRAND (berurutan; HP: tombol FILTER + sheet). Wilayah/ASM/Sales → backend baru `apiTrxDaily` (lib/api_main.php, + DSM_ALLOWED): report harian untuk sales yang lolos filter (cache per kombinasi). Brand dihitung di browser (`v6BrandReport`).
+- Strip ringkasan (hari bertransaksi, ST, SO, omzet + hari tertinggi, rata-rata hari kerja vs target, hari capai target), kalender B2 (warna lembut tanpa bar, chip % target, label TERTINGGI, kolom TOTAL MINGGU; HP: kotak MG di bawah), pola hari batang solid + chip %, pola per brand chip indeks + kotak insight biru muda.
+- Catatan: popup klik tanggal masih memakai data cakupan penuh (belum ikut filter).

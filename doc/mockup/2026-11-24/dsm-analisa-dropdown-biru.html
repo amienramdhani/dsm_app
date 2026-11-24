@@ -1,0 +1,24 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dropdown · warna aktif biru</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eef2f6;font-family:Inter,"Segoe UI",system-ui,sans-serif;color:#0f172a;padding:18px;font-size:11.5px}
+.lbl{color:#64748b;margin:0 0 14px;max-width:720px}
+.row{display:grid;grid-template-columns:200px 1fr;gap:14px;align-items:start;margin-bottom:14px}
+.nm{font-weight:600;font-size:12px}.nm small{display:block;font-weight:400;color:#64748b;margin-top:2px}
+.bar{display:grid;grid-template-columns:repeat(3,230px);gap:14px;align-items:end;background:#EAF3FC;border:1px solid #C9DBEE;border-radius:14px;padding:12px 14px;width:max-content;position:relative}
+.bar label{display:block;font-size:11px;font-weight:800;color:#0A2E57;letter-spacing:.3px;margin-bottom:5px}
+.dd{position:relative}
+.s{height:34px;display:flex;align-items:stretch;justify-content:space-between;background:#fff;border:1px solid #d9e0e8;border-radius:8px;box-shadow:0 1px 3px rgba(15,23,42,.1);overflow:hidden;font-size:11.5px;color:#334155;font-weight:500}
+.s span{flex:1;display:flex;align-items:center;padding:0 12px}
+.s i{width:32px;background:#F1F5F9;border-left:1px solid #e2e8f0;display:flex;align-items:center;justify-content:center}
+.s i svg path{stroke:#64748b}
+.s.act{border-color:var(--c);color:var(--c);font-weight:600}.s.act i{background:var(--c);border-left-color:var(--c)}.s.act i svg path{stroke:#fff}
+.menu{position:absolute;top:calc(100% + 5px);left:0;width:100%;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 10px 24px rgba(15,23,42,.16);padding:5px;z-index:3}
+.o{padding:6px 9px;border-radius:7px;display:flex;justify-content:space-between;color:#334155}.o.on{background:color-mix(in srgb,var(--c) 10%,#fff);color:var(--c);font-weight:600}.o.on:after{content:"✓"}
+</style></head><body>
+<p class="lbl">Dropdown model A + D, hanya warna "aktif" yang diganti ke biru. Kotak pertama = idle (Semua), kedua = aktif (JAWA, daftar terbuka), ketiga = aktif.</p>
+<div id="w"></div>
+<script>
+const chev='<svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const O=[['A · Biru DSM','#0B5CAD','sama dengan biru tab Analisa dan header'],['B · Biru ST','#1E5FB8','biru indikator ST (sedikit lebih terang)'],['C · Biru navy','#0A2E57','biru tua, paling serius dan kontras'],['D · Biru petrol','#2E6E9E','biru kalem keabu-abuan'],['E · Biru cerah','#2563EB','lebih segar, lebih menonjol']];
+document.getElementById('w').innerHTML=O.map(o=>'<div class="row" style="--c:'+o[1]+'"><div class="nm">'+o[0]+'<small>'+o[2]+' · '+o[1]+'</small></div><div class="bar"><div class="dd"><label>REGION</label><div class="s"><span>Semua Region</span><i>'+chev+'</i></div></div><div class="dd"><label>SUB REGION</label><div class="s act"><span>JAWA</span><i>'+chev+'</i></div><div class="menu"><div class="o">Semua Sub Region</div><div class="o on">JAWA</div><div class="o">SUMATERA</div></div></div><div class="dd"><label>SALES</label><div class="s act"><span>ZULI PURNOMO</span><i>'+chev+'</i></div></div></div></div>').join('');
+</script></body></html>

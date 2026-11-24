@@ -1,0 +1,23 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Analisa · info data s.d.</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eef2f9;font-family:Inter,"Segoe UI",system-ui,sans-serif;color:#0f172a;padding:20px}
+.pick{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}.pick button{border:1px solid #cbd5e1;background:#fff;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer}.pick button.on{background:#0F4C3A;color:#fff;border-color:#0F4C3A}
+.wrap{max-width:560px}.lbl{font-size:11.5px;color:#64748b;margin:0 0 6px}
+.hd{background:#0B5CAB;color:#fff;border-radius:14px;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.hd h1{margin:0;font-size:22px;font-weight:600}.hd p{margin:2px 0 0;font-size:11.5px;opacity:.9}
+.bdg{font-size:10px;font-weight:500;background:rgba(255,255,255,.18);border-radius:999px;padding:4px 10px;white-space:nowrap}
+.tabs{display:flex;gap:6px;background:#fff;border-radius:12px;padding:6px;margin-top:10px;width:max-content}
+.tabs span{font-size:11.5px;font-weight:600;color:#0F4C3A;padding:9px 16px;border-radius:9px}.tabs span.on{background:#0B5CAB;color:#fff}
+.dt{font-size:11.5px;color:#64748b;margin:8px 4px 0}
+.v{display:none}.v.on{display:block}
+</style></head><body><div class="wrap">
+<div class="pick"><button class="on" data-v="s">SEKARANG</button><button data-v="a">A</button><button data-v="b">B (rekomendasi)</button><button data-v="c">C</button></div>
+<div class="v on" id="s"><p class="lbl">SEKARANG: teks nempel di samping tab</p><div class="hd"><div><h1>ANALISA</h1><p>Analisa sell thru, sell out, dan peluang</p></div></div>
+<div style="display:flex;align-items:center;gap:14px;margin-top:10px"><div class="tabs" style="margin:0"><span>REAKTIVASI DEALER</span><span class="on">DEALER BARU</span></div><span style="font-size:11.5px;color:#64748b">Data s.d. 28 Sep 2026 · sesuai cakupan</span></div></div>
+<div class="v" id="a"><p class="lbl">A: di bawah tab, rata kiri, satu baris kecil</p><div class="hd"><div><h1>ANALISA</h1><p>Analisa sell thru, sell out, dan peluang</p></div></div>
+<div class="tabs"><span>REAKTIVASI DEALER</span><span class="on">DEALER BARU</span></div><div class="dt">Data s.d. 28 Sep 2026</div></div>
+<div class="v" id="b"><p class="lbl">B: badge di pojok kanan header</p><div class="hd"><div><h1>ANALISA</h1><p>Analisa sell thru, sell out, dan peluang</p></div><span class="bdg">Data s.d. 28 Sep 2026</span></div>
+<div class="tabs"><span>REAKTIVASI DEALER</span><span class="on">DEALER BARU</span></div></div>
+<div class="v" id="c"><p class="lbl">C: dihapus dari halaman Analisa</p><div class="hd"><div><h1>ANALISA</h1><p>Analisa sell thru, sell out, dan peluang</p></div></div>
+<div class="tabs"><span>REAKTIVASI DEALER</span><span class="on">DEALER BARU</span></div></div>
+</div><script>document.querySelectorAll('.pick button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.pick button,.v').forEach(e=>e.classList.remove('on'));b.classList.add('on');document.getElementById(b.dataset.v).classList.add('on')})</script></body></html>

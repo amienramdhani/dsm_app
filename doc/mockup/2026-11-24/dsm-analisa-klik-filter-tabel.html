@@ -1,0 +1,42 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Klik baris = tabel bawah berubah</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eef2f6;font-family:Inter,"Segoe UI",system-ui,sans-serif;color:#0f172a;padding:16px;font-size:11.5px}
+.p{background:#fff;border-radius:14px;padding:14px 16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(15,23,42,.06)}
+h3{margin:0;font-size:13px;font-weight:600;color:#0F4C3A}.s{color:#64748b;font-size:11.5px;margin:2px 0 10px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cd{border:1px solid #d6e3fd;background:#f7faff;border-radius:10px;padding:8px 12px}.cd.cur{background:#f2fbf7;border-color:#bfe8d5}
+.cd h4{margin:0 0 6px;font-size:12px;font-weight:600;color:#0A2E57}.cd.cur h4{color:#0B6A46}
+.r{display:grid;grid-template-columns:90px 1fr 70px;gap:6px;align-items:center;padding:3px 4px;border-radius:6px;cursor:pointer;border:1px solid transparent}
+.r:hover{background:rgba(11,92,173,.07)}.r.on{background:#fff;border-color:#0F4C3A;box-shadow:0 0 0 2px rgba(15,76,58,.12)}
+.r b{font-size:10.5px;font-weight:600}.bar{height:16px;background:#EEF2F7;border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;border-radius:6px}
+.v{text-align:right;font-weight:600}.v small{font-weight:400;color:#64748b;font-size:10px;margin-left:3px}
+.ch{display:flex;align-items:center;gap:8px;background:#E9F8F1;border:1px solid #bfe8d5;border-radius:8px;padding:6px 10px;margin-bottom:10px;color:#0B6A46;font-weight:500}
+.ch button{margin-left:auto;border:1px solid #0F4C3A;background:#fff;color:#0F4C3A;border-radius:6px;font-size:10px;font-weight:600;padding:3px 9px;cursor:pointer}
+table{border-collapse:collapse;width:100%}th{background:#E6EBF1;font-size:9.5px;font-weight:600;letter-spacing:.3px;text-align:left;padding:6px 8px;border:1px solid #d3dbe4;border-bottom:2px solid #15303F;white-space:nowrap}
+td{padding:4px 8px;border:1px solid #eef1f5;white-space:nowrap}td.kd{border-left:4px solid #6D3FD8;font-weight:500}.n{text-align:right}.z{color:#94a3b8}
+.bt{display:inline-block;font-size:9.5px;font-weight:600;border-radius:5px;padding:1px 5px;margin-right:3px;background:#EEF1F5;color:#475569}
+.pk{display:flex;gap:8px;margin-bottom:12px}.pk button{border:1px solid #cbd5e1;background:#fff;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:600;cursor:pointer}
+</style></head><body>
+<div class="p"><h3>DEALER BARU: ORDER LAGI ATAU NGGAK?</h3><div class="s">Klik baris untuk menyaring tabel di bawah (tidak ada popup)</div>
+<div class="two">
+<div class="cd"><h4>Dealer baru Agustus 2026</h4>
+<div class="r" data-k="Agustus 2026 · Dealer baru" data-n="412"><b>Dealer baru</b><div class="bar"><i style="width:100%;background:#0A2E57"></i></div><span class="v">412<small>100%</small></span></div>
+<div class="r" data-k="Agustus 2026 · Order lagi" data-n="158"><b>Order lagi</b><div class="bar"><i style="width:38%;background:#0B5CAD"></i></div><span class="v">158<small>38,3%</small></span></div>
+<div class="r" data-k="Agustus 2026 · SELL THRU ≥2" data-n="145"><b>SELL THRU ≥2</b><div class="bar"><i style="width:35%;background:#12A86B"></i></div><span class="v">145<small>35,2%</small></span></div>
+<div class="r" data-k="Agustus 2026 · Ambil ≥2 brand" data-n="59"><b>Ambil ≥2 brand</b><div class="bar"><i style="width:14%;background:#7A5AF8"></i></div><span class="v">59<small>14,3%</small></span></div></div>
+<div class="cd cur"><h4>Dealer baru September 2026</h4>
+<div class="r on" data-k="September 2026 · Dealer baru" data-n="368"><b>Dealer baru</b><div class="bar"><i style="width:100%;background:#0A2E57"></i></div><span class="v">368<small>100%</small></span></div>
+<div class="r" data-k="September 2026 · Order lagi" data-n="78"><b>Order lagi</b><div class="bar"><i style="width:21%;background:#0B5CAD"></i></div><span class="v">78<small>21,2%</small></span></div>
+<div class="r" data-k="September 2026 · SELL THRU ≥2" data-n="330"><b>SELL THRU ≥2</b><div class="bar"><i style="width:90%;background:#12A86B"></i></div><span class="v">330<small>89,7%</small></span></div>
+<div class="r" data-k="September 2026 · Ambil ≥2 brand" data-n="151"><b>Ambil ≥2 brand</b><div class="bar"><i style="width:41%;background:#7A5AF8"></i></div><span class="v">151<small>41,0%</small></span></div></div>
+</div></div>
+<div class="p"><h3 id="t">DAFTAR DEALER BARU · SEPTEMBER 2026</h3><div class="s">1 baris = 1 dealer · brand yang NOO di dealer itu bulan ini</div>
+<div class="ch" id="chip" style="display:none"><span id="ct"></span><button onclick="reset()">HAPUS FILTER</button></div>
+<table><thead><tr><th>KODE</th><th>NAMA DEALER</th><th>REGION</th><th>SALES</th><th>BRAND NOO</th><th class="n">Σ BRAND</th><th class="n">JUMLAH UNIT</th><th>TANGGAL NOO</th><th class="n x" style="display:none">SELL THRU BULAN PERTAMA</th><th class="n x" style="display:none">SELL THRU BULAN INI</th></tr></thead>
+<tbody><tr><td class="kd">030.012</td><td><b>BINGO PHONE</b></td><td>JAWA TENGAH</td><td>ZULI PURNOMO</td><td><span class="bt">ITEL</span><span class="bt">VILLAON</span><span class="bt">MOTOPAD</span></td><td class="n">3</td><td class="n">21</td><td>7 Sep 2026</td><td class="n x" style="display:none">21</td><td class="n x z" style="display:none">—</td></tr>
+<tr><td class="kd">321.119</td><td><b>CV. MITRA TERANG REZEKI</b></td><td>JAWA TENGAH</td><td>MUHAMMAD DWI SETIAJI</td><td><span class="bt">ITEL</span><span class="bt">VILLAON</span></td><td class="n">2</td><td class="n">46</td><td>10 Sep 2026</td><td class="n x" style="display:none">46</td><td class="n x" style="display:none">12</td></tr></tbody></table></div>
+<script>
+const rs=document.querySelectorAll('.r');function reset(){rs.forEach(r=>r.classList.remove('on'));document.querySelector('[data-k="September 2026 · Dealer baru"]').classList.add('on');upd(document.querySelector('[data-k="September 2026 · Dealer baru"]'))}
+function upd(r){const k=r.dataset.k,[b,f]=k.split(' · '),sep=b.startsWith('September'),all=f==='Dealer baru'&&sep;document.getElementById('t').textContent='DAFTAR DEALER BARU · '+b.toUpperCase();document.getElementById('chip').style.display=all?'none':'flex';document.getElementById('ct').textContent='Filter: '+f+' · '+r.dataset.n+' dealer';document.querySelectorAll('.x').forEach(e=>e.style.display=sep&&all?'none':'')}
+rs.forEach(r=>r.onclick=()=>{rs.forEach(x=>x.classList.remove('on'));r.classList.add('on');upd(r)});
+</script></body></html>

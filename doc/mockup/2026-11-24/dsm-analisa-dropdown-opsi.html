@@ -1,0 +1,36 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Analisa · opsi model dropdown</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eef2f6;font-family:Inter,"Segoe UI",system-ui,sans-serif;color:#0f172a;padding:18px;font-size:11.5px}
+.pk{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.pk button{border:1px solid #cbd5e1;background:#fff;border-radius:8px;padding:7px 12px;font-size:11.5px;font-weight:600;cursor:pointer}.pk button.on{background:#0F4C3A;color:#fff;border-color:#0F4C3A}
+.lbl{color:#64748b;margin:0 0 10px;max-width:760px}
+/* bar lama tetap */
+.bar{display:grid;grid-template-columns:repeat(5,1fr) auto;gap:14px;align-items:end;background:#EAF3FC;border:1px solid #C9DBEE;border-radius:14px;padding:12px 14px;max-width:1300px;position:relative}
+.bar label{display:block;font-size:11px;font-weight:800;color:#0A2E57;letter-spacing:.3px;margin-bottom:5px}
+.rs{background:#fff;border:1px solid #d9e0e8;border-radius:8px;height:34px;padding:0 14px;font-weight:600;font-size:11px;color:#475569}
+.dd{position:relative}
+.s{height:34px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 10px;font-size:11.5px;color:#334155;background:#fff;border:1px solid #d9e0e8;border-radius:8px}
+.s .ch{width:16px;height:16px;flex:none}
+.s .ch svg{display:block}
+/* opsi */
+.A .s{border-radius:999px;box-shadow:0 1px 3px rgba(15,23,42,.08);border-color:transparent;padding:0 12px 0 14px}.A .s .ch{background:#EAF3FC;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.B .s{border:0;border-bottom:2px solid #9DB6D3;border-radius:6px 6px 0 0;background:rgba(255,255,255,.7);font-weight:500}.B .s.act{border-bottom-color:#0F4C3A;background:#fff;color:#0F4C3A;font-weight:600}
+.C .s{border-radius:10px;border:1px solid #cdd8e6;box-shadow:inset 0 1px 2px rgba(15,23,42,.05)}.C .s:before{content:"";width:7px;height:7px;border-radius:50%;background:#cbd5e1;flex:none}.C .s span{flex:1}.C .s.act:before{background:#12A86B}.C .s.act{border-color:#12A86B;background:#F2FBF7;color:#0B6A46;font-weight:600}
+.D .s{border-radius:8px;border:1px solid #d9e0e8;padding:0;overflow:hidden}.D .s span{flex:1;padding:0 10px}.D .s .ch{width:30px;height:100%;background:#F1F5F9;border-left:1px solid #e2e8f0;display:flex;align-items:center;justify-content:center}.D .s.act{border-color:#0F4C3A}.D .s.act .ch{background:#0F4C3A}.D .s.act .ch path{stroke:#fff}
+.s.act{font-weight:600}
+/* daftar terbuka */
+.menu{position:absolute;top:calc(100% + 6px);left:0;width:230px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 10px 24px rgba(15,23,42,.16);padding:6px;z-index:5}
+.menu .q{height:30px;border:1px solid #d9e0e8;border-radius:8px;display:flex;align-items:center;padding:0 9px;color:#94a3b8;margin-bottom:5px;font-size:11px}
+.menu .o{padding:7px 9px;border-radius:7px;display:flex;justify-content:space-between;color:#334155}.menu .o small{color:#94a3b8}.menu .o.on{background:#E8F7EF;color:#0F4C3A;font-weight:600}.menu .o.on:after{content:"✓"}.menu .o:hover{background:#f1f5f9}
+.v{display:none}.v.on{display:block}
+.ph{width:390px;background:#eef2f9;border-radius:22px;padding:12px}.ph .bar{display:block;padding:10px}
+</style></head><body>
+<div class="pk" id="pk"><button data-v="s">SEKARANG</button><button data-v="A" class="on">A · pil bulat</button><button data-v="B">B · garis bawah</button><button data-v="C">C · titik status</button><button data-v="D">D · tombol panah terpisah</button></div>
+<p class="lbl">Hanya model dropdown yang diubah: bar biru, label, urutan, dan tombol Reset tetap. Kotak pertama (REGION) contoh yang sedang terpilih dan daftarnya terbuka (dengan kolom cari + tanda ✓).</p>
+<script>
+const chev='<svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" fill="none" stroke="#64748b" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const L=[['REGION','JAWA',1],['SUB REGION','Semua Sub Region',0],['RGM','Semua RGM',0],['ASM','Semua ASM',0],['SALES','Semua Sales',0]];
+const menu='<div class="menu"><div class="q">Cari region…</div><div class="o">Semua Region<small>341</small></div><div class="o on">JAWA<small>128</small></div><div class="o">SUMATERA<small>96</small></div><div class="o">KALIMANTAN<small>41</small></div></div>';
+function build(c){return '<div class="v '+(c==='A'?'on ':'')+'" id="v'+c+'"><div class="bar '+(c==='s'?'':c)+'">'+L.map((x,i)=>'<div class="dd"><label>'+x[0]+'</label><div class="s'+(x[2]&&c!=='s'?' act':'')+'"><span>'+x[1]+'</span><span class="ch">'+chev+'</span></div>'+(i===0&&c!=='s'?menu:'')+'</div>').join('')+'<button class="rs">Reset</button></div></div>';}
+document.body.insertAdjacentHTML('beforeend',['s','A','B','C','D'].map(build).join(''));
+document.querySelectorAll('#pk button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#pk button').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.querySelectorAll('.v').forEach(v=>v.classList.toggle('on',v.id==='v'+b.dataset.v))});
+</script></body></html>

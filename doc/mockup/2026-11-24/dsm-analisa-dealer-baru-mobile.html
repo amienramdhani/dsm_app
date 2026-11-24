@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSM · Analisa · Dealer Baru (mobile)</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0}body{font:13px/1.45 Inter,Segoe UI,Arial,sans-serif;background:#DDE5EE;color:#14233A;display:flex;justify-content:center;padding:18px}
+.ph{position:relative;width:390px;height:844px;background:#F3F6FA;border-radius:28px;box-shadow:0 10px 40px rgba(10,46,87,.25);overflow:hidden;border:6px solid #10202F}
+.sc{height:100%;overflow-y:auto;overflow-x:hidden;padding-bottom:76px}
+@media(max-width:430px){body{padding:0}.ph{width:100vw;height:100vh;border:0;border-radius:0}}
+.bar{position:sticky;top:0;z-index:5;background:#0A2E57;color:#fff;padding:10px 14px;display:flex;align-items:center;gap:10px}.bar b{font-size:15px}.bar small{opacity:.75;margin-left:auto}
+.av{width:28px;height:28px;border-radius:50%;background:#2E6E9E;display:grid;place-items:center;font-size:11px;font-weight:700}
+.pad{padding:12px}
+.seg{display:flex;background:#fff;border:1px solid #D8E0EA;border-radius:10px;padding:3px;margin-bottom:10px}.seg button{flex:1;border:0;background:none;padding:9px 4px;border-radius:8px;font:600 12px inherit;color:#4B5B70}.seg button.on{background:#0A2E57;color:#fff}
+.hint{color:#6B7A8F;font-size:11.5px}
+.fbtn{width:100%;height:44px;border:0;border-radius:12px;background:linear-gradient(90deg,#FFB020,#F07A0C);color:#fff;font:800 13px inherit;letter-spacing:.4px;display:flex;align-items:center;justify-content:center;gap:8px;margin:8px 0;box-shadow:0 3px 10px rgba(240,122,12,.3)}
+.fbtn svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.fbtn em{font-style:normal;background:rgba(255,255,255,.28);border-radius:999px;padding:1px 9px;font-size:11px}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.kpi{background:#E9F7EF;border:1px solid #CDE6D8;border-radius:12px;padding:10px 12px}.kpi small{display:block;color:#0F4C3A;font-size:10px;font-weight:800;line-height:1.25;text-transform:uppercase;letter-spacing:.2px;min-height:25px}.kpi b{display:block;color:#0F4C3A;font-size:21px;font-weight:800;line-height:1.15;margin:3px 0 1px}.kpi span{display:block;font-size:10.5px;color:#5B6B66;line-height:1.25}
+.panel{background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(10,46,87,.08);overflow:hidden;margin-bottom:12px}
+.hC{padding:11px 12px 9px;border-left:5px solid #6D3FD8}.hC h3{margin:0;font-size:12.5px;letter-spacing:.2px}.sub{font-size:11px;color:#6B7A8F;margin-top:1px}
+.bdg{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}.bdg span{background:#F3EEFF;color:#4B2AA8;border-radius:8px;padding:3px 9px;font-size:10.5px;font-weight:600}.bdg b{font-size:12.5px;margin-right:3px}.bdg span.g{background:#EEF2F7;color:#4B5B70}
+.body{padding:0 12px 12px}
+.box{border:1px solid #E6ECF3;border-radius:12px;padding:10px 11px;margin-bottom:8px}.box.cur{border-color:#9CC3EE;background:#F7FBFF}
+.bh{display:flex;justify-content:space-between;align-items:baseline;gap:6px}.bh b{font-size:12.5px}
+.tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;background:#E9F8F1;color:#0B7A50;white-space:nowrap}.tag.run{background:#FFF1D6;color:#A86400}
+.bs{font-size:11px;color:#6B7A8F;margin-bottom:7px}
+.fr{display:grid;grid-template-columns:92px 1fr 74px;gap:8px;align-items:center;height:28px}.fr .t{font-weight:600;font-size:11.5px;white-space:nowrap}
+.fb{background:#EEF2F7;border-radius:5px;height:16px}.fb i{display:block;height:100%;border-radius:5px;min-width:4px}.fr .v{text-align:right;white-space:nowrap}.fr .v b{font-size:12.5px}.fr .v small{color:#6B7A8F;margin-left:3px;font-size:11px}
+.note{background:#F5F8FC;border-radius:10px;padding:8px 10px;font-size:11px;color:#4B5B70;margin-top:4px}
+.sr{padding:0 12px 8px}.sr input{width:100%;height:36px;padding:0 11px;border:1px solid #D8E0EA;border-radius:10px;font:inherit}
+.brs{display:flex;gap:5px;overflow-x:auto;padding:0 12px 10px;scrollbar-width:none}.brs::-webkit-scrollbar{display:none}
+.brs button{flex:none;height:28px;border:1px solid #E1E7EE;background:#fff;border-radius:8px;padding:0 10px;font:700 11px inherit;color:#14233A}.brs button.on{border-color:#6D3FD8;background:#F3EEFF;color:#4B2AA8}
+.tw{overflow-x:auto}
+table.t{border-collapse:collapse;width:100%;font-size:11px}
+.t th,.t td{border-bottom:1px solid #EAEFF4;padding:6px 9px;white-space:nowrap}
+.t thead th{background:#E6EBF1;font-weight:700;font-size:10px;letter-spacing:.3px;text-align:left;border-bottom:2px solid #15303F}
+.t td.n,.t th.n{text-align:right;font-family:ui-monospace,Consolas,monospace}
+.t td.kd{position:sticky;left:0;z-index:1;background:#fff;font-family:ui-monospace,Consolas,monospace;color:#4B5B70;border-left:4px solid #6D3FD8}.t td.kd.old{border-left-color:#C9D3DF}
+.t th.kd{position:sticky;left:0;z-index:2;background:#E6EBF1}
+.t td.dn{font-weight:700;color:#14233A}.t tbody tr{cursor:pointer}.t tbody tr:active td{background:#F3EEFF}
+.bt{display:inline-block;border-radius:6px;padding:1px 7px;margin-right:3px;font-size:10px;font-weight:700}
+.jm{display:inline-block;min-width:18px;text-align:center;border-radius:5px;background:#F3EEFF;color:#4B2AA8;font-weight:800}.qt{font-weight:800}.dt{color:#6B7A8F}
+.heat{display:inline-block;min-width:42px;text-align:center;border-radius:6px;padding:2px 5px;font-weight:700;font-size:11px}
+.lg{display:flex;gap:10px;font-size:10.5px;color:#6B7A8F;padding:7px 12px;background:#FAFBFD;border-top:1px solid #EAEFF4;flex-wrap:wrap}.lg i{display:inline-block;width:4px;height:11px;vertical-align:-2px;margin-right:4px}
+.more{text-align:center;padding:8px}.more button{border:1px solid #D8E0EA;background:#fff;border-radius:999px;padding:6px 14px;font:600 11.5px inherit}
+.nav{position:absolute;left:0;right:0;bottom:0;height:64px;background:#fff;border-top:1px solid #E1E7EE;display:grid;grid-template-columns:repeat(5,1fr);z-index:8}
+.nav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10px;font-weight:600;color:#6B7A8F;text-decoration:none}
+.nav svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.nav a.on{color:#0A2E57}
+.ov{position:absolute;inset:0;background:rgba(10,20,35,.45);z-index:20;display:none}.ov.on{display:block}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:20px 20px 0 0;padding:8px 14px 16px;z-index:21;transform:translateY(105%);transition:transform .25s}.sheet.on{transform:none}
+.grab{width:38px;height:4px;border-radius:2px;background:#D0D8E2;margin:0 auto 10px}
+.sh h4{margin:0;font-size:14px}.sh .m{color:#6B7A8F;font-size:11.5px;margin:2px 0 10px}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}.kv div{background:#F5F8FC;border-radius:10px;padding:7px 10px}.kv small{display:block;color:#6B7A8F;font-size:10.5px}.kv b{font-size:12.5px}
+.bl{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #EEF2F7}.bl:last-child{border-bottom:0}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.acts button{height:40px;border-radius:10px;font:700 12px inherit;border:1px solid #D8E0EA;background:#fff}.acts .p{background:#0A2E57;color:#fff;border-color:#0A2E57}
+.l4{background:#12A86B;color:#fff}.l3{background:#5CC79B;color:#06382A}.l2{background:#A6E0C4;color:#0B4A36}.l1{background:#D9F2E6;color:#0B4A36}.ch{border:2px solid transparent;border-radius:6px;padding:2px 1px;display:flex;align-items:baseline;justify-content:center;gap:3px;font-variant-numeric:tabular-nums}.ch b{font-size:12px;font-weight:800}.ch small{font-size:9.5px;opacity:.85}.ch small:before{content:'';display:inline-block;width:1px;height:9px;background:currentColor;opacity:.45;margin-right:5px;vertical-align:-1px}.ch.run{border-style:dashed;border-color:rgba(10,40,30,.55)}
+.t td.cc{padding:2px 3px}.t th.cc{text-align:center}
+.lgd{display:flex;align-items:center;gap:5px;font-size:10.5px;color:#6B7A8F;padding:0 12px 8px}.lgd i{display:inline-block;width:20px;height:10px;border-radius:3px}.lgd i.r{background:#fff;border:2px dashed rgba(10,40,30,.55);width:18px}
+.t tfoot td{background:#E6EBF1;border-top:2px solid #15303F}
+</style></head><body>
+<div class="ph"><div class="sc" id="sc">
+<div class="bar"><b>DSM</b><small>Analisa</small><span class="av">AH</span></div>
+<div class="pad">
+<div class="seg"><button>Cross-sell</button><button>Reaktivasi</button><button class="on">Dealer Baru</button></div>
+<div class="hint">Data s.d. 23 Nov 2026 · sesuai cakupan</div>
+<button class="fbtn"><svg viewBox="0 0 24 24"><path d="M3 5h18l-7 8v6l-4-2v-4z"/></svg>FILTER <em>0 aktif · 48 dealer</em></button>
+
+<div class="kpis">
+<div class="kpi"><small>Dealer baru Nov 2026 (MTD)</small><b>64</b><span>▼ 12,3% vs Okt (73)</span></div>
+<div class="kpi"><small>Dealer baru Okt 2026</small><b>73</b><span>sebulan penuh</span></div>
+<div class="kpi"><small>Order lagi · Okt 2026</small><b>41,1%</b><span>30 dari 73 order di Nov</span></div>
+<div class="kpi"><small>Order lagi · Nov 2026</small><b>18,8%</b><span>12 dari 64 order ulang</span></div>
+</div>
+
+<div class="panel"><div class="hC"><h3>DEALER BARU: ORDER LAGI ATAU NGGAK?</h3><div class="sub">Ketuk baris untuk lihat daftar dealer</div></div>
+<div class="body" id="A"><div class="note">Kiri/atas: dealer baru Oktober, dicek di November. Kanan/bawah: dealer baru November, dicek di bulan yang sama (baru 23 hari, wajar kecil).</div></div></div>
+
+<div class="panel"><div class="hC"><h3>DAFTAR DEALER BARU · NOV 2026</h3><div class="sub">1 baris = 1 dealer · brand yang NOO bulan ini</div><div class="bdg"><span><b>48</b>dealer</span><span><b>64</b>brand NOO</span><span class="g"><b>21</b>dealer baru</span></div></div>
+<div class="sr"><input placeholder="Cari kode / nama dealer…"></div>
+<div class="brs"><button class="on">SEMUA</button><button>OPPO 18</button><button>VIVO 15</button><button>SAMSUNG 12</button><button>XIAOMI 11</button><button>INFINIX 8</button></div>
+<div class="tw"><table class="t"><thead><tr><th class="kd">KODE</th><th>NAMA DEALER</th><th>REGION</th><th>SALES</th><th>BRAND NOO</th><th class="n">Σ BRAND</th><th class="n">QTY</th><th>TGL NOO</th></tr></thead><tbody id="tbD"></tbody></table></div>
+<div class="more"><button>Tampilkan semua (48)</button></div>
+<div class="lg"><span><i style="background:#6D3FD8"></i>dealer baru</span><span><i style="background:#C9D3DF"></i>dealer lama buka brand baru</span><span>Geser tabel ke samping · ketuk baris untuk rincian</span></div></div>
+
+<div class="panel"><div class="hC"><h3>PER BULAN: MASIH ORDER SAMPAI SEKARANG?</h3><div class="sub">% dealer baru yang order lagi di bulan berikutnya</div></div>
+<div class="lgd">rendah<i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i>tinggi<span style="margin-left:8px"></span><i class="r"></i>bln berjalan</div>
+<div class="tw"><table class="t"><thead><tr><th class="kd">DEALER BARU</th><th class="cc">BLN 1</th><th class="cc">BLN 2</th><th class="cc">BLN 3</th><th class="cc">BLN 4</th></tr></thead><tbody id="tbC"></tbody><tfoot id="tfC"></tfoot></table></div>
+<div class="lg"><span>Bln 1 = bulan setelah jadi dealer baru · garis putus (*) = bulan berjalan, tidak masuk rata-rata</span></div></div>
+</div></div>
+
+<div class="nav"><a href="#"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>Beranda</a><a href="#"><svg viewBox="0 0 24 24"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-7h6v7"/></svg>Dealer</a><a href="#"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Brand</a><a href="#"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>Transaksi</a><a href="#" class="on"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>Lainnya</a></div>
+
+<div class="ov" id="ov"></div>
+<div class="sheet sh" id="sh"><div class="grab"></div><h4 id="shN"></h4><div class="m" id="shM"></div><div class="kv" id="shK"></div><div id="shB"></div><div class="acts"><button>WhatsApp</button><button class="p">Buka Detail Dealer</button></div></div>
+</div>
+<script>
+const pc0=(a,b)=>Math.round(a/b*100)+'%';
+const FS=[["Dealer baru","#0A2E57",73,64],["Order lagi","#0B5CAD",30,12],["SELL THRU ≥2","#12A86B",21,19],["Ambil ≥2 brand","#7A5AF8",9,7]];
+const box=(k,t,tag,run,sub)=>`<div class="box ${run?'cur':''}"><div class="bh"><b>${t}</b><span class="tag ${run?'run':''}">${tag}</span></div><div class="bs">${sub}</div>${FS.map(s=>`<div class="fr"><span class="t">${s[0]}</span><div class="fb"><i style="width:${s[k]/FS[0][k]*100}%;background:${s[1]}"></i></div><span class="v"><b>${s[k]}</b><small>${pc0(s[k],FS[0][k])}</small></span></div>`).join('')}</div>`;
+A.insertAdjacentHTML('afterbegin',box(2,'Dealer baru Okt 2026','sebulan penuh',0,'Dicek di November 2026')+box(3,'Dealer baru Nov 2026','berjalan · 23 hari',1,'Dicek di bulan yang sama'));
+const BC={OPPO:'#1E7B4A',VIVO:'#3B5BDB',SAMSUNG:'#1428A0',XIAOMI:'#F26B1D',INFINIX:'#7CB342'};
+const D=[["Cell Jaya Abadi","CJ0142","Cirebon","Dedi S.",[["OPPO",4],["VIVO",3],["XIAOMI",2]],"3 Nov 2026",1,["—"]],["Sinar Ponsel","SP0881","Kuningan","Rina A.",[["SAMSUNG",3],["INFINIX",2]],"5 Nov 2026",0,["OPPO"]],["Mega Phone Center","MP0217","Indramayu","Yoga P.",[["VIVO",5],["OPPO",2]],"8 Nov 2026",1,["—"]],["Berkah Selular","BS1022","Majalengka","Dedi S.",[["XIAOMI",4]],"11 Nov 2026",0,["VIVO","SAMSUNG"]],["Galaxy Cell","GC0450","Brebes","Andi K.",[["OPPO",2]],"14 Nov 2026",1,["—"]],["Putra Gadget","PG0309","Cirebon","Rina A.",[["INFINIX",3]],"19 Nov 2026",0,["OPPO","VIVO","XIAOMI"]]];
+tbD.innerHTML=D.map((d,i)=>`<tr data-i="${i}"><td class="kd ${d[6]?'':'old'}">${d[1]}</td><td class="dn">${d[0]}</td><td>${d[2]}</td><td>${d[3]}</td><td>${d[4].map(x=>`<span class="bt" style="background:${BC[x[0]]}1F;color:${BC[x[0]]}">${x[0]}</span>`).join('')}</td><td class="n"><span class="jm">${d[4].length}</span></td><td class="n qt">${d[4].reduce((a,x)=>a+x[1],0)}</td><td class="dt">${d[5]}</td></tr>`).join('');
+const CH=[["Juli 2026",88,[40,33,27,26]],["Agustus 2026",79,[34,28,24]],["September 2026",81,[32,27]],["Oktober 2026",73,[30]]];
+const lv=p=>p>=45?'l4':p>=38?'l3':p>=30?'l2':'l1';
+const cell=(v,b,run)=>{const p=Math.round(v/b*100);return `<div class="ch ${lv(p)}${run?' run':''}"><b>${p}%${run?'*':''}</b><small>${v}</small></div>`};
+const avg=[0,1,2,3].map(k=>{let v=0,b=0;CH.forEach(c=>{if(c[2][k]!=null&&k<c[2].length-1){v+=c[2][k];b+=c[1]}});return b?{p:Math.round(v/b*100),v,b}:null});
+tbC.innerHTML=CH.map(c=>`<tr><td class="kd dn" style="border-left:0;line-height:1.2">${c[0].replace(' 2026',' 26')}<div class="hint" style="font-weight:500;font-size:10px">${c[1]} dealer</div></td>${[0,1,2,3].map(k=>c[2][k]==null?'<td class="cc"><span class="hint">–</span></td>':`<td class="cc">${cell(c[2][k],c[1],k===c[2].length-1)}</td>`).join('')}</tr>`).join('');
+tfC.innerHTML=`<tr><td class="kd dn" style="border-left:0;background:#E6EBF1;line-height:1.2">RATA-RATA<div class="hint" style="font-weight:500;font-size:10px">bulan penuh</div></td>${avg.map(a=>a?`<td class="cc"><div class="ch ${lv(a.p)}"><b>${a.p}%</b><small>${a.v}/${a.b}</small></div></td>`:'<td class="cc"><span class="hint">–</span></td>').join('')}</tr>`;
+const sh=document.getElementById('sh'),ov=document.getElementById('ov');
+tbD.onclick=e=>{const tr=e.target.closest('tr');if(!tr)return;const d=D[tr.dataset.i];shN.textContent=d[0];shM.textContent=d[1]+' · '+d[2]+' · '+d[3];
+shK.innerHTML=`<div><small>Tgl NOO pertama</small><b>${d[5]}</b></div><div><small>Status</small><b>${d[6]?'Dealer baru':'Dealer lama, buka brand baru'}</b></div><div><small>Σ brand NOO</small><b>${d[4].length}</b></div><div><small>Total qty</small><b>${d[4].reduce((a,x)=>a+x[1],0)}</b></div>`;
+shB.innerHTML='<div class="hint" style="margin-bottom:2px">BRAND NOO BULAN INI</div>'+d[4].map(x=>`<div class="bl"><span class="bt" style="background:${BC[x[0]]}1F;color:${BC[x[0]]}">${x[0]}</span><b>${x[1]} unit</b></div>`).join('')+(d[7][0]!=='—'?`<div class="hint" style="margin-top:8px">Brand lain yang sudah lama diambil: <b>${d[7].join(', ')}</b></div>`:'');
+sh.classList.add('on');ov.classList.add('on')};
+ov.onclick=()=>{sh.classList.remove('on');ov.classList.remove('on')};
+</script></body></html>

@@ -173,6 +173,9 @@ function apiAnalisa($token, $period, $selection = null) {
     foreach ($curRows as $r) if ($r['q'] > 0) $laterCur[jkey([$r['customer'], $r['brand']])][] = $r['date'];
     $pairs = [];
     $first = $db['first'] ?? [];
+    /* 2026-11-24: tanggal pertama dealer muncul (semua brand) -> penanda dealer baru vs dealer lama buka brand baru */
+    $dealerFirst = [];
+    foreach (js_keys($first) as $k0) { $f0 = $first[$k0]; $p0 = json_decode($k0, true); if (!truthy($f0) || !is_array($p0)) continue; $c0 = (string) $p0[0]; $d0 = $f0['date'] ?? null; if ($d0 !== null && (!isset($dealerFirst[$c0]) || $d0 < $dealerFirst[$c0])) $dealerFirst[$c0] = $d0; }
     foreach (js_keys($first) as $k) {
         $f = $first[$k]; if (!truthy($f) || !in_set($idSet, $f['nik'] ?? null)) continue;
         $m = substr($f['date'], 0, 7); $idx = array_search($m, $months6, true); if ($idx === false) continue;
@@ -181,7 +184,7 @@ function apiAnalisa($token, $period, $selection = null) {
         for ($j = $idx; $j < count($months6); $j++) $pres[] = $qtyIn($pk[0], $months6[$j], $pk[1]) > 0 ? 1 : 0;
         $cu = $cust($pk[0]);
         $mm = $perMonth[(string) $pk[0]][$period] ?? []; $bl = []; foreach ($mm as $x => $v) if ($v > 0) $bl[] = (string) $x;
-        $pairs[] = ['c' => $pk[0], 'n' => $cu['nama'] ?? null, 'k' => js_or($cu['kota'] ?? null, ''), 'hp' => js_or($cu['hp'] ?? null, ''), 'b' => $pk[1], 'nik' => $f['nik'], 'm' => $m, 'd' => $f['date'], 'pres' => $pres, 'qM' => $qtyIn($pk[0], $m, $pk[1]), 'qCur' => $qtyIn($pk[0], $period, $pk[1]), 'multi' => $brandsIn($pk[0], $period), 'bl' => js_sort_default($bl), 'last' => js_or($lastDate[(string) $pk[0]] ?? null, null),
+        $pairs[] = ['c' => $pk[0], 'n' => $cu['nama'] ?? null, 'k' => js_or($cu['kota'] ?? null, ''), 'hp' => js_or($cu['hp'] ?? null, ''), 'b' => $pk[1], 'nik' => $f['nik'], 'm' => $m, 'd' => $f['date'], 'df' => $dealerFirst[(string) $pk[0]] ?? null, 'pres' => $pres, 'qM' => $qtyIn($pk[0], $m, $pk[1]), 'qCur' => $qtyIn($pk[0], $period, $pk[1]), 'multi' => $brandsIn($pk[0], $period), 'bl' => js_sort_default($bl), 'last' => js_or($lastDate[(string) $pk[0]] ?? null, null),
             'again' => $m === $period ? js_some($laterCur[$k] ?? [], fn($dt) => strcmp($dt, $f['date']) > 0) : null];
     }
     $noo = ['prev' => $prevP, 'current' => $period, 'months' => $months6, 'pairs' => $pairs];
@@ -395,3 +398,38 @@ function anaHolNames_(): array {
     return $out;
 }
 function apiV6Boot($token) { $t = null; try { $t = apiDealerTutupList($token); } catch (Throwable $e) {} return ['hol' => anaHol_(), 'holn' => (object) anaHolNames_(), 'tutup' => $t]; }
+
+/* v7 Brand MINGGUAN (mockup 2026-11-24 dsm-brand-mingguan-opsi): ST & SO mingguan per sales x TYPE untuk 1 brand.
+   ST dari cube periode berjalan, SO dikreditkan ke sales pemilik dealer saat ini (sama seperti apiCompare). */
+function apiWeeklySales($token, $period, $selection = null, $brand = null) {
+    $c = anaCtx_($token, $period, $selection); $period = js_str($period); $brand = text_(js_or($brand, '')); $all = $brand === '' || $brand === 'ALL'; $meta = $c['db']['meta'];
+    $cut = $c['cutoff']; $cutDay = (int) substr($cut, 8); $lastDay = (int) substr(PortalCore::end($period), 8);
+    $weeks = array_map(function ($w) use ($cutDay, $lastDay) { $from = ($w - 1) * 7 + 1; $to = $w === 5 ? $lastDay : min($w * 7, $lastDay); return ['week' => $w, 'from' => $from, 'to' => $to, 'future' => $from > $cutDay || $from > $lastDay]; }, [1, 2, 3, 4, 5]);
+    $idx = fn($d) => min(5, (int) ceil(((int) substr($d, 8)) / 7)) - 1;
+    $acc = []; $bigCnt = []; $tb = []; $cmp = [];
+    $ci = $idx($cut); $kDays = $cutDay - $ci * 7; $prevTo = $ci > 0 ? $period . '-' . str_pad((string) (($ci - 1) * 7 + $kDays), 2, '0', STR_PAD_LEFT) : null; $prevFrom = $ci > 0 ? $period . '-' . str_pad((string) (($ci - 1) * 7 + 1), 2, '0', STR_PAD_LEFT) : null;
+    $put = function ($nik, $type, $k, $w, $v) use (&$acc) { $nik = (string) $nik; $type = (string) $type; if (!isset($acc[$nik][$type])) $acc[$nik][$type] = ['st' => [0, 0, 0, 0, 0], 'so' => [0, 0, 0, 0, 0]]; $acc[$nik][$type][$k][$w] += $v; };
+    foreach (PortalCore::slice($c['db'], $period, $c['ids'], null) as $r) {
+        if ((!$all && $r['brand'] !== $brand) || !truthy($r['q']) || strcmp($r['date'], $cut) > 0) continue;
+        $ty = js_or($r['type'] ?? null, '(tanpa TYPE)'); $tb[$ty] = $r['brand']; $wi = $idx($r['date']);
+        $put($r['nik'], $ty, 'st', $wi, $r['q']);
+        $nk = (string) $r['nik']; if (!isset($cmp[$nk])) $cmp[$nk] = [0, 0]; if ($wi === $ci) $cmp[$nk][0] += $r['q']; elseif ($prevFrom && strcmp($r['date'], $prevFrom) >= 0 && strcmp($r['date'], $prevTo) <= 0) $cmp[$nk][1] += $r['q'];
+        if (truthy($r['region'] ?? null)) $bigCnt[(string) $r['nik']][(string) $r['region']] = ($bigCnt[(string) $r['nik']][(string) $r['region']] ?? 0) + 1;
+    }
+    $soMissing = false; $idSet = js_set($c['ids']);
+    $pv = coverageView_($c['source'], $period, $c['ids'], 'PAIR', $c['u']);
+    if (empty($pv['stock']) || !empty($pv['missingSO'])) $soMissing = true;
+    else foreach (stockMoves_($pv, $period . '-01', (string) $cut, ['out' => true]) as $t) {
+        if (!truthy($t['outQty']) || substr($t['date'], 0, 7) !== $period || strcmp($t['date'], $cut) > 0) continue;
+        $p = $meta['products'][$t['sku']] ?? null; if (!$p || !truthy($p['device'] ?? false) || (!$all && ($p['brand'] ?? '') !== $brand)) continue;
+        $own = $pv['stock']['owners'][$t['customer']] ?? null; if (!truthy($own) || !in_set($idSet, $own)) continue;
+        $ty = js_or($p['type'] ?? null, js_or($p['nama'] ?? null, $t['sku'])); $tb[$ty] = $p['brand'] ?? ''; $put($own, $ty, 'so', $idx($t['date']), $t['outQty']);
+    }
+    $anc = function ($nik, $role) use ($c) { $p = anaPerson_($c['people'], $nik); $g = 0; while ($p && $g++ < 10) { if ($p['role'] === $role) return $p; $p = anaPerson_($c['people'], $p['atasan'] ?? null); } return null; };
+    $rows = array_map(function ($nik) use ($c, $anc, $bigCnt, $acc, $cmp) {
+        $p = anaPerson_($c['people'], $nik) ?? ['nik' => $nik, 'nama' => $nik, 'role' => 'SALES']; $asm = $anc($nik, 'ASM'); $rgm = $anc($nik, 'RGM');
+        $bc = $bigCnt[$nik] ?? null; $bigTx = $bc ? js_sort(js_keys($bc), fn($x, $y) => $bc[$y] - $bc[$x])[0] : '';
+        return ['nik' => $nik, 'nama' => $p['nama'] ?? $nik, 'region' => js_or($p['portfolio'] ?? null, js_or($p['region'] ?? null, '')), 'big' => js_or($p['wilayah'] ?? null, js_or($bigTx, '(tanpa Region)')), 'rgm' => $rgm ? $rgm['nama'] : '', 'asm' => $asm ? $asm['nama'] : '', 'group' => $asm ? $asm['nama'] : '(tanpa ASM)', 'self' => (bool) $asm && $asm['nik'] === $nik, 'types' => js_obj($acc[$nik]), 'wk' => $cmp[$nik] ?? [0, 0]];
+    }, js_keys($acc));
+    return ['brand' => $all ? 'ALL' : $brand, 'typeBrand' => js_obj($tb), 'cmpWeek' => $ci + 1, 'cmpDays' => $kDays, 'cmpFrom' => $prevFrom, 'cmpTo' => $prevTo, 'period' => $period, 'cutoff' => $cut, 'weeks' => $weeks, 'rows' => $rows, 'soMissing' => $soMissing];
+}

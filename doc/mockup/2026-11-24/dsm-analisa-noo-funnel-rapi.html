@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSM · Dealer Baru · panel Order Lagi (rapi)</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:13px/1.45 Inter,Segoe UI,Arial,sans-serif;background:#F3F6FA;color:#14233A}
+.wrap{max-width:1180px;margin:0 auto;padding:18px}
+.lbl{font:700 12px inherit;color:#fff;background:#FF7A1A;display:inline-block;padding:3px 10px;border-radius:999px;margin:6px 0 8px}
+.lbl.alt{background:#6B7A8F}
+.panel{background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(10,46,87,.06);padding:14px 16px;margin-bottom:22px}
+.panel h3{margin:0;font-size:15px}.panel .sub{color:#6B7A8F;font-size:12px;margin-bottom:12px}
+.note{background:#F5F8FC;border-radius:10px;padding:9px 12px;font-size:12px;color:#4B5B70;margin-top:12px}
+
+/* ===== OPSI A: 2 kotak, label pendek & seragam ===== */
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.box{border:1px solid #E6ECF3;border-radius:12px;padding:12px 14px}.box.cur{border-color:#9CC3EE;background:#F7FBFF}
+.bh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:2px}
+.bh b{font-size:13.5px}.tag{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;background:#E9F8F1;color:#0B7A50;white-space:nowrap}.tag.run{background:#FFF1D6;color:#A86400}
+.bs{font-size:11.5px;color:#6B7A8F;margin-bottom:10px}
+.fr{display:grid;grid-template-columns:110px 1fr 92px;gap:10px;align-items:center;height:30px;cursor:pointer;border-radius:8px;padding:0 4px}
+.fr:hover{background:#EEF4FB}
+.fr .t{font-weight:600;white-space:nowrap}
+.fb{background:#EEF2F7;border-radius:6px;height:20px}.fb i{display:block;height:100%;border-radius:6px;min-width:4px}
+.fr .v{text-align:right;white-space:nowrap}.fr .v b{font-size:13px}.fr .v small{color:#6B7A8F;margin-left:4px}
+
+/* ===== OPSI B: 1 tabel gabungan ===== */
+table{width:100%;border-collapse:collapse}th{text-align:left;font-size:11.5px;color:#4B5B70;padding:8px;background:#F5F8FC;border-bottom:1px solid #E6ECF3}
+td{padding:7px 8px;border-bottom:1px solid #EEF2F7;vertical-align:middle}
+th.c{width:38%}.cell{display:grid;grid-template-columns:1fr 86px;gap:10px;align-items:center}
+.cell .v{text-align:right;white-space:nowrap}.cell .v small{color:#6B7A8F;margin-left:4px}
+td.k{font-weight:600;white-space:nowrap}
+tr.cl{cursor:pointer}tr.cl:hover td{background:#F7FBFF}
+@media(max-width:760px){.cmp{grid-template-columns:1fr}.fr{grid-template-columns:96px 1fr 84px}.panel{overflow-x:auto}table{min-width:560px}}
+</style></head><body><div class="wrap">
+
+<span class="lbl">OPSI A · rekomendasi</span>
+<div class="panel"><h3>Dealer Baru: Order Lagi atau Nggak?</h3><div class="sub">Bulan lalu vs bulan berjalan · klik baris untuk lihat daftar dealer</div>
+<div class="cmp" id="A"></div>
+<div class="note">Kiri: dealer baru Oktober, dicek aktivitasnya di November. Kanan: dealer baru November, dicek di bulan yang sama (baru 23 hari, wajar masih kecil). Dihitung per pasangan dealer × brand.</div>
+</div>
+
+<span class="lbl alt">OPSI B · 1 tabel gabungan</span>
+<div class="panel"><h3>Dealer Baru: Order Lagi atau Nggak?</h3><div class="sub">Bulan lalu vs bulan berjalan · klik baris untuk lihat daftar dealer</div>
+<table><thead><tr><th></th><th class="c">Dealer baru Oktober 2026 <span style="font-weight:400">· dicek di November</span></th><th class="c">Dealer baru November 2026 <span style="font-weight:400">· s.d. 23 Nov</span></th></tr></thead><tbody id="B"></tbody></table>
+</div>
+
+</div>
+<script>
+const S=[["Dealer baru","#0A2E57",73,64],["Order lagi","#0B5CAD",30,12],["SELL THRU ≥2","#12A86B",21,19],["Ambil ≥2 brand","#7A5AF8",9,7]];
+const pc=(a,b)=>Math.round(a/b*100)+'%';
+const box=(k,title,tag,run,sub)=>`<div class="box ${run?'cur':''}"><div class="bh"><b>${title}</b><span class="tag ${run?'run':''}">${tag}</span></div><div class="bs">${sub}</div>${S.map(s=>`<div class="fr" title="Klik untuk lihat daftar dealer"><span class="t">${s[0]}</span><div class="fb"><i style="width:${s[k]/S[0][k]*100}%;background:${s[1]}"></i></div><span class="v"><b>${s[k]}</b><small>${pc(s[k],S[0][k])}</small></span></div>`).join('')}</div>`;
+A.innerHTML=box(2,'Dealer baru Oktober 2026','sebulan penuh',0,'Aktivitasnya dicek di November 2026')+box(3,'Dealer baru November 2026','berjalan · 23 hari',1,'Aktivitasnya dicek di bulan yang sama');
+const cell=(v,b,c)=>`<div class="cell"><div class="fb"><i style="width:${v/b*100}%;background:${c}"></i></div><span class="v"><b>${v}</b><small>${pc(v,b)}</small></span></div>`;
+B.innerHTML=S.map(s=>`<tr class="cl"><td class="k">${s[0]}</td><td>${cell(s[2],S[0][2],s[1])}</td><td>${cell(s[3],S[0][3],s[1])}</td></tr>`).join('');
+</script></body></html>

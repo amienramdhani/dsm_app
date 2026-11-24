@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSM · Analisa · Reaktivasi & Dealer Baru (kondisi saat ini)</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:13px/1.45 Inter,Segoe UI,Arial,sans-serif;background:#F3F6FA;color:#14233A}
+.top{background:#0A2E57;color:#fff;padding:10px 20px;display:flex;gap:16px;align-items:center}.top b{font-size:15px}.top small{opacity:.75}
+.wrap{max-width:1240px;margin:0 auto;padding:18px}
+.banner{background:#FFF7E6;border:1px solid #F5C978;border-radius:10px;padding:8px 12px;margin-bottom:14px;font-size:12px}
+.head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.seg{display:inline-flex;background:#fff;border:1px solid #D8E0EA;border-radius:10px;padding:3px}
+.seg button{border:0;background:none;padding:7px 14px;border-radius:8px;font:600 12.5px inherit;color:#4B5B70;cursor:pointer}
+.seg button.on{background:#0A2E57;color:#fff}.hint{color:#6B7A8F;font-size:12px}
+.filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.filter select{padding:7px 10px;border:1px solid #D8E0EA;border-radius:8px;background:#fff;font:inherit}
+.chip{border:1px solid #D8E0EA;background:#fff;border-radius:999px;padding:6px 12px;font:600 12px inherit;cursor:pointer}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.kpi{background:#E9F8F1;border-radius:12px;padding:12px 14px}.kpi small{display:block;color:#4B5B70;font-size:11.5px}.kpi b{display:block;font-size:22px;margin:2px 0}.kpi span{font-size:11.5px;color:#6B7A8F}
+.panel{background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(10,46,87,.06);padding:14px 16px;margin-bottom:14px}
+.panel h3{margin:0 0 2px;font-size:15px}.panel .sub{color:#6B7A8F;font-size:12px;margin-bottom:10px}
+.ctrl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.dcard{display:grid;grid-template-columns:1.6fr 1.3fr auto;gap:14px;align-items:center;border:1px solid #E6ECF3;border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.who{display:flex;gap:10px;align-items:flex-start}.av{width:28px;height:28px;border-radius:50%;background:#E6ECF3;display:grid;place-items:center;font-weight:700;font-size:12px;flex:none}.av.hot{background:#FF7A1A;color:#fff}
+.who a{color:#0B5CAD;font-weight:700;text-decoration:none}.cellsub{display:block;color:#6B7A8F;font-size:11.5px}
+.pill{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:4px}.warn{background:#FFF1D6;color:#A86400}.vio{background:#EFEAFF;color:#5B3CC4}.bad{background:#FDE3E3;color:#C0352B}
+.mid{display:flex;gap:16px}.pot{font-size:11.5px;color:#6B7A8F}.pot b{display:block;color:#14233A;font-size:13px}
+.act{display:flex;gap:6px}.wa{background:#25D366;color:#fff;border:0;border-radius:8px;padding:6px 10px;font:600 12px inherit}
+.note{background:#F5F8FC;border-radius:10px;padding:9px 12px;font-size:12px;color:#4B5B70;margin-top:8px}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:14px}.box{border:1px solid #E6ECF3;border-radius:12px;padding:12px}.box.cur{border-color:#9CC3EE;background:#F7FBFF}
+.fh{font-weight:700;margin-bottom:8px}.fr{display:grid;grid-template-columns:150px 1fr 46px;gap:8px;align-items:center;margin-bottom:7px;cursor:pointer}
+.fb{background:#EEF2F7;border-radius:6px;height:22px;position:relative}.fb i{display:block;height:100%;border-radius:6px}.fb span{position:absolute;left:8px;top:2px;font-weight:700;font-size:12px;color:#fff;text-shadow:0 0 2px rgba(0,0,0,.3)}
+table{width:100%;border-collapse:collapse;font-size:12.5px}th{background:#F5F8FC;text-align:left;padding:8px;font-size:11.5px;color:#4B5B70;border-bottom:1px solid #E6ECF3}td{padding:8px;border-bottom:1px solid #EEF2F7}
+td.n,th.n{text-align:right}.heat{display:inline-block;min-width:48px;text-align:center;border-radius:6px;padding:3px 6px;font-weight:700;font-size:12px}
+.bar{display:inline-block;width:60px;height:6px;background:#EEF2F7;border-radius:3px;vertical-align:middle;margin-right:6px}.bar i{display:block;height:100%;background:#12A86B;border-radius:3px}
+.tab{display:none}.tab.on{display:block}
+@media(max-width:760px){.kpis{grid-template-columns:1fr 1fr}.dcard{grid-template-columns:1fr}.cmp{grid-template-columns:1fr}.mid{flex-wrap:wrap}.panel{overflow-x:auto}}
+</style></head><body>
+<div class="top"><b>DSM</b><small>Analisa (saat ini disembunyikan)</small></div>
+<div class="wrap">
+<div class="banner"><b>Mockup kondisi SAAT INI</b> (dibuat ulang dari kode <code>dev</code> d11bef8: <code>v6ReactHtml</code> & <code>v6NooHtml</code>). Struktur, label & rumus sama persis, <b>angka dummy</b>. Belum ada perubahan desain.</div>
+<div class="head"><div class="seg"><button>⊞ Cross-sell Brand</button><button class="on" data-t="react">↻ Reaktivasi Dealer</button><button data-t="noo">★ Dealer Baru</button></div><span class="hint">Data s.d. 23 Nov 2026 · sesuai cakupan</span><span class="hint">ⓘ</span></div>
+<div class="filter"><select><option>Semua Big Region</option></select><select><option>Semua Region</option></select><select><option>Semua ASM</option></select><select><option>Semua Sales</option></select><button class="chip">Reset</button></div>
+
+<!-- ================= REAKTIVASI ================= -->
+<section class="tab on" id="react">
+<div class="kpis">
+<div class="kpi"><small>Dealer perlu dihubungi</small><b>412</b><span>belum order bulan ini</span></div>
+<div class="kpi"><small>Potensi hilang</small><b>± 1.860 unit</b><span>rata-rata/bulan mereka dulu</span></div>
+<div class="kpi"><small>Paling mudah</small><b>138</b><span>status Aktif / Di Bawah Min, belum order</span></div>
+<div class="kpi"><small>Berhasil aktif lagi</small><b>57</b><span>bulan ini order lagi setelah absen</span></div>
+</div>
+<div class="panel"><h3>Daftar telepon · prioritas</h3><div class="sub">Urut dari potensi terbesar</div>
+<div class="ctrl"><div class="seg"><button class="on">Semua</button><button>Active ⏳</button><button>Passive</button><button>Idle</button><button>Inactive</button></div><span class="hint">412 dealer · tampil 80 teratas · skor = rata-rata unit × peluang kembali</span></div>
+<div id="rl"></div>
+<div class="note">Semua dealer di sini belum order bulan ini. Status = status terkunci (pola 3 bulan closing): Active ⏳ = masih rutin order · Passive · Idle · Inactive. Rata-rata dihitung dari bulan yang ada order-nya.</div>
+</div>
+</section>
+
+<!-- ================= DEALER BARU ================= -->
+<section class="tab" id="noo">
+<div class="kpis">
+<div class="kpi"><small>Dealer baru November 2026 (MTD)</small><b>64</b><span>▼ 12,3% vs Oktober 2026 (73)</span></div>
+<div class="kpi"><small>Dealer baru Oktober 2026</small><b>73</b><span>sebulan penuh</span></div>
+<div class="kpi"><small>Order lagi · Oktober 2026</small><b>41,1%</b><span>30 dari 73 order di November 2026</span></div>
+<div class="kpi"><small>Order lagi · November 2026</small><b>18,8%</b><span>12 dari 64 order ulang di bulan yang sama</span></div>
+</div>
+<div class="panel"><h3>Dealer Baru: Order Lagi atau Nggak?</h3><div class="sub">Bulan lalu vs bulan berjalan</div>
+<div class="cmp">
+<div class="box"><div class="fh">Oktober 2026 · sebulan penuh</div><div id="fL"></div></div>
+<div class="box cur"><div class="fh">November 2026 · berjalan s.d. 23 Nov 2026</div><div id="fC"></div></div>
+</div>
+<div class="note"><b>Klik batang mana saja</b> untuk melihat daftar dealernya (popup: dealer, brand, sales, tgl pertama, qty, brand lain, order terakhir, tombol WA). Kiri: dealer baru bulan lalu, dicek aktivitasnya di bulan ini (bulan ini baru berjalan 23 hari). Kanan: dealer baru bulan ini, dicek aktivitasnya di bulan yang sama. Dihitung per pasangan dealer × brand, sama seperti NOO.</div>
+</div>
+<div class="panel"><h3>Per sales · bulan lalu vs bulan ini</h3><div class="sub">Urut jumlah dealer baru</div>
+<table><thead><tr><th>Sales</th><th>Region</th><th class="n">Oktober 2026 · baru</th><th class="n">Order lagi</th><th>% order lagi</th><th class="n">November 2026 · baru</th><th class="n">Order lagi</th><th class="n">Selisih baru</th></tr></thead><tbody id="ps"></tbody></table>
+</div>
+<div class="panel"><h3>Dealer Baru per Bulan: Masih Order Sampai Sekarang?</h3><div class="sub">Makin hijau makin bagus</div>
+<table><thead><tr><th>Bulan jadi dealer baru</th><th class="n">Jumlah</th><th>Bulan pertama</th><th>Bulan ke-1</th><th>Bulan ke-2</th><th>Bulan ke-3</th><th>Bulan ke-4</th></tr></thead><tbody id="coh"></tbody></table>
+<div class="note">Baca per baris: dari dealer yang jadi dealer baru di bulan itu, berapa persen yang masih order di bulan-bulan berikutnya. * = bulan berjalan, belum penuh.</div>
+</div>
+</section>
+</div>
+<script>
+const R=[["Cell Jaya Abadi","ACTIVE","warn","Cirebon","Dedi S.","18 Okt 2026",36,42],["Sinar Ponsel","PASSIVE","warn","Kuningan","Rina A.","2 Sep 2026",83,31],["Mega Phone Center","IDLE","vio","Indramayu","Yoga P.","11 Jul 2026",135,27],["Berkah Selular","ACTIVE","warn","Majalengka","Dedi S.","25 Okt 2026",29,22],["Galaxy Cell","INACTIVE","bad","Brebes","Andi K.","3 Mei 2026",204,19],["Putra Gadget","PASSIVE","warn","Cirebon","Rina A.","14 Sep 2026",70,15]];
+rl.innerHTML=R.map((r,i)=>`<div class="dcard"><div class="who"><span class="av ${i<3?'hot':''}">${i+1}</span><div><a href="#">${r[0]}</a> <span class="pill ${r[2]}">${r[1]}</span><small class="cellsub">${r[3]} · Sales ${r[4]} · terakhir order ${r[5]} (${r[6]} hari lalu)</small></div></div><div class="mid"><div class="pot">Rata-rata dulu<b>${r[7]} unit/bln</b></div><div class="pot">6 bulan terakhir<svg width="110" height="28"><polyline fill="none" stroke="#7A5AF8" stroke-width="2" points="0,${8+i*2} 22,6 44,${12+i} 66,10 88,${20+i} 110,26"/></svg><small class="cellsub">Jun · Jul · Agu · Sep · Okt · Nov</small></div></div><div class="act"><button class="wa">WhatsApp</button><button class="chip">Riwayat →</button></div></div>`).join('');
+const fun=(el,d)=>{el.innerHTML=d.map(s=>`<div class="fr" title="Klik untuk lihat daftar dealer"><b>${s[0]}</b><div class="fb"><i style="width:${s[1]/d[0][1]*100}%;background:${s[2]}"></i><span>${s[1]}</span></div><b style="text-align:right">${Math.round(s[1]/d[0][1]*100)}%</b></div>`).join('')};
+fun(fL,[["Dealer baru",73,"#0A2E57"],["Order lagi di November 2026",30,"#0B5CAD"],["SELL THRU ≥2 di November 2026",21,"#12A86B"],["Ambil ≥2 brand di November 2026",9,"#7A5AF8"]]);
+fun(fC,[["Dealer baru",64,"#0A2E57"],["Order ulang bulan ini",12,"#0B5CAD"],["SELL THRU ≥2 bulan ini",19,"#12A86B"],["Ambil ≥2 brand bulan ini",7,"#7A5AF8"]]);
+ps.innerHTML=[["Dedi S.","Cirebon","Big West",14,7,12],["Rina A.","Kuningan","Big West",11,4,13],["Yoga P.","Indramayu","Big North",9,3,6],["Andi K.","Brebes","Big East",8,5,9]].map(s=>{const a=Math.round(s[4]/s[3]*1000)/10,d=s[5]-s[3];return `<tr><td>${s[0]}</td><td>${s[1]}<small class="cellsub">${s[2]}</small></td><td class="n">${s[3]}</td><td class="n">${s[4]}</td><td><span class="bar"><i style="width:${a}%"></i></span><b>${String(a).replace('.',',')}%</b></td><td class="n"><b>${s[5]}</b></td><td class="n">0</td><td class="n"><b style="color:${d>=0?'#12A86B':'#C0352B'}">${d>=0?'+':''}${d}</b></td></tr>`}).join('');
+const C=[["Juli 2026",88,[100,46,38,31,29]],["Agustus 2026",79,[100,43,35,30]],["September 2026",81,[100,40,33]],["Oktober 2026",73,[100,41]]];
+const h=(v,last)=>`<span class="heat" style="background:rgba(18,168,107,${(0.12+v/100*.8).toFixed(2)});color:${v>55?'#fff':'#0B5E45'}">${v}%${last?'*':''}</span>`;
+coh.innerHTML=C.map(c=>`<tr><td>${c[0]}</td><td class="n">${c[1]}</td>${[0,1,2,3,4].map(k=>c[2][k]==null?'<td><span class="hint">–</span></td>':`<td>${h(c[2][k],k===c[2].length-1&&k>0)}</td>`).join('')}</tr>`).join('');
+document.querySelectorAll('.head .seg button[data-t]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.head .seg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.id===b.dataset.t))});
+</script></body></html>

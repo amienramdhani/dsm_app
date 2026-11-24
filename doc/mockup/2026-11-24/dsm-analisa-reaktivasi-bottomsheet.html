@@ -1,0 +1,31 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reaktivasi HP · bottom sheet</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#dfe5ee;font-family:Inter,"Segoe UI",system-ui,sans-serif;color:#0f172a;font-size:11.5px;display:flex;justify-content:center;padding:14px}
+.ph{width:390px;background:#eef2f9;border-radius:22px;padding:12px;box-shadow:0 10px 30px rgba(15,23,42,.2)}
+.card{background:#fff;border:1px solid #e5e9ef;border-left:4px solid #E8590C;border-radius:8px;padding:8px 10px;margin-bottom:8px;cursor:pointer}
+.c1{display:flex;align-items:center;gap:7px}.rk{width:18px;height:18px;border-radius:50%;background:#FF7A1A;color:#fff;font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center}
+.kd{font-size:10px;font-weight:500;background:#f1f5f9;color:#475569;border-radius:5px;padding:1px 5px}.nm{flex:1;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wa{font-size:10px;font-weight:600;color:#fff;background:#12A86B;border-radius:8px;padding:5px 12px}
+.rs{font-size:10px;color:#64748b;margin:3px 0 0 25px}.c3{display:flex;justify-content:space-between;margin:5px 0 0 25px}.c3 small{display:block;font-size:10px;font-weight:500;color:#94a3b8}.c3 em{font-style:normal;color:#E8590C;font-size:10px;margin-left:3px}
+.bk{position:fixed;inset:0;background:rgba(15,23,42,.35);opacity:0;pointer-events:none;transition:.2s}.bk.on{opacity:1;pointer-events:auto}
+.sh2{position:fixed;left:50%;bottom:0;width:390px;max-width:100%;transform:translate(-50%,100%);background:#fff;border-radius:18px 18px 0 0;padding:8px 16px 18px;box-shadow:0 -8px 24px rgba(15,23,42,.2);transition:.25s}.sh2.on{transform:translate(-50%,0)}
+.gr{width:38px;height:4px;border-radius:2px;background:#cbd5e1;margin:0 auto 10px}
+.hd2{display:flex;gap:10px;align-items:center;margin-bottom:12px}.av{width:42px;height:42px;border-radius:12px;color:#fff;font-weight:600;font-size:14px;display:flex;align-items:center;justify-content:center;background:#E8590C}
+.hx b{display:block;font-size:14px;font-weight:600}.hx span{display:flex;gap:6px;align-items:center;margin-top:4px}.pl{font-size:9px;font-weight:600;border-radius:999px;padding:2px 8px;background:#FDEBDD;color:#E8590C}
+.tl{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:6px;margin-bottom:10px}.tl>div{background:#E8F7EF;border:1px solid #CFEBDC;border-radius:10px;padding:7px 9px}.tl small{display:block;font-size:8.5px;font-weight:700;color:#0F4C3A;letter-spacing:.3px}.tl b{font-size:19px;font-weight:500}.tl b.dt{font-size:14px;font-weight:600}.tl i{font-style:normal;font-size:9.5px;color:#64748b;margin-left:3px}
+.lc{background:#f8fafc;border-radius:10px;padding:8px 10px;margin-bottom:6px;font-size:11px;display:flex;flex-direction:column;gap:5px}.lc small{display:inline-block;width:78px;font-size:9px;font-weight:500;color:#94a3b8;letter-spacing:.3px}
+.dh{font-size:9px;font-weight:600;color:#64748b;letter-spacing:.3px;margin:8px 0 4px}
+.ch{display:flex;align-items:flex-end;gap:6px;height:64px;padding:0 2px}.ch div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:2px}.ch i{width:100%;border-radius:4px 4px 0 0;background:#E8590C;min-height:3px}.ch i.z{background:#e2e8f0}.ch b{font-size:9.5px;font-weight:500}.ch span{font-size:9px;color:#94a3b8}
+.ac{display:flex;gap:6px;margin-top:12px}.ac .wa{padding:9px 16px;font-size:11px}.op{flex:1;text-align:center;font-size:10.5px;font-weight:600;color:#fff;background:#0F4C3A;border-radius:8px;padding:9px}
+</style></head><body><div class="ph">
+<div class="card" id="c1"><div class="c1"><span class="rk">1</span><span class="kd">005.020</span><b class="nm">PT. INVENS SUKSES INDONESIA</b><span class="wa">WA</span></div><div class="rs">JAKARTA · REFKY WIJAYA</div><div class="c3"><div><small>TERAKHIR ORDER</small>20 Agu 2026<em>39 hari lalu</em></div><div style="text-align:right"><small>RATA² DULU</small>200 unit/bln</div></div></div>
+<div class="card" id="c2"><div class="c1"><span class="rk">2</span><span class="kd">320.920</span><b class="nm">PT. MAJESTI SELULAR INTERNUSA</b><span class="wa">WA</span></div><div class="rs">BIG BANDUNG · UUS USMANA</div><div class="c3"><div><small>TERAKHIR ORDER</small>28 Jul 2026<em>62 hari lalu</em></div><div style="text-align:right"><small>RATA² DULU</small>200 unit/bln</div></div></div>
+<p style="font-size:10px;color:#64748b">Ketuk kartu untuk membuka bottom sheet.</p></div>
+<div class="bk" id="bk" onclick="cl()"></div><div class="sh2" id="sh2"><div class="gr"></div>
+<div class="hd2"><div class="av">IN</div><div class="hx"><b>PT. INVENS SUKSES INDONESIA</b><span><i class="kd" style="font-style:normal">005.020</i><i class="pl" style="font-style:normal">PASSIVE · 1 DARI 3 BULAN CLOSING</i></span></div></div>
+<div class="tl"><div><small>TERAKHIR ORDER</small><b class="dt">20 Agu</b><i>2026</i></div><div><small>SUDAH ABSEN</small><b>39</b><i>hari</i></div><div><small>RATA² DULU</small><b>200</b><i>unit/bln</i></div></div>
+<div class="lc"><div><small>REGION</small>JAKARTA</div><div><small>SALES</small>REFKY WIJAYA</div></div>
+<div class="dh">UNIT PER BULAN · 6 BULAN TERAKHIR</div>
+<div class="ch"><div><b>0</b><i class="z" style="height:3px"></i><span>Mar</span></div><div><b>0</b><i class="z" style="height:3px"></i><span>Apr</span></div><div><b>200</b><i style="height:100%"></i><span>Mei</span></div><div><b>0</b><i class="z" style="height:3px"></i><span>Jun</span></div><div><b>0</b><i class="z" style="height:3px"></i><span>Jul</span></div><div><b>200</b><i style="height:100%"></i><span>Agu</span></div></div>
+<div class="ac"><span class="wa">WA</span><span class="op">BUKA DETAIL LENGKAP DEALER</span></div></div>
+<script>document.querySelectorAll('.card').forEach(c=>c.onclick=()=>{bk.classList.add('on');sh2.classList.add('on')});function cl(){bk.classList.remove('on');sh2.classList.remove('on')}</script></body></html>

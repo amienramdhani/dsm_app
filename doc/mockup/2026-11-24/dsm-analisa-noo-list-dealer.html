@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSM · Dealer Baru · Daftar dealer NOO bulan ini</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:13px/1.45 Inter,Segoe UI,Arial,sans-serif;background:#F3F6FA;color:#14233A}
+.wrap{max-width:1180px;margin:0 auto;padding:18px}
+.banner{background:#FFF7E6;border:1px solid #F5C978;border-radius:10px;padding:8px 12px;margin-bottom:14px;font-size:12px}
+.panel{background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(10,46,87,.06);padding:14px 16px;margin-bottom:14px}
+.ph{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.panel h3{margin:0;font-size:15px}.sub{color:#6B7A8F;font-size:12px}
+.ctrl{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0 10px}
+.ctrl input{padding:7px 10px;border:1px solid #D8E0EA;border-radius:8px;font:inherit;width:240px}
+.ctrl select{padding:7px 10px;border:1px solid #D8E0EA;border-radius:8px;font:inherit;background:#fff}
+.hint{color:#6B7A8F;font-size:12px}
+.sum{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.sum span{background:#F5F8FC;border:1px solid #E6ECF3;border-radius:999px;padding:3px 10px;font-size:12px}.sum b{margin-left:4px}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{background:#F5F8FC;text-align:left;padding:8px;font-size:11.5px;color:#4B5B70;border-bottom:1px solid #E6ECF3;white-space:nowrap}
+td{padding:8px;border-bottom:1px solid #EEF2F7;vertical-align:top}td.n,th.n{text-align:right}
+a{color:#0B5CAD;font-weight:700;text-decoration:none}.cellsub{display:block;color:#6B7A8F;font-size:11.5px}
+.bc{display:inline-block;border-radius:999px;padding:2px 9px;font-size:11.5px;font-weight:700;margin:0 4px 4px 0;background:#E6F0FB;color:#0B5CAD}
+.bc small{font-weight:500;color:#4B5B70;margin-left:3px}
+.tg{font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:999px;background:#E9F8F1;color:#0B7A50}
+.wa{background:#25D366;color:#fff;border:0;border-radius:8px;padding:5px 10px;font:600 12px inherit}
+.note{background:#F5F8FC;border-radius:10px;padding:9px 12px;font-size:12px;color:#4B5B70;margin-top:10px}
+.more{text-align:center;margin-top:10px}.more button{border:1px solid #D8E0EA;background:#fff;border-radius:999px;padding:6px 14px;font:600 12px inherit}
+/* HP: kartu */
+.cards{display:none}
+.card{border:1px solid #E6ECF3;border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.card .r{display:flex;justify-content:space-between;gap:8px}
+@media(max-width:760px){.tbl{display:none}.cards{display:block}.ctrl input{width:100%}}
+
+/* ===== OPSI B: tabel padat bersih ===== */
+.sw{display:flex;gap:6px;margin-bottom:12px}.sw button{border:1px solid #D8E0EA;background:#fff;border-radius:8px;padding:6px 14px;font:700 12px inherit;cursor:pointer}.sw button.on{background:#10394E;color:#fff;border-color:#10394E}
+.op{display:none}.op.on{display:block}
+.pB{background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(10,46,87,.06);padding:12px 14px}
+.pB h3{margin:0;font-size:14px}.pB .sub{margin-bottom:10px}
+.fB{display:flex;gap:8px;align-items:center;margin-bottom:8px}.fB input,.fB select{height:32px;padding:0 10px;border:1px solid #D8E0EA;border-radius:8px;font:inherit;background:#fff}.fB input{width:230px}.fB .cnt{margin-left:auto;color:#6B7A8F;font-size:12px}
+.tw{overflow-x:auto}
+table.tB{border-collapse:collapse;width:100%;font-size:11.5px}
+.tB th,.tB td{border:1px solid #E1E7EE;padding:4px 8px;white-space:nowrap}
+.tB th{background:#E6EBF1;color:#14233A;font-weight:700;border-bottom:2px solid #15303F;text-align:left}
+.tB td.n,.tB th.n{text-align:right;font-family:ui-monospace,Consolas,monospace}
+.tB td.nm{border-left:4px solid #6D3FD8}.tB td.nm.old{border-left-color:#C9D3DF}
+.tB a{color:#0B5CAD;font-weight:700}.tB .s{color:#6B7A8F;font-size:10.5px;margin-left:6px}
+.tB .br{font-weight:600}
+.lg{display:flex;gap:14px;font-size:11px;color:#6B7A8F;margin-top:8px}.lg i{display:inline-block;width:4px;height:12px;vertical-align:-2px;margin-right:5px}
+@media(max-width:760px){.fB{flex-wrap:wrap}.fB input{width:100%}.tB td.nm{position:sticky;left:0;background:#fff}}
+
+/* ===== OPSI C: padat + lebih hidup ===== */
+.pC{background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(10,46,87,.08);overflow:hidden}
+.hC{display:flex;align-items:center;gap:12px;padding:12px 14px;border-left:5px solid #6D3FD8;background:linear-gradient(#fff,#fff)}
+.hC h3{margin:0;font-size:14px;letter-spacing:.2px}.hC .sub{font-size:11.5px}
+.bdg{margin-left:auto;display:flex;gap:8px}
+.bdg span{background:#F3EEFF;color:#4B2AA8;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:600}.bdg b{font-size:14px;margin-right:3px;font-family:ui-monospace,Consolas,monospace}
+.bdg span.g{background:#EEF2F7;color:#4B5B70}
+.fC{display:flex;gap:8px;align-items:center;padding:0 14px 10px}.fC input,.fC select{height:32px;padding:0 10px;border:1px solid #D8E0EA;border-radius:8px;font:inherit;background:#fff}.fC input{width:230px}
+.brs{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}.brs button{height:26px;border:1px solid #E1E7EE;background:#fff;border-radius:7px;padding:0 9px;font:600 11px inherit;cursor:pointer;display:flex;align-items:center;gap:5px}.brs button.on{border-color:#6D3FD8;background:#F3EEFF;color:#4B2AA8}
+.sq{display:inline-block;width:9px;height:9px;border-radius:2px}
+.tC{border-collapse:collapse;width:100%;font-size:11.5px}
+.tC th,.tC td{border-bottom:1px solid #EAEFF4;padding:5px 10px;white-space:nowrap}
+.tC th{background:#E6EBF1;color:#14233A;font-weight:700;font-size:10.5px;letter-spacing:.3px;border-bottom:2px solid #15303F;text-align:left}
+.tC td.n,.tC th.n{text-align:right;font-family:ui-monospace,Consolas,monospace}
+.tC tbody tr:hover td{background:#F7F4FF}
+.tC td.kd{font-family:ui-monospace,Consolas,monospace;color:#4B5B70;border-left:4px solid #6D3FD8}.tC td.kd.old{border-left-color:#C9D3DF}
+.tC td.dn a{color:#14233A;font-weight:700;text-decoration:none}.tC td.dn a:hover{color:#0B5CAD;text-decoration:underline}
+.bt{display:inline-block;border-radius:6px;padding:1px 8px;margin-right:4px;font-size:10.5px;font-weight:700;letter-spacing:.2px}
+.qt{font-weight:800}.jm{display:inline-block;min-width:20px;text-align:center;border-radius:5px;background:#F3EEFF;color:#4B2AA8;font-weight:800}
+.dt{color:#6B7A8F}
+.lgC{display:flex;gap:14px;font-size:11px;color:#6B7A8F;padding:8px 14px;background:#FAFBFD;border-top:1px solid #EAEFF4}.lgC i{display:inline-block;width:4px;height:12px;vertical-align:-2px;margin-right:5px}
+@media(max-width:760px){.hC{flex-wrap:wrap}.bdg{margin-left:0}.fC{flex-wrap:wrap}.fC input{width:100%}.brs{margin-left:0}.twC{overflow-x:auto}.tC td.kd{position:sticky;left:0;background:#fff}}
+</style></head><body><div class="wrap">
+<div class="sw"><button data-o="A">SEBELUMNYA</button><button data-o="B">USULAN B · PADAT</button><button class="on" data-o="C">USULAN C · PADAT + MENARIK</button></div><div class="op" id="oA"><div class="banner"><b>Mockup panel BARU</b> di tab ★ Dealer Baru, posisinya tepat di bawah panel "Order Lagi atau Nggak?". Angka dummy. Sumber data sama dengan yang sudah ada (pasangan dealer × brand NOO), jadi <b>tidak perlu ubah backend</b>.</div>
+
+<div class="panel">
+<div class="ph"><div><h3>Daftar Dealer Baru November 2026</h3><div class="sub">1 baris = 1 dealer · brand = brand yang NOO di dealer itu bulan ini</div></div></div>
+<div class="ctrl"><input placeholder="Cari nama / kode dealer…"><select><option>Semua brand</option><option>OPPO</option><option>VIVO</option><option>SAMSUNG</option><option>XIAOMI</option><option>INFINIX</option></select><span class="hint">48 dealer · 64 pasangan dealer × brand</span></div>
+<div class="sum">NOO per brand:<span>OPPO<b>18</b></span><span>VIVO<b>15</b></span><span>SAMSUNG<b>12</b></span><span>XIAOMI<b>11</b></span><span>INFINIX<b>8</b></span></div>
+
+<div class="tbl"><table><thead><tr><th>#</th><th>Dealer</th><th>Sales</th><th>Brand NOO bulan ini</th><th class="n">Jml brand</th><th class="n">Qty NOO</th><th>Tgl NOO pertama</th><th>Brand lain (sudah lama)</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>
+<div class="cards" id="cd"></div>
+<div class="more"><button>Tampilkan semua (48)</button></div>
+<div class="note">Brand NOO = brand yang pertama kali diambil dealer ini bulan ini (definisi NOO sama dengan yang dipakai sekarang). Angka kecil di chip = qty brand itu. Label <span class="tg">dealer baru</span> = dealer yang belum pernah order brand apa pun sebelumnya; tanpa label = dealer lama yang buka brand baru. Urut: jumlah brand NOO terbanyak, lalu qty.</div>
+</div>
+</div>
+</div>
+<div class="op" id="oB"><div class="pB"><h3>DAFTAR DEALER BARU · NOVEMBER 2026</h3><div class="sub">1 baris = 1 dealer · brand yang NOO di dealer itu bulan ini</div>
+<div class="fB"><input placeholder="Cari nama / kode dealer…"><select><option>Semua brand</option></select><span class="cnt">48 dealer · 64 brand NOO</span></div>
+<div class="tw"><table class="tB"><thead><tr><th class="n">#</th><th>KODE</th><th>NAMA DEALER</th><th>REGION</th><th>SALES</th><th>BRAND NOO</th><th class="n">JML</th><th class="n">QTY</th><th>TGL NOO</th></tr></thead><tbody id="tbB"></tbody></table></div>
+<div class="lg"><span><i style="background:#6D3FD8"></i>dealer baru</span><span><i style="background:#C9D3DF"></i>dealer lama buka brand baru</span></div></div></div>
+<div class="op on" id="oC"><div class="pC">
+<div class="hC"><div><h3>DAFTAR DEALER BARU · NOVEMBER 2026</h3><div class="sub">1 baris = 1 dealer · brand yang NOO di dealer itu bulan ini</div></div><div class="bdg"><span><b>48</b>dealer</span><span><b>64</b>brand NOO</span><span class="g"><b>21</b>dealer baru</span></div></div>
+<div class="fC"><input placeholder="Cari kode / nama dealer…"><div class="brs"><button class="on">SEMUA</button><button><i class="sq" style="background:#1E7B4A"></i>OPPO 18</button><button><i class="sq" style="background:#3B5BDB"></i>VIVO 15</button><button><i class="sq" style="background:#1428A0"></i>SAMSUNG 12</button><button><i class="sq" style="background:#F26B1D"></i>XIAOMI 11</button><button><i class="sq" style="background:#7CB342"></i>INFINIX 8</button></div></div>
+<div class="twC"><table class="tC"><thead><tr><th>KODE</th><th>NAMA DEALER</th><th>REGION</th><th>SALES</th><th>BRAND NOO</th><th class="n">Σ BRAND</th><th class="n">QTY</th><th>TGL NOO</th></tr></thead><tbody id="tbC"></tbody></table></div>
+<div class="lgC"><span><i style="background:#6D3FD8"></i>dealer baru</span><span><i style="background:#C9D3DF"></i>dealer lama buka brand baru</span><span style="margin-left:auto">Klik nama dealer untuk buka detail</span></div>
+</div></div>
+<script>
+const D=[["Cell Jaya Abadi","CJ0142","Cirebon","Dedi S.","Cirebon",[["OPPO",4],["VIVO",3],["XIAOMI",2]],"3 Nov 2026",[],1],
+["Sinar Ponsel","SP0881","Kuningan","Rina A.","Kuningan",[["SAMSUNG",3],["INFINIX",2]],"5 Nov 2026",["OPPO"],0],
+["Mega Phone Center","MP0217","Indramayu","Yoga P.","Indramayu",[["VIVO",5],["OPPO",2]],"8 Nov 2026",[],1],
+["Berkah Selular","BS1022","Majalengka","Dedi S.","Cirebon",[["XIAOMI",4]],"11 Nov 2026",["VIVO","SAMSUNG"],0],
+["Galaxy Cell","GC0450","Brebes","Andi K.","Brebes",[["OPPO",2]],"14 Nov 2026",[],1],
+["Putra Gadget","PG0309","Cirebon","Rina A.","Kuningan",[["INFINIX",3]],"19 Nov 2026",["OPPO","VIVO","XIAOMI"],0]];
+const chips=b=>b.map(x=>`<span class="bc">${x[0]}<small>${x[1]}</small></span>`).join('');
+tb.innerHTML=D.map((d,i)=>`<tr><td>${i+1}</td><td><a href="#">${d[0]}</a> ${d[8]?'<span class="tg">dealer baru</span>':''}<small class="cellsub">${d[1]} · ${d[2]}</small></td><td>${d[3]}<small class="cellsub">${d[4]}</small></td><td>${chips(d[5])}</td><td class="n"><b>${d[5].length}</b></td><td class="n">${d[5].reduce((a,x)=>a+x[1],0)}</td><td>${d[6]}</td><td>${d[7].length?d[7].join(', '):'<span class="hint">—</span>'}</td><td><button class="wa">WA</button></td></tr>`).join('');
+cd.innerHTML=D.map(d=>`<div class="card"><div class="r"><div><a href="#">${d[0]}</a> ${d[8]?'<span class="tg">dealer baru</span>':''}<small class="cellsub">${d[1]} · ${d[2]} · ${d[3]}</small></div><button class="wa">WA</button></div><div style="margin-top:6px">${chips(d[5])}</div><small class="cellsub">NOO pertama ${d[6]}${d[7].length?' · brand lain: '+d[7].join(', '):''}</small></div>`).join('');
+tbB.innerHTML=D.map((d,i)=>`<tr><td class="n">${i+1}</td><td class="nm ${d[8]?'':'old'}">${d[1]}</td><td><a href="#">${d[0]}</a></td><td>${d[4]}</td><td>${d[3]}</td><td class="br">${d[5].map(x=>x[0]).join(', ')}</td><td class="n">${d[5].length}</td><td class="n">${d[5].reduce((a,x)=>a+x[1],0)}</td><td>${d[6]}</td></tr>`).join('');
+const BC={OPPO:'#1E7B4A',VIVO:'#3B5BDB',SAMSUNG:'#1428A0',XIAOMI:'#F26B1D',INFINIX:'#7CB342'};
+tbC.innerHTML=D.map(d=>`<tr><td class="kd ${d[8]?'':'old'}">${d[1]}</td><td class="dn"><a href="#">${d[0]}</a></td><td>${d[4]}</td><td>${d[3]}</td><td>${d[5].map(x=>`<span class="bt" style="background:${BC[x[0]]}1F;color:${BC[x[0]]}">${x[0]}</span>`).join('')}</td><td class="n"><span class="jm">${d[5].length}</span></td><td class="n qt">${d[5].reduce((a,x)=>a+x[1],0)}</td><td class="dt">${d[6]}</td></tr>`).join('');
+document.querySelectorAll('.sw button').forEach(b=>b.onclick=()=>{const BC={OPPO:'#1E7B4A',VIVO:'#3B5BDB',SAMSUNG:'#1428A0',XIAOMI:'#F26B1D',INFINIX:'#7CB342'};
+tbC.innerHTML=D.map(d=>`<tr><td class="kd ${d[8]?'':'old'}">${d[1]}</td><td class="dn"><a href="#">${d[0]}</a></td><td>${d[4]}</td><td>${d[3]}</td><td>${d[5].map(x=>`<span class="bt" style="background:${BC[x[0]]}1F;color:${BC[x[0]]}">${x[0]}</span>`).join('')}</td><td class="n"><span class="jm">${d[5].length}</span></td><td class="n qt">${d[5].reduce((a,x)=>a+x[1],0)}</td><td class="dt">${d[6]}</td></tr>`).join('');
+document.querySelectorAll('.sw button').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.op').forEach(o=>o.classList.toggle('on',o.id==='o'+b.dataset.o))});
+</script></body></html>

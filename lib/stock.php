@@ -27,11 +27,12 @@ final class StockCore {
         return true;
     }
 
-    public static function monthly(array $db, string $period, array $ids, $customer = null, $brand = null, $type = null): array {
+    public static function monthly(array $db, string $period, array $ids, $customer = null, $brand = null, $type = null, $cutMax = null): array {
         $st = $db['stock'] ?? null;
         if (!$st || !isset($st['coverage'][$period])) return ['qty' => null, 'cutoff' => null, 'complete' => false];
         $sc = $st['coverage'][$period]['cutoff']; $dc = $db['coverage'][$period]['cutoff'];
         $cutoff = strcmp($sc, $dc) < 0 ? $sc : $dc;
+        if ($cutMax && strcmp((string) $cutMax, $cutoff) < 0) $cutoff = (string) $cutMax; // v6: LMTD sell out
         // Indeks per pemilik dealer dibuat sekali per (view, periode, cutoff); indeks per tim = gabungan pemilik.
         $byOwner = PortalCore::memo('soown', PortalCore::vid($db) . '|' . $period . '|' . $cutoff, function () use ($db, $st, $period, $cutoff) {
             $o = [];
