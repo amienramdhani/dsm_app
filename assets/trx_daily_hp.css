@@ -1,0 +1,118 @@
+/* Transaksi HP - Ringkasan per hari (Usulan A, disetujui 2026-11-25). Hanya .v8dly, desktop tidak terpengaruh. */
+.v8dly .v8w{border:1px solid #d5dde8;border-radius:10px;overflow-x:auto;background:#fff}
+.v8dly table{border-collapse:collapse;width:max-content;min-width:100%;font-size:11.5px;font-family:inherit}
+.v8dly th,.v8dly td{padding:0 8px;white-space:nowrap;border-bottom:1px solid #e8edf3;font-family:inherit}
+.v8dly th{background:#0E5A63;color:#fff;font-weight:700;text-align:left;font-size:10.5px;height:34px;line-height:1.15;white-space:normal;text-transform:uppercase}
+.v8dly th small{display:block;font-weight:400;font-size:9.5px;color:#cfe3e6;text-transform:none}
+.v8dly .v8n{text-align:right;min-width:62px}
+.v8dly tbody td{height:30px;font-variant-numeric:tabular-nums}
+.v8dly tbody tr:nth-child(even) td:not(.v8n){background:#f8fafc}
+.v8dly .v8s{position:sticky;left:0;z-index:2;background:#fff;box-shadow:2px 0 0 #e1e7ef;min-width:104px}
+.v8dly tbody tr:nth-child(even) .v8s{background:#f8fafc}
+.v8dly th.v8s{background:#0E5A63;z-index:3}
+.v8dly tfoot td{background:#e6ebf1;font-weight:700;border-top:2px solid #15303F;padding:6px 8px}
+.v8dly tfoot small{display:block;font-weight:400;color:#64748b;font-size:9.5px}
+.v8dly .v6heat{display:inline-block;min-width:40px;text-align:center;padding:3px 6px;border-radius:7px;font-weight:700}
+
+/* Sheet rincian tanggal (HP) - tema abu + garis (disetujui 2026-11-25) */
+#v8ds{position:fixed;inset:0;z-index:9000;font-family:inherit}
+#v8ds .v8dim{position:absolute;inset:0;background:rgba(15,23,42,.45);opacity:0;transition:opacity .2s}
+#v8ds.on .v8dim{opacity:1}
+#v8ds .v8sh{position:absolute;left:0;right:0;bottom:0;height:90%;background:#fff;border-radius:20px 20px 0 0;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .22s ease;box-shadow:0 -8px 30px rgba(15,23,42,.25)}
+#v8ds.on .v8sh{transform:none}
+.v8grab{width:42px;height:5px;border-radius:9px;background:#cbd5e1;margin:8px auto 4px}
+.v8hd{display:flex;align-items:center;padding:6px 14px 10px;border-bottom:1px solid #e8edf3}.v8hd div{flex:1}.v8hd b{font-size:16px;display:block}.v8hd span{font-size:11px;color:#64748b}
+.v8x{width:30px;height:30px;border-radius:50%;border:0;background:#eef2f7;color:#475569;font-weight:700;font-size:14px}
+.v8bd{flex:1;overflow-y:auto;padding:12px 14px}
+.v8tot{background:#10394E;color:#fff;border-radius:12px;padding:10px 13px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.v8tot small{font-size:10px;letter-spacing:.04em;opacity:.8;display:block}.v8tot b{font-size:24px}.v8tot b i{font-size:12px;font-weight:500;font-style:normal;opacity:.85}
+.v8tot>span{font-size:10.5px;font-weight:700;background:#2557a7;border-radius:99px;padding:5px 10px;max-width:150px;text-align:right}
+.v8kp{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0}
+.v8kp div{border:1px solid #e1e7ef;border-radius:10px;padding:7px 9px;background:#f8fafc}.v8kp small{font-size:9.5px;color:#64748b;display:block;font-weight:600}.v8kp b{font-size:14px}
+.v8sel{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:8px}
+.v8sel label{font-size:9.5px;font-weight:700;color:#475569;display:block}
+.v8sel select{width:100%;height:32px;border:1px solid #cbd5e1;border-radius:8px;background:#f1f5f9;font:600 11.5px inherit;color:#0f172a;padding:0 6px}
+.v8seg{display:flex;background:#e6ebf1;border-radius:9px;padding:3px;margin-bottom:8px}.v8seg span{flex:1;text-align:center;font-size:9.5px;font-weight:700;padding:6px 0;border-radius:7px;color:#475569;cursor:pointer}.v8seg span.on{background:#fff;color:#10394E;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.v8w,.v6xdt{border:1px solid #d5dde8;border-radius:10px;overflow-x:auto}
+.v8w table,.v6xdt table{border-collapse:collapse;width:100%;font-size:11.5px;font-variant-numeric:tabular-nums;font-family:inherit}
+.v8w th,.v8w td,.v6xdt th,.v6xdt td{padding:0 8px;white-space:nowrap;border-bottom:1px solid #e8edf3;height:29px;text-align:right}
+.v8w th,.v6xdt th{height:34px;font-size:10.5px;font-weight:700;background:#DCE6F2!important;color:#0f172a!important;border-bottom:1px solid #b9c8dc}
+.v8w th:first-child,.v8w td:first-child,.v6xdt th:first-child,.v6xdt td:first-child{text-align:left;position:sticky;left:0;background:#fff;box-shadow:2px 0 0 #e1e7ef;z-index:1}
+.v8w th:first-child,.v6xdt th:first-child{background:#DCE6F2!important;z-index:2}
+.v8bh{box-shadow:inset 0 4px 0 var(--c)}
+.v8w tfoot td,.v6xdt tfoot td{background:#DCE6F2!important;font-weight:700;border-top:2px solid #15303F;color:#0f172a}
+.v8bc{box-shadow:inset 0 -4px 0 var(--c)}
+.v8h{border-radius:6px;padding:2px 7px;display:inline-block;min-width:30px;text-align:center;background:#cfdcee;color:#0A2E57}.v8h.top{background:#2557a7;color:#fff}.v8z{color:#b6c0cd}
+.v8mt{font-size:10.5px;color:#64748b;margin:8px 2px}
+.v8ft{padding:10px 14px 14px;border-top:1px solid #e8edf3}.v8close{width:100%;border:0;background:#eaf1fb;color:#2557a7;font-weight:700;padding:12px;border-radius:12px;font-size:13px}
+/* Tren Beranda: hero popup tanggal solid, selaras */
+.v6xdhero{background:#10394E!important}
+
+/* Rincian Transaksi HP - Usulan B (disetujui 2026-11-25): baris padat 1 baris, tanggal bisa dilipat (default tertutup), pager ringkas */
+@media(max-width:760px){
+ html body #app #view .v7trxDay.v8dh{cursor:pointer;background:#DCE6F2;color:#0f172a;border-radius:8px;border-left:4px solid #6663c4;height:32px;padding:0 10px;margin:6px 0 0;font-size:11.5px}
+ html body #app #view .v7trxDay.v8dh em{color:#475569}
+ .v8ar{display:inline-block;width:0;height:0;border-left:5px solid #6663c4;border-top:4px solid transparent;border-bottom:4px solid transparent;margin-right:7px;transition:transform .15s}
+ .v8dh.v8o .v8ar{transform:rotate(90deg)}
+ html body #app #view button.mobileTransaction.v7trx{display:flex!important;align-items:center;gap:8px;height:36px;padding:0 4px!important}
+ html body #app #view button.mobileTransaction.v7trx[hidden]{display:none!important}
+ html body #app #view button.mobileTransaction.v7trx b{flex:1;min-width:0;font-size:12.5px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ html body #app #view button.mobileTransaction.v7trx small{font-size:10.5px!important;color:#64748b;width:56px;text-align:right}
+ html body #app #view button.mobileTransaction.v7trx>span:not(.v8u){display:none}
+ .v8u{min-width:44px;text-align:center;font-size:11.5px;font-weight:800;background:#e8f0fb;color:#2557a7;border-radius:7px;padding:3px 6px}.v8u.h{background:#2557a7;color:#fff}
+ #transactionRows .pager{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px;margin:6px 0}
+ #transactionRows .pager>span{flex:1 0 100%;text-align:center;font-size:11px;font-weight:700;order:-1}
+ #transactionRows .pager label{flex:0 0 auto;font-size:10.5px}#transactionRows .pager select{height:34px}
+ #transactionRows .pager .chip{flex:1;height:34px;padding:0 6px;font-size:12px}
+}
+@media(max-width:760px){
+ html body #app #view button.mobileTransaction.v7trx>span.v8u{display:inline-block!important;grid-column:auto;grid-row:auto;min-width:40px;height:auto;font-size:11.5px!important;font-weight:800;line-height:1.4;text-align:center;background:#e8f0fb;color:#2557a7!important;border-radius:7px;padding:2px 6px}
+ html body #app #view button.mobileTransaction.v7trx>span.v8u.h{background:#2557a7;color:#fff!important}
+}
+
+/* Format baris Rincian Transaksi HP: KODE - NAMA DEALER | QTY - OMZET (permintaan 2026-11-25) */
+@media(max-width:760px){
+ html body #app #view button.mobileTransaction.v7trx>i.v8k{font-style:normal;font-size:10.5px;font-weight:700;color:#64748b;flex:0 0 auto;min-width:52px}
+ html body #app #view button.mobileTransaction.v7trx>b{flex:1;min-width:0}
+ html body #app #view button.mobileTransaction.v7trx>b:before{content:"- ";color:#94a3b8;font-weight:400}
+ html body #app #view button.mobileTransaction.v7trx>span.v8m{display:inline-block!important;grid-column:auto;grid-row:auto;font-size:10.5px!important;font-weight:700;color:#475569!important;min-width:58px;text-align:right}
+ .v8colhd{display:flex;gap:8px;padding:6px 4px;font-size:9.5px;font-weight:800;color:#64748b;letter-spacing:.03em;border-bottom:2px solid #15303F}.v8colhd span:first-child{flex:1}
+}
+
+.v8ft{display:flex;flex-direction:column;gap:8px}
+.v8go{width:100%;border:0;background:#10394E;color:#fff;font-weight:700;padding:12px;border-radius:12px;font-size:13px}
+
+/* Transaksi HP: 3 tab KALENDER / HARIAN / RINCIAN (disetujui 2026-11-25) */
+@media(max-width:760px){
+ .v8tabs{display:flex;background:#fff;border-radius:12px;box-shadow:0 2px 6px rgba(15,23,42,.08);margin:10px 0 12px;overflow:hidden}
+ .v8tabs button{flex:1;border:0;background:none;padding:12px 0 10px;font:800 11.5px inherit;color:#64748b;border-bottom:3px solid transparent;letter-spacing:.02em}
+ .v8tabs button.on{color:#10394E;border-bottom-color:#F07A0C}
+ #view[data-v8tab="1"] #v7trxBody,#view[data-v8tab="2"] #v7trxBody{display:none}
+ #view[data-v8tab="0"] .dailySummaryPanel,#view[data-v8tab="2"] .dailySummaryPanel{display:none}
+ #view[data-v8tab="0"] .transactionDetailPanel,#view[data-v8tab="1"] .transactionDetailPanel{display:none}
+ #view .dailySummaryPanel>summary{display:none}
+ #view .transactionDetailPanel .toolbar{display:grid!important;grid-template-columns:1fr 1fr;gap:8px;align-items:end}
+ #view .transactionDetailPanel .toolbar label{font-size:9.5px;font-weight:800;color:#475569}
+ #view .transactionDetailPanel .toolbar .ptQk{grid-column:1/-1}
+ #view .transactionDetailPanel .toolbar #trxApply{display:none}
+ #view .transactionDetailPanel .toolbar #trxReset,#view .transactionDetailPanel .toolbar #trxRawExport{grid-column:1/-1}
+}
+
+/* popup tanggal desktop: lebih pendek */
+html body .modal .v6popHead{gap:8px;margin-bottom:8px}
+html body .modal .v6popHead .v6stat{padding:6px 10px;display:flex;align-items:baseline;flex-wrap:wrap;column-gap:8px}
+html body .modal .v6popHead .v6stat .l{flex:1 0 100%;margin:0}
+html body .modal .v6popHead .v6stat .v{font-size:15px;margin:0}
+html body .modal .v6popHead .v6stat .s{margin:0}
+html body .modal .v6seg{margin-bottom:8px;padding:3px}
+html body .modal .v6segBtn{padding:5px 12px;font-size:11.5px}
+html body .modal .v6dailyTable{max-height:46vh;overflow:auto}
+html body .modal .v6dailyTable table{font-size:11.5px}
+html body .modal .v6dailyTable thead th{position:sticky;top:0;z-index:3;padding:6px 8px}
+html body .modal .v6dailyTable td{padding:3px 8px;height:28px;white-space:nowrap}
+html body .modal .v6dailyTable td small.cellsub{display:inline;margin:0 0 0 6px;font-size:10px!important;color:#7B8A98}
+html body .modal .v6dailyTable td small.cellsub::before{content:"\2013";margin-right:6px;color:#B5BDCC}
+html body .modal .v6dailyTable .v6heat{padding:2px 8px;min-width:30px;line-height:1.3}
+html body .modal .v6dailyTable tfoot td,html body .modal .v6dailyTable tr:last-child td{position:sticky;bottom:0}
+html body .modal .toolbar{margin-top:8px!important}
+html body .modal .v6dailyTable tr:last-child td{background:#E9F0F8;z-index:2}

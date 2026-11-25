@@ -308,14 +308,36 @@ function apiRankDetail($token, $period, $nik) {
 
 /* v7 Transaksi (mockup 2026-11-24 dsm-transaksi-kalender-opsi B2): data harian untuk filter Big Region / Region di atas kalender.
    Cakupan tetap dari pilihan scope; filter hanya mempersempit ke sales di wilayah itu. */
+/** Saring daftar NIK dengan filter Transaksi (big/region/asm/sales). Dipakai rincian transaksi agar ikut filter di atas. */
+function trxFilterIds_($source, $ids, $f) {
+    if (!is_array($f)) return $ids;
+    $big = text_(js_or($f['big'] ?? null, '')); $reg = text_(js_or($f['region'] ?? null, '')); $asm = text_(js_or($f['asm'] ?? null, '')); $sales = text_(js_or($f['sales'] ?? null, ''));
+    if ($big === '' && $reg === '' && $asm === '' && $sales === '') return $ids;
+    return array_values(js_filter($ids, function ($id) use ($source, $big, $reg, $asm, $sales) {
+        $p = person_($source, $id); if (!$p) return false;
+        if ($big !== '' && ($p['wilayah'] ?? '') !== $big) return false;
+        if ($reg !== '' && js_or($p['portfolio'] ?? null, $p['region'] ?? '') !== $reg) return false;
+        if ($sales !== '' && (string) $id !== $sales) return false;
+        if ($asm !== '') { $x = $p; $g = 0; $ok = false; while ($x && $g++ < 10) { if ((string) $x['nik'] === $asm) { $ok = true; break; } $x = person_($source, $x['atasan'] ?? null); } if (!$ok) return false; }
+        return true;
+    }));
+}
 function apiTrxDaily($token, $period, $selection = null, $f = null) {
     $source = snapshot_(); $u = guard_($token, false, false, $source); $period = js_str($period); $f = is_array($f) ? $f : [];
     $ids = allowed_($source, $u, $selection); $big = text_(js_or($f['big'] ?? null, '')); $reg = text_(js_or($f['region'] ?? null, '')); $asm = text_(js_or($f['asm'] ?? null, '')); $sales = text_(js_or($f['sales'] ?? null, ''));
-    $db = coverageView_($source, $period, $ids, 'ST', $u);
+    $db = $source; /* saring sales dulu pakai data master, baru siapkan data transaksi khusus sales yang lolos filter */
     $ids = array_values(js_filter($ids, function ($id) use ($db, $big, $reg, $asm, $sales) { $p = person_($db, $id); if (!$p) return false; if ($big !== '' && ($p['wilayah'] ?? '') !== $big) return false; if ($reg !== '' && js_or($p['portfolio'] ?? null, $p['region'] ?? '') !== $reg) return false; if ($sales !== '' && (string) $id !== $sales) return false;
         if ($asm !== '') { $x = $p; $g = 0; $ok = false; while ($x && $g++ < 10) { if ((string) $x['nik'] === $asm) { $ok = true; break; } $x = person_($db, $x['atasan'] ?? null); } if (!$ok) return false; } return true; }));
-    $rep = PortalCore::report($db, $period, $ids, null);
-    $so = StockCore::monthly($db, $period, $ids); $rep['total']['sellout'] = $so['qty'];
-    foreach ($rep['brands'] as &$b) $b['current']['sellout'] = StockCore::monthly($db, $period, $ids, null, $b['brand'])['qty']; unset($b);
-    return ['period' => $period, 'daily' => $rep['daily'], 'total' => $rep['total'], 'brands' => array_map(fn($b) => ['brand' => $b['brand'], 'current' => $b['current'], 'previous' => $b['previous'] ?? [], 'target' => $b['target'] ?? null, 'targetDA' => $b['targetDA'] ?? null, 'targetNOO' => $b['targetNOO'] ?? null], $rep['brands']), 'count' => count($ids)];
+    if (!$ids) return ['period' => $period, 'daily' => [], 'total' => ['qty' => 0, 'omzet' => 0, 'sellout' => 0, 'outlets' => 0], 'brands' => [], 'count' => 0];
+    $db = coverageView_($source, $period, $ids, 'ST', $u);
+    /* versi ringan: hanya yang dibutuhkan kalender & pola hari (tanpa customers/KPI/LMTD, SO cukup total) */
+    $rows = PortalCore::slice($db, $period, $ids); $idSet = js_set($ids);
+    $bl = array_map(fn($r) => $r['brand'], $rows);
+    foreach ($db['meta']['targets'] ?? [] as $t) if ($t['period'] === $period && isset($idSet[(string) $t['nik']]) && !truthy($t['indicator'] ?? '') && $t['brand'] !== 'ALL') $bl[] = $t['brand'];
+    $brands = js_sort_default(uniq($bl));
+    $total = PortalCore::metrics($rows, $db, $period); $total['sellout'] = StockCore::monthly($db, $period, $ids)['qty'];
+    $brandRows = array_map(fn($b) => ['brand' => $b, 'current' => PortalCore::metrics($rows, $db, $period, $b), 'previous' => [], 'target' => PortalCore::target($db['meta'], $period, $ids, $b, 'QTY')], $brands);
+    $byDate = []; foreach ($rows as $r) $byDate[(string) $r['date']][] = $r; ksort($byDate, SORT_STRING);
+    $daily = []; foreach ($byDate as $date => $dr) { $m = PortalCore::metrics($dr, $db, $period); $bq = []; $bo = []; foreach ($brands as $b) { $bm = PortalCore::metrics($dr, $db, $period, $b); $bq[] = $bm['qty']; $bo[] = $bm['omzet'] ?? 0; } $daily[] = ['date' => $date, 'qty' => $m['qty'], 'outlets' => $m['outlets'] ?? 0, 'omzet' => $m['omzet'] ?? 0, 'brands' => $bq, 'brandOmzet' => $bo]; }
+    return ['period' => $period, 'daily' => $daily, 'total' => $total, 'brands' => $brandRows, 'count' => count($ids)];
 }

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup DSM Klaim desktop - Super Admin</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:"Inter","Segoe UI",system-ui,sans-serif;background:#e9edf3;color:#0f172a;font-size:13px;-webkit-font-smoothing:antialiased}
+.top{max-width:1440px;margin:0 auto;padding:14px 20px 6px}.top h1{font-size:17px;margin:0}.top p{margin:3px 0 8px;color:#64748b;font-size:12.5px}
+.pick{display:flex;gap:6px}.pick button{font:inherit;font-size:12px;font-weight:800;border:1px solid #cfdcef;background:#fff;color:#334155;border-radius:8px;padding:6px 12px;cursor:pointer}.pick button.on{background:#0b5fb3;color:#fff;border-color:#0b5fb3}
+.app{max-width:1440px;height:880px;margin:10px auto 30px;background:#f4f6fa;border-radius:14px;overflow:hidden;display:flex;box-shadow:0 10px 30px rgba(15,23,42,.15)}
+.sb{width:224px;background:#fff;border-right:1px solid #e3e9f2;display:flex;flex-direction:column;flex:none}
+.lg{display:flex;gap:9px;align-items:center;padding:16px 16px 12px}.lg i{width:34px;height:34px;border-radius:9px;background:#0b5fb3;color:#fff;font-style:normal;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:12px}.lg b{display:block;font-size:14px}.lg small{color:#64748b;font-size:11px}
+.role{margin:0 12px 6px;border:1px solid #e3e9f2;border-radius:9px;padding:6px 10px;background:#f8fafc}.role span{display:block;font-size:9.5px;font-weight:800;color:#94a3b8}.role b{font-size:12.5px}
+.nv{padding:4px 10px;flex:1}.nv .g{font-size:10px;font-weight:800;color:#94a3b8;letter-spacing:.06em;margin:10px 8px 4px}
+.nv a{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;color:#334155;font-weight:600;font-size:12.5px}.nv a svg{width:17px;height:17px}.nv a.on{background:#eaf2fc;color:#0b5fb3}
+.me{border-top:1px solid #e3e9f2;padding:12px 14px;font-size:12px}.me small{color:#64748b;display:block}.me button{margin-top:9px;width:100%;border:1px solid #cfdcef;background:#fff;color:#0b5fb3;border-radius:8px;padding:7px;font:inherit;font-weight:800;font-size:11.5px}
+.mn{flex:1;display:flex;flex-direction:column;min-width:0}
+.hd{height:56px;background:#0b5fb3;color:#fff;display:flex;align-items:center;padding:0 24px;flex:none}.hd small{display:block;font-size:11px;opacity:.8}.hd h2{margin:0;font-size:16px}.hd .sp{flex:1}
+.bt{height:32px;border-radius:8px;padding:0 13px;font-weight:800;font-size:12px;display:inline-flex;align-items:center;gap:6px;border:1px solid #dbe3ee;background:#fff;color:#334155}
+.bt.b{background:#0b5fb3;color:#fff;border-color:#0b5fb3}.bt.w{background:rgba(255,255,255,.15);border-color:transparent;color:#fff}
+.ct{flex:1;overflow:auto;padding:18px 24px}
+.scr{display:none}.scr.on{display:block}
+/* SA beranda */
+.st{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.k{background:#fff;border:1px solid #e3e9f2;border-radius:12px;padding:13px 14px;display:flex;gap:12px;align-items:center}
+.k .ic{width:44px;height:44px;border-radius:12px;background:color-mix(in srgb,var(--c) 12%,#fff);color:var(--c);display:flex;align-items:center;justify-content:center;flex:none}.k .ic svg{width:21px;height:21px}
+.k small{display:block;font-size:10.5px;font-weight:800;color:#64748b;letter-spacing:.04em}.k b{font-size:22px;display:block}.k span{font-size:11px;color:#64748b}
+.sh{font-size:11px;font-weight:800;color:#64748b;letter-spacing:.06em;margin:4px 0 8px}
+.tl{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+.t{background:#fff;border:1px solid #e3e9f2;border-radius:12px;padding:14px;display:flex;gap:12px;align-items:flex-start;cursor:pointer;position:relative;transition:.15s}
+.t:hover{border-color:var(--c);box-shadow:0 6px 18px rgba(15,23,42,.08);transform:translateY(-1px)}
+.t .ic{width:42px;height:42px;border-radius:11px;background:var(--c);color:#fff;display:flex;align-items:center;justify-content:center;flex:none;box-shadow:0 4px 10px color-mix(in srgb,var(--c) 35%,transparent)}.t .ic svg{width:20px;height:20px}
+.t b{font-size:13.5px;display:block}.t p{margin:2px 0 8px;color:#64748b;font-size:12px;line-height:1.4}
+.t .mt{display:flex;gap:6px;flex-wrap:wrap}.t .mt span{font-size:10.5px;font-weight:700;background:#f1f5f9;color:#475569;border-radius:6px;padding:2px 7px}.t .mt span.w{background:#fff4d6;color:#9A6400}
+.t .go{position:absolute;right:14px;top:14px;color:#94a3b8;font-weight:800}
+.two{display:grid;grid-template-columns:1.4fr 1fr;gap:12px}
+.pn{background:#fff;border:1px solid #e3e9f2;border-radius:12px;overflow:hidden}
+.pn .h{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #eef2f7;font-weight:800;font-size:12.5px}.pn .h a{font-size:11.5px;color:#0b5fb3}
+.lg2 div{display:flex;gap:10px;padding:9px 14px;border-bottom:1px solid #f1f5f9;font-size:12px;align-items:center}.lg2 i{width:8px;height:8px;border-radius:50%;background:var(--c);flex:none}.lg2 small{margin-left:auto;color:#94a3b8;white-space:nowrap}
+.wr{padding:10px 14px}.wr div{background:#fff8e6;border-left:4px solid #F0A400;border-radius:8px;padding:8px 10px;margin-bottom:8px;font-size:12px;color:#7a4a00}.wr b{display:block;color:#5c3a00}
+/* pengguna */
+.fb{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.in{border:1px solid #dbe3ee;border-radius:8px;height:32px;padding:0 10px;display:flex;align-items:center;font-size:12px;color:#475569;background:#fff}.in.s{width:280px;color:#94a3b8}
+.chp{display:flex;gap:5px}.chp span{font-size:11.5px;font-weight:700;border:1px solid #dbe3ee;background:#fff;border-radius:8px;padding:6px 10px;color:#475569}.chp span.on{background:#0b5fb3;color:#fff;border-color:#0b5fb3}.chp span em{font-style:normal;opacity:.7;margin-left:3px}
+.al{background:#fff8e6;border:1px solid #f6e2b0;border-left:4px solid #F0A400;border-radius:10px;padding:9px 12px;margin-bottom:12px;display:flex;align-items:center;gap:10px;font-size:12px;color:#7a4a00}.al b{color:#5c3a00}.al .bt{margin-left:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#E6EBF1;text-align:left;font-size:10.5px;letter-spacing:.04em;padding:8px 12px;border-bottom:2px solid #15303F;white-space:nowrap}
+td{padding:8px 12px;border-bottom:1px solid #eef2f7;white-space:nowrap;vertical-align:middle}tbody tr:hover td{background:#f8fbff}
+.av{display:flex;align-items:center;gap:10px}.av i{width:32px;height:32px;border-radius:9px;background:var(--c);color:#fff;font-style:normal;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:12px}.av b{display:block}.av small{color:#64748b;font-size:11px}
+.rl{display:inline-block;font-size:10.5px;font-weight:800;border-radius:6px;padding:2px 8px;margin-right:3px;background:color-mix(in srgb,var(--c) 13%,#fff);color:var(--c)}
+.mut{color:#94a3b8}
+.sw{width:30px;height:17px;border-radius:99px;background:#12866A;position:relative;display:inline-block;vertical-align:middle}.sw:after{content:"";position:absolute;right:2px;top:2px;width:13px;height:13px;border-radius:50%;background:#fff}.sw.off{background:#cbd5e1}.sw.off:after{right:auto;left:2px}
+.ac{color:#0b5fb3;font-weight:800;font-size:11.5px}
+.pg{display:flex;justify-content:space-between;padding:9px 12px;font-size:12px;color:#64748b}
+.note{max-width:1440px;margin:0 auto 30px;padding:0 20px;font-size:12.5px;line-height:1.6;color:#334155}
+</style></head><body>
+<div class="top"><h1>DSM Klaim desktop · Super Admin</h1><p>Beranda Super Admin jadi pusat kendali (angka ringkas + menu berwarna + log & peringatan), daftar Pengguna jadi tabel dengan cari & filter peran.</p>
+<div class="pick" id="pk"><button data-s="h" class="on">1 · BERANDA SA</button><button data-s="u">2 · PENGGUNA &amp; PERAN</button></div></div>
+<div class="app">
+<aside class="sb"><div class="lg"><i>DSM</i><div><b>DSM Klaim</b><small>Biaya operasional</small></div></div><div class="role"><span>PERAN</span><b>Super Admin ▾</b></div>
+<nav class="nv"><div class="g">KERJA</div>
+<a class="on" data-s="h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11 12 3l9 8M5 10v11h5v-7h4v7h5V10"/></svg>Beranda</a>
+<a data-s="u"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8m-6 10v-3a6 6 0 0 1 12 0v3m2-17a4 4 0 0 1 0 8m2 3a5 5 0 0 1 4 5v1"/></svg>Pengguna</a>
+<a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 7a4 4 0 1 1-3.5 6L4 20H2v-3l1-1h2v-2h2l2.5-2.5A4 4 0 0 1 15 7"/></svg>Kode</a>
+<a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6M19 12l2-1.6-2-3.4-2.4 1-2-1.2L14.5 2h-5l-.4 2.6-2 1.2-2.4-1-2 3.4 2 1.6v2.4l-2 1.6 2 3.4 2.4-1 2 1.2.4 2.6h5l.4-2.6 2-1.2 2.4 1 2-3.4-2-1.6z"/></svg>Atur</a>
+<div class="g">LAINNYA</div><a>Notifikasi</a><a>Menu</a></nav>
+<div class="me"><b>ARI HIDAYAT</b><small>Super Admin</small><button>TAMPILAN HP</button></div></aside>
+<div class="mn">
+<div class="hd"><div><small id="hs">SUPER ADMIN</small><h2 id="ht">Halo, Ari</h2></div><div class="sp"></div><span class="bt w" id="hb" style="display:none">+ PENGGUNA BARU</span></div>
+<div class="ct">
+
+<div class="scr on" id="s-h">
+ <div class="st">
+  <div class="k" style="--c:#1E5FB8"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M8 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8m-6 10v-3a6 6 0 0 1 12 0v3"/></svg></span><div><small>PENGGUNA AKTIF</small><b>48</b><span>36 pemohon · 12 approver</span></div></div>
+  <div class="k" style="--c:#F07A0C"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 8v5M12 16h.01M10.3 3.9 2 18a2 2 0 0 0 1.7 3h16.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0"/></svg></span><div><small>REGION TANPA ADMIN</small><b>1</b><span>Jawa Timur</span></div></div>
+  <div class="k" style="--c:#6D3FD8"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M15 7a4 4 0 1 1-3.5 6L4 20H2v-3l1-1h2v-2h2l2.5-2.5A4 4 0 0 1 15 7"/></svg></span><div><small>KODE CADANGAN AKTIF</small><b>2</b><span>berlaku s/d 30 Nov</span></div></div>
+  <div class="k" style="--c:#12866A"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 20V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v15M3 20h12"/></svg></span><div><small>HARGA BBM BERLAKU</small><b style="font-size:16px;margin-top:3px">Rp 10.000 · Rp 12.500</b><span>Pertalite · Pertamax, sejak 1 Nov</span></div></div>
+ </div>
+ <div class="sh">PENGATURAN</div>
+ <div class="tl">
+  <div class="t" style="--c:#1E5FB8"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M8 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8m-6 10v-3a6 6 0 0 1 12 0v3m2-17a4 4 0 0 1 0 8m2 3a5 5 0 0 1 4 5v1"/></svg></span><div><b>Pengguna &amp; peran</b><p>Tambah pengguna, atur peran dan wilayah tugas.</p><div class="mt"><span>48 pengguna</span><span class="w">1 region tanpa Admin</span></div></div><span class="go">›</span></div>
+  <div class="t" style="--c:#6D3FD8"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M15 7a4 4 0 1 1-3.5 6L4 20H2v-3l1-1h2v-2h2l2.5-2.5A4 4 0 0 1 15 7"/></svg></span><div><b>Kode cadangan</b><p>Terbitkan akses cadangan saat approver berhalangan.</p><div class="mt"><span>2 aktif</span></div></div><span class="go">›</span></div>
+  <div class="t" style="--c:#475569"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0M14 4v4M8 10v4M16 16v4"/></svg></span><div><b>Pengaturan</b><p>Batas hari menunggu lama, mode tes, aturan umum.</p><div class="mt"><span>N = 2 hari</span><span>Mode tes: mati</span></div></div><span class="go">›</span></div>
+  <div class="t" style="--c:#D97706"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 20V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v15M3 20h12M14 9h2a2 2 0 0 1 2 2v5a1.5 1.5 0 0 0 3 0V8l-3-3"/></svg></span><div><b>Harga BBM</b><p>Harga Pertalite &amp; Pertamax per tanggal berlaku.</p><div class="mt"><span>terakhir 1 Nov 2026</span></div></div><span class="go">›</span></div>
+  <div class="t" style="--c:#0E7C6B"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h1M14 9h1M9 13h1M14 13h1"/></svg></span><div><b>Badan usaha</b><p>Daftar pilihan badan usaha untuk Admin.</p><div class="mt"><span>4 badan usaha</span></div></div><span class="go">›</span></div>
+  <div class="t" style="--c:#DB2777"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M7 7h12m0 0-4-4m4 4-4 4M17 17H5m0 0 4 4m-4-4 4-4"/></svg></span><div><b>Ganti peran</b><p>Uji aplikasi sebagai pengguna lain.</p><div class="mt"><span>mode uji</span></div></div><span class="go">›</span></div>
+ </div>
+ <div class="two">
+  <div class="pn"><div class="h">Aktivitas pengaturan terbaru <a>Lihat semua</a></div><div class="lg2">
+   <div style="--c:#1E5FB8"><i></i>Peran <b>Rina (uji)</b> diubah: ADMIN, wilayah Cirebon<small>hari ini 14:02</small></div>
+   <div style="--c:#D97706"><i></i>Harga BBM berlaku 1 Nov: Pertalite Rp 10.000, Pertamax Rp 12.500<small>1 Nov</small></div>
+   <div style="--c:#6D3FD8"><i></i>Kode cadangan HOS diterbitkan untuk <b>Hadi (uji)</b><small>23 Nov</small></div>
+   <div style="--c:#0E7C6B"><i></i>Badan usaha <b>PT. MSI</b> ditambahkan<small>20 Nov</small></div></div></div>
+  <div class="pn"><div class="h">Perlu perhatian</div><div class="wr">
+   <div><b>Region tanpa Admin</b>JAWA TIMUR (1 pemohon). Klaim dari region ini belum punya Admin penerima.</div>
+   <div><b>Tarif uang makan belum diatur</b>3 pemohon belum punya tarif uang makan.</div></div></div>
+ </div>
+</div>
+
+<div class="scr" id="s-u">
+ <div class="al"><span>⚠</span><div><b>Region tanpa Admin:</b> JAWA TIMUR (1 pemohon). Klaim dari region ini belum punya Admin penerima.</div><span class="bt">ATUR ADMIN</span></div>
+ <div class="fb"><div class="in s">⌕ Cari nama, username, NIK</div><div class="chp"><span class="on">SEMUA <em>48</em></span><span>PEMOHON <em>36</em></span><span>ADMIN <em>4</em></span><span>RGM <em>3</em></span><span>HOS <em>1</em></span><span>FINANCE <em>2</em></span><span>AUDIT <em>1</em></span><span>SA <em>1</em></span></div><div class="in">Region: Semua ▾</div><span class="bt b" style="margin-left:auto">+ PENGGUNA BARU</span></div>
+ <div class="pn"><table><thead><tr><th>NAMA</th><th>USERNAME / NIK</th><th>JABATAN</th><th>PERAN</th><th>WILAYAH TUGAS</th><th>BADAN USAHA</th><th>AKTIF</th><th></th></tr></thead><tbody id="ub"></tbody></table>
+ <div class="pg"><span>Menampilkan 1–9 dari 48 pengguna</span><span><span class="bt">‹</span> <span class="bt">›</span></span></div></div>
+</div>
+
+</div></div></div>
+<div class="note"><b>Catatan:</b> isi, menu, dan aturan Super Admin tidak berubah; hanya tampilan desktop. Angka di kartu atas & info di kartu menu diambil dari data yang sudah ada (jumlah pengguna, kode aktif, harga BBM, region tanpa Admin). "Aktivitas pengaturan terbaru" & "tarif uang makan belum diatur" perlu dicek dulu apakah datanya tersedia; kalau belum, panel itu bisa ditiadakan.</div>
+<script>
+const RC={SA:'#0f172a',RGM:'#0E7C6B',ADMIN:'#1E5FB8',AUDIT:'#6D3FD8',HOS:'#C2410C',FM:'#9A6400',FT:'#12866A',Pemohon:'#64748B'};
+const U=[['ARI HIDAYAT','adminpusat','Super Admin',['SA','Pemohon'],'—','—',1],['ROBBY AGUSTINA','2014.12.26.01','RGM',['RGM','Pemohon'],'JAWA TIMUR','PT. MSI',1],['Rina (uji)','uji-admin','Admin',['ADMIN'],'Cirebon','RISM',1],['Sinta (uji)','uji-admin2','Admin',['ADMIN'],'Jakarta','PT. MSI',1],['Andi (uji)','uji-audit','Audit',['AUDIT'],'—','RISM, PT. MSI',1],['Hadi (uji)','uji-hos','HOS',['HOS'],'—','—',1],['Maya (uji)','uji-fm','Finance Manager',['FM'],'—','RISM, PT. MSI',1],['Fitri Handayani (uji)','uji-ft','Finance Transfer',['FT'],'—','RISM',1],['Joko Widodo','2019.03.11.04','Sales',['Pemohon'],'Bandung','RISM',0]];
+document.getElementById('ub').innerHTML=U.map(u=>`<tr><td><div class="av" style="--c:${RC[u[3][0]]}"><i>${u[0][0]}</i><div><b>${u[0]}</b></div></div></td><td>${u[1]}</td><td>${u[2]}</td><td>${u[3].map(r=>`<span class="rl" style="--c:${RC[r]}">${r}</span>`).join('')}</td><td class="${u[4]=='—'?'mut':''}">${u[4]}</td><td class="${u[5]=='—'?'mut':''}">${u[5]}</td><td><span class="sw ${u[6]?'':'off'}"></span></td><td class="ac">UBAH ›</td></tr>`).join('');
+const H={h:['SUPER ADMIN','Halo, Ari'],u:['X01','Peran klaim pengguna']};
+function go(s){document.querySelectorAll('.scr').forEach(e=>e.classList.toggle('on',e.id=='s-'+s));document.querySelectorAll('[data-s]').forEach(e=>e.classList.toggle('on',e.dataset.s==s));hs.textContent=H[s][0];ht.textContent=H[s][1];}
+document.querySelectorAll('[data-s]').forEach(e=>e.onclick=()=>go(e.dataset.s));
+</script></body></html>

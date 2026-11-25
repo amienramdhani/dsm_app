@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup DSM - Ajari AI satu klik</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:"Inter","Segoe UI",system-ui,sans-serif;background:#e9edf3;color:#0f172a;font-size:12px;-webkit-font-smoothing:antialiased}
+.top{max-width:1440px;margin:0 auto;padding:14px 20px 6px}.top h1{font-size:17px;margin:0}.top p{margin:3px 0 8px;color:#64748b;font-size:12.5px}
+.pick{display:flex;gap:6px}.pick button{font:inherit;font-size:12px;font-weight:800;border:1px solid #cfdcef;background:#fff;color:#334155;border-radius:8px;padding:6px 12px;cursor:pointer}.pick button.on{background:#0b5fb3;color:#fff;border-color:#0b5fb3}
+.app{max-width:1440px;margin:10px auto 30px;background:#f4f6fa;border-radius:14px;overflow:hidden;box-shadow:0 10px 30px rgba(15,23,42,.15);padding:12px 14px 16px}
+.ban{background:#0b5fb3;color:#fff;border-radius:12px;padding:12px 20px;display:flex;align-items:center;gap:12px;margin-bottom:10px}.ban h1{margin:0;font-size:21px;font-weight:900}.ban p{margin:2px 0 0;font-size:11px;opacity:.9}.ban .sp{flex:1}
+.ban .bk{background:rgba(255,255,255,.16);border-radius:8px;padding:7px 12px;font-weight:800;font-size:11.5px}
+.kp{display:grid;grid-template-columns:repeat(5,1fr);background:#fff;border:1px solid #e3e9f2;border-radius:10px;margin-bottom:8px;overflow:hidden}
+.kp div{padding:7px 12px;border-right:1px solid #eef2f7}.kp div:last-child{border-right:0}.kp small{display:block;font-size:9.5px;font-weight:800;color:#64748b;letter-spacing:.04em}.kp b{font-size:15px}.kp span{display:block;font-size:10.5px;color:#64748b}
+.kp .r b{color:#D2453F}.kp .g b{color:#12866A}.kp .hl{background:#fff8e6}
+.tb{display:flex;gap:2px;background:#e8edf3;border-radius:9px;padding:3px;margin-bottom:8px;width:max-content}.tb span{padding:6px 14px;font-size:11.5px;font-weight:800;border-radius:7px;color:#64748b;cursor:pointer}.tb span.on{background:#fff;color:#0f172a;box-shadow:0 1px 3px rgba(0,0,0,.08)}.tb em{font-style:normal;background:#D2453F;color:#fff;border-radius:99px;padding:0 6px;font-size:10px;margin-left:4px}
+.gr{display:grid;grid-template-columns:1fr 400px;gap:8px;align-items:start}
+.pn{background:#fff;border:1px solid #e3e9f2;border-radius:10px;overflow:hidden}
+.pn .h{display:flex;align-items:center;gap:6px;padding:7px 12px;border-bottom:1px solid #eef2f7;font-weight:800;font-size:12px;background:#f8fafc}.pn .h small{font-weight:600;color:#64748b}
+.fb{display:flex;gap:6px;align-items:center;padding:7px 10px;border-bottom:1px solid #eef2f7}
+.in{border:1px solid #dbe3ee;border-radius:7px;height:28px;padding:0 9px;display:flex;align-items:center;font-size:11.5px;color:#94a3b8;background:#fff}
+.sg{display:flex;background:#e8edf3;border-radius:7px;padding:2px}.sg span{padding:4px 10px;font-size:10.5px;font-weight:800;border-radius:5px;color:#64748b}.sg span.on{background:#fff;color:#0f172a}
+table{width:100%;border-collapse:collapse;font-size:11.5px}
+th{background:#E6EBF1;text-align:left;font-size:9.5px;letter-spacing:.04em;padding:5px 8px;border-bottom:2px solid #15303F;white-space:nowrap}th.n,td.n{text-align:right}
+td{padding:5px 8px;border-bottom:1px solid #eef2f7;vertical-align:middle}tbody tr{cursor:pointer}tbody tr:hover td{background:#f8fbff}tr.sel td{background:#eaf2fc!important}
+.q{font-weight:700;color:#0f172a}.mut{color:#94a3b8}.sm{display:block;font-size:10.5px;color:#64748b;font-weight:500}
+.pl{font-size:9.5px;font-weight:800;border-radius:5px;padding:2px 7px;white-space:nowrap}.p-b{background:#fde8e7;color:#B42318}.p-a{background:#e3f5ee;color:#12866A}.p-k{background:#efe9fd;color:#6D3FD8}.p-x{background:#f1f5f9;color:#94a3b8}.p-s{background:#fff4d6;color:#9A6400}
+.cnt{display:inline-flex;min-width:22px;height:18px;border-radius:6px;background:#eaf2fc;color:#0b5fb3;font-weight:800;font-size:10.5px;align-items:center;justify-content:center;padding:0 5px}
+.bd{padding:10px 12px}
+.qb{background:#f8fafc;border:1px solid #eef2f7;border-radius:9px;padding:9px 11px;margin-bottom:10px}.qb b{display:block;font-size:13px}.qb small{color:#64748b}
+.lb{font-size:10px;font-weight:800;color:#64748b;letter-spacing:.04em;margin:0 0 5px}
+.opt{border:1.5px solid #e3e9f2;border-radius:10px;padding:9px 11px;margin-bottom:7px;display:flex;gap:9px;cursor:pointer}.opt i{width:16px;height:16px;border-radius:50%;border:2px solid #cbd5e1;flex:none;margin-top:1px}.opt.on{border-color:#0b5fb3;background:#f5f9fe}.opt.on i{border:5px solid #0b5fb3}.opt b{display:block;font-size:12px}.opt small{color:#64748b;font-size:11px}
+.sel2{border:1px solid #dbe3ee;border-radius:7px;height:30px;padding:0 9px;display:flex;align-items:center;justify-content:space-between;font-size:12px;margin:6px 0 4px;background:#fff}
+.ta{border:1px solid #dbe3ee;border-radius:7px;padding:7px 9px;font-size:12px;min-height:70px;color:#334155;background:#fff;line-height:1.45}
+.chips{display:flex;gap:5px;flex-wrap:wrap;margin:6px 0}.chips span{font-size:11px;border:1px solid #dbe3ee;border-radius:7px;padding:4px 9px;color:#475569}.chips span.on{background:#0b5fb3;color:#fff;border-color:#0b5fb3}
+.prev{margin-top:10px;border:1px dashed #cfdcef;border-radius:10px;padding:9px 11px;background:#fbfdff}.prev .lb{color:#0b5fb3}
+.ans{display:flex;gap:8px}.ans .av{width:24px;height:24px;border-radius:7px;background:#0b5fb3;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;flex:none}.ans div{font-size:11.5px;line-height:1.5}
+.btns{display:flex;gap:6px;margin-top:10px}.bt{height:32px;border-radius:8px;padding:0 13px;font-weight:800;font-size:11.5px;display:inline-flex;align-items:center;border:1px solid #dbe3ee;background:#fff;color:#334155}.bt.b{background:#0b5fb3;color:#fff;border-color:#0b5fb3;flex:1;justify-content:center}.bt.r{color:#D2453F;border-color:#f3c4c2}
+.scr{display:none}.scr.on{display:block}
+.kg{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:10px}
+.kc{border:1px solid #e3e9f2;border-left:3px solid var(--c);border-radius:9px;padding:9px 11px;background:#fff}.kc .t{display:flex;align-items:center;gap:6px;margin-bottom:4px}.kc .t b{flex:1;font-size:12.5px}.kc p{margin:0;font-size:11.5px;color:#475569;line-height:1.45}.kc .m{font-size:10.5px;color:#94a3b8;margin-top:5px}
+.sw{width:28px;height:16px;border-radius:99px;background:#12866A;position:relative;display:inline-block}.sw:after{content:"";position:absolute;right:2px;top:2px;width:12px;height:12px;border-radius:50%;background:#fff}.sw.off{background:#cbd5e1}.sw.off:after{right:auto;left:2px}
+.note{max-width:1440px;margin:0 auto 30px;padding:0 20px;font-size:12.5px;line-height:1.6;color:#334155}
+
+.hint{display:flex;gap:8px;align-items:flex-start;background:#eaf2fc;border:1px solid #cfe0f5;border-radius:9px;padding:8px 10px;margin-bottom:9px;font-size:11.5px;color:#1e4f9c;line-height:1.45}.hint b{color:#0b5fb3}
+.sug{border:1.5px solid #12866A;background:#f1faf6;border-radius:10px;padding:9px 11px;margin-bottom:8px}.sug .t{display:flex;align-items:center;gap:6px;font-weight:800;font-size:12px;color:#12866A}.sug p{margin:4px 0 0;font-size:11.5px;color:#334155;line-height:1.45}
+.mini{height:24px;border-radius:7px;padding:0 10px;font-weight:800;font-size:10.5px;display:inline-flex;align-items:center;border:1px solid #0b5fb3;background:#0b5fb3;color:#fff;white-space:nowrap}.mini.g{background:#12866A;border-color:#12866A}.mini.o{background:#fff;color:#334155;border-color:#dbe3ee}
+.rowact{display:flex;gap:5px;justify-content:flex-end}
+.chat{max-width:520px;margin:0 auto;background:#fff;border:1px solid #e3e9f2;border-radius:12px;padding:12px}.msg{display:flex;gap:8px;margin-bottom:10px}.msg .b{background:#f1f5f9;border-radius:10px;padding:8px 11px;font-size:12px;line-height:1.5;max-width:420px}.msg.me{justify-content:flex-end}.msg.me .b{background:#dcf1e6}
+.sa{border:1px dashed #12866A;background:#f1faf6;border-radius:10px;padding:8px 10px;margin:0 0 4px 32px;font-size:11.5px}.sa .l{font-size:9.5px;font-weight:800;color:#12866A;letter-spacing:.04em;margin-bottom:5px}
+.tag{font-size:9.5px;font-weight:800;border-radius:5px;padding:2px 7px;background:#e3f5ee;color:#12866A}
+</style></head><body>
+<div class="top"><h1>DSM · Ajari AI jadi satu klik (khusus Super Admin)</h1><p>Sekarang Super Admin harus isi sendiri kata kunci, tujuan jawaban, dan contoh pertanyaan. Tiga opsi di bawah memangkas itu. Pilih satu, atau gabungkan nomornya.</p>
+<div class="pick" id="pk"><button data-s="a" class="on">A · SARAN OTOMATIS DI DAFTAR</button><button data-s="b">B · PANEL DENGAN SARAN</button><button data-s="c">C · LANGSUNG DARI CHAT</button></div></div>
+<div class="app">
+ <div class="ban"><div><h1>AJARI AI</h1><p>Super Admin · bantu AI menjawab pertanyaan yang belum bisa dijawab</p></div><div class="sp" style="flex:1"></div><span class="bk">← KEMBALI KE AI ASSISTANT</span></div>
+
+ <div class="scr on" id="s-a">
+  <div class="hint"><span>💡</span><span><b>Opsi A.</b> Tiap baris sudah ada saran dari AI: jawaban tujuan dan kata kunci. Klik <b>AJARI</b> satu kali, arahan langsung tersimpan. Kalau saran kurang pas, klik <b>UBAH</b> untuk buka panel biasa.</span></div>
+  <div class="pn"><div class="h">Pertanyaan yang belum terjawab <small>dikelompokkan yang mirip · saran tujuan dibuat otomatis dari kata di pertanyaan</small></div>
+   <div class="fb"><div class="in" style="width:220px">⌕ Cari pertanyaan</div><div class="sg"><span class="on">BARU</span><span>SUDAH DIAJARI</span><span>DIABAIKAN</span></div></div>
+   <table><thead><tr><th>PERTANYAAN</th><th class="n">DITANYA</th><th>SARAN TUJUAN</th><th>KATA KUNCI</th><th></th></tr></thead><tbody>
+    <tr><td><span class="q">target kita aman ga bulan ini</span><span class="sm">mirip: "target aman?", "aman ga targetnya"</span></td><td class="n"><span class="cnt">6</span></td><td><span class="pl p-a">RINGKASAN</span></td><td>target, aman</td><td><div class="rowact"><span class="mini g">AJARI</span><span class="mini o">UBAH</span><span class="mini o">ABAIKAN</span></div></td></tr>
+    <tr><td><span class="q">noo itel di cirebon bulan ini</span></td><td class="n"><span class="cnt">4</span></td><td><span class="pl p-a">BRAND & TYPE</span></td><td>noo, brand</td><td><div class="rowact"><span class="mini g">AJARI</span><span class="mini o">UBAH</span><span class="mini o">ABAIKAN</span></div></td></tr>
+    <tr><td><span class="q">siapa sales terbaik minggu ini</span></td><td class="n"><span class="cnt">2</span></td><td><span class="pl p-k">RANKING</span></td><td>sales terbaik</td><td><div class="rowact"><span class="mini g">AJARI</span><span class="mini o">UBAH</span><span class="mini o">ABAIKAN</span></div></td></tr>
+    <tr><td><span class="q">berapa insentif saya bulan ini</span></td><td class="n"><span class="cnt">4</span></td><td><span class="pl p-x">TIDAK ADA DATA</span></td><td>insentif</td><td><div class="rowact"><span class="mini">TULIS PENGETAHUAN</span><span class="mini o">ABAIKAN</span></div></td></tr>
+   </tbody></table></div>
+  <p class="note" style="padding:8px 0 0">Kalau AI tidak menemukan tujuan yang cocok (data memang tidak ada, misalnya insentif), tombolnya berubah jadi <b>TULIS PENGETAHUAN</b> supaya Super Admin menulis jawaban teks. Sebelum tersimpan ada pratinjau jawabannya.</p>
+ </div>
+
+ <div class="scr" id="s-b">
+  <div class="hint"><span>💡</span><span><b>Opsi B.</b> Panel kanan sama seperti sekarang, tapi sudah terisi saran AI dan ada <b>pratinjau jawaban langsung</b> sebelum disimpan. Super Admin tinggal cek lalu <b>SIMPAN</b>.</span></div>
+  <div class="gr"><div class="pn"><div class="h">Pertanyaan yang belum terjawab</div>
+   <table><thead><tr><th>PERTANYAAN</th><th class="n">DITANYA</th><th>ALASAN</th></tr></thead><tbody>
+    <tr class="sel"><td><span class="q">target kita aman ga bulan ini</span></td><td class="n"><span class="cnt">6</span></td><td><span class="pl p-s">TIDAK DIKENALI</span></td></tr>
+    <tr><td><span class="q">noo itel di cirebon bulan ini</span></td><td class="n"><span class="cnt">4</span></td><td><span class="pl p-s">TIDAK DIKENALI</span></td></tr>
+    <tr><td><span class="q">siapa sales terbaik minggu ini</span></td><td class="n"><span class="cnt">2</span></td><td><span class="pl p-s">TIDAK DIKENALI</span></td></tr></tbody></table></div>
+   <div class="pn"><div class="h">Ajari AI <small>sudah terisi saran</small></div><div class="bd">
+    <div class="qb"><b>target kita aman ga bulan ini</b><small>ditanya 6 kali · Joko W., Rina, +2</small></div>
+    <div class="sug"><div class="t">✓ SARAN AI · keyakinan tinggi</div><p>Tujuan <b>Ringkasan</b>. Kata kunci <b>target, aman</b>. Ditemukan karena pertanyaan mirip "proyeksi tembus target".</p></div>
+    <div class="lb">JAWABAN TUJUAN</div><div class="sel2"><span>Ringkasan (ST, SO, DA, NOO, run rate)</span><span>▾</span></div>
+    <div class="lb" style="margin-top:8px">KATA KUNCI</div><div class="chips"><span class="on">target</span><span class="on">aman</span><span>+ tambah</span></div>
+    <div class="prev"><div class="lb">PRATINJAU JAWABAN (data asli, akun Super Admin)</div><div class="ans"><div class="av">AI</div><div>Sell Thru 1.240 (82% dari target 1.500), proyeksi 104%. Run rate 62/hari, butuh 52/hari di sisa 5 hari kerja.</div></div></div>
+    <div class="btns"><span class="bt g" style="background:#12866A;color:#fff;border-color:#12866A">SIMPAN ARAHAN</span><span class="bt">ABAIKAN</span></div>
+   </div></div></div>
+ </div>
+
+ <div class="scr" id="s-c">
+  <div class="hint"><span>💡</span><span><b>Opsi C.</b> Super Admin bisa langsung mengajari dari layar chat. Di bawah jawaban "belum bisa" muncul kotak khusus Super Admin, jadi tidak perlu pindah ke halaman Ajari AI. User biasa tidak melihat kotak ini.</span></div>
+  <div class="chat">
+   <div class="msg me"><div class="b">target kita aman ga bulan ini</div></div>
+   <div class="msg"><div class="av" style="width:24px;height:24px;border-radius:7px;background:#0b5fb3;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;flex:none">AI</div><div class="b">Maaf, pertanyaan itu belum bisa gue jawab. Sudah dicatat supaya bisa ditambahkan.</div></div>
+   <div class="sa"><div class="l">KHUSUS SUPER ADMIN</div><div style="margin-bottom:6px">Ajari AI: jawab pertanyaan ini pakai <b>Ringkasan</b>?</div><div class="rowact" style="justify-content:flex-start"><span class="mini g">YA, AJARI</span><span class="mini o">PILIH JAWABAN LAIN</span><span class="mini o">TULIS PENGETAHUAN</span></div></div>
+   <div class="msg me" style="margin-top:12px"><div class="b">noo itel di cirebon bulan ini</div></div>
+   <div class="msg"><div class="av" style="width:24px;height:24px;border-radius:7px;background:#0b5fb3;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;flex:none">AI</div><div class="b">NOO ITEL Cirebon 6 dealer baru, 0 dari target…<br><span class="tag">ARAHAN TERSIMPAN</span></div></div>
+  </div>
+ </div>
+</div>
+<div class="note"><b>Catatan teknis.</b> Saran tujuan dihitung dari kata di pertanyaan dan aturan yang sudah ada, bukan tebakan AI baru, jadi tidak menambah biaya Gemini. Semua opsi tetap membuat arahan yang bisa dihapus atau diubah di tab ARAHAN. Tampilan yang sudah ada tidak berubah selain bagian yang ditandai.</div>
+<script>
+document.querySelectorAll('#pk button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#pk button').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));document.getElementById('s-'+b.dataset.s).classList.add('on')});
+</script></body></html>

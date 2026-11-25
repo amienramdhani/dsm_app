@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup DSM Klaim desktop - Realisasi satu halaman</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:"Inter","Segoe UI",system-ui,sans-serif;background:#e9edf3;color:#0f172a;font-size:12px;-webkit-font-smoothing:antialiased}
+.top{max-width:1440px;margin:0 auto;padding:14px 20px 6px}.top h1{font-size:17px;margin:0}.top p{margin:3px 0 0;color:#64748b;font-size:12.5px}
+.app{max-width:1440px;margin:10px auto 30px;background:#f4f6fa;border-radius:14px;overflow:hidden;display:flex;box-shadow:0 10px 30px rgba(15,23,42,.15)}
+.sb{width:210px;background:#fff;border-right:1px solid #e3e9f2;flex:none;padding:14px 10px;font-size:12px}.sb b{display:block;font-size:14px;margin-bottom:12px}.sb div{padding:7px 10px;border-radius:8px;color:#334155;font-weight:600}.sb div.on{background:#eaf2fc;color:#0b5fb3}
+.mn{flex:1;min-width:0}
+.hd{height:50px;background:#0b5fb3;color:#fff;display:flex;align-items:center;padding:0 18px;gap:12px}.hd small{display:block;font-size:10.5px;opacity:.8}.hd h2{margin:0;font-size:15px}.hd .sp{flex:1}
+.sg{display:flex;background:rgba(255,255,255,.15);border-radius:8px;padding:2px}.sg span{padding:5px 12px;font-size:11.5px;font-weight:800;border-radius:6px;color:#dbe7f7}.sg span.on{background:#fff;color:#0b5fb3}
+.ct{padding:10px 14px 14px}
+.fb{display:flex;gap:6px;align-items:center;margin-bottom:8px}
+.in{border:1px solid #dbe3ee;border-radius:7px;height:28px;padding:0 9px;display:flex;align-items:center;font-size:11.5px;color:#334155;background:#fff;gap:5px}
+.bt{height:28px;border-radius:7px;padding:0 11px;font-weight:800;font-size:11px;display:inline-flex;align-items:center;border:1px solid #dbe3ee;background:#fff;color:#334155}.ml{margin-left:auto}
+.kp{display:grid;grid-template-columns:repeat(6,1fr);background:#fff;border:1px solid #e3e9f2;border-radius:10px;margin-bottom:8px;overflow:hidden}
+.kp div{padding:7px 12px;border-right:1px solid #eef2f7;white-space:nowrap}.kp div:last-child{border-right:0}
+.kp small{display:block;font-size:9.5px;font-weight:800;color:#64748b;letter-spacing:.04em}.kp b{font-size:15px;font-variant-numeric:tabular-nums}.kp span{display:block;font-size:10.5px;color:#64748b}
+.kp .up{color:#12866A;font-weight:800}.kp .hl{background:#fff8e6}
+.gr{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;align-items:stretch}
+.s2{grid-column:span 2}
+.pn{background:#fff;border:1px solid #e3e9f2;border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+.pn .h{display:flex;align-items:center;gap:6px;padding:6px 10px;border-bottom:1px solid #eef2f7;font-weight:800;font-size:11.5px;background:#f8fafc}.pn .h small{font-weight:600;color:#64748b}.pn .h .r{margin-left:auto;font-size:10.5px;color:#0b5fb3;font-weight:800}
+.bd{padding:7px 10px;flex:1}
+table{width:100%;border-collapse:collapse;font-size:11.5px}
+th{background:#E6EBF1;text-align:left;font-size:9.5px;letter-spacing:.04em;padding:5px 8px;border-bottom:2px solid #15303F;white-space:nowrap}th.n{text-align:right}
+td{padding:4px 8px;border-bottom:1px solid #eef2f7;white-space:nowrap}td.n{text-align:right;font-family:Consolas,monospace}
+tfoot td{background:#E6EBF1;font-weight:800;border-top:2px solid #15303F}
+.p{font-weight:800}.p.g{color:#12866A}.p.a{color:#C27C00}.p.r{color:#D2453F}.mut{color:#94a3b8}
+.dot{display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--c);margin-right:6px}
+.dn{display:flex;gap:10px;align-items:center}.dn svg{width:84px;height:84px;flex:none}
+.dl{flex:1}.dl div{display:flex;align-items:center;padding:3px 0;border-bottom:1px dashed #eef2f7;font-size:11.5px}.dl b{margin-left:auto}.dl small{color:#64748b;width:32px;text-align:right}
+.rk div{display:flex;align-items:center;gap:7px;padding:3px 0;border-bottom:1px solid #f1f5f9}.rk em{font-style:normal;width:17px;height:17px;border-radius:5px;background:#eaf2fc;color:#0b5fb3;font-weight:800;font-size:9.5px;display:flex;align-items:center;justify-content:center}.rk b{margin-left:auto}.rk small{color:#94a3b8;margin-left:6px;width:44px;text-align:right}
+.ba div{display:flex;gap:7px;padding:3px 0;border-bottom:1px solid #f1f5f9}.ba em{font-style:normal;min-width:17px;height:17px;border-radius:5px;background:#fde8e7;color:#B42318;font-weight:800;font-size:9.5px;display:flex;align-items:center;justify-content:center}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:5px}.pc div{background:#f8fafc;border:1px solid #eef2f7;border-radius:7px;padding:4px 8px}.pc small{display:block;font-size:9.5px;color:#64748b;font-weight:700}.pc b{font-size:12.5px}
+.chip{font-size:9.5px;font-weight:800;border-radius:5px;padding:1px 6px;background:#f1f5f9;color:#475569}.chip.ba{background:#fde8e7;color:#B42318}
+.note{max-width:1440px;margin:0 auto 30px;padding:0 20px;font-size:12.5px;line-height:1.6;color:#334155}
+</style></head><body>
+<div class="top"><h1>DSM Klaim desktop · Realisasi (satu halaman, tanpa tab)</h1><p>Ringkasan, Tren, Budget, dan Detail digabung jadi satu layar padat gaya DSM: strip angka, chart tren + komposisi, tabel budget, top pemohon, transaksi, BA, petty cash.</p></div>
+<div class="app">
+<aside class="sb"><b>DSM Klaim</b><div>Antrean</div><div>BA</div><div>Semua</div><div class="on">Budget</div><div>Notifikasi</div><div>Menu</div></aside>
+<div class="mn"><div class="hd"><div><small>F05 · READ-ONLY</small><h2>Realisasi</h2></div><div class="sp"></div><div class="sg"><span>BUDGET</span><span class="on">REALISASI</span></div></div>
+<div class="ct">
+ <div class="fb"><div class="in">Periode (bulan) ▾</div><div class="in">November 2026</div><div class="in">Badan usaha: Semua ▾</div><span class="bt ml">⬇ EXPORT EXCEL</span></div>
+ <div class="kp">
+  <div><small>TOTAL REALISASI</small><b>Rp 649.100</b><span>vs Okt <span class="up">▲ baru</span></span></div>
+  <div><small>KLAIM TERTRANSFER</small><b>3 klaim</b><span>rata-rata Rp 216.366</span></div>
+  <div><small>BUDGET TERPAKAI</small><b>4,6%</b><span>dari Rp 14.000.000</span></div>
+  <div><small>KLAIM MEMAKAI BA</small><b>1 (33%)</b><span>Rp 69.100</span></div>
+  <div><small>PETTY CASH CAIR</small><b>Rp 0</b><span>sisa disetor Rp 0</span></div>
+  <div class="hl"><small>PC BELUM DIPERTANGGUNGJAWABKAN</small><b>Rp 0</b><span>0 petty cash</span></div>
+ </div>
+ <div class="gr">
+  <div class="pn s2"><div class="h">Tren realisasi <small>per hari · Nov 2026</small><span class="r"><span class="dot" style="--c:#3B78C2"></span>harian &nbsp;<span class="dot" style="--c:#12866A"></span>kumulatif</span></div><div class="bd">
+   <svg viewBox="0 0 860 150" width="100%" font-family="Inter,Segoe UI" font-size="9.5" id="tr"></svg></div></div>
+  <div class="pn"><div class="h">Komposisi kategori</div><div class="bd">
+   <div class="dn"><svg viewBox="0 0 42 42"><circle cx="21" cy="21" r="15.9" fill="none" stroke="#eef2f7" stroke-width="7"/><circle cx="21" cy="21" r="15.9" fill="none" stroke="#8268C9" stroke-width="7" stroke-dasharray="57 43" stroke-dashoffset="25"/><circle cx="21" cy="21" r="15.9" fill="none" stroke="#C97A4A" stroke-width="7" stroke-dasharray="32 68" stroke-dashoffset="-32"/><circle cx="21" cy="21" r="15.9" fill="none" stroke="#3B78C2" stroke-width="7" stroke-dasharray="11 89" stroke-dashoffset="-64"/><text x="21" y="22.5" text-anchor="middle" font-size="5" font-weight="800">649rb</text></svg>
+   <div class="dl"><div><span class="dot" style="--c:#8268C9"></span>Perdin<b>370.000</b><small>57%</small></div><div><span class="dot" style="--c:#C97A4A"></span>Entertain<b>207.000</b><small>32%</small></div><div><span class="dot" style="--c:#3B78C2"></span>Transportasi<b>72.100</b><small>11%</small></div><div><span class="dot" style="--c:#3E9486"></span>Operasional<b>0</b><small>0%</small></div></div></div>
+   <div style="margin-top:6px;font-weight:800;font-size:10px;color:#64748b">PER BADAN USAHA</div>
+   <div class="dl"><div><span class="dot" style="--c:#1E5FB8"></span>PT. MSI<b>467.000</b><small>72%</small></div><div><span class="dot" style="--c:#12866A"></span>RISM<b>182.100</b><small>28%</small></div></div>
+  </div></div>
+ </div>
+ <div class="gr">
+  <div class="pn s2"><div class="h">Realisasi vs budget <small>per badan usaha &amp; kategori</small></div>
+   <table><thead><tr><th>BADAN USAHA</th><th>KATEGORI</th><th class="n">BUDGET</th><th class="n">REALISASI</th><th class="n">SISA</th><th class="n">PEMAKAIAN</th><th class="n">KLAIM</th><th class="n">BA</th></tr></thead><tbody>
+    <tr><td><b>PT. MSI</b></td><td><span class="dot" style="--c:#3B78C2"></span>Transportasi</td><td class="n">8.000.000</td><td class="n"><b>69.100</b></td><td class="n">7.930.900</td><td class="n"><span class="p g">1%</span></td><td class="n">1</td><td class="n">1</td></tr>
+    <tr><td></td><td><span class="dot" style="--c:#C97A4A"></span>Entertain</td><td class="n">6.000.000</td><td class="n"><b>210.000</b></td><td class="n">5.790.000</td><td class="n"><span class="p g">4%</span></td><td class="n">1</td><td class="n">-</td></tr>
+    <tr><td></td><td><span class="dot" style="--c:#8268C9"></span>Perdin</td><td class="n mut">tanpa budget</td><td class="n"><b>370.000</b></td><td class="n mut">-</td><td class="n mut">-</td><td class="n">1</td><td class="n">-</td></tr>
+    <tr><td><b>RISM</b></td><td><span class="dot" style="--c:#3B78C2"></span>Transportasi</td><td class="n mut">0</td><td class="n"><b>0</b></td><td class="n">-</td><td class="n mut">-</td><td class="n">0</td><td class="n">-</td></tr>
+   </tbody><tfoot><tr><td>TOTAL</td><td></td><td class="n">14.000.000</td><td class="n">649.100</td><td class="n">13.720.900</td><td class="n"><span class="p g">4,6%</span></td><td class="n">3</td><td class="n">1</td></tr></tfoot></table></div>
+  <div class="pn"><div class="h">Top pemohon <span class="r">lihat semua ›</span></div><div class="bd rk">
+   <div><em>1</em>Rudi Hartono (uji)<b>370.000</b><small>57%</small></div><div><em>2</em>Budi Santoso (uji)<b>210.000</b><small>32%</small></div><div><em>3</em>Joko Widodo (uji)<b>69.100</b><small>11%</small></div><div><em>4</em>Dewi Lestari (uji)<b>0</b><small>0%</small></div><div><em>5</em>Eko Prasetyo (uji)<b>0</b><small>0%</small></div></div></div>
+ </div>
+ <div class="gr">
+  <div class="pn s2"><div class="h">Transaksi <small>3 transfer</small></div>
+   <table><thead><tr><th>WAKTU</th><th>REF</th><th>PEMOHON</th><th>JENIS</th><th>NO. TRANSFER</th><th class="n">NOMINAL</th></tr></thead><tbody>
+    <tr><td>20/11 14:02</td><td><b>KLM-2611-0005</b> <span class="chip ba">BA</span></td><td>Budi Santoso (uji)</td><td>Uang makan</td><td>TRF-2611-0012</td><td class="n"><b>70.000</b></td></tr>
+    <tr><td>12/11 10:15</td><td><b>KLM-2611-0003</b></td><td>Rudi Hartono (uji)</td><td>Perdin</td><td>TRF-2611-0008</td><td class="n"><b>370.000</b></td></tr>
+    <tr><td>04/11 09:40</td><td><b>KLM-2611-0001</b></td><td>Joko Widodo (uji)</td><td>BBM + Tol</td><td>TRF-2611-0002</td><td class="n"><b>69.100</b></td></tr>
+   </tbody></table></div>
+  <div class="pn"><div class="h">Sorotan BA &amp; petty cash</div><div class="bd">
+   <div class="ba"><div><em>1</em>Kehilangan nota</div><div><em>0</em><span class="mut">Over budget</span></div><div><em>0</em><span class="mut">Nota di luar hari normal</span></div></div>
+   <div style="margin:7px 0 4px;font-weight:800;font-size:10px;color:#64748b">PETTY CASH</div>
+   <div class="pc"><div><small>DANA CAIR</small><b>Rp 0</b></div><div><small>TEREALISASI</small><b>Rp 0</b></div><div><small>SISA DISETOR</small><b>Rp 0</b></div><div><small>BELUM DIPERTANGGUNGJAWABKAN</small><b>Rp 0</b></div></div></div></div>
+ </div>
+</div></div></div>
+<div class="note"><b>Catatan:</b> 4 tab (Ringkasan/Tren/Budget/Detail) dihapus, isinya semua tampil di satu layar. Isi & angka sama dengan yang sekarang. "Budget terpakai" &amp; "Petty cash cair" diambil dari data Budget &amp; Petty cash yang sudah ada di halaman ini. Tampilan HP tidak berubah.</div>
+<script>
+const D=[[3,72100],[4,0],[5,0],[6,0],[7,0],[10,0],[11,0],[12,207000],[13,0],[14,0],[17,0],[18,0],[19,0],[20,370000],[21,0],[24,0]];
+const mx=Math.max(...D.map(d=>d[1])),W=860,b=125,t=14,st=(W-50)/D.length,bw=st*.5;let c=0,h='',pts=[];
+[0,.5,1].forEach(f=>{const y=b-f*(b-t);h+=`<line x1="40" x2="${W}" y1="${y}" y2="${y}" stroke="#eef2f7"/><text x="34" y="${y+3}" text-anchor="end" fill="#94a3b8">${f?Math.round(mx*f/1000)+'rb':'0'}</text>`});
+D.forEach((d,i)=>{c+=d[1];const x=40+st*i+st/2,hh=Math.max(1.5,d[1]/mx*(b-t));h+=`<rect x="${x-bw/2}" y="${b-hh}" width="${bw}" height="${hh}" rx="2" fill="${d[1]?'#3B78C2':'#e2e8f0'}"/>${d[1]?`<text x="${x}" y="${b-hh-3}" text-anchor="middle" font-weight="800" fill="#0f172a">${Math.round(d[1]/1000)}rb</text>`:''}<text x="${x}" y="${b+12}" text-anchor="middle" fill="#64748b">${d[0]}/11</text>`;pts.push(`${x},${b-c/649100*(b-t)}`)});
+h+=`<polyline fill="none" stroke="#12866A" stroke-width="2" points="${pts.join(' ')}"/>`;document.getElementById('tr').innerHTML=h;
+</script></body></html>

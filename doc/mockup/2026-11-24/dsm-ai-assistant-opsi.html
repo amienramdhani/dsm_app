@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup DSM - AI Assistant</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:"Inter","Segoe UI",system-ui,sans-serif;background:#e9edf3;color:#0f172a;font-size:13px;-webkit-font-smoothing:antialiased}
+.top{max-width:1440px;margin:0 auto;padding:14px 20px 6px}.top h1{font-size:17px;margin:0}.top p{margin:3px 0 8px;color:#64748b;font-size:12.5px}
+.pick{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.pick button{font:inherit;font-size:12px;font-weight:800;border:1px solid #cfdcef;background:#fff;color:#334155;border-radius:8px;padding:6px 12px;cursor:pointer}.pick button.on{background:#0b5fb3;color:#fff;border-color:#0b5fb3}.pick em{font-style:normal;font-size:11px;font-weight:800;color:#64748b;margin-left:8px}
+.app{max-width:1440px;height:860px;margin:10px auto 30px;background:#f4f6fa;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 10px 30px rgba(15,23,42,.15)}
+.nb{height:50px;background:#fff;border-bottom:2px solid #6366f1;display:flex;align-items:center;padding:0 16px;gap:18px;font-weight:700;font-size:12.5px;color:#334155;flex:none}
+.nb .lg{font-weight:800;color:#0b5fb3;font-size:16px;letter-spacing:.1em}.nb .on{background:#0b5fb3;color:#fff;border-radius:8px;padding:7px 12px}.nb .sp{flex:1}.nb .pr{border:1px solid #e3e9f2;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:800}
+.ph{margin:12px 16px 0;background:#0b5fb3;color:#fff;border-radius:12px;padding:12px 20px;flex:none}.ph h1{margin:0;font-size:21px;font-weight:900;letter-spacing:.02em}.ph p{margin:2px 0 0;font-size:11px;opacity:.9}
+.body{flex:1;display:flex;min-height:0;margin:10px 16px 16px;border:1px solid #e3e9f2;border-radius:12px;overflow:hidden;background:#f4f6fa}
+/* sidebar AI */
+.as{width:270px;background:#fff;border-right:1px solid #e3e9f2;display:flex;flex-direction:column;flex:none}
+.as .new{margin:12px;border:0;border-radius:9px;background:#0b5fb3;color:#fff;font:inherit;font-weight:800;font-size:12px;padding:9px}
+.as .g{font-size:10px;font-weight:800;color:#94a3b8;letter-spacing:.06em;margin:10px 14px 4px}
+.as .it{padding:7px 14px;font-size:12px;color:#334155;display:flex;gap:8px;align-items:center;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.as .it:hover{background:#f1f5f9}.as .it.on{background:#eaf2fc;color:#0b5fb3;font-weight:700}
+.as .it i{width:6px;height:6px;border-radius:50%;background:var(--c);flex:none}
+.as .ft{margin-top:auto;border-top:1px solid #eef2f7;padding:10px 14px;font-size:10.5px;color:#64748b;line-height:1.5}
+.as .ft b{color:#12866A}
+/* chat area */
+.ch{flex:1;display:flex;flex-direction:column;min-width:0}
+.ctx{display:flex;gap:6px;align-items:center;padding:9px 18px;border-bottom:1px solid #e3e9f2;background:#fff;font-size:11.5px}
+.ctx .ai{display:flex;align-items:center;gap:8px;font-weight:800;font-size:13px;margin-right:10px}.ctx .ai i{width:30px;height:30px;border-radius:9px;background:#0b5fb3;color:#fff;display:flex;align-items:center;justify-content:center;font-style:normal}
+.ctx .ai small{display:block;font-size:10px;font-weight:600;color:#64748b}
+.cp{border:1px solid #dbe3ee;border-radius:7px;padding:4px 9px;color:#334155;font-weight:700;background:#f8fafc}.cp b{color:#0b5fb3}
+.ctx .ro{margin-left:auto;font-size:10.5px;font-weight:800;color:#12866A;background:#e3f5ee;border-radius:6px;padding:3px 8px}
+.sc{flex:1;overflow:auto;padding:22px 0}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px}
+.hi{text-align:center;margin:10px 0 22px}.hi .lo{width:52px;height:52px;border-radius:15px;background:#0b5fb3;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:10px}
+.hi h2{margin:0;font-size:22px}.hi p{margin:5px 0 0;color:#64748b}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.cd{background:#fff;border:1px solid #e3e9f2;border-radius:12px;padding:12px;border-top:3px solid var(--c)}
+.cd h4{margin:0 0 8px;font-size:11px;font-weight:800;color:var(--c);letter-spacing:.05em;display:flex;align-items:center;gap:7px}.cd h4 i{width:22px;height:22px;border-radius:7px;background:color-mix(in srgb,var(--c) 13%,#fff);display:flex;align-items:center;justify-content:center;font-style:normal}
+.q{display:block;width:100%;text-align:left;border:1px solid #eef2f7;background:#f8fafc;border-radius:8px;padding:7px 9px;margin-bottom:5px;font:inherit;font-size:12px;color:#334155;cursor:pointer}.q:hover{border-color:var(--c);background:#fff}
+/* input */
+.ib{padding:12px 20px 14px;background:linear-gradient(180deg,rgba(244,246,250,0),#f4f6fa 30%)}
+.box{max-width:880px;margin:0 auto;background:#fff;border:1.5px solid #cfdcef;border-radius:14px;box-shadow:0 6px 18px rgba(15,23,42,.07);padding:10px 12px}
+.box .tx{min-height:40px;color:#94a3b8;font-size:13.5px}
+.box .rw{display:flex;align-items:center;gap:6px}.box .rw span{font-size:11px;font-weight:700;color:#64748b;border:1px solid #e3e9f2;border-radius:7px;padding:3px 8px}
+.box .snd{margin-left:auto;width:34px;height:34px;border-radius:10px;background:#0b5fb3;color:#fff;border:0;font-size:16px}
+.hint{max-width:880px;margin:6px auto 0;text-align:center;font-size:10.5px;color:#94a3b8}
+/* chat messages */
+.msg{display:flex;gap:10px;margin-bottom:16px}.msg.u{justify-content:flex-end}
+.msg.u .bb{background:#0b5fb3;color:#fff;border-radius:14px 14px 4px 14px;padding:9px 13px;max-width:70%}
+.msg .av{width:30px;height:30px;border-radius:9px;background:#0b5fb3;color:#fff;display:flex;align-items:center;justify-content:center;flex:none;font-weight:800;font-size:12px}
+.msg.a .bb{background:#fff;border:1px solid #e3e9f2;border-radius:4px 14px 14px 14px;padding:12px 14px;flex:1;line-height:1.55}
+.bb h5{margin:0 0 6px;font-size:13px}
+.kp{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid #eef2f7;border-radius:9px;overflow:hidden;margin:8px 0}.kp div{padding:6px 10px;border-right:1px solid #eef2f7}.kp div:last-child{border:0}.kp small{display:block;font-size:9.5px;font-weight:800;color:#64748b}.kp b{font-size:14px}
+table{width:100%;border-collapse:collapse;font-size:11.5px;margin:6px 0}th{background:#E6EBF1;text-align:left;font-size:9.5px;padding:5px 8px;border-bottom:2px solid #15303F}th.n,td.n{text-align:right}td{padding:4px 8px;border-bottom:1px solid #eef2f7}
+.g{color:#12866A;font-weight:800}.r{color:#D2453F;font-weight:800}.a2{color:#C27C00;font-weight:800}
+.act{display:flex;gap:6px;margin-top:8px}.act span{font-size:11px;font-weight:700;color:#475569;border:1px solid #e3e9f2;border-radius:7px;padding:4px 9px;cursor:pointer}
+.fu{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 0 40px}.fu span{font-size:11.5px;border:1px solid #cfdcef;background:#fff;border-radius:8px;padding:5px 10px;color:#0b5fb3;font-weight:700;cursor:pointer}
+.src{font-size:10.5px;color:#94a3b8;margin-top:6px}
+.vB .as{display:none}
+.note{max-width:1440px;margin:0 auto 30px;padding:0 20px;font-size:12.5px;line-height:1.6;color:#334155}
+
+.hp{max-width:1440px;margin:0 auto 30px;padding:0 20px}.hp h2{font-size:16px;margin:0 0 4px}.hp>p{margin:0 0 12px;color:#64748b;font-size:12.5px}
+.phs{display:flex;gap:22px;flex-wrap:wrap}
+.pc{width:360px}.pc>b{display:block;font-size:12px;color:#0b5fb3;margin-bottom:6px}
+.fr{height:740px;background:#f4f6fa;border-radius:26px;overflow:hidden;box-shadow:0 8px 24px rgba(15,23,42,.15);display:flex;flex-direction:column;position:relative;border:6px solid #0f172a}
+.mh{background:#0b5fb3;color:#fff;padding:12px 14px 12px;flex:none}.mh .mhr{display:flex;align-items:center;gap:8px}.mh h3{margin:0;font-size:17px;font-weight:900;flex:1}.mh small{display:block;font-size:10px;opacity:.85;margin-top:2px}
+.mh .ib2{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:14px}
+.mctx{display:flex;gap:5px;padding:8px 12px;overflow:hidden;background:#fff;border-bottom:1px solid #e3e9f2;flex:none}.mctx span{flex:none;font-size:10.5px;font-weight:700;border:1px solid #dbe3ee;border-radius:7px;padding:3px 7px;background:#f8fafc;color:#334155}.mctx span b{color:#0b5fb3}.mctx .ro{margin-left:auto;background:#e3f5ee;color:#12866A;border-color:#e3f5ee}
+.msc{flex:1;overflow:auto;padding:12px}
+.mhi{text-align:center;margin:4px 0 12px}.mhi .lo{width:40px;height:40px;border-radius:12px;background:#0b5fb3;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:17px}.mhi h4{margin:6px 0 2px;font-size:16px}.mhi p{margin:0;color:#64748b;font-size:11px}
+.mcat{background:#fff;border:1px solid #e3e9f2;border-left:3px solid var(--c);border-radius:10px;padding:8px 10px;margin-bottom:7px}
+.mcat h6{margin:0 0 5px;font-size:10px;font-weight:800;color:var(--c);letter-spacing:.05em}
+.mcat .sc2{display:flex;gap:5px;overflow:hidden}.mcat .sc2 span{flex:none;font-size:11px;border:1px solid #eef2f7;background:#f8fafc;border-radius:7px;padding:5px 8px;color:#334155}
+.mib{padding:8px 10px 10px;background:#fff;border-top:1px solid #e3e9f2;flex:none}.mib .bx{display:flex;align-items:flex-end;gap:7px;border:1.5px solid #cfdcef;border-radius:13px;padding:7px 7px 7px 11px}.mib .bx span{flex:1;color:#94a3b8;font-size:12.5px;padding:5px 0}.mib .bx i{width:34px;height:34px;border-radius:10px;background:#0b5fb3;color:#fff;display:flex;align-items:center;justify-content:center;font-style:normal;flex:none}
+.mib small{display:block;text-align:center;font-size:9.5px;color:#94a3b8;margin-top:4px}
+.mnav{display:flex;justify-content:space-around;background:#fff;border-top:1px solid #eef2f7;padding:7px 0 9px;flex:none;font-size:9.5px;color:#64748b;font-weight:700}.mnav span{text-align:center}.mnav span.on{color:#F07A0C}
+.mu{display:flex;justify-content:flex-end;margin-bottom:10px}.mu div{background:#0b5fb3;color:#fff;border-radius:13px 13px 4px 13px;padding:8px 11px;font-size:12.5px;max-width:80%}
+.ma{background:#fff;border:1px solid #e3e9f2;border-radius:4px 13px 13px 13px;padding:10px 11px;font-size:12px;line-height:1.5;margin-bottom:8px}
+.ma h5{margin:0 0 4px;font-size:12.5px}
+.mk{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:7px 0}.mk div{background:#f8fafc;border:1px solid #eef2f7;border-radius:7px;padding:5px 8px}.mk small{display:block;font-size:9px;font-weight:800;color:#64748b}.mk b{font-size:13px}
+.ma table{font-size:11px}.ma th{font-size:9px;padding:4px 6px}.ma td{padding:3px 6px}
+.mact{display:flex;gap:5px;margin-top:7px}.mact span{font-size:10.5px;font-weight:700;color:#475569;border:1px solid #e3e9f2;border-radius:7px;padding:4px 8px}
+.mfu{display:flex;gap:5px;overflow:hidden;margin-bottom:6px}.mfu span{flex:none;font-size:11px;border:1px solid #cfdcef;background:#fff;border-radius:8px;padding:5px 9px;color:#0b5fb3;font-weight:700}
+.dw{position:absolute;inset:0;background:rgba(15,23,42,.45);display:flex}.dw .pnl{width:82%;background:#fff;height:100%;display:flex;flex-direction:column}
+.dw .pnl .t{padding:14px;border-bottom:1px solid #eef2f7;display:flex;align-items:center}.dw .pnl .t b{flex:1;font-size:14px}
+.dw .new2{margin:10px 12px;border:0;border-radius:9px;background:#0b5fb3;color:#fff;font:inherit;font-weight:800;font-size:12px;padding:10px}
+.dw .g2{font-size:9.5px;font-weight:800;color:#94a3b8;letter-spacing:.06em;margin:10px 14px 4px}
+.dw .it2{padding:9px 14px;font-size:12.5px;display:flex;gap:8px;align-items:center;border-bottom:1px solid #f8fafc}.dw .it2 i{width:7px;height:7px;border-radius:50%;background:var(--c);flex:none}.dw .it2 em{margin-left:auto;font-style:normal;color:#cbd5e1}.dw .it2.on{background:#eaf2fc;color:#0b5fb3;font-weight:700}
+.dw .ft2{margin-top:auto;padding:10px 14px;font-size:10px;color:#64748b;border-top:1px solid #eef2f7}
+</style></head><body>
+<div class="top"><h1>DSM · AI Assistant (rombak)</h1><p>Dua opsi tata letak. Bisa lihat kondisi awal (kosong) dan saat sudah ada percakapan.</p>
+<div class="pick"><button data-v="A" class="on">A · DENGAN PANEL SAMPING</button><button data-v="B">B · SATU KOLOM TENGAH</button><em>KONDISI:</em><button data-s="e" class="on">KOSONG</button><button data-s="c">SEDANG CHAT</button></div></div>
+<div class="app" id="app">
+ <div class="nb"><span class="lg">DSM</span><span>Beranda</span><span>Semua Menu ▾</span><span class="on">✦ AI Assistant</span><span>Informasi</span><span>DSM Klaim</span><span>Admin</span><span class="sp"></span><span class="pr" style="background:#fff4d6;color:#9a6400;border-color:#f6e2b0">⚠ ST BELUM LENGKAP · 2 SUB REGION</span><span class="pr">SEPTEMBER 2026 ▾</span></div>
+ <div class="ph"><h1>AI ASSISTANT</h1><p>AI read-only · jawaban mengikuti periode dan cakupan yang sedang dipilih</p></div>
+ <div class="body">
+  <aside class="as">
+   <button class="new">＋ PERCAKAPAN BARU</button>
+   <div class="g">HARI INI</div>
+   <div class="it on"><i style="--c:#1E5FB8"></i>Proyeksi akhir bulan tembus target?</div>
+   <div class="it"><i style="--c:#C25A12"></i>10 dealer prioritas kunjungan</div>
+   <div class="g">7 HARI TERAKHIR</div>
+   <div class="it"><i style="--c:#0E7C6B"></i>Dealer yang stoknya menipis</div>
+   <div class="it"><i style="--c:#6D3FD8"></i>Siapa yang proyeksinya bahaya?</div>
+   <div class="it"><i style="--c:#9A6400"></i>TYPE paling laku bulan ini</div>
+   <div class="ft"><b>● Read-only.</b> AI hanya membaca &amp; menganalisis data sesuai hak akses akun. Tidak bisa mengubah target, customer, transaksi, atau konfigurasi.<br>Model: gemini-2.5-flash</div>
+  </aside>
+  <div class="ch">
+   <div class="ctx"><div class="ai"><i>✦</i><div>DSM AI<small>Super Admin</small></div></div><span class="cp">Periode: <b>September 2026</b></span><span class="cp">Cakupan: <b>Semua region</b></span><span class="cp">Brand: <b>Semua</b></span><span class="ro">READ-ONLY</span></div>
+   <div class="sc">
+    <div class="wrap" id="emp">
+     <div class="hi"><div class="lo">✦</div><h2>Halo Ari, mau cek apa hari ini?</h2><p>Jawaban mengikuti periode &amp; cakupan yang dipilih di atas.</p></div>
+     <div class="cards">
+      <div class="cd" style="--c:#1E5FB8"><h4><i>▲</i>CAPAIAN &amp; PROYEKSI</h4><button class="q">Proyeksi akhir bulan tembus target nggak?</button><button class="q">Brand mana yang paling ketinggalan dari target?</button><button class="q">Ringkas performa minggu ini</button></div>
+      <div class="cd" style="--c:#D2453F"><h4><i>!</i>TIM &amp; EARLY WARNING</h4><button class="q">Siapa yang proyeksinya bahaya?</button><button class="q">Rincian KPI saya per indikator</button></div>
+      <div class="cd" style="--c:#C25A12"><h4><i>⌂</i>DEALER</h4><button class="q">10 dealer prioritas kunjungan minggu ini</button><button class="q">Dealer yang belum order bulan ini</button><button class="q">Dealer yang berpotensi menambah Dealer Aktif?</button></div>
+      <div class="cd" style="--c:#0E7C6B"><h4><i>▤</i>STOK &amp; PRODUK</h4><button class="q">Dealer mana yang stoknya menipis?</button><button class="q">TYPE apa yang paling laku bulan ini?</button><button class="q">Tren penjualan per minggu</button></div>
+      <div class="cd" style="--c:#6D3FD8"><h4><i>?</i>ISTILAH</h4><button class="q">Jelaskan arti DOS</button><button class="q">Apa bedanya Sell Thru dan Sell Out?</button></div>
+      <div class="cd" style="--c:#475569"><h4><i>↺</i>TERAKHIR DITANYA</h4><button class="q">Proyeksi akhir bulan tembus target?</button><button class="q">10 dealer prioritas kunjungan</button></div>
+     </div>
+    </div>
+    <div class="wrap" id="cht" style="display:none">
+     <div class="msg u"><div class="bb">Proyeksi akhir bulan tembus target nggak?</div></div>
+     <div class="msg a"><div class="av">✦</div><div class="bb"><h5>Proyeksi Sell Thru September: 92% dari target</h5>Dengan laju harian 3,1 jt unit, Sell Thru diproyeksikan <b>Rp 18,4 M</b> dari target <b>Rp 20 M</b>. Kurang sekitar <b class="r">Rp 1,6 M</b>.
+      <div class="kp"><div><small>TARGET</small><b>20,0 M</b></div><div><small>AKTUAL MTD</small><b>14,2 M</b></div><div><small>PROYEKSI</small><b class="a2">18,4 M</b></div><div><small>BUTUH / HARI</small><b>580 jt</b></div></div>
+      <table><thead><tr><th>BRAND</th><th class="n">TARGET</th><th class="n">AKTUAL</th><th class="n">PROYEKSI</th></tr></thead><tbody><tr><td>ITEL</td><td class="n">8,0 M</td><td class="n">6,1 M</td><td class="n g">103%</td></tr><tr><td>INFINIX</td><td class="n">7,0 M</td><td class="n">4,4 M</td><td class="n a2">86%</td></tr><tr><td>TECNO</td><td class="n">5,0 M</td><td class="n">3,7 M</td><td class="n r">79%</td></tr></tbody></table>
+      Saran: fokus ke <b>TECNO</b> di 2 sub region yang ST-nya belum lengkap.
+      <div class="src">Sumber: data ST/SO s/d 23 Sep 2026 · cakupan Semua region</div>
+      <div class="act"><span>⧉ Salin</span><span>⬇ Export tabel</span><span>↻ Ulangi</span><span>👍</span><span>👎</span></div></div></div>
+     <div class="fu"><span>Kenapa TECNO tertinggal?</span><span>Dealer TECNO yang belum order</span><span>Rincian per sales</span></div>
+    </div>
+   </div>
+   <div class="ib"><div class="box"><div class="tx">Tanyakan data penjualan, KPI, dealer, brand, atau DOS…</div><div class="rw"><span>Periode: September 2026</span><span>Cakupan: Semua region</span><button class="snd">➤</button></div></div><div class="hint">Enter untuk kirim · Shift+Enter baris baru · AI bisa salah, cek angka penting di halaman terkait.</div></div>
+  </div>
+ </div>
+</div>
+<div class="hp"><h2>Versi HP</h2><p>Banner biru sama, chip konteks bisa digeser, kartu saran per kategori (saran digeser ke samping), kotak tanya menempel di bawah di atas menu bawah. Riwayat lewat tombol 🕘 di header (panel dari kiri), percakapan baru lewat ＋.</p><div class="phs"><div class="pc"><b>1 · KOSONG</b><div class="fr"><div class="mh"><div class="mhr"><h3>AI ASSISTANT</h3><span class="ib2">🕘</span><span class="ib2">＋</span></div><small>AI read-only · ikut periode &amp; cakupan</small></div><div class="mctx"><span>Periode: <b>Sep 2026</b></span><span>Cakupan: <b>Semua</b></span><span class="ro">READ-ONLY</span></div><div class="msc"><div class="mhi"><div class="lo">✦</div><h4>Halo Ari, mau cek apa?</h4><p>Ketuk salah satu atau ketik pertanyaan.</p></div><div class="mcat" style="--c:#1E5FB8"><h6>CAPAIAN &amp; PROYEKSI</h6><div class="sc2"><span>Proyeksi akhir bulan tembus target?</span><span>Brand paling ketinggalan</span></div></div><div class="mcat" style="--c:#D2453F"><h6>TIM &amp; EARLY WARNING</h6><div class="sc2"><span>Siapa yang proyeksinya bahaya?</span><span>Rincian KPI saya</span></div></div><div class="mcat" style="--c:#C25A12"><h6>DEALER</h6><div class="sc2"><span>10 dealer prioritas</span><span>Dealer belum order</span></div></div><div class="mcat" style="--c:#0E7C6B"><h6>STOK &amp; PRODUK</h6><div class="sc2"><span>Stok menipis</span><span>TYPE paling laku</span></div></div><div class="mcat" style="--c:#6D3FD8"><h6>ISTILAH</h6><div class="sc2"><span>Arti DOS</span><span>Sell Thru vs Sell Out</span></div></div></div><div class="mib"><div class="bx"><span>Tanyakan data penjualan, KPI…</span><i>➤</i></div><small>AI bisa salah, cek angka penting di halaman terkait.</small></div><div class="mnav"><span>⌂<br>Beranda</span><span>▤<br>Dealer</span><span>◆<br>Brand</span><span>⇄<br>Transaksi</span><span class="on">☰<br>Lainnya</span></div></div></div><div class="pc"><b>2 · SEDANG CHAT</b><div class="fr"><div class="mh"><div class="mhr"><h3>AI ASSISTANT</h3><span class="ib2">🕘</span><span class="ib2">＋</span></div><small>AI read-only · ikut periode &amp; cakupan</small></div><div class="mctx"><span>Periode: <b>Sep 2026</b></span><span>Cakupan: <b>Semua</b></span><span class="ro">READ-ONLY</span></div><div class="msc"><div class="mu"><div>Proyeksi akhir bulan tembus target nggak?</div></div><div class="ma"><h5>Proyeksi Sell Thru: 92% dari target</h5>Diproyeksikan <b>Rp 18,4 M</b> dari target <b>Rp 20 M</b>, kurang <b class="r">Rp 1,6 M</b>.<div class="mk"><div><small>TARGET</small><b>20,0 M</b></div><div><small>AKTUAL MTD</small><b>14,2 M</b></div><div><small>PROYEKSI</small><b class="a2">18,4 M</b></div><div><small>BUTUH / HARI</small><b>580 jt</b></div></div><table><thead><tr><th>BRAND</th><th class="n">AKTUAL</th><th class="n">PROYEKSI</th></tr></thead><tbody><tr><td>ITEL</td><td class="n">6,1 M</td><td class="n g">103%</td></tr><tr><td>INFINIX</td><td class="n">4,4 M</td><td class="n a2">86%</td></tr><tr><td>TECNO</td><td class="n">3,7 M</td><td class="n r">79%</td></tr></tbody></table><div class="mact"><span>⧉ Salin</span><span>↻ Ulangi</span></div></div><div class="mfu"><span>Kenapa TECNO tertinggal?</span><span>Dealer TECNO belum order</span></div></div><div class="mib"><div class="bx"><span>Tanyakan data penjualan, KPI…</span><i>➤</i></div><small>AI bisa salah, cek angka penting di halaman terkait.</small></div><div class="mnav"><span>⌂<br>Beranda</span><span>▤<br>Dealer</span><span>◆<br>Brand</span><span>⇄<br>Transaksi</span><span class="on">☰<br>Lainnya</span></div></div></div><div class="pc"><b>3 · RIWAYAT (ketuk 🕘)</b><div class="fr"><div class="mh"><div class="mhr"><h3>AI ASSISTANT</h3><span class="ib2">🕘</span><span class="ib2">＋</span></div><small>AI read-only · ikut periode &amp; cakupan</small></div><div class="mctx"><span>Periode: <b>Sep 2026</b></span><span>Cakupan: <b>Semua</b></span><span class="ro">READ-ONLY</span></div><div class="msc"></div><div class="mib"><div class="bx"><span>Tanyakan data penjualan, KPI…</span><i>➤</i></div><small>AI bisa salah, cek angka penting di halaman terkait.</small></div><div class="mnav"><span>⌂<br>Beranda</span><span>▤<br>Dealer</span><span>◆<br>Brand</span><span>⇄<br>Transaksi</span><span class="on">☰<br>Lainnya</span></div><div class="dw"><div class="pnl"><div class="t"><b>Riwayat percakapan</b>✕</div><button class="new2">＋ PERCAKAPAN BARU</button><div class="g2">HARI INI</div><div class="it2 on"><i style="--c:#1E5FB8"></i>Proyeksi akhir bulan tembus target?<em>✕</em></div><div class="it2"><i style="--c:#C25A12"></i>10 dealer prioritas kunjungan<em>✕</em></div><div class="g2">7 HARI TERAKHIR</div><div class="it2"><i style="--c:#0E7C6B"></i>Dealer yang stoknya menipis<em>✕</em></div><div class="it2"><i style="--c:#6D3FD8"></i>Siapa yang proyeksinya bahaya?<em>✕</em></div><div class="ft2">Riwayat tersimpan di perangkat ini saja (maks. 30 percakapan).</div></div></div></div></div></div></div><div class="note"><b>Catatan:</b> fitur sama (read-only, ikut periode &amp; cakupan). Tambahan tampilan: panel riwayat percakapan (opsi A), sapaan + kartu saran per kategori berwarna, chip konteks (periode/cakupan/brand) di atas & di kotak tanya, jawaban berformat (angka ringkas + tabel), tombol salin/export, dan saran pertanyaan lanjutan. Riwayat percakapan &amp; export tabel = fitur baru (perlu simpan di server) — bisa ditunda kalau mau tampilan dulu.</div>
+<script>
+document.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-v]').forEach(x=>x.classList.toggle('on',x===b));document.getElementById('app').className='app v'+b.dataset.v;});
+document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-s]').forEach(x=>x.classList.toggle('on',x===b));emp.style.display=b.dataset.s=='e'?'':'none';cht.style.display=b.dataset.s=='c'?'':'none';});
+</script></body></html>

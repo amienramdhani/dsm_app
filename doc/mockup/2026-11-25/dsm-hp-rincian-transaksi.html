@@ -1,0 +1,52 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup HP - Rincian Transaksi</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Inter","Segoe UI",system-ui,sans-serif;background:#eef2f8;color:#0f172a;padding:12px;max-width:430px;margin:auto;-webkit-font-smoothing:antialiased}
+h1{font-size:15px;margin:4px 0 2px}p.s{font-size:11.5px;color:#64748b;line-height:1.45;margin-bottom:10px}
+.tabs{display:flex;gap:6px;margin-bottom:10px}.tabs button{flex:1;border:1px solid #cbd5e1;background:#fff;border-radius:10px;padding:9px 4px;font:700 11.5px inherit;font-family:inherit;color:#334155}.tabs button.on{background:#10394E;color:#fff;border-color:#10394E}
+.card{background:#fff;border-radius:16px;box-shadow:0 2px 10px rgba(15,23,42,.07);padding:12px;position:relative}
+.ttl{font-size:15px;font-weight:800;letter-spacing:.01em}.sub{font-size:11px;color:#64748b;margin:2px 0 10px}
+.fbtn{height:44px;border-radius:12px;background:linear-gradient(135deg,#FFB020,#F07A0C);color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 12px rgba(240,122,12,.3)}
+.fbtn em{font-style:normal;font-size:10px;background:#fff;color:#C25A12;border-radius:99px;padding:2px 8px}
+.pg{margin:8px 0;border:1px solid #cfdcee;background:#eaf1fb;border-radius:12px;padding:10px;text-align:center}
+.pg .c{font-weight:800;font-size:13px;margin-bottom:8px}.pg .r{display:flex;gap:8px}.pg .r div{flex:1;border:1px solid #cbd5e1;background:#fff;border-radius:10px;padding:9px;font-weight:700;font-size:12px;color:#2557a7}.pg .r .d{opacity:.45}
+.dg{background:#e8f0fb;border-radius:10px;padding:9px 12px;display:flex;justify-content:space-between;font-size:12px;font-weight:800;color:#2557a7;margin:10px 0 0}.dg span{font-weight:700;color:#334155}
+.row{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e8edf3}
+.row.n{padding:11px 4px}.row.n b{font-size:14.5px;display:block}.row.n small{font-size:12px;color:#64748b}.row.n i{color:#94a3b8;font-style:normal;font-size:20px}
+/* usulan */
+.bar{display:flex;gap:6px;align-items:center;margin-bottom:8px}
+.bar .f{flex:1;height:38px;border-radius:10px;background:linear-gradient(135deg,#FFB020,#F07A0C);color:#fff;font-weight:800;font-size:12.5px;display:flex;align-items:center;justify-content:center;gap:6px}.bar .f em{font-style:normal;font-size:10px;background:#fff;color:#C25A12;border-radius:99px;padding:1px 7px}
+.bar .n{width:38px;height:38px;border-radius:10px;border:1px solid #cbd5e1;background:#fff;display:grid;place-items:center;color:#2557a7;font-weight:800;font-size:16px}.bar .n.d{opacity:.4}
+.info{font-size:11px;color:#475569;font-weight:700;text-align:center;margin:0 0 6px}
+.dh{display:flex;align-items:center;justify-content:space-between;background:#DCE6F2;border-radius:8px;padding:0 10px;height:30px;font-size:11.5px;font-weight:800;color:#0f172a;margin-top:6px;border-left:4px solid #6663c4;cursor:pointer}
+.dh span{font-weight:700;color:#475569;font-size:11px}.dh u{text-decoration:none;color:#6663c4;margin-right:6px}
+.cr{display:flex;align-items:center;height:36px;border-bottom:1px solid #eef2f7;padding:0 4px;gap:8px}
+.cr b{flex:1;font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cr small{font-size:10.5px;color:#64748b;width:50px;text-align:right}
+.cr .u{min-width:44px;text-align:center;font-size:11.5px;font-weight:800;background:#e8f0fb;color:#2557a7;border-radius:7px;padding:3px 6px}
+.cr .u.h{background:#2557a7;color:#fff}
+.nt{margin-top:10px;font-size:11px;line-height:1.55;color:#334155;background:#fff;border-left:4px solid #6663c4;padding:8px 10px;border-radius:6px}.cap{font-size:10.5px;color:#64748b;margin-top:6px}
+</style></head><body>
+<h1>Rincian Transaksi - HP</h1>
+<p class="s">Data contoh (mengikuti screenshot; tanggal kedua hanya contoh). Belum dipasang ke aplikasi.</p>
+<div class="tabs"><button class="on" data-v="now">SEKARANG</button><button data-v="a">USULAN A</button><button data-v="b">USULAN B</button></div>
+<div class="card" id="out"></div><div class="nt" id="nt"></div>
+<script>
+var G=[['30 SEP 2026',431,55,[['ADEV CELL - KENDAL','009.042',2],['ANDY PONSEL','022.117',8],['BINTANG TIMUR','009.019',5],['BT00337','BT00337',3],['BT00598','BT00598',21],['BT02657','BT02657',20],['BT04014','BT04014',5],['BT04233','BT04233',2],['BT04327','BT04327',5],['BT05910','BT05910',4],['BT05912','BT05912',3],['BT05962','BT05962',1]]],
+['29 SEP 2026',388,49,[['CONTOH DEALER A','011.201',12],['CONTOH DEALER B','011.340',6],['CONTOH DEALER C','BT01022',9]]],
+['28 SEP 2026',402,52,[['CONTOH DEALER D','012.100',7],['CONTOH DEALER E','BT03311',4]]]];
+function now(){var h='<div class="ttl">RINCIAN TRANSAKSI</div><div class="sub">Filter tanggal hanya untuk rincian; kartu dan tabel harian tetap bulanan</div><div class="fbtn">⚲ FILTER</div><div class="pg"><div class="c">1–100 dari 1.592</div><div class="r"><div style="max-width:90px">100 ⌄</div><div class="d">Sebelumnya</div><div>Berikutnya</div></div></div>';
+var g=G[0];h+='<div class="dg">'+g[0]+'<span>'+g[1]+' unit · '+g[2]+' transaksi</span></div>'+g[3].map(function(r){return '<div class="row n"><div><b>'+r[0]+'</b><small>'+r[1]+' · '+r[2]+' unit</small></div><i>›</i></div>'}).join('');
+return h+'<p class="cap">12 baris saja sudah satu layar penuh; pager makan 1 kartu tersendiri.</p>'}
+function a(fold){var h='<div class="ttl">RINCIAN TRANSAKSI</div><div class="bar"><div class="n d">‹</div><div class="f">⚲ FILTER <em>0 aktif</em></div><div class="n">›</div></div><div class="info">1–100 dari 1.592 · 100 per halaman</div>';
+G.forEach(function(g,gi){if(g.open===undefined)g.open=(gi==0);var open=!fold||g.open;h+='<div class="dh" data-g="'+gi+'"><div>'+(fold?'<u>'+(open?'▾':'▸')+'</u>':'')+g[0]+'</div><span>'+g[1]+' unit · '+g[2]+' transaksi</span></div>';
+if(open)h+=g[3].map(function(r){return '<div class="cr"><b>'+r[0]+'</b><small>'+r[1]+'</small><span class="u'+(r[2]>=10?' h':'')+'">'+r[2]+'</span></div>'}).join('')});
+return h+'<p class="cap">'+(fold?'Ketuk judul tanggal untuk buka/tutup. Tanggal terbaru terbuka, sisanya tertutup.':'Baris 36px satu garis, tanpa panah.')+'</p>'}
+var T={now:['SEKARANG','Baris 57px dua susun, panah di kanan, pager satu kartu sendiri di atas daftar, judul + keterangan + tombol filter juga memakan tempat. Banyak scroll.'],
+a:['USULAN A - padat','<b>Filter + sebelumnya/berikutnya satu baris</b> (tombol ‹ ›), info halaman jadi satu baris kecil, judul keterangan dibuang. Tiap dealer <b>satu baris 36px</b>: nama, kode, lalu angka unit di lencana (biru tua kalau 10 unit ke atas). Header tanggal abu kebiruan dengan aksen ungu 4px (gaya panel yang sudah disetujui). Muat sekitar 3x lebih banyak baris per layar.'],
+b:['USULAN B - A + lipat per tanggal','Isi A, ditambah <b>header tanggal bisa dibuka-tutup</b>. Hanya tanggal terbaru yang terbuka, tanggal lain tertutup dengan ringkasan unit &amp; jumlah transaksi tetap terlihat. Scroll paling pendek, dan gampang loncat antar tanggal. Ketuk baris dealer tetap membuka rincian seperti sekarang.']};
+function show(v){var o=document.getElementById('out');o.innerHTML=v=='now'?now():a(v=='b');
+o.querySelectorAll('.dh').forEach(function(d){d.onclick=function(){if(v!='b')return;var i=+d.dataset.g;G[i].open=!G[i].open;show(v);}});
+document.getElementById('nt').innerHTML='<b>'+T[v][0]+'</b><br>'+T[v][1];document.querySelectorAll('.tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.v==v)})}
+document.querySelectorAll('.tabs button').forEach(function(b){b.onclick=function(){show(b.dataset.v)}});show('now');
+</script></body></html>

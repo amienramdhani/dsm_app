@@ -1,0 +1,56 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup HP - Ringkasan per hari (Transaksi)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Inter","Segoe UI",system-ui,sans-serif;background:#eef2f8;color:#0f172a;padding:12px;max-width:430px;margin:auto;-webkit-font-smoothing:antialiased}
+h1{font-size:15px;margin:4px 0 2px}p.s{font-size:11.5px;color:#64748b;line-height:1.45;margin-bottom:10px}
+.tabs{display:flex;gap:6px;margin-bottom:10px}
+.tabs button{flex:1;border:1px solid #cbd5e1;background:#fff;border-radius:10px;padding:9px 4px;font:700 11.5px inherit;font-family:inherit;color:#334155}
+.tabs button.on{background:#10394E;color:#fff;border-color:#10394E}
+.card{background:#fff;border-radius:16px;box-shadow:0 2px 10px rgba(15,23,42,.07);padding:12px}
+.ttl{font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.ttl i{width:22px;height:22px;border-radius:50%;background:#2557a7;display:inline-block}
+.note{font-size:11px;line-height:1.5;color:#334155;background:#f1f5f9;border-left:4px solid #6663c4;padding:8px 10px;border-radius:6px;margin:10px 0}
+.note b{color:#10394E}
+.jump{display:flex;gap:6px;margin-bottom:8px}
+.jump span{font-size:10.5px;font-weight:700;padding:5px 10px;border-radius:99px;background:#e6ebf1;color:#334155}
+.jump span.i{background:#e3f4ee;color:#0E7C6B}.jump span.b{background:#fdeadd;color:#C25A12}
+.wrap{border:1px solid #d5dde8;border-radius:10px;overflow:hidden}
+.sc{overflow-x:auto}
+table{border-collapse:collapse;width:max-content;min-width:100%;font-size:11.5px}
+th,td{padding:0 8px;white-space:nowrap;border-bottom:1px solid #e8edf3}
+th{background:#0E5A63;color:#fff;font-weight:700;text-align:left;font-size:10.5px;height:34px;line-height:1.15;white-space:normal}
+th.n,td.n{text-align:right}
+td{height:var(--rh);font-variant-numeric:tabular-nums}
+tr:nth-child(even) td{background:#f8fafc}
+th.it{background:#0E7C6B}th.b2{background:#C25A12}
+td.it{background:#eef8f4!important}td.b2{background:#fff4ec!important}
+.pill{display:inline-block;min-width:40px;text-align:center;padding:3px 6px;border-radius:7px;font-weight:700;color:#10294a;background:#d6e2ef}
+.pill.h{background:#6c93c4;color:#fff}
+.stk{position:sticky;left:0;z-index:2;background:#fff;box-shadow:2px 0 0 #e1e7ef}
+tr:nth-child(even) .stk{background:#f8fafc}th.stk{background:#0E5A63;z-index:3}
+tfoot td{background:#e6ebf1!important;font-weight:700;border-top:2px solid #15303F;height:auto;padding:6px 8px}
+tfoot .it{background:#d9f0e8!important;color:#0E7C6B}tfoot .b2{background:#fde3d0!important;color:#C25A12}
+small{display:block;font-weight:400;color:#64748b;font-size:9.5px}
+.cap{font-size:10.5px;color:#64748b;margin:6px 2px 0}
+.nest{max-height:430px;overflow-y:auto}
+</style></head><body>
+<h1>Ringkasan per hari - HP</h1>
+<p class="s">Data contoh (angka mengikuti screenshot, brand kedua hanya contoh). Belum dipasang ke aplikasi. Pilih tab untuk membandingkan.</p>
+<div class="tabs"><button class="on" data-v="now">SEKARANG</button><button data-v="a">USULAN A</button><button data-v="b">USULAN B</button></div>
+<div class="card"><div class="ttl"><i></i>Ringkasan per hari</div><div id="out"></div></div>
+<div class="note" id="nt"></div>
+<script>
+var D=[[1,'Selasa',75,557,310],[2,'Rabu',48,118,90],[3,'Kamis',51,142,101],[4,'Jumat',48,141,88],[5,'Sabtu',55,102,77],[7,'Senin',104,670,402],[8,'Selasa',57,67,60],[9,'Rabu',53,32,44],[10,'Kamis',54,32,51],[11,'Jumat',66,89,70],[12,'Sabtu',49,68,52],[14,'Senin',77,113,95],[15,'Selasa',66,185,120],[16,'Rabu',66,322,150]];
+function pill(v,mx){return '<span class="pill'+(v>=mx*.7?' h':'')+'">'+v+'</span>'}
+function now(){var r=D.map(function(d){return '<tr><td>'+d[0]+' Sep 2026</td><td>'+d[1]+'</td><td class="n">'+d[2]+'</td><td class="it">'+pill(d[3],670)+'</td><td class="b2">'+pill(d[4],402)+'</td></tr>'}).join('');
+return '<div class="wrap"><div class="sc nest" style="--rh:47px"><table><thead><tr><th style="width:130px">TANGGAL</th><th style="width:70px">HARI</th><th class="n" style="width:130px">DEALER PRODUKTIF</th><th class="it">ITEL</th><th class="b2">BRAND B</th></tr></thead><tbody>'+r+'</tbody><tfoot><tr><td>Total</td><td style="white-space:normal;width:70px">Sebulan · dealer unik</td><td class="n">945</td><td class="it">4.586</td><td class="b2">2.100</td></tr></tfoot></table></div></div><p class="cap">Brand sudah terpotong di layar, tabel punya scroll sendiri (baris 16 Sep terpotong), baris tinggi 47px, label total 3 baris.</p>'}
+function a(jump){var r=D.map(function(d){return '<tr><td class="stk"><b>'+d[1]+'</b> '+d[0]+' Sep</td><td class="n">'+d[2]+'</td><td class="it">'+pill(d[3],670)+'</td><td class="b2">'+pill(d[4],402)+'</td></tr>'}).join('');
+return (jump?'<div class="jump"><span>TANGGAL</span><span class="i">ITEL</span><span class="b">BRAND B</span></div>':'')+'<div class="wrap"><div class="sc" style="--rh:30px"><table><thead><tr><th class="stk" style="width:104px">TANGGAL<small style="color:#cfe3e6">dan hari</small></th><th class="n" style="width:62px">DEALER PRODUKTIF</th><th class="it" style="width:62px">ITEL</th><th class="b2" style="width:62px">BRAND B</th></tr></thead><tbody>'+r+'</tbody><tfoot><tr><td class="stk" style="background:#e6ebf1">Total<small>sebulan · dealer unik</small></td><td class="n">945</td><td class="it">4.586</td><td class="b2">2.100</td></tr></tfoot></table></div></div><p class="cap">'+(jump?'Ketuk baris untuk rincian hari itu (bottom sheet).':'Tanpa scroll bertingkat: tabel mengikuti halaman, seluruh tanggal terlihat.')+'</p>'}
+var T={now:['SEKARANG','Layar sempit habis dipakai 3 kolom pertama, jadi brand sudah terpotong. Ada scroll di dalam scroll.'],
+a:['USULAN A - padat','<b>Tanggal + hari digabung</b> satu kolom (hari tebal, tanggal tanpa tahun karena periode sudah di atas), kolom pertama menempel saat digeser. Baris 30px (sekarang 47px). Dealer produktif disempitkan, header tetap utuh dua baris. Label total jadi satu kolom dengan keterangan kecil. Tabel panjang penuh mengikuti halaman, tanpa scroll bertingkat. Brand langsung kelihatan 2 kolom.'],
+b:['USULAN B - A + loncat kolom','Semua isi Usulan A, ditambah <b>chip loncat per kelompok kolom</b> (TANGGAL / ITEL / BRAND B) di atas tabel dan ketuk baris untuk membuka rincian hari itu dari bawah. Pola ini sama dengan tabel HP lain yang sudah disetujui (Pencapaian Tim, DOS). Paling berguna kalau brand-nya banyak.']};
+function show(v){document.getElementById('out').innerHTML=v=='now'?now():a(v=='b');document.getElementById('nt').innerHTML='<b>'+T[v][0]+'</b><br>'+T[v][1];
+document.querySelectorAll('.tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.v==v)})}
+document.querySelectorAll('.tabs button').forEach(function(b){b.onclick=function(){show(b.dataset.v)}});show('now');
+</script></body></html>

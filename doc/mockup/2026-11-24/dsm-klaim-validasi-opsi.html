@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup DSM Klaim - Validasi form sebelum Ringkasan</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:"Inter","Segoe UI",system-ui,sans-serif;background:#eef2f7;color:#0f172a;-webkit-font-smoothing:antialiased}
+.wrap{max-width:900px;margin:0 auto;padding:20px}
+h1{font-size:18px;margin:0 0 4px}.sub{color:#64748b;font-size:13px;margin:0 0 18px}
+.cols{display:flex;gap:22px;flex-wrap:wrap;justify-content:center}
+.col{width:390px}.lbl{font-size:12px;font-weight:800;letter-spacing:.5px;margin:0 0 8px}
+.lbl.a{color:#64748b}.lbl.b{color:#0b5fb3}
+.ph{background:#f1f5f9;border-radius:18px;overflow:hidden;box-shadow:0 8px 24px rgba(15,23,42,.12);position:relative;height:780px;display:flex;flex-direction:column}
+.hd{background:#0b5fb3;color:#fff;padding:12px 16px 14px}.hd .bk{font-size:13px;font-weight:700}.hd .p{font-size:10px;opacity:.8;margin-top:6px}.hd h2{margin:2px 0 0;font-size:18px}
+.bd{padding:12px;overflow:auto;flex:1}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin-bottom:10px}
+.card h3{margin:0 0 8px;font-size:13px}
+.f{margin-bottom:9px}.f label{display:block;font-size:11px;font-weight:700;color:#334155;margin-bottom:3px}
+.in{border:1px solid #cbd5e1;border-radius:8px;padding:8px 10px;font-size:13px;background:#fff;color:#0f172a;min-height:34px}
+.in.ph2{color:#94a3b8}
+.row{display:flex;gap:8px}.row .f{flex:1}
+.seg{display:flex;gap:6px}.seg span{flex:1;text-align:center;border:1px solid #cbd5e1;border-radius:8px;padding:7px;font-size:12px;font-weight:700;color:#475569;background:#fff}
+.photo{border:1.5px dashed #cbd5e1;border-radius:8px;padding:10px;text-align:center;font-size:11px;color:#64748b}
+/* error state */
+.err .in,.err .seg span,.err .photo{border-color:#dc2626;background:#fef2f2}
+.err label{color:#b91c1c}
+.msg{font-size:10.5px;color:#b91c1c;margin-top:3px;font-weight:600}
+.card.err{border-color:#fca5a5;box-shadow:inset 4px 0 0 #dc2626}
+.card .bad{float:right;background:#dc2626;color:#fff;font-size:10px;font-weight:800;border-radius:6px;padding:2px 7px}
+.ban{background:#fef2f2;border:1px solid #fecaca;border-left:4px solid #dc2626;border-radius:10px;padding:9px 11px;margin-bottom:10px;font-size:12px;color:#991b1b}
+.ban b{display:block;font-size:12.5px;margin-bottom:2px}
+.ban .jp{display:inline-block;margin-top:6px;background:#fff;border:1px solid #fca5a5;border-radius:6px;padding:3px 8px;font-weight:700;font-size:11px;margin-right:4px}
+.bar{background:#fff;border-top:1px solid #e2e8f0;padding:10px 12px;display:flex;gap:8px}
+.btn{flex:1;text-align:center;border-radius:10px;padding:11px;font-weight:800;font-size:13px}
+.btn.g{background:#f1f5f9;color:#334155}.btn.p{background:#0b5fb3;color:#fff}
+.btn.p.dis{background:#94a3b8}
+.toast{position:absolute;left:50%;bottom:70px;transform:translateX(-50%);background:#991b1b;color:#fff;font-size:12px;font-weight:700;padding:8px 14px;border-radius:10px;white-space:nowrap;box-shadow:0 6px 16px rgba(0,0,0,.2)}
+.kv{display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px dashed #e2e8f0}
+.ls{background:#fef2f2;border-left:4px solid #dc2626;border-radius:10px;padding:10px;font-size:11px;color:#991b1b;line-height:1.5}
+.note{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px;margin-top:22px;font-size:13px;line-height:1.6}
+.note b{color:#0b5fb3}
+</style></head><body><div class="wrap">
+<h1>DSM Klaim · Isian kosong ditandai merah di form</h1>
+<p class="sub">Kalau ada isian wajib yang kosong, tombol LANJUTKAN tidak membuka Ringkasan. User tetap di form, isian yang kosong jadi merah, dan layar otomatis menggulung ke isian merah yang pertama.</p>
+<div class="cols">
+
+<div class="col"><p class="lbl a">SEKARANG: langsung ke Ringkasan + daftar error</p>
+<div class="ph"><div class="hd"><div class="bk">← Kembali</div><div class="p">P14</div><h2>Ringkasan sebelum kirim</h2></div>
+<div class="bd">
+<div class="card"><div class="kv"><span>Jenis</span><b>Transportasi / BBM + Tol</b></div><div class="kv"><span>Jumlah nota</span><b>2</b></div><div class="kv"><span>Total</span><b>Rp 0</b></div></div>
+<div class="ls"><b>Lengkapi dulu:</b><br>• Nota 1: nominal wajib diisi.<br>• Nota 1: lampirkan minimal satu foto nota.<br>• Nota 1: pilih jenis BBM.<br>• Nota 2: nominal wajib diisi.<br>• Nota 2: lampirkan minimal satu foto nota.<br>• Nota 2: gerbang asal dan tujuan wajib.<br>• BBM: pilih jenis kendaraan.<br>• BBM: plat kendaraan wajib diisi.<br>• BBM: KM akhir harus lebih besar dari KM awal.<br>• BBM: foto odometer awal & akhir wajib.</div>
+<div class="card" style="text-align:center;margin-top:10px"><b style="font-size:13px">KEMBALI MEMPERBAIKI</b></div>
+<p style="font-size:11px;color:#64748b">User harus bolak-balik dan mengingat-ingat isian mana yang salah.</p>
+</div></div></div>
+
+<div class="col"><p class="lbl b">USULAN: tetap di form, isian kosong merah</p>
+<div class="ph"><div class="hd"><div class="bk">← Kembali</div><div class="p">P14</div><h2>Transportasi / BBM + Tol</h2></div>
+<div class="bd">
+<div class="ban"><b>Masih ada 10 isian yang belum lengkap</b>Isian yang ditandai merah wajib diisi dulu.<br><span class="jp">BBM · 5</span><span class="jp">Nota 1 · 3</span><span class="jp">Nota 2 · 3</span></div>
+
+<div class="card err"><span class="bad">5</span><h3>Kendaraan & Odometer</h3>
+<div class="f err"><label>Jenis kendaraan *</label><div class="seg"><span>Mobil</span><span>Motor</span></div><div class="msg">Pilih Mobil atau Motor.</div></div>
+<div class="f err"><label>Plat kendaraan *</label><div class="in ph2">mis. E 1234 AB</div><div class="msg">Wajib diisi.</div></div>
+<div class="row"><div class="f"><label>KM awal</label><div class="in">12.400</div></div><div class="f err"><label>KM akhir *</label><div class="in">12.100</div><div class="msg">Harus lebih besar dari KM awal.</div></div></div>
+<div class="row"><div class="f err"><div class="photo">＋ Foto odometer awal</div></div><div class="f err"><div class="photo">＋ Foto odometer akhir</div></div></div>
+</div>
+
+<div class="card err"><span class="bad">3</span><h3>Nota 1 · BBM</h3>
+<div class="f err"><label>Jenis BBM *</label><div class="seg"><span>Pertalite</span><span>Pertamax</span></div></div>
+<div class="f err"><label>Nominal *</label><div class="in ph2">Rp 0</div><div class="msg">Wajib diisi.</div></div>
+<div class="f err"><div class="photo">＋ Lampirkan foto nota (min. 1)</div></div>
+</div>
+
+<div class="card"><h3>Refnote</h3><div class="in">bandung</div></div>
+</div>
+<div class="toast">Lengkapi isian yang merah dulu</div>
+<div class="bar"><div class="btn g">SIMPAN DRAFT</div><div class="btn p">LANJUTKAN</div></div>
+</div></div>
+</div>
+
+<div class="note">
+<b>Cara kerjanya:</b><br>
+1. Tekan <b>LANJUTKAN</b> → dicek dulu di form. Kalau ada yang kosong: tidak pindah ke Ringkasan, muncul toast, layar menggulung ke isian merah pertama.<br>
+2. Kotak merah di atas berisi chip per bagian (BBM · 5, Nota 1 · 3). Ketuk chip langsung loncat ke bagian itu.<br>
+3. Begitu isian diisi, merahnya hilang saat itu juga, dan angka di chip ikut berkurang.<br>
+4. Ringkasan hanya terbuka kalau semua sudah lengkap, jadi daftar "Lengkapi dulu" di Ringkasan tidak muncul lagi.<br>
+5. <b>SIMPAN DRAFT</b> tetap boleh walau belum lengkap (tidak divalidasi).
+</div>
+<h1 style="margin-top:34px">Form lebih padat</h1>
+<p class="sub">Isian dibuat pendek (34px), label kecil, isian yang sejenis disejajarkan, dan kotak foto dikecilkan ke samping. Kira-kira jadi setengah tinggi yang sekarang.</p>
+<style>
+.x .in{min-height:44px;border-radius:10px}.x .photo{width:62px;height:62px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#2563eb;background:#eef4ff;border-color:#93b4f0}
+.x .f label{font-size:10.5px;letter-spacing:.4px}
+.c .card{padding:10px}.c .f{margin-bottom:7px}.c .f label{font-size:9.5px;letter-spacing:.4px;color:#64748b;margin-bottom:2px}
+.c .in{min-height:32px;padding:6px 9px;font-size:12.5px;border-radius:7px}
+.ch{display:flex;gap:5px}.ch span{border:1px solid #cbd5e1;border-radius:7px;padding:6px 10px;font-size:11.5px;font-weight:700;color:#1e40af;background:#eef4ff}
+.pt{display:flex;gap:6px;align-items:flex-end}.pt .tl{width:46px;height:32px;border:1.5px dashed #93b4f0;background:#eef4ff;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#2563eb;font-size:9.5px;font-weight:700;text-align:center;line-height:1.05}
+.sh{display:flex;justify-content:space-between;background:#fff4d6;border-radius:9px;padding:7px 11px;font-size:12.5px;font-weight:800;color:#7c4a03;margin:4px 0 6px}
+.nt{font-size:11.5px;font-weight:800;margin:0 0 6px;display:flex;justify-content:space-between}.nt i{font-style:normal;color:#64748b;font-weight:600;font-size:10px}
+.ad{text-align:center;font-size:11.5px;font-weight:800;color:#0b5fb3;border:1px dashed #9db8e0;border-radius:9px;padding:7px;margin-bottom:8px;background:#fff}
+.hint{font-size:10px;color:#64748b;margin-top:3px}
+</style>
+<div class="cols">
+<div class="col"><p class="lbl a">SEKARANG</p>
+<div class="ph x"><div class="hd"><div class="p">P17</div><h2>Form BBM + Tol</h2></div><div class="bd">
+<div class="card"><div class="f"><label>BRAND</label><div class="in">ITEL</div></div><div class="f"><label>REFNOTE (OPSIONAL)</label><div class="in">bandung</div></div><div class="f"><label>LOKASI</label><div class="in">asdasd</div></div></div>
+<div class="sh">BBM <span>Rp 0</span></div>
+<div class="card"><div class="f"><label>KENDARAAN</label><div class="ch"><span>Mobil</span><span>Motor</span></div></div>
+<div class="f"><label>PLAT KENDARAAN</label><div class="in ph2" style="width:60%">E 1234 AB</div></div>
+<div class="row"><div class="f"><label>KM AWAL</label><div class="in"></div></div><div class="f"><label>KM AKHIR</label><div class="in"></div></div></div>
+<div class="f"><label>FOTO ODOMETER AWAL</label><div class="photo">+</div></div><div class="f"><label>FOTO ODOMETER AKHIR</label><div class="photo">+</div></div></div>
+<p style="font-size:11px;color:#64748b">Baru sampai odometer, Nota 1 belum kelihatan.</p>
+</div></div></div>
+
+<div class="col"><p class="lbl b">USULAN: padat</p>
+<div class="ph c"><div class="hd"><div class="p">P17</div><h2>Form BBM + Tol</h2></div><div class="bd">
+<div class="card"><div class="row"><div class="f"><label>BRAND</label><div class="in">ITEL ▾</div></div><div class="f"><label>REFNOTE (OPSIONAL)</label><div class="in">bandung</div></div></div>
+<div class="f" style="margin:0"><label>LOKASI (KOTA/KABUPATEN)</label><div class="in">asdasd</div></div></div>
+<div class="sh">BBM <span>Rp 0</span></div>
+<div class="card"><div class="row"><div class="f" style="flex:0 0 auto"><label>KENDARAAN</label><div class="ch"><span>Mobil</span><span>Motor</span></div></div><div class="f"><label>PLAT</label><div class="in ph2">E 1234 AB</div></div></div>
+<div class="row" style="margin:0"><div class="f"><label>KM AWAL + FOTO</label><div class="pt"><div class="in" style="flex:1"></div><div class="tl">+ foto</div></div></div><div class="f"><label>KM AKHIR + FOTO</label><div class="pt"><div class="in" style="flex:1"></div><div class="tl">+ foto</div></div></div></div></div>
+<div class="card"><p class="nt">Nota 1 <i>BBM</i></p>
+<div class="row"><div class="f"><label>TANGGAL</label><div class="in">24/11/2026</div></div><div class="f"><label>NOMINAL (RP)</label><div class="in">0</div></div></div>
+<div class="row" style="margin:0"><div class="f"><label>JENIS BBM</label><div class="ch"><span>Pertalite</span><span>Pertamax</span></div></div><div class="f" style="flex:0 0 auto"><label>NOTA (0)</label><div class="pt"><div class="tl">+ foto</div></div></div></div></div>
+<div class="ad">+ Tambah nota BBM</div>
+<div class="sh">Tol <span>Rp 0</span></div>
+<div class="card"><p class="nt">Nota 2 <i>Tol</i></p>
+<div class="row"><div class="f"><label>GERBANG ASAL</label><div class="in ph2">GT Kalikangkung</div></div><div class="f"><label>GERBANG TUJUAN</label><div class="in ph2">GT Cikampek</div></div></div>
+<div class="row" style="margin:0"><div class="f"><label>TANGGAL</label><div class="in">24/11/2026</div></div><div class="f"><label>NOMINAL (RP)</label><div class="in">0</div></div><div class="f" style="flex:0 0 auto"><label>NOTA (0)</label><div class="pt"><div class="tl">+ foto</div></div></div></div>
+<div class="hint">Struk tol / riwayat e-toll yang memperlihatkan tanggal, gerbang, nominal.</div></div>
+</div></div></div>
+</div>
+<div class="note"><b>Yang berubah:</b> isian 44px → 32px, label lebih kecil dan abu, Brand + Refnote sejajar, Kendaraan + Plat sejajar, <b>kotak foto odometer pindah ke samping KM</b>-nya, lampiran nota jadi tombol kecil di samping Nominal (foto yang sudah diambil muncul sebagai thumbnail kecil berjajar). Validasi merah dari mockup atas tetap berlaku.</div>
+</div></body></html>

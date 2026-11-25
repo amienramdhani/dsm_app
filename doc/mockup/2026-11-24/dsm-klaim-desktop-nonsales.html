@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup DSM Klaim - Desktop non-sales</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:"Inter","Segoe UI",system-ui,sans-serif;background:#e9edf3;color:#0f172a;-webkit-font-smoothing:antialiased;font-size:13px}
+.top{max-width:1440px;margin:0 auto;padding:14px 20px 8px}.top h1{font-size:17px;margin:0}.top p{margin:3px 0 8px;color:#64748b;font-size:12.5px}
+.pick{display:flex;gap:6px;flex-wrap:wrap}.pick button{font:inherit;font-size:12px;font-weight:800;border:1px solid #cfdcef;background:#fff;color:#334155;border-radius:8px;padding:6px 12px;cursor:pointer}.pick button.on{background:#0b5fb3;color:#fff;border-color:#0b5fb3}
+.app{max-width:1440px;height:860px;margin:10px auto 30px;background:#f4f6fa;border-radius:14px;overflow:hidden;display:flex;box-shadow:0 10px 30px rgba(15,23,42,.15)}
+/* sidebar */
+.sb{width:224px;background:#fff;border-right:1px solid #e3e9f2;display:flex;flex-direction:column;flex:none}
+.lg{display:flex;gap:9px;align-items:center;padding:16px 16px 12px}.lg i{width:34px;height:34px;border-radius:9px;background:#0b5fb3;color:#fff;font-style:normal;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:12px}.lg b{font-size:14px;display:block}.lg small{color:#64748b;font-size:11px}
+.role{margin:0 12px 10px;border:1px solid #e3e9f2;border-radius:9px;padding:7px 10px;display:flex;justify-content:space-between;font-size:12px;font-weight:700;background:#f8fafc}.role span{color:#64748b;font-weight:600}
+.nv{padding:4px 10px;flex:1}.nv .g{font-size:10px;font-weight:800;color:#94a3b8;letter-spacing:.06em;margin:10px 8px 4px}
+.nv a{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;color:#334155;font-weight:600;font-size:12.5px;cursor:pointer;text-decoration:none}
+.nv a svg{width:17px;height:17px;flex:none}.nv a em{margin-left:auto;font-style:normal;background:#dc2626;color:#fff;font-size:10px;font-weight:800;border-radius:99px;padding:1px 7px}
+.nv a.on{background:#eaf2fc;color:#0b5fb3}.nv a:hover{background:#f1f5f9}
+.me{border-top:1px solid #e3e9f2;padding:12px 16px;font-size:12px}.me b{display:block}.me small{color:#64748b}
+/* main */
+.mn{flex:1;display:flex;flex-direction:column;min-width:0}
+.hd{height:56px;background:#0b5fb3;color:#fff;display:flex;align-items:center;padding:0 22px;gap:14px;flex:none}
+.hd h2{font-size:16px;margin:0}.hd small{opacity:.8;font-size:11px;display:block}.hd .sp{flex:1}
+.hd .sr{background:rgba(255,255,255,.15);border-radius:8px;padding:7px 12px;width:280px;font-size:12px;color:#dbe7f7}
+.hd .bl{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center}
+.ct{flex:1;overflow:auto;padding:18px 22px}
+.scr{display:none}.scr.on{display:block}
+/* common */
+.kp{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.k{background:#fff;border:1px solid #e3e9f2;border-radius:12px;padding:12px 14px;border-left:4px solid var(--c);box-shadow:0 1px 4px rgba(15,23,42,.04)}
+.k small{display:block;font-size:10.5px;font-weight:800;color:#64748b;letter-spacing:.04em}.k b{font-size:20px;display:block;margin-top:3px}.k span{font-size:11px;color:#64748b}
+.pn{background:#fff;border:1px solid #e3e9f2;border-radius:12px;box-shadow:0 1px 4px rgba(15,23,42,.04)}
+.fb{display:flex;gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid #eef2f7;flex-wrap:wrap}
+.in{border:1px solid #dbe3ee;border-radius:8px;height:32px;padding:0 10px;display:flex;align-items:center;font-size:12px;color:#475569;background:#fff;gap:6px}
+.in.s{width:240px;color:#94a3b8}
+.seg{display:flex;background:#f1f5f9;border-radius:8px;padding:2px}.seg span{padding:5px 11px;font-size:11.5px;font-weight:700;color:#64748b;border-radius:7px}.seg span.on{background:#fff;color:#0f172a;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.bt{height:32px;border-radius:8px;padding:0 13px;font-weight:800;font-size:12px;display:inline-flex;align-items:center;gap:6px;border:1px solid #dbe3ee;background:#fff;color:#334155;cursor:pointer}
+.bt.o{background:#F07A0C;color:#fff;border-color:#F07A0C}.bt.b{background:#0b5fb3;color:#fff;border-color:#0b5fb3}.bt.g{background:#12866A;color:#fff;border-color:#12866A}.bt.r{color:#D2453F;border-color:#f3c4c2}
+.ml{margin-left:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#E6EBF1;color:#0f172a;text-align:left;font-size:10.5px;letter-spacing:.04em;padding:8px 10px;border-bottom:2px solid #15303F;white-space:nowrap}
+td{padding:7px 10px;border-bottom:1px solid #eef2f7;white-space:nowrap}
+tbody tr{cursor:pointer}tbody tr:hover td{background:#f8fbff}tbody tr.sel td{background:#eaf2fc}
+td.n{text-align:right;font-family:"JetBrains Mono",Consolas,monospace}th.n{text-align:right}
+.ty{display:inline-flex;align-items:center;gap:6px;font-weight:700}.ty i{width:8px;height:8px;border-radius:3px;background:var(--c)}
+.pl{display:inline-block;font-size:10.5px;font-weight:800;border-radius:6px;padding:2px 8px}
+.p-w{background:#fff4d6;color:#9A6400}.p-ba{background:#fde8e7;color:#B42318}.p-ok{background:#e3f5ee;color:#12866A}.p-rv{background:#efe9fd;color:#6D3FD8}.p-bl{background:#eaf2fc;color:#0b5fb3}
+.age{font-size:11px;color:#64748b}.age.l{color:#D2453F;font-weight:700}
+.pg{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;font-size:12px;color:#64748b}
+/* detail */
+.dt{display:grid;grid-template-columns:1fr 420px;gap:14px}
+.ttl{display:flex;align-items:center;gap:10px;margin-bottom:12px}.ttl h3{margin:0;font-size:17px}.ttl .sp{flex:1}
+.cd{background:#fff;border:1px solid #e3e9f2;border-radius:12px;margin-bottom:12px;overflow:hidden}
+.cd .st{background:#DCE8F7;color:#0b5fb3;font-weight:800;font-size:12px;padding:8px 12px;display:flex;justify-content:space-between}
+.cd .bd{padding:10px 12px}
+.kv{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 18px}.kv div small{display:block;font-size:10px;font-weight:700;color:#64748b;letter-spacing:.04em}.kv div b{font-size:12.5px}
+.nt td,.nt th{padding:6px 10px}
+.ph{display:flex;gap:6px}.ph i{width:42px;height:42px;border-radius:7px;background:linear-gradient(135deg,#cbd5e1,#94a3b8);display:block}
+.big{height:300px;border-radius:10px;background:linear-gradient(135deg,#dfe6ef,#b8c4d4);display:flex;align-items:center;justify-content:center;color:#475569;font-weight:700;margin-bottom:8px}
+.ths{display:flex;gap:6px;flex-wrap:wrap}.ths i{width:56px;height:56px;border-radius:8px;background:linear-gradient(135deg,#cbd5e1,#94a3b8);display:block;border:2px solid transparent}.ths i.on{border-color:#0b5fb3}
+.rt{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.rt span{font-size:11px;font-weight:700;border-radius:7px;padding:4px 9px;background:#f1f5f9;color:#64748b}.rt span.d{background:#e3f5ee;color:#12866A}.rt span.c{background:#0b5fb3;color:#fff}.rt b{color:#cbd5e1}
+.ab{position:sticky;bottom:0;background:#fff;border-top:1px solid #e3e9f2;padding:10px 22px;display:flex;gap:8px;align-items:center;box-shadow:0 -4px 14px rgba(15,23,42,.06)}
+.warn{background:#fef2f2;border-left:4px solid #DC2626;border-radius:8px;padding:8px 10px;font-size:12px;color:#991B1B;margin-bottom:10px}
+/* budget */
+.bud{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.bg{background:#fff;border:1px solid #e3e9f2;border-radius:12px;padding:12px 14px}
+.bg .h{display:flex;justify-content:space-between;font-weight:800;font-size:12.5px}.bg .h span{color:var(--c)}
+.bar{height:8px;border-radius:99px;background:#eef2f7;overflow:hidden;margin:8px 0 6px}.bar i{display:block;height:100%;background:var(--c);border-radius:99px}
+.bg .r{display:flex;justify-content:space-between;font-size:11px;color:#64748b}.bg .r b{color:#0f172a}
+.mini{display:inline-block;width:90px;height:6px;border-radius:99px;background:#eef2f7;vertical-align:middle;margin-right:6px;overflow:hidden}.mini i{display:block;height:100%}
+.note{max-width:1440px;margin:0 auto 30px;padding:0 20px;font-size:12.5px;color:#334155;line-height:1.6}
+.k .ki{display:none}
+/* B: ikon + angka besar */
+body.kb .k{border-left:1px solid #e3e9f2;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto auto;column-gap:12px;align-items:center;padding:14px}
+body.kb .k .ki{display:flex;grid-row:1/4;width:46px;height:46px;border-radius:12px;background:color-mix(in srgb,var(--c) 12%,#fff);color:var(--c);align-items:center;justify-content:center}.k .ki svg{width:22px;height:22px}
+body.kb .k b{font-size:24px;margin:0;line-height:1.1}body.kb .k small{color:#64748b}
+/* C: kartu warna solid + bisa diklik jadi filter */
+body.kc .k{background:var(--c);border:none;color:#fff;position:relative;overflow:hidden;cursor:pointer;box-shadow:0 6px 16px color-mix(in srgb,var(--c) 30%,transparent)}
+body.kc .k small,body.kc .k span{color:rgba(255,255,255,.88)}body.kc .k b{font-size:24px}
+body.kc .k .ki{display:flex;position:absolute;right:12px;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.2);color:#fff;align-items:center;justify-content:center}
+body.kc .k:first-child{outline:3px solid #0f172a22;outline-offset:2px}
+/* D: tint lembut, garis atas */
+body.kd .k{border-left:1px solid color-mix(in srgb,var(--c) 22%,#fff);border-color:color-mix(in srgb,var(--c) 22%,#fff);border-top:4px solid var(--c);background:color-mix(in srgb,var(--c) 6%,#fff);position:relative}
+body.kd .k .ki{display:flex;position:absolute;right:12px;top:12px;width:32px;height:32px;border-radius:9px;background:#fff;color:var(--c);align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(15,23,42,.08)}body.kd .k .ki svg{width:17px;height:17px}
+body.kd .k small{color:var(--c)}body.kd .k b{font-size:24px;color:#0f172a}
+.kopt{display:flex;gap:6px;margin-top:6px;align-items:center;font-size:11.5px;color:#64748b;font-weight:700}
+</style></head><body class="kb">
+<div class="top"><h1>DSM Klaim · Versi desktop untuk non-sales</h1>
+<p>Menu samping kiri (bukan menu bawah), tabel lebar, detail klaim dua kolom. Berlaku otomatis saat layar ≥ 1024px untuk role Admin, Audit, HOS, Finance Manager, Finance Transfer, RGM, Super Admin. Pemohon/sales tetap tampilan HP.</p>
+<div class="pick" id="pk"><button data-s="q" class="on">1 · ANTREAN</button><button data-s="d">2 · DETAIL KLAIM</button><button data-s="b">3 · BUDGET</button><button data-s="t">4 · TRANSFER (FT)</button><button data-s="n">5 · BALIK NOTA</button></div><div class="kopt pick" id="ko">GAYA KARTU: <button data-k="">A · SEKARANG</button><button data-k="kb" class="on">B · IKON</button><button data-k="kc">C · WARNA SOLID</button><button data-k="kd">D · TINT LEMBUT</button></div></div>
+
+<div class="app">
+<aside class="sb">
+ <div class="lg"><i>DSM</i><div><b>DSM Klaim</b><small>Biaya operasional</small></div></div>
+ <div class="role">Admin <span>ganti role ▾</span></div>
+ <nav class="nv" id="nv">
+  <div class="g">KERJA</div>
+  <a class="on" data-s="q"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v12H4zM4 16l3 4h10l3-4M9 10h6"/></svg>Antrean<em>12</em></a>
+  <a data-s="d"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h5"/></svg>BA<em>3</em></a>
+  <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 14 4 9l5-5M4 9h11a5 5 0 0 1 0 10h-3"/></svg>Revisi<em>2</em></a>
+  <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 7v5l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18"/></svg>Diproses</a>
+  <div class="g">PANTAU</div>
+  <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16M4 12h16M4 19h10"/></svg>Semua klaim</a>
+  <a data-s="n"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6M9 16h3"/></svg>Balik nota<em>4</em></a>
+  <a data-s="b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Budget &amp; realisasi</a>
+  <a data-s="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h15l-3-3M21 17H6l3 3"/></svg>Transfer</a>
+  <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v11M7 10l5 5 5-5M4 20h16"/></svg>Export</a>
+  <div class="g">LAINNYA</div>
+  <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21h4"/></svg>Notifikasi<em>5</em></a>
+  <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h16"/></svg>Menu</a>
+ </nav>
+ <div class="me"><b>Rina Admin</b><small>Admin · Region Jabar</small></div>
+</aside>
+
+<div class="mn">
+ <div class="hd"><div><small id="hs">ADMIN</small><h2 id="ht">Antrean pemeriksaan</h2></div><div class="sp"></div><div class="sr">Cari no. klaim, nama, refnote…</div><div class="bl">🔔</div></div>
+ <div class="ct">
+
+ <!-- 1 ANTREAN -->
+ <div class="scr on" id="s-q">
+  <div class="kp">
+   <div class="k" style="--c:#F07A0C"><span class="ki"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v5l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18"/></svg></span><small>MENUNGGU SAYA</small><b>12</b><span>Rp 8.420.500</span></div>
+   <div class="k" style="--c:#D2453F"><span class="ki"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5M12 16h.01M10.3 3.9 2 18a2 2 0 0 0 1.7 3h16.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0"/></svg></span><small>LEWAT 2 HARI</small><b>3</b><span>perlu segera</span></div>
+   <div class="k" style="--c:#6D3FD8"><span class="ki"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h5"/></svg></span><small>DENGAN BA</small><b>3</b><span>Rp 2.150.000</span></div>
+   <div class="k" style="--c:#12866A"><span class="ki"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><small>DISETUJUI HARI INI</small><b>9</b><span>Rp 5.102.000</span></div>
+  </div>
+  <div class="pn">
+   <div class="fb"><div class="in s">⌕ Cari nama / no. klaim / refnote</div><div class="in">Kategori: Semua ▾</div><div class="in">Region: Semua ▾</div><div class="in">Periode: Nov 2026 ▾</div><div class="seg"><span class="on">SEMUA</span><span>DENGAN BA</span><span>OVER BUDGET</span></div><span class="ml bt">⬇ EXPORT</span></div>
+   <table><thead><tr><th>NO. KLAIM</th><th>TANGGAL</th><th>PEMOHON</th><th>REGION</th><th>KATEGORI / JENIS</th><th>BRAND</th><th class="n">NOTA</th><th class="n">TOTAL</th><th>STATUS</th><th>UMUR</th></tr></thead><tbody id="qb"></tbody></table>
+   <div class="pg"><span>Menampilkan 1–10 dari 12 klaim</span><span><span class="bt">‹</span> <span class="bt">›</span></span></div>
+  </div>
+ </div>
+
+ <!-- 2 DETAIL -->
+ <div class="scr" id="s-d">
+  <div class="ttl"><span class="bt">← Antrean</span><h3>KLM/2611/0142 · Joko Widodo</h3><span class="pl p-ba">DENGAN BA</span><span class="pl p-w">MENUNGGU ADMIN</span><div class="sp"></div><span class="bt">‹ Sebelumnya</span><span class="bt">Berikutnya ›</span></div>
+  <div class="dt"><div>
+   <div class="cd"><div class="st">Info klaim <span>v1</span></div><div class="bd kv">
+    <div><small>KATEGORI / JENIS</small><b>Transportasi · BBM + Tol</b></div><div><small>BRAND</small><b>ITEL</b></div><div><small>REFNOTE</small><b style="color:#D2453F">Belum diisi</b></div>
+    <div><small>LOKASI</small><b>Bandung</b></div><div><small>REKENING</small><b>BRI 0231456789 a.n. Joko</b></div><div><small>BUDGET TRANSPORTASI</small><b>sisa Rp 1.923.900</b></div></div></div>
+   <div class="cd"><div class="st">Kendaraan &amp; odometer</div><div class="bd kv"><div><small>KENDARAAN</small><b>Mobil · E 1234 AB</b></div><div><small>KM</small><b>12.400 → 12.582 (182 km)</b></div><div><small>BIAYA / KM</small><b>Rp 1.030</b></div></div></div>
+   <div class="cd"><div class="st">Nota (3) <span>Total Rp 187.500</span></div>
+    <table class="nt"><thead><tr><th>#</th><th>JENIS</th><th>TANGGAL</th><th>DETAIL</th><th class="n">NOMINAL</th><th>FOTO</th></tr></thead><tbody>
+     <tr class="sel"><td>1</td><td><span class="ty" style="--c:#D97706"><i></i>BBM</span></td><td>22/11/2026</td><td>Pertalite · 15,2 L</td><td class="n">150.000</td><td><div class="ph"><i></i></div></td></tr>
+     <tr><td>2</td><td><span class="ty" style="--c:#0E7C6B"><i></i>Tol</span></td><td>22/11/2026</td><td>GT Kalikangkung → GT Cikampek</td><td class="n">25.000</td><td><div class="ph"><i></i></div></td></tr>
+     <tr><td>3</td><td><span class="ty" style="--c:#0E7C6B"><i></i>Tol</span></td><td>23/11/2026 <span class="pl p-ba">MINGGU</span></td><td>GT Cikampek → GT Kalikangkung</td><td class="n">12.500</td><td><div class="ph"><i></i></div></td></tr>
+    </tbody></table></div>
+   <div class="cd"><div class="st" style="background:#FDE8E7;color:#B42318">Berita acara · BA/2611/031</div><div class="bd" style="font-size:12px;line-height:1.55"><b>Nota di luar hari normal:</b> Nota 3 tanggal 23/11 (Minggu) karena kegiatan memang berlangsung di hari tersebut.<br><span style="color:#64748b">Ditandatangani pemohon 23/11/2026 19:02</span></div></div>
+  </div>
+  <div>
+   <div class="cd"><div class="st">Foto nota 1 <span>1 / 4</span></div><div class="bd"><div class="big">Foto nota (klik untuk perbesar)</div><div class="ths"><i class="on"></i><i></i><i></i><i></i></div></div></div>
+   <div class="cd"><div class="st">Rute persetujuan</div><div class="bd"><div class="rt"><span class="d">✓ Pemohon</span><b>›</b><span class="c">Admin</span><b>›</b><span>HOS</span><b>›</b><span>Finance Manager</span><b>›</b><span>Finance Transfer</span></div></div></div>
+   <div class="cd"><div class="st">Riwayat</div><div class="bd" style="font-size:11.5px;color:#475569;line-height:1.7">23/11 19:02 · Dikirim pemohon<br>23/11 19:02 · BA ditandatangani pemohon</div></div>
+  </div></div>
+ </div>
+
+ <!-- 3 BUDGET -->
+ <div class="scr" id="s-b">
+  <div class="fb" style="background:#fff;border:1px solid #e3e9f2;border-radius:12px;margin-bottom:12px"><div class="seg"><span class="on">BUDGET</span><span>REALISASI</span></div><div class="in">Periode: Nov 2026 ▾</div><div class="in">Region: Semua ▾</div><div class="in s">⌕ Cari nama</div><span class="ml bt">⬇ EXPORT</span></div>
+  <div class="bud">
+   <div class="bg" style="--c:#3B78C2"><div class="h">Transportasi <span>64%</span></div><div class="bar"><i style="width:64%"></i></div><div class="r"><span>Terpakai <b>Rp 41,2 jt</b></span><span>dari Rp 64 jt</span></div></div>
+   <div class="bg" style="--c:#C97A4A"><div class="h">Entertain <span>82%</span></div><div class="bar"><i style="width:82%"></i></div><div class="r"><span>Terpakai <b>Rp 24,6 jt</b></span><span>dari Rp 30 jt</span></div></div>
+   <div class="bg" style="--c:#8268C9"><div class="h">Perdin <span>—</span></div><div class="bar"><i style="width:40%"></i></div><div class="r"><span>Terpakai <b>Rp 18,9 jt</b></span><span>tanpa batas</span></div></div>
+   <div class="bg" style="--c:#3E9486"><div class="h">Operasional <span>—</span></div><div class="bar"><i style="width:25%"></i></div><div class="r"><span>Terpakai <b>Rp 7,4 jt</b></span><span>tanpa batas</span></div></div>
+  </div>
+  <div class="pn"><table><thead><tr><th>NAMA</th><th>REGION</th><th class="n">BUDGET TRANSPORTASI</th><th class="n">TERPAKAI</th><th>%</th><th class="n">BUDGET ENTERTAIN</th><th class="n">TERPAKAI</th><th>%</th><th class="n">PERDIN</th><th class="n">OPERASIONAL</th><th class="n">TOTAL KLAIM</th></tr></thead><tbody id="bb"></tbody></table></div>
+ </div>
+
+ <!-- 4 TRANSFER -->
+ <div class="scr" id="s-t">
+  <div class="kp">
+   <div class="k" style="--c:#0b5fb3"><span class="ki"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h15l-3-3M21 17H6l3 3"/></svg></span><small>SIAP DITRANSFER</small><b>7</b><span>Rp 4.380.500</span></div>
+   <div class="k" style="--c:#F07A0C"><span class="ki"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v5l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18"/></svg></span><small>AKAN DATANG</small><b>11</b><span>masih di FM</span></div>
+   <div class="k" style="--c:#12866A"><span class="ki"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><small>DITRANSFER HARI INI</small><b>5</b><span>Rp 2.910.000</span></div>
+   <div class="k" style="--c:#6D3FD8"><span class="ki"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v12H3zM3 11h18M7 15h3"/></svg></span><small>PETTY CASH TERBUKA</small><b>4</b><span>Rp 6.000.000</span></div>
+  </div>
+  <div class="pn">
+   <div class="fb"><div class="in s">⌕ Cari nama / no. klaim</div><div class="in">Bank: Semua ▾</div><span class="ml" style="font-size:12px;color:#64748b">3 dipilih · <b style="color:#0f172a">Rp 1.912.500</b></span><span class="bt">⬇ FILE TRANSFER</span><span class="bt g">✓ TANDAI SUDAH DITRANSFER</span></div>
+   <table><thead><tr><th>☐</th><th>NO. KLAIM</th><th>PEMOHON</th><th>JENIS</th><th>BANK</th><th>NO. REKENING</th><th>ATAS NAMA</th><th class="n">NOMINAL</th><th>DISETUJUI FM</th></tr></thead><tbody id="tb"></tbody></table>
+  </div>
+ </div>
+
+ <!-- 5 BALIK NOTA -->
+ <div class="scr" id="s-n">
+  <div class="kp">
+   <div class="k" style="--c:#F07A0C"><span class="ki"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 7v5l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18"/></svg></span><small>PERLU DIPERIKSA</small><b>4</b><span>sudah dikirim pemohon</span></div>
+   <div class="k" style="--c:#D2453F"><span class="ki"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 8v5M12 16h.01M10.3 3.9 2 18a2 2 0 0 0 1.7 3h16.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0"/></svg></span><small>LEWAT TENGGAT</small><b>2</b><span>belum balik nota</span></div>
+   <div class="k" style="--c:#8268C9"><span class="ki"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 7h18v12H3zM3 11h18M7 15h3"/></svg></span><small>DANA BELUM DIPERTANGGUNGJAWABKAN</small><b>Rp 9,4 jt</b><span>7 perdin</span></div>
+   <div class="k" style="--c:#12866A"><span class="ki"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M20 6 9 17l-5-5"/></svg></span><small>SISA DISETOR BULAN INI</small><b>Rp 1,2 jt</b><span>5 perdin selesai</span></div>
+  </div>
+  <div class="dt" style="grid-template-columns:1fr 440px">
+  <div class="pn">
+   <div class="fb"><div class="in s">⌕ Cari nama / no. klaim</div><div class="seg"><span class="on">PERLU DIPERIKSA</span><span>MENUNGGU PEMOHON</span><span>LEWAT TENGGAT</span><span>SELESAI</span></div></div>
+   <table><thead><tr><th>NO. KLAIM</th><th>PEMOHON</th><th>TUJUAN</th><th>PULANG</th><th>TENGGAT</th><th class="n">DANA</th><th class="n">REALISASI</th><th class="n">SELISIH</th><th>STATUS</th></tr></thead><tbody>
+    <tr class="sel"><td><b>KLM/2611/0098</b></td><td>Rudi Hartono</td><td>Tegal · Brebes</td><td>20/11</td><td>27/11</td><td class="n">2.340.000</td><td class="n">2.110.000</td><td class="n" style="color:#12866A"><b>+230.000</b></td><td><span class="pl p-w">DIPERIKSA</span></td></tr>
+    <tr><td><b>KLM/2611/0091</b></td><td>Yusuf A.</td><td>Surabaya</td><td>19/11</td><td>26/11</td><td class="n">3.100.000</td><td class="n">3.250.000</td><td class="n" style="color:#D2453F"><b>−150.000</b></td><td><span class="pl p-w">DIPERIKSA</span></td></tr>
+    <tr><td><b>KLM/2611/0087</b></td><td>Andi Pratama</td><td>Garut</td><td>18/11</td><td>25/11</td><td class="n">1.200.000</td><td class="n">1.200.000</td><td class="n">0</td><td><span class="pl p-w">DIPERIKSA</span></td></tr>
+    <tr><td><b>KLM/2611/0072</b></td><td>Lina Marlina</td><td>Semarang</td><td>12/11</td><td style="color:#D2453F;font-weight:700">19/11</td><td class="n">1.800.000</td><td class="n">—</td><td class="n">—</td><td><span class="pl p-ba">LEWAT TENGGAT</span></td></tr>
+   </tbody></table>
+  </div>
+  <div>
+   <div class="cd"><div class="st">KLM/2611/0098 · Rudi Hartono <span>Perdin 3 hari</span></div><div class="bd">
+    <div class="kv" style="grid-template-columns:repeat(3,1fr);margin-bottom:10px"><div><small>DANA DITERIMA</small><b>Rp 2.340.000</b></div><div><small>REALISASI</small><b>Rp 2.110.000</b></div><div><small>SISA DISETOR</small><b style="color:#12866A">Rp 230.000</b></div></div>
+    <table class="nt"><thead><tr><th>KOMPONEN</th><th class="n">RENCANA</th><th class="n">REALISASI</th><th>NOTA</th></tr></thead><tbody>
+     <tr><td>Uang makan</td><td class="n">225.000</td><td class="n">225.000</td><td style="color:#64748b">otomatis</td></tr>
+     <tr><td>Transportasi · sewa motor</td><td class="n">150.000</td><td class="n">150.000</td><td><div class="ph"><i></i></div></td></tr>
+     <tr><td>Penginapan · Hotel Santika</td><td class="n">1.965.000</td><td class="n">1.735.000</td><td><div class="ph"><i></i><i></i></div></td></tr>
+    </tbody></table>
+    <div style="font-size:11.5px;color:#475569;margin-top:8px">Bukti setor sisa: <b>terlampir</b> (BRI 23/11)</div>
+   </div></div>
+   <div style="display:flex;gap:8px;justify-content:flex-end"><span class="bt">MINTA REVISI</span><span class="bt g">✓ SETUJUI BALIK NOTA</span></div>
+  </div></div>
+ </div>
+
+ </div>
+ <div class="ab" id="ab" style="display:none"><span style="font-size:12px;color:#64748b">Total klaim</span><b style="font-size:16px">Rp 187.500</b><div class="ml"></div><span class="bt">Isi refnote</span><span class="bt r">TOLAK</span><span class="bt">MINTA REVISI</span><span class="bt g">✓ SETUJUI</span></div>
+</div></div>
+
+<div class="note"><b>Catatan:</b> isi, aturan, dan alur approval tidak berubah, hanya tampilan di layar lebar. Klik baris tabel membuka detail; tombol Sebelumnya/Berikutnya di detail supaya pemeriksa bisa memeriksa antrean berurutan tanpa balik ke daftar. Di layar kecil (HP) tetap tampilan yang sekarang.</div>
+<script>
+const R=[['KLM/2611/0142','23/11','Joko Widodo','Jabar','BBM + Tol','#D97706','ITEL',3,'187.500','p-ba','DENGAN BA','3 hari',1],['KLM/2611/0139','23/11','Siti Aminah','Jateng','Meeting','#C2410C','INFINIX',1,'450.000','p-w','MENUNGGU','3 hari',1],['KLM/2611/0137','22/11','Budi Santoso','Jabar','Hotel','#4F46E5','ITEL',2,'1.200.000','p-w','MENUNGGU','2 hari',1],['KLM/2611/0151','24/11','Dewi Lestari','Jatim','Parkir','#2563EB','TECNO',4,'32.000','p-w','MENUNGGU','hari ini',0],['KLM/2611/0150','24/11','Andi Pratama','Jabar','Kue ulang tahun','#E11D48','ITEL',1,'275.000','p-ba','DENGAN BA','hari ini',0],['KLM/2611/0148','24/11','Rudi Hartono','Banten','Perdin','#8268C9','INFINIX',6,'2.340.000','p-rv','REVISI v2','hari ini',0],['KLM/2611/0147','24/11','Lina Marlina','Jateng','Ojol & taksi online','#7C3AED','TECNO',3,'96.000','p-w','MENUNGGU','hari ini',0],['KLM/2611/0146','23/11','Hendra K.','Jabar','Operasional lainnya','#64748B','ITEL',1,'700.000','p-w','MENUNGGU','1 hari',0],['KLM/2611/0145','23/11','Yusuf A.','Jatim','Tiket perjalanan','#0891B2','INFINIX',2,'1.150.000','p-ba','OVER BUDGET','1 hari',0],['KLM/2611/0144','23/11','Maya Sari','Jabar','BBM','#D97706','ITEL',2,'300.000','p-w','MENUNGGU','1 hari',0]];
+document.getElementById('qb').innerHTML=R.map((r,i)=>`<tr class="${i==0?'sel':''}" onclick="go('d')"><td><b>${r[0]}</b></td><td>${r[1]}/2026</td><td>${r[2]}</td><td>${r[3]}</td><td><span class="ty" style="--c:${r[5]}"><i></i>${r[4]}</span></td><td>${r[6]}</td><td class="n">${r[7]}</td><td class="n"><b>${r[8]}</b></td><td><span class="pl ${r[9]}">${r[10]}</span></td><td><span class="age ${r[12]?'l':''}">${r[11]}</span></td></tr>`).join('');
+const B=[['Joko Widodo','Jabar',2e6,1.62e6,1.5e6,.45e6,0,.3e6],['Siti Aminah','Jateng',2e6,1.95e6,1.5e6,1.52e6,1.2e6,0],['Budi Santoso','Jabar',1.5e6,.6e6,1e6,.2e6,2.1e6,.15e6],['Dewi Lestari','Jatim',1.5e6,1.1e6,1e6,.8e6,0,.4e6],['Andi Pratama','Jabar',2e6,.9e6,1.5e6,1.3e6,.9e6,0],['Rudi Hartono','Banten',1.5e6,1.4e6,1e6,.1e6,2.34e6,0]];
+const f=n=>Math.round(n).toLocaleString('id-ID'),pc=(a,b)=>{const p=Math.round(a/b*100),c=p>=100?'#D2453F':p>=85?'#F0A400':'#12866A';return `<span class="mini"><i style="width:${Math.min(p,100)}%;background:${c}"></i></span><b style="color:${c}">${p}%</b>`};
+document.getElementById('bb').innerHTML=B.map(r=>`<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td class="n">${f(r[2])}</td><td class="n">${f(r[3])}</td><td>${pc(r[3],r[2])}</td><td class="n">${f(r[4])}</td><td class="n">${f(r[5])}</td><td>${pc(r[5],r[4])}</td><td class="n">${f(r[6])}</td><td class="n">${f(r[7])}</td><td class="n"><b>${f(r[3]+r[5]+r[6]+r[7])}</b></td></tr>`).join('');
+const T=[['KLM/2611/0121','Joko Widodo','BBM + Tol','BRI','0231456789','Joko Widodo','187.500','24/11 09:12',1],['KLM/2611/0118','Siti Aminah','Meeting','BCA','7720119834','Siti Aminah','450.000','24/11 08:40',1],['KLM/2611/0115','Budi Santoso','Hotel','Mandiri','1300098877','Hotel Santika','1.275.000','23/11 16:22',1],['KLM/2611/0112','Dewi Lestari','Parkir','BNI','0088123456','Dewi Lestari','32.000','23/11 15:01',0],['KLM/2611/0110','Rudi Hartono','Perdin','BRI','0155098712','Rudi Hartono','2.340.000','23/11 11:45',0]];
+document.getElementById('tb').innerHTML=T.map(r=>`<tr class="${r[8]?'sel':''}"><td>${r[8]?'☑':'☐'}</td><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td style="font-family:Consolas,monospace">${r[4]}</td><td>${r[5]}</td><td class="n"><b>${r[6]}</b></td><td>${r[7]}</td></tr>`).join('');
+const H={q:['ADMIN','Antrean pemeriksaan'],d:['ADMIN · DETAIL','Periksa klaim'],b:['HOS / FINANCE MANAGER','Budget & realisasi'],t:['FINANCE TRANSFER','Siap ditransfer'],n:['ADMIN / FINANCE','Balik nota Perdin']};
+function go(s){document.querySelectorAll('.scr').forEach(e=>e.classList.toggle('on',e.id=='s-'+s));document.querySelectorAll('#pk button').forEach(e=>e.classList.toggle('on',e.dataset.s==s));document.querySelectorAll('#nv a').forEach(e=>e.classList.toggle('on',e.dataset.s==s));document.getElementById('hs').textContent=H[s][0];document.getElementById('ht').textContent=H[s][1];document.getElementById('ab').style.display=s=='d'?'flex':'none';}
+document.querySelectorAll('[data-s]').forEach(e=>e.addEventListener('click',()=>go(e.dataset.s)));
+document.querySelectorAll('#ko button').forEach(b=>b.onclick=()=>{document.body.className=b.dataset.k;document.querySelectorAll('#ko button').forEach(x=>x.classList.toggle('on',x===b))});
+</script></body></html>

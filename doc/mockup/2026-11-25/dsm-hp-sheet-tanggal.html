@@ -1,0 +1,79 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup HP - Sheet rincian tanggal (Transaksi) v2</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Inter","Segoe UI",system-ui,sans-serif;background:#8a94a6;color:#0f172a;-webkit-font-smoothing:antialiased;height:100vh;overflow:hidden;max-width:430px;margin:auto;position:relative}
+.bg{position:absolute;inset:0;background:#eef2f8;padding:12px}.bg h1{font-size:15px}.bg p{font-size:11.5px;color:#64748b;line-height:1.45;margin:4px 0 8px}
+.note{font-size:11px;line-height:1.55;color:#334155;background:#fff;border-left:4px solid #6663c4;padding:8px 10px;border-radius:6px}
+.dim{position:absolute;inset:0;background:rgba(15,23,42,.45)}
+.sh{position:absolute;left:0;right:0;bottom:0;height:90%;background:#fff;border-radius:20px 20px 0 0;display:flex;flex-direction:column;box-shadow:0 -8px 30px rgba(15,23,42,.25)}
+.grab{width:42px;height:5px;border-radius:9px;background:#cbd5e1;margin:8px auto 4px}
+.hd{display:flex;align-items:center;padding:6px 14px 10px;border-bottom:1px solid #e8edf3}.hd div{flex:1}.hd b{font-size:16px;display:block}.hd span{font-size:11px;color:#64748b}
+.x{width:30px;height:30px;border-radius:50%;background:#eef2f7;display:grid;place-items:center;color:#475569;font-weight:700;font-size:14px}
+.bd{flex:1;overflow-y:auto;padding:12px 14px}
+.tot{background:#10394E;color:#fff;border-radius:12px;padding:10px 13px;display:flex;align-items:center;justify-content:space-between}
+.tot small{font-size:10px;letter-spacing:.04em;opacity:.8;display:block}.tot b{font-size:24px}.tot b i{font-size:12px;font-weight:500;font-style:normal;opacity:.85}
+.tot .sc{font-size:10.5px;font-weight:700;background:#2557a7;border-radius:99px;padding:5px 10px;max-width:150px;text-align:right}
+.kp{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0}
+.kp div{border:1px solid #e1e7ef;border-radius:10px;padding:7px 9px;background:#f8fafc}.kp small{font-size:9.5px;color:#64748b;display:block;font-weight:600}.kp b{font-size:14px}.kp .r b{color:#b91c1c}
+.sel{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}
+.sel label{font-size:9.5px;font-weight:700;color:#475569;display:block}
+.sel select{width:100%;height:32px;border:1px solid #cbd5e1;border-radius:8px;background:#f1f5f9;font:600 11.5px inherit;font-family:inherit;color:#0f172a;padding:0 6px}
+.seg{display:flex;background:#e6ebf1;border-radius:9px;padding:3px;margin-bottom:8px}.seg span{flex:1;text-align:center;font-size:10.5px;font-weight:700;padding:6px 0;border-radius:7px;color:#475569;cursor:pointer}.seg span.on{background:#fff;color:#10394E;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.wrap{border:1px solid #d5dde8;border-radius:10px;overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:11.5px;font-variant-numeric:tabular-nums}
+th,td{padding:0 8px;white-space:nowrap;border-bottom:1px solid #e8edf3;height:29px;text-align:right}
+th{height:34px;font-size:10.5px;font-weight:700;border-bottom-width:3px;border-bottom-style:solid}
+th.id{background:#0E5A63;color:#fff;border-bottom-color:#0E5A63}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;box-shadow:2px 0 0 #e1e7ef;background:#fff;z-index:1}th:first-child{background:#0E5A63;z-index:2}
+td.z{color:#b6c0cd}
+td b.h{border-radius:6px;padding:2px 7px;display:inline-block;min-width:30px;text-align:center;background:#cfdcee;color:#0A2E57}td b.h.top{background:#2557a7;color:#fff}
+tfoot td{font-weight:700;border-top:2px solid #15303F;background:#e9eef7}
+.mt{font-size:10.5px;color:#64748b;margin:8px 2px;display:flex;justify-content:space-between}.mt u{color:#2557a7;text-decoration:none;font-weight:700}
+.ft{padding:10px 14px 14px;border-top:1px solid #e8edf3}.ft div{background:#eaf1fb;color:#2557a7;font-weight:700;text-align:center;padding:12px;border-radius:12px;font-size:13px}
+
+.th{display:flex;gap:6px;margin:0 0 8px}.th span{flex:1;text-align:center;font-size:10.5px;font-weight:700;padding:7px 2px;border-radius:9px;border:1px solid #cbd5e1;background:#fff;color:#334155;cursor:pointer}.th span.on{background:#10394E;color:#fff;border-color:#10394E}
+.sq{display:inline-block;width:9px;height:9px;border-radius:2px;background:var(--c);margin-right:5px;vertical-align:-1px}
+.t0 th.bh{background:var(--t);color:var(--c);border-bottom-color:var(--c)}.t0 td.bc{background:var(--t)}.t0 tfoot td.bc{background:var(--t);color:var(--c)}.t0 .sq{display:none}
+.t1 th{background:#DCE6F2;color:#0f172a;border-bottom:1px solid #b9c8dc}.t1 th.id{background:#DCE6F2;color:#0f172a}
+.t1 th.bh{box-shadow:inset 0 4px 0 var(--c)}.t1 .sq{display:none}
+.t1 tfoot td{background:#DCE6F2;border-top:2px solid #15303F}.t1 tfoot td.bc{box-shadow:inset 0 -4px 0 var(--c)}
+.t1 th:first-child{background:#DCE6F2;color:#0f172a}
+.t2 th{background:#fff;color:#334155;border-bottom:2px solid #15303F}.t2 th.id{background:#fff;color:#334155;border-bottom-color:#15303F}.t2 th:first-child{background:#fff;color:#334155}
+.t2 th.bh{color:#0f172a}.t2 tfoot td{background:#f1f5f9;color:#0f172a}.t2 tfoot td.bc{color:var(--c)}
+.t2 td b.h{background:var(--t);color:var(--c)}.t2 td b.h.top{background:var(--c);color:#fff}
+.t3 th.bh{background:#0E5A63;color:#fff;border-bottom-color:#0E5A63}.t3 tfoot td{background:#0E5A63;color:#fff;border-top:2px solid #0E5A63}.t3 tfoot td:first-child{background:#0E5A63}
+.t3 .sq{border:1px solid #fff}
+</style></head><body>
+<div class="bg"><h1>Sheet rincian tanggal - HP (revisi)</h1><p>Muncul saat tanggal di Kalender Sell Thru Harian diketuk. Nama ASM/sales dan angkanya hanya contoh. Belum dipasang.</p>
+<div class="note"><b>Revisi 3 - warna tabel:</b> pilih tema di baris paling atas sheet (0-3), isi tabel sama. Tema 1-3 dibuat lebih kalem; header brand tidak lagi blok warna.<br>Sebelumnya:<br>1. Bisa pilih <b>Region, ASM, Sales</b> (3 pilihan berjenjang, mengikuti cakupan akses user) dan bisa pilih tampilan baris <b>PER REGION / PER ASM / PER SALES</b>. Coba ganti pilihannya di sheet.<br>2. Tabel disamakan dengan tabel Tren/Brand: header kolom identitas petrol, header brand tint warna brand + teks warna brand + garis bawah tebal, kolom brand bertint tipis, baris TOTAL tint brand dengan garis tebal di atas.</div></div>
+<div class="dim"></div>
+<div class="sh"><div class="grab"></div>
+<div class="hd"><div><b>Kamis, 3 September 2026</b><span>Kalender Sell Thru Harian</span></div><span class="x">✕</span></div>
+<div class="bd" id="bd"></div>
+<div class="ft"><div>Tutup</div></div></div>
+<script>
+var B=[['ITEL','#0E6E64','#E2F4F1'],['REALME','#2E7D32','#E5F4E6'],['TECNO','#B4204F','#FCE7EE'],['VILLAON','#455A64','#E9EEF1']];
+var S=[['JAWA BARAT','Budi S.','Andi Pratama',50,20,5,0],['JAWA BARAT','Budi S.','Rina Marlina',36,12,0,0],['JAWA TENGAH','Dewi K.','Agus Santoso',37,46,0,0],['JAWA TIMUR','Hendra W.','Yudi Hartono',13,0,5,0],['JABODETABEK','Lia A.','Tono Wijaya',6,0,0,0],['SULAWESI UTARA','Farid M.','Joko Lestari',0,0,0,54],['SUMATERA BAG. TENGAH','Santi R.','Eko Prasetyo',0,0,45,8],['SUMATERA BAG. SELATAN','Santi R.','Maya Sari',0,0,23,0]];
+var st={by:'region',rg:'',asm:'',sl:'',th:1};var TH=['0 Tint (tadi)','1 Abu + garis','2 Putih bersih','3 Petrol'];
+function tot(r){return r[3]+r[4]+r[5]+r[6]}
+function group(){var f=S.filter(function(r){return(!st.rg||r[0]==st.rg)&&(!st.asm||r[1]==st.asm)&&(!st.sl||r[2]==st.sl)});var k=st.by=='region'?0:st.by=='asm'?1:2,m={};f.forEach(function(r){var n=r[k];m[n]=m[n]||[n,0,0,0,0];for(var i=0;i<4;i++)m[n][i+1]+=r[i+3]});return Object.keys(m).map(function(n){return m[n]}).sort(function(a,b){return(b[1]+b[2]+b[3]+b[4])-(a[1]+a[2]+a[3]+a[4])})}
+function opts(arr,cur,all){return '<option value="">'+all+'</option>'+arr.filter(function(v,i,a){return a.indexOf(v)==i}).map(function(v){return '<option'+(v==cur?' selected':'')+'>'+v+'</option>'}).join('')}
+function render(){var rows=group(),T=[0,0,0,0];rows.forEach(function(r){for(var i=0;i<4;i++)T[i]+=r[i+1]});var all=T.reduce(function(a,b){return a+b},0);
+var a1=S.filter(function(r){return !st.rg||r[0]==st.rg}),a2=a1.filter(function(r){return !st.asm||r[1]==st.asm});
+var lab=st.sl||st.asm||st.rg||'Semua Region';
+var h='<div class="tot"><div><small>TOTAL SELL THRU</small><b>'+all+' <i>unit</i></b></div><span class="sc">'+lab+'</span></div>'+
+'<div class="kp"><div><small>DEALER ORDER</small><b>62</b></div><div><small>TARGET HARIAN</small><b>2.137</b></div><div class="r"><small>CAPAIAN</small><b>'+(all/2137*100).toFixed(1).replace('.',',')+'%</b></div></div>'+
+'<div class="sel"><div><label>REGION</label><select id="s1">'+opts(S.map(function(r){return r[0]}),st.rg,'Semua')+'</select></div><div><label>ASM</label><select id="s2">'+opts(a1.map(function(r){return r[1]}),st.asm,'Semua')+'</select></div><div><label>SALES</label><select id="s3">'+opts(a2.map(function(r){return r[2]}),st.sl,'Semua')+'</select></div></div>'+
+'<div class="th">'+TH.map(function(n,i){return '<span data-t="'+i+'"'+(st.th==i?' class="on"':'')+'>'+n+'</span>'}).join('')+'</div><div class="seg">'+[['region','PER REGION'],['asm','PER ASM'],['sales','PER SALES']].map(function(x){return '<span data-b="'+x[0]+'"'+(st.by==x[0]?' class="on"':'')+'>'+x[1]+'</span>'}).join('')+'</div>';
+var idl=st.by=='region'?'REGION':st.by=='asm'?'ASM':'SALES';
+h+='<div class="wrap t'+st.th+'"><table><thead><tr><th class="id">'+idl+'</th>'+B.map(function(b){return '<th class="bh" style="--c:'+b[1]+';--t:'+b[2]+'"><i class="sq"></i>'+b[0]+'</th>'}).join('')+'<th class="id">TOTAL</th></tr></thead><tbody>'+
+rows.map(function(r){return '<tr><td>'+r[0]+'</td>'+[1,2,3,4].map(function(i){var v=r[i];return '<td class="bc" style="--c:'+B[i-1][1]+';--t:'+B[i-1][2]+'">'+(v?'<b class="h'+(v>=50?' top':'')+'">'+v+'</b>':'<span class="z" style="color:#b6c0cd">0</span>')+'</td>'}).join('')+'<td><b>'+(r[1]+r[2]+r[3]+r[4])+'</b></td></tr>'}).join('')+
+'</tbody><tfoot><tr><td>TOTAL</td>'+T.map(function(v,i){return '<td class="bc" style="--c:'+B[i][1]+';--t:'+B[i][2]+'">'+v+'</td>'}).join('')+'<td>'+all+'</td></tr></tfoot></table></div><div class="mt"><span>'+rows.length+' '+idl.toLowerCase()+' ada transaksi</span></div>';
+document.getElementById('bd').innerHTML=h;
+document.getElementById('s1').onchange=function(){st.rg=this.value;st.asm='';st.sl='';render()};
+document.getElementById('s2').onchange=function(){st.asm=this.value;st.sl='';render()};
+document.getElementById('s3').onchange=function(){st.sl=this.value;render()};
+document.querySelectorAll('.th span').forEach(function(s){s.onclick=function(){st.th=+s.dataset.t;render()}});document.querySelectorAll('.seg span').forEach(function(s){s.onclick=function(){st.by=s.dataset.b;render()}})}
+render();
+</script></body></html>

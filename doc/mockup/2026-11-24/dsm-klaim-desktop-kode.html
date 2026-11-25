@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup DSM Klaim desktop - Kode cadangan</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:"Inter","Segoe UI",system-ui,sans-serif;background:#e9edf3;color:#0f172a;font-size:12px;-webkit-font-smoothing:antialiased}
+.top{max-width:1440px;margin:0 auto;padding:14px 20px 6px}.top h1{font-size:17px;margin:0}.top p{margin:3px 0 0;color:#64748b;font-size:12.5px}
+.app{max-width:1440px;margin:10px auto 30px;background:#f4f6fa;border-radius:14px;overflow:hidden;display:flex;box-shadow:0 10px 30px rgba(15,23,42,.15);min-height:640px}
+.sb{width:210px;background:#fff;border-right:1px solid #e3e9f2;flex:none;padding:14px 10px}.sb b{display:block;font-size:14px;margin-bottom:12px}.sb div{padding:7px 10px;border-radius:8px;color:#334155;font-weight:600}.sb div.on{background:#eaf2fc;color:#0b5fb3}
+.mn{flex:1;min-width:0}
+.hd{height:50px;background:#0b5fb3;color:#fff;display:flex;align-items:center;padding:0 18px}.hd small{display:block;font-size:10.5px;opacity:.8}.hd h2{margin:0;font-size:15px}
+.ct{padding:10px 14px;display:grid;grid-template-columns:380px 1fr;gap:10px;align-items:start}
+.pn{background:#fff;border:1px solid #e3e9f2;border-radius:10px;overflow:hidden}
+.pn .h{display:flex;align-items:center;gap:6px;padding:7px 12px;border-bottom:1px solid #eef2f7;font-weight:800;font-size:12px;background:#f8fafc}.pn .h small{font-weight:600;color:#64748b}
+.bd{padding:10px 12px}
+.st{display:flex;gap:9px;margin-bottom:11px}.st>em{flex:none;width:20px;height:20px;border-radius:6px;background:#0b5fb3;color:#fff;font-style:normal;font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.st>div{flex:1}.st label{display:block;font-size:10px;font-weight:800;color:#64748b;letter-spacing:.04em;margin-bottom:4px}
+.in{border:1px solid #dbe3ee;border-radius:7px;height:30px;padding:0 9px;display:flex;align-items:center;font-size:12px;color:#334155;background:#fff;justify-content:space-between}.in.h{color:#94a3b8}
+.seg{display:flex;background:#f1f5f9;border-radius:7px;padding:2px}.seg span{flex:1;text-align:center;padding:5px;font-size:11.5px;font-weight:800;border-radius:6px;color:#64748b}.seg span.on{background:#fff;color:#0b5fb3;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.ch{display:flex;gap:5px;flex-wrap:wrap}.ch span{border:1px solid #dbe3ee;border-radius:7px;padding:5px 10px;font-size:11.5px;font-weight:700;color:#475569}.ch span.on{background:#0b5fb3;color:#fff;border-color:#0b5fb3}
+.warn{background:#fef2f2;border-left:3px solid #DC2626;border-radius:6px;padding:6px 9px;font-size:11.5px;color:#991B1B}
+.go{display:block;width:100%;border:0;border-radius:8px;background:#F07A0C;color:#fff;font:inherit;font-weight:800;font-size:12.5px;padding:9px;margin-top:4px}
+.rule{margin-top:10px;border-top:1px dashed #e2e8f0;padding-top:8px;font-size:11px;color:#64748b;line-height:1.5}.rule div{display:flex;gap:6px}.rule div:before{content:"•";color:#0b5fb3;font-weight:800}
+.kp{display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border:1px solid #e3e9f2;border-radius:10px;margin-bottom:8px;overflow:hidden}
+.kp div{padding:7px 12px;border-right:1px solid #eef2f7}.kp div:last-child{border-right:0}.kp small{display:block;font-size:9.5px;font-weight:800;color:#64748b;letter-spacing:.04em}.kp b{font-size:15px}.kp .g b{color:#12866A}.kp .a b{color:#C27C00}
+.fb{display:flex;gap:6px;align-items:center;padding:7px 10px;border-bottom:1px solid #eef2f7}
+.sg2{display:flex;background:#e8edf3;border-radius:7px;padding:2px}.sg2 span{padding:4px 10px;font-size:10.5px;font-weight:800;border-radius:5px;color:#64748b}.sg2 span.on{background:#fff;color:#0f172a}
+.srch{border:1px solid #dbe3ee;border-radius:7px;height:28px;padding:0 9px;display:flex;align-items:center;width:200px;color:#94a3b8;font-size:11.5px;margin-left:auto}
+table{width:100%;border-collapse:collapse;font-size:11.5px}
+th{background:#E6EBF1;text-align:left;font-size:9.5px;letter-spacing:.04em;padding:5px 8px;border-bottom:2px solid #15303F;white-space:nowrap}
+td{padding:5px 8px;border-bottom:1px solid #eef2f7;white-space:nowrap}
+.pl{font-size:9.5px;font-weight:800;border-radius:5px;padding:2px 7px}.p-ak{background:#e3f5ee;color:#12866A}.p-be{background:#fff4d6;color:#9A6400}.p-se{background:#eef2f7;color:#475569}.p-kd{background:#f1f5f9;color:#94a3b8}.p-dc{background:#fde8e7;color:#B42318}
+.rl{font-size:9.5px;font-weight:800;border-radius:5px;padding:2px 7px;background:#eaf2fc;color:#1E5FB8}.rl.ft{background:#e3f5ee;color:#12866A}
+.mut{color:#94a3b8}.sm{display:block;color:#64748b;font-size:10.5px}
+.use{display:inline-flex;gap:2px;vertical-align:middle;margin-right:5px}.use i{width:6px;height:10px;border-radius:2px;background:#e2e8f0}.use i.on{background:#0b5fb3}
+.cb{border:1px solid #f3c4c2;color:#D2453F;background:#fff;border-radius:6px;font:inherit;font-weight:800;font-size:10.5px;padding:3px 9px}
+.cd{font-family:Consolas,monospace;font-weight:800;letter-spacing:.08em;background:#f1f5f9;border-radius:5px;padding:1px 6px}
+.note{max-width:1440px;margin:0 auto 30px;padding:0 20px;font-size:12.5px;line-height:1.6;color:#334155}
+</style></head><body>
+<div class="top"><h1>DSM Klaim desktop · Kode cadangan</h1><p>Kiri: form terbitkan kode bertahap 1–4 (padat, tetap di tempat). Kanan: ringkasan angka + tabel daftar kode dengan filter status, sisa waktu, jumlah masuk, dan tombol CABUT.</p></div>
+<div class="app">
+<aside class="sb"><b>DSM Klaim</b><div>Beranda</div><div>Pengguna</div><div class="on">Kode</div><div>Atur</div><div>Menu</div></aside>
+<div class="mn"><div class="hd"><div><small>X02</small><h2>Kode cadangan</h2></div></div>
+<div class="ct">
+ <div class="pn"><div class="h">Terbitkan kode baru</div><div class="bd">
+  <div class="st"><em>1</em><div><label>ORANG YANG DIGANTIKAN</label><div class="in h">Pilih orang… <span>▾</span></div></div></div>
+  <div class="st"><em>2</em><div><label>PERAN YANG DIBUKA</label><div class="seg"><span>ADMIN</span><span class="on">FINANCE TRANSFER</span></div></div></div>
+  <div class="st"><em>3</em><div><label>DIBERIKAN KEPADA (PERAN FINANCE TRANSFER JUGA)</label><div class="warn">Tidak ada pemegang peran Finance Transfer lain yang aktif.</div></div></div>
+  <div class="st"><em>4</em><div><label>DURASI AKSES</label><div class="ch"><span>2 jam</span><span>4 jam</span><span>8 jam</span><span class="on">1 hari</span><span>3 hari</span></div></div></div>
+  <button class="go">TERBITKAN KODE</button>
+  <div class="rule"><div>Kode untuk satu orang, menggantikan Admin atau Finance Transfer.</div><div>Durasi mulai saat kode dipakai pertama kali; harus dipakai dalam 24 jam.</div><div>Penerima bisa masuk maksimal 5 kali selama durasi.</div><div>Bisa dicabut kapan saja. HOS, Audit, dan FM tidak punya pengganti.</div></div>
+ </div></div>
+ <div>
+  <div class="kp"><div class="g"><small>AKTIF</small><b>0</b></div><div class="a"><small>BELUM DIPAKAI</small><b>0</b></div><div><small>SELESAI</small><b>2</b></div><div><small>KEDALUWARSA / DICABUT</small><b>1</b></div></div>
+  <div class="pn"><div class="h">Daftar kode <small>3 kode</small></div>
+   <div class="fb"><div class="sg2"><span class="on">SEMUA</span><span>AKTIF</span><span>BELUM DIPAKAI</span><span>SELESAI</span><span>KEDALUWARSA</span><span>DICABUT</span></div><div class="srch">⌕ Cari nama</div></div>
+   <table><thead><tr><th>STATUS</th><th>PENERIMA</th><th>PERAN</th><th>MENGGANTIKAN</th><th>DURASI</th><th>PEMAKAIAN</th><th>DIBERI OLEH</th><th>TERAKHIR</th><th></th></tr></thead><tbody>
+    <tr><td><span class="pl p-ak">AKTIF</span></td><td><b>Yoga Pratama (uji)</b></td><td><span class="rl ft">FINANCE TRANSFER</span></td><td>Fitri Handayani (uji)</td><td>1 hari<span class="sm">sisa 18 jam 20 mnt</span></td><td><span class="use"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span>2 / 5</td><td>Fitri Handayani (uji)</td><td>24/11 19:02</td><td><button class="cb">CABUT</button></td></tr>
+    <tr><td><span class="pl p-se">SELESAI</span></td><td><b>Yoga Pratama (uji)</b></td><td><span class="rl ft">FINANCE TRANSFER</span></td><td>Fitri Handayani (uji)</td><td>2 jam</td><td><span class="use"><i class="on"></i><i></i><i></i><i></i><i></i></span>1 / 5</td><td>Fitri Handayani (uji)</td><td>05/11 13:34</td><td></td></tr>
+    <tr><td><span class="pl p-se">SELESAI</span></td><td class="mut">-</td><td><span class="rl ft">FINANCE TRANSFER</span></td><td>Yoga Pratama (uji)</td><td>2 jam</td><td><span class="use"><i></i><i></i><i></i><i></i><i></i></span>0 / 5</td><td>Yoga Pratama (uji)</td><td>05/11 10:38</td><td></td></tr>
+    <tr><td><span class="pl p-kd">KEDALUWARSA</span></td><td class="mut">-</td><td><span class="rl ft">FINANCE TRANSFER</span></td><td>Fitri Handayani (uji)</td><td>2 jam</td><td class="mut">tidak dipakai</td><td>ARI HIDAYAT</td><td>berlaku s/d 04/11 20:18</td><td></td></tr>
+   </tbody></table></div>
+ </div>
+</div></div></div>
+<div class="note"><b>Catatan:</b> isi, aturan, dan alur kode tidak berubah. Baris AKTIF contoh saja untuk memperlihatkan sisa waktu &amp; tombol CABUT. Penjelasan panjang (paragraf biru) dipindah jadi poin singkat di bawah tombol. Tampilan HP tidak berubah.</div>
+</body></html>

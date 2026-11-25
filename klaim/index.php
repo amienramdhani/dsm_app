@@ -7,6 +7,7 @@
 <meta name="theme-color" content="#10394E">
 <title>DSM Klaim</title>
 <link rel="stylesheet" href="assets/app.css?v=<?= filemtime(__DIR__ . '/assets/app.css') ?>">
+<link rel="stylesheet" href="assets/desk.css?v=<?= filemtime(__DIR__ . '/assets/desk.css') ?>">
 </head>
 <body>
 <div id="app"></div>
@@ -18,5 +19,6 @@
 <script src="assets/screens.js?v=<?= filemtime(__DIR__ . '/assets/screens.js') ?>"></script>
 <script src="assets/admin.js?v=<?= filemtime(__DIR__ . '/assets/admin.js') ?>"></script>
 <script src="assets/draft.js?v=<?= filemtime(__DIR__ . '/assets/draft.js') ?>"></script>
+<script src="assets/desk.js?v=<?= filemtime(__DIR__ . '/assets/desk.js') ?>"></script>
 </body>
 </html>

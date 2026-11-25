@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup DSM - AI transaksi di HP</title><style>
+*{box-sizing:border-box}body{margin:0;font-family:"Inter","Segoe UI",system-ui,sans-serif;background:#e9edf3;color:#0f172a;-webkit-font-smoothing:antialiased}
+.top{max-width:1200px;margin:0 auto;padding:14px 20px 6px}.top h1{font-size:17px;margin:0}.top p{margin:3px 0 10px;color:#64748b;font-size:12.5px}
+.pick{display:flex;gap:6px;margin-bottom:12px}.pick button{font:inherit;font-size:12px;font-weight:800;border:1px solid #cfdcef;background:#fff;color:#334155;border-radius:8px;padding:6px 12px;cursor:pointer}.pick button.on{background:#0b5fb3;color:#fff;border-color:#0b5fb3}
+.phs{max-width:1200px;margin:0 auto 30px;padding:0 20px;display:flex;gap:24px;flex-wrap:wrap}
+.pc>b{display:block;font-size:12px;color:#0b5fb3;margin-bottom:6px}
+.fr{width:360px;height:760px;border:6px solid #0f172a;border-radius:28px;overflow:hidden;display:flex;flex-direction:column;position:relative;background:#fff}
+/* header gaya chat */
+.wh{background:#0b5fb3;color:#fff;display:flex;align-items:center;gap:10px;padding:10px 10px 10px 8px;flex:none}
+.wh .bk{font-size:20px;padding:0 4px;opacity:.9}
+.wh .av{width:38px;height:38px;border-radius:50%;background:#fff;color:#0b5fb3;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px;position:relative;flex:none}
+.wh .av:after{content:"";position:absolute;right:0;bottom:1px;width:10px;height:10px;border-radius:50%;background:#22c55e;border:2px solid #0b5fb3}
+.wh .nm{flex:1;min-width:0}.wh .nm b{display:block;font-size:15px}.wh .nm small{display:block;font-size:11px;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wh .ic{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px}
+.ctx{display:flex;gap:5px;padding:6px 10px;background:#eef4fc;border-bottom:1px solid #dce7f5;flex:none;overflow:hidden}.ctx span{flex:none;font-size:10.5px;font-weight:700;color:#334155;background:#fff;border:1px solid #dbe3ee;border-radius:99px;padding:3px 9px}.ctx b{color:#0b5fb3}
+/* area chat */
+.wb{flex:1;overflow:auto;padding:10px 10px 6px;background-color:#e7eef7;background-image:radial-gradient(#d3deec 1px,transparent 1px);background-size:16px 16px}
+.day{text-align:center;margin:4px 0 10px}.day span{font-size:10.5px;font-weight:700;color:#475569;background:#fff;border-radius:7px;padding:3px 10px;box-shadow:0 1px 1px rgba(0,0,0,.06)}
+.sys{text-align:center;margin:0 18px 10px}.sys span{display:inline-block;font-size:10.5px;color:#7a5a00;background:#fff5d6;border-radius:8px;padding:5px 10px;line-height:1.4}
+.m{display:flex;margin-bottom:6px}.m.o{justify-content:flex-end}
+.bb{max-width:82%;padding:6px 9px 4px;border-radius:10px;font-size:13px;line-height:1.42;position:relative;box-shadow:0 1px 1px rgba(15,23,42,.1)}
+.m.i .bb{background:#fff;border-top-left-radius:2px}.m.o .bb{background:#d6e8ff;border-top-right-radius:2px}
+.m.i .bb:before{content:"";position:absolute;left:-6px;top:0;border:6px solid transparent;border-top-color:#fff;border-right-color:#fff;border-width:0 7px 7px 0}
+.m.o .bb:before{content:"";position:absolute;right:-6px;top:0;border-style:solid;border-color:#d6e8ff transparent transparent #d6e8ff;border-width:0 0 7px 7px}
+.tm{display:block;text-align:right;font-size:10px;color:#64748b;margin-top:2px}.m.o .tm b{color:#1e88e5;font-weight:800;letter-spacing:-2px;margin-left:3px}
+.cont{margin-top:-2px}.cont .bb:before{display:none}
+.kp{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:6px 0}.kp div{background:#f4f7fb;border-radius:7px;padding:4px 7px}.kp small{display:block;font-size:9px;font-weight:800;color:#64748b}.kp b{font-size:12.5px}
+table{width:100%;border-collapse:collapse;font-size:11px;margin:5px 0;background:#fff;border-radius:6px;overflow:hidden}th{background:#E6EBF1;text-align:left;font-size:9px;padding:4px 6px}td{padding:3px 6px;border-bottom:1px solid #eef2f7}.n{text-align:right}
+.g{color:#12866A;font-weight:800}.r{color:#D2453F;font-weight:800}.a{color:#C27C00;font-weight:800}
+.ac{display:flex;gap:4px;margin-top:5px}.ac span{font-size:10.5px;font-weight:700;color:#0b5fb3;background:#f1f6fd;border-radius:6px;padding:3px 8px}
+.typ{display:inline-flex;gap:3px;padding:10px 12px}.typ i{width:7px;height:7px;border-radius:50%;background:#94a3b8;animation:b 1s infinite}.typ i:nth-child(2){animation-delay:.15s}.typ i:nth-child(3){animation-delay:.3s}@keyframes b{40%{transform:translateY(-3px);background:#0b5fb3}}
+/* saran cepat (quick reply) */
+.qr{display:flex;gap:6px;overflow-x:auto;padding:6px 10px;background:#e7eef7;flex:none;scrollbar-width:none}.qr span{flex:none;font-size:12px;font-weight:600;color:#0b5fb3;background:#fff;border:1px solid #cfdcef;border-radius:99px;padding:6px 12px;white-space:nowrap}
+.menu{background:#e7eef7;padding:2px 10px 6px;flex:none}.menu .cat{background:#fff;border-radius:12px;padding:8px 10px;box-shadow:0 1px 2px rgba(15,23,42,.08)}
+.menu h6{margin:0 0 6px;font-size:10px;font-weight:800;color:#64748b;letter-spacing:.05em}
+.menu .row{display:flex;gap:5px;overflow:hidden;margin-bottom:6px}.menu .row:last-child{margin-bottom:0}.menu .row span{flex:none;font-size:11.5px;border:1px solid #e3e9f2;border-left:3px solid var(--c);border-radius:8px;padding:5px 9px;background:#f8fafc}
+/* input */
+.wi{display:flex;align-items:flex-end;gap:7px;padding:7px 8px 9px;background:#e7eef7;flex:none}
+.wi .bx{flex:1;display:flex;align-items:center;gap:8px;background:#fff;border-radius:22px;padding:9px 12px;box-shadow:0 1px 2px rgba(15,23,42,.08)}.wi .bx em{font-style:normal;font-size:17px;color:#64748b}.wi .bx span{flex:1;color:#94a3b8;font-size:13.5px}
+.wi .snd{width:44px;height:44px;border-radius:50%;background:#0b5fb3;color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;flex:none;box-shadow:0 2px 6px rgba(11,92,173,.35)}
+.nav{display:flex;justify-content:space-around;background:#fff;border-top:1px solid #eef2f7;padding:7px 0 9px;flex:none;font-size:9.5px;color:#64748b;font-weight:700}.nav span.on{color:#F07A0C}
+/* riwayat seperti daftar chat */
+.lst{flex:1;overflow:auto;background:#fff}
+.srch{margin:8px 10px;background:#f1f5f9;border-radius:99px;padding:8px 14px;color:#94a3b8;font-size:13px}
+.ci{display:flex;gap:11px;align-items:center;padding:10px 12px}.ci .av2{width:44px;height:44px;border-radius:50%;background:color-mix(in srgb,var(--c) 15%,#fff);color:var(--c);display:flex;align-items:center;justify-content:center;font-weight:800;flex:none}
+.ci .tx{flex:1;min-width:0;border-bottom:1px solid #f1f5f9;padding-bottom:10px}.ci .tx div{display:flex;justify-content:space-between}.ci b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ci small{font-size:11px;color:#94a3b8;flex:none;margin-left:6px}.ci p{margin:2px 0 0;font-size:12.5px;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fab{position:absolute;right:16px;bottom:76px;width:54px;height:54px;border-radius:16px;background:#0b5fb3;color:#fff;font-size:24px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(11,92,173,.4)}
+.note{max-width:1200px;margin:0 auto 30px;padding:0 20px;font-size:12.5px;line-height:1.6;color:#334155}
+
+.sc{overflow-x:auto;margin:5px 0;border-radius:6px;scrollbar-width:thin}.sc table{margin:0;min-width:430px}.sc.w table{min-width:520px}
+.tt{font-size:10px;font-weight:800;color:#475569;letter-spacing:.03em;margin:6px 0 2px}
+.kp4{grid-template-columns:1fr 1fr 1fr 1fr}.kp4 b{font-size:11.5px}
+.bb.wide{max-width:94%}
+</style></head><body>
+<div class="top"><h1>DSM · AI Assistant HP: jawaban transaksi per tanggal</h1><p>Memakai tampilan chat WhatsApp yang sudah ada. Kartu angka, lalu tabel per brand dan per sales (bisa digeser ke samping), lalu rincian baris dengan nomor SJ.</p></div>
+<div class="phs"><div class="pc"><b>1 · TRANSAKSI PER SALES</b><div class="fr">
+  <div class="wh"><span class="bk">←</span><div class="av">✦</div><div class="nm"><b>DSM AI</b><small>online · read-only · Super Admin</small></div><span class="ic">🕘</span><span class="ic">⋮</span></div>
+  <div class="ctx"><span>Periode: <b>Nov 2026</b></span><span>Cakupan: <b>Seluruh cakupan saya</b></span></div>
+  <div class="wb"><div class="day"><span>HARI INI</span></div>
+   <div class="m o"><div class="bb">transaksi tanggal 20 per sales<span class="tm">06:12 <b>✓✓</b></span></div></div>
+   <div class="m i"><div class="bb wide"><b>20/11: 38 SJ dari 24 dealer, qty 412, omzet Rp 2,1 M.</b>
+    <div class="kp kp4"><div><small>SURAT JALAN</small><b>38</b></div><div><small>DEALER</small><b>24</b></div><div><small>QTY</small><b>412</b></div><div><small>OMZET</small><b>2,1 M</b></div></div>
+    <div class="tt">PER BRAND · 4 BRAND</div>
+    <div class="sc"><table><tr><th>BRAND</th><th class="n">DEALER</th><th class="n">SJ</th><th class="n">QTY</th><th class="n">OMZET</th><th class="n">KONTR.</th></tr><tr><td>ITEL</td><td class="n">14</td><td class="n">20</td><td class="n">220</td><td class="n">1,1 M</td><td class="n g">53%</td></tr><tr><td>INFINIX</td><td class="n">9</td><td class="n">11</td><td class="n">120</td><td class="n">690 jt</td><td class="n">29%</td></tr><tr><td>MOTOPAD</td><td class="n">5</td><td class="n">5</td><td class="n">52</td><td class="n">230 jt</td><td class="n">13%</td></tr><tr><td>LAINNYA</td><td class="n">2</td><td class="n">2</td><td class="n">20</td><td class="n">80 jt</td><td class="n">5%</td></tr></table></div>
+    <div class="tt">PER SALES · 5 SALES</div>
+    <div class="sc"><table><tr><th>SALES</th><th>REGION</th><th class="n">DLR</th><th class="n">SJ</th><th class="n">QTY</th><th class="n">OMZET</th></tr><tr><td>ANI</td><td>CIREBON</td><td class="n">8</td><td class="n">12</td><td class="n">140</td><td class="n">720 jt</td></tr><tr><td>BUDI</td><td>TEGAL</td><td class="n">6</td><td class="n">9</td><td class="n">98</td><td class="n">510 jt</td></tr><tr><td>SITI</td><td>KUNINGAN</td><td class="n">5</td><td class="n">8</td><td class="n">90</td><td class="n">480 jt</td></tr></table></div>
+    <div class="ac"><span>‹ geser tabel ›</span></div><span class="tm">06:12</span></div></div></div>
+  <div class="wi"><div class="bx"><em>☺</em><span>Ketik pertanyaan…</span></div><div class="snd">➤</div></div>
+  <div class="nav"><span>⌂<br>Beranda</span><span>▤<br>Dealer</span><span>◆<br>Brand</span><span>⇄<br>Transaksi</span><span class="on">☰<br>Lainnya</span></div></div></div><div class="pc"><b>2 · RINCIAN BARIS & No. SJ</b><div class="fr">
+  <div class="wh"><span class="bk">←</span><div class="av">✦</div><div class="nm"><b>DSM AI</b><small>online · read-only · Super Admin</small></div><span class="ic">🕘</span><span class="ic">⋮</span></div>
+  <div class="ctx"><span>Periode: <b>Nov 2026</b></span><span>Cakupan: <b>Seluruh cakupan saya</b></span></div>
+  <div class="wb"><div class="day"><span>HARI INI</span></div>
+   <div class="m i cont"><div class="bb wide"><div class="tt">TRANSAKSI 20/11 · 40 BARIS PERTAMA</div>
+    <div class="sc w"><table><tr><th>DEALER</th><th>BRAND</th><th>TYPE</th><th class="n">QTY</th><th class="n">OMZET</th><th>NO. SJ</th></tr><tr><td>C001 Cahaya Abadi</td><td>ITEL</td><td>A70</td><td class="n">12</td><td class="n">24 jt</td><td>SJ-8821, SJ-8822</td></tr><tr><td>C001 Cahaya Abadi</td><td>INFINIX</td><td>HOT 50</td><td class="n">6</td><td class="n">21 jt</td><td>SJ-8823</td></tr><tr><td>C014 Sinar Jaya</td><td>ITEL</td><td>P55</td><td class="n">10</td><td class="n">19 jt</td><td>SJ-8830 +1</td></tr></table></div>
+    <div class="ac"><span>Tampilkan semua</span><span>Per sales</span></div><span class="tm">06:12</span></div></div>
+   <div class="m o"><div class="bb">transaksi itel tanggal 20 semua<span class="tm">06:13 <b>✓✓</b></span></div></div>
+   <div class="m i"><div class="bb"><span class="typ"><i></i><i></i><i></i></span></div></div></div>
+  <div class="wi"><div class="bx"><em>☺</em><span>Ketik pertanyaan…</span></div><div class="snd">➤</div></div>
+  <div class="nav"><span>⌂<br>Beranda</span><span>▤<br>Dealer</span><span>◆<br>Brand</span><span>⇄<br>Transaksi</span><span class="on">☰<br>Lainnya</span></div></div></div></div>
+<div class="note"><b>Catatan.</b> Tabel yang lebar bisa digeser ke samping di dalam gelembung, tidak memperlebar layar. Judul kolom ditulis lengkap di aplikasi; di mockup ini sebagian disingkat karena layar contoh sempit. Tidak ada elemen baru, hanya blok kartu dan tabel yang sudah dipakai jawaban AI lain.</div>
+</body></html>

@@ -27,8 +27,8 @@ function pageIdx_($page, int $total, int $size): int {
     return min($req, max(0, (int) ceil($total / $size) - 1));
 }
 
-function apiTransactions($token, $period = null, $selection = null, $customer = null, $page = null, $dateFrom = null, $dateTo = null, $sort = null, $pageSize = null) {
-    $source = snapshot_(); $u = guard_($token, false, false, $source); $ids = allowed_($source, $u, $selection);
+function apiTransactions($token, $period = null, $selection = null, $customer = null, $page = null, $dateFrom = null, $dateTo = null, $sort = null, $pageSize = null, $f = null) {
+    $source = snapshot_(); $u = guard_($token, false, false, $source); $ids = trxFilterIds_($source, allowed_($source, $u, $selection), $f);
     $db = coverageView_($source, $period, $ids, 'ST', $u); $size = pageSizeOf_($pageSize);
     PortalCore::month($period); $cut = js_or($db['coverage'][$period]['cutoff'] ?? null, PortalCore::end($period));
     $from = PortalCore::iso(js_or($dateFrom, $period . '-01')); $to = PortalCore::iso(js_or($dateTo, $cut));
@@ -40,13 +40,15 @@ function apiTransactions($token, $period = null, $selection = null, $customer = 
     $src = (truthy($customer) && !prop_get_('TX_FAST_OFF')) ? dataRowsCustomer_((string) $db['raw'][$period], custCodesFor_($db['meta'], $customer)) : dataRows_((string) $db['raw'][$period]);
     $raw = js_filter(txEffRaw_($db['meta'], $src), fn($t) => in_set($set, $t['nik'] ?? null) && (!truthy($t['region'] ?? null) || $sel === null || in_array($t['region'], $sel, true)) && (!truthy($customer) || ($t['customer'] ?? null) === $customer || custInduk_($db['meta'], $t['customer'] ?? '') === custInduk_($db['meta'], $customer)) && $t['date'] >= $from && $t['date'] <= $to);
     $all = PortalCore::groupedTransactions($raw, $db['meta']); $n = pageIdx_($page, count($all), $size);
+    // Urutan bawaan Rincian (tanpa klik judul kolom, bukan popup satu dealer): tanggal terlama -> terbaru
+    if (!truthy($sort) && !truthy($customer)) { usort($all, fn($x, $y) => strcmp((string) ($x['date'] ?? ''), (string) ($y['date'] ?? '')) ?: strcmp((string) ($x['sj'] ?? ''), (string) ($y['sj'] ?? ''))); }
     $all = sortRecords_($all, $sort, [fn($r) => $r['date'], fn($r) => $r['sj'], fn($r) => $r['nama'], fn($r) => $r['brand'], fn($r) => $r['type'], fn($r) => $r['qty'], fn($r) => $r['amount']]);
     $q = 0; $a = 0; foreach ($raw as $t) { $q += $t['qty']; $a += $t['amount']; } $dq = 0; foreach ($all as $g) $dq += (float) ($g['deviceQty'] ?? 0);
     return ['total' => count($all), 'page' => $n, 'pageSize' => $size, 'from' => $from, 'to' => $to, 'totals' => ['qty' => $q, 'amount' => PortalCore::round($a), 'deviceQty' => $dq], 'sourceRows' => count($raw), 'rows' => array_slice($all, $n * $size, $size)];
 }
-function apiTransactionGroups($token, $period = null, $selection = null, $page = null, $from = null, $to = null, $sort = null, $pageSize = null) {
-    $source = snapshot_(); $u = guard_($token, false, false, $source); $ids = allowed_($source, $u, $selection);
-    $db = coverageView_($source, $period, $ids, 'ST', $u); $size = pageSizeOf_($pageSize);
+function apiTransactionGroups($token, $period = null, $selection = null, $page = null, $from = null, $to = null, $sort = null, $pageSize = null, $f = null) {
+    $source = snapshot_(); $u = guard_($token, false, false, $source); $ids = trxFilterIds_($source, allowed_($source, $u, $selection), $f);
+    $db = coverageView_($source, $period, $ids, 'ST', $u); $size = (numJs_($pageSize) == 5000 ? 5000 : pageSizeOf_($pageSize));
     PortalCore::month($period); $cut = js_or($db['coverage'][$period]['cutoff'] ?? null, PortalCore::end($period));
     $from = PortalCore::iso(js_or($from, $period . '-01')); $to = PortalCore::iso(js_or($to, $cut));
     if (substr($from, 0, 7) !== $period || substr($to, 0, 7) !== $period || $from > $to || $to > $cut) fail_('Rentang tanggal tidak valid.');
@@ -58,10 +60,11 @@ function apiTransactionGroups($token, $period = null, $selection = null, $page =
         if (!isset($groups[$key])) $groups[$key] = ['date' => $t['date'], 'customer' => $t['customer'], 'nama' => $t['nama'], 'rows' => [], 'qty' => 0, 'amount' => 0];
         $groups[$key]['rows'][] = $t; $groups[$key]['qty'] += $t['qty']; $groups[$key]['amount'] += $t['amount'];
     }
-    $all = js_sort(array_values($groups), fn($a, $b) => lc($b['date'], $a['date']) ?: lc($a['nama'], $b['nama']));
+    $all = js_sort(array_values($groups), fn($a, $b) => lc($a['date'], $b['date']) ?: lc($a['nama'], $b['nama']));
     $all = sortRecords_($all, $sort, [fn($g) => $g['date'], fn($g) => $g['nama']]);
     $n = pageIdx_($page, count($all), $size); $q = 0; $a = 0; foreach ($raw as $r) { $q += $r['qty']; $a += $r['amount']; } $dq = 0; foreach ($groups as $g) foreach ($g['rows'] as $t) $dq += (float) ($t['deviceQty'] ?? 0);
-    return ['rows' => array_slice($all, $n * $size, $size), 'total' => count($all), 'page' => $n, 'pageSize' => $size, 'from' => $from, 'to' => $to, 'totals' => ['qty' => $q, 'amount' => $a, 'deviceQty' => $dq]];
+    $byDate = []; foreach ($groups as $g) { $d = $g['date']; $byDate[$d] ??= ['u' => 0, 'n' => 0]; $byDate[$d]['n']++; foreach ($g['rows'] as $t) $byDate[$d]['u'] += (float) ($t['deviceQty'] ?? 0); }
+    return ['rows' => array_slice($all, $n * $size, $size), 'total' => count($all), 'page' => $n, 'pageSize' => $size, 'from' => $from, 'to' => $to, 'byDate' => $byDate, 'totals' => ['qty' => $q, 'amount' => $a, 'deviceQty' => $dq]];
 }
 
 function apiDealerStock($token, $period = null, $selection = null, $customer = null) {

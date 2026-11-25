@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup DSM Klaim desktop - Menu</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:"Inter","Segoe UI",system-ui,sans-serif;background:#e9edf3;color:#0f172a;font-size:13px;-webkit-font-smoothing:antialiased}
+.top{max-width:1440px;margin:0 auto;padding:14px 20px 6px}.top h1{font-size:17px;margin:0}.top p{margin:3px 0 0;color:#64748b;font-size:12.5px}
+.app{max-width:1440px;height:820px;margin:10px auto 30px;background:#f4f6fa;border-radius:14px;overflow:hidden;display:flex;box-shadow:0 10px 30px rgba(15,23,42,.15)}
+.sb{width:224px;background:#fff;border-right:1px solid #e3e9f2;flex:none;padding:16px 12px;color:#94a3b8;font-size:12px}
+.sb b{color:#0f172a;display:block;font-size:14px;margin-bottom:14px}.sb div{padding:8px 10px;border-radius:9px;color:#334155;font-weight:600}.sb div.on{background:#eaf2fc;color:#0b5fb3}
+.mn{flex:1;display:flex;flex-direction:column;min-width:0}
+.hd{height:56px;background:#0b5fb3;color:#fff;display:flex;align-items:center;padding:0 24px}.hd small{display:block;font-size:11px;opacity:.8}.hd h2{margin:0;font-size:16px}
+.ct{flex:1;overflow:auto;padding:18px 24px;display:grid;grid-template-columns:320px 1fr;gap:18px;align-items:start}
+/* profil */
+.pf{background:#fff;border:1px solid #e3e9f2;border-radius:14px;overflow:hidden;position:sticky;top:0}
+.pf .tp{background:#0b5fb3;color:#fff;padding:18px 16px 16px;display:flex;gap:12px;align-items:center}
+.pf .av{width:52px;height:52px;border-radius:14px;background:#fff;color:#0b5fb3;font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center}
+.pf .tp small{display:block;font-size:10.5px;opacity:.85;letter-spacing:.05em}.pf .tp b{font-size:16px}
+.pf .bd{padding:14px 16px}
+.lb{font-size:10px;font-weight:800;color:#64748b;letter-spacing:.05em;margin:0 0 6px}
+.rl{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}.rl span{font-size:11.5px;font-weight:700;border:1px solid #dbe3ee;border-radius:8px;padding:6px 10px;color:#475569;cursor:pointer}.rl span.on{background:#0b5fb3;border-color:#0b5fb3;color:#fff}
+.ck{display:flex;align-items:center;gap:10px;border:1px solid #e3e9f2;border-radius:10px;padding:9px 11px;margin-bottom:8px}
+.ck i{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-style:normal;flex:none}
+.ck b{display:block;font-size:12.5px}.ck small{color:#64748b;font-size:11px}.ck em{margin-left:auto;font-style:normal;font-size:10.5px;font-weight:800;border-radius:6px;padding:2px 8px}
+.ck.w{background:#fff8e6;border-color:#f6e2b0}.ck.w i{background:#F0A400;color:#fff}.ck.w em{background:#F0A400;color:#fff}
+.ck.ok i{background:#e3f5ee;color:#12866A}.ck.ok em{background:#e3f5ee;color:#12866A}
+.ck.n i{background:#f1f5f9;color:#475569}
+.out{display:block;width:100%;margin-top:12px;border:1px solid #f3c4c2;background:#fff;color:#D2453F;border-radius:10px;padding:10px;font:inherit;font-weight:800;font-size:12px}
+/* grup */
+.gp{margin-bottom:18px}.gp h4{margin:0 0 8px;font-size:11px;font-weight:800;color:#64748b;letter-spacing:.06em}
+.qa{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.q{background:var(--c);color:#fff;border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer;box-shadow:0 6px 14px color-mix(in srgb,var(--c) 28%,transparent)}
+.q i{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center}.q svg{width:19px;height:19px}
+.q b{font-size:13px;display:block}.q small{font-size:11px;opacity:.85}
+.tl{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.t{background:#fff;border:1px solid #e3e9f2;border-radius:12px;padding:12px 14px;display:flex;gap:11px;align-items:center;cursor:pointer;transition:.15s}
+.t:hover{border-color:var(--c);box-shadow:0 4px 14px rgba(15,23,42,.07)}
+.t i{width:38px;height:38px;border-radius:10px;background:color-mix(in srgb,var(--c) 12%,#fff);color:var(--c);display:flex;align-items:center;justify-content:center;flex:none}.t svg{width:19px;height:19px}
+.t b{display:block;font-size:12.5px}.t small{color:#64748b;font-size:11px}.t .go{margin-left:auto;color:#cbd5e1;font-weight:800}
+.note{max-width:1440px;margin:0 auto 30px;padding:0 20px;font-size:12.5px;line-height:1.6;color:#334155}
+</style></head><body>
+<div class="top"><h1>DSM Klaim desktop · Menu (Lainnya)</h1><p>Kiri: kartu profil (peran, status WhatsApp &amp; tanda tangan, kembali ke DSM). Kanan: akses cepat berwarna + menu jadi petak 3 kolom per grup. Isi & tujuan menu sama persis dengan sekarang.</p></div>
+<div class="app">
+<aside class="sb"><b>DSM Klaim</b><div>Antrean</div><div>BA</div><div>Revisi</div><div>Diproses</div><div style="margin-top:10px">Notifikasi</div><div class="on">Menu</div></aside>
+<div class="mn"><div class="hd"><div><small>ADMIN (DEMO)</small><h2>Menu</h2></div></div>
+<div class="ct">
+ <div class="pf"><div class="tp"><div class="av">R</div><div><small>ADMIN · DEMO</small><b>Rina (uji)</b></div></div>
+  <div class="bd">
+   <div class="lb">MASUK SEBAGAI</div><div class="rl"><span>Pemohon</span><span class="on">Admin</span></div>
+   <div class="lb">KELENGKAPAN AKUN</div>
+   <div class="ck w"><i>☏</i><div><b>WhatsApp</b><small>Dipakai untuk follow-up</small></div><em>BELUM DIISI</em></div>
+   <div class="ck ok"><i>✓</i><div><b>Tanda tangan</b><small>Dipakai di BA &amp; approval</small></div><em>ADA</em></div>
+   <div class="ck n"><i>⚿</i><div><b>Masuk kode cadangan</b><small>Kalau menggantikan orang lain</small></div></div>
+   <button class="out">↩ KEMBALI KE DSM</button>
+  </div></div>
+ <div>
+  <div class="gp"><h4>AKSES CEPAT</h4><div class="qa">
+   <div class="q" style="--c:#0B5CAD"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 5h16v16H4zM4 10h16M9 3v4m6-4v4"/></svg></i><div><b>Kalender</b><small>jadwal & tenggat</small></div></div>
+   <div class="q" style="--c:#6D3FD8"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M15 7a4 4 0 1 1-3.5 6L4 20H2v-3l1-1h2v-2h2l2.5-2.5A4 4 0 0 1 15 7"/></svg></i><div><b>Kode pengganti</b><small>akses cadangan</small></div></div>
+   <div class="q" style="--c:#12866A"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 21h16"/></svg></i><div><b>Export</b><small>unduh rekap</small></div></div>
+   <div class="q" style="--c:#F07A0C"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 20V10m8 10V4m8 16v-7M2 22h20"/></svg></i><div><b>Budget</b><small>per orang & kategori</small></div></div>
+  </div></div>
+  <div class="gp"><h4>PENGATURAN KLAIM</h4><div class="tl">
+   <div class="t" style="--c:#1E5FB8"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M8 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8m-6 10v-3a6 6 0 0 1 12 0v3"/></svg></i><div><b>Hak klaim</b><small>Budget &amp; akses pemohon</small></div><span class="go">›</span></div>
+   <div class="t" style="--c:#0E7C6B"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 3v12m0-12-5 5m5-5 5 5M4 21h16"/></svg></i><div><b>Update massal WA &amp; rekening</b><small>Unggah file Excel</small></div><span class="go">›</span></div>
+   <div class="t" style="--c:#D97706"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M20 12 12 20l-8-8V4h8z M8 8h.01"/></svg></i><div><b>Jenis klaim</b><small>Aktif / nonaktif jenis</small></div><span class="go">›</span></div>
+   <div class="t" style="--c:#475569"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M14 4v4M8 10v4M16 16v4"/></svg></i><div><b>Pengaturan klaim</b><small>Aturan BA &amp; batas</small></div><span class="go">›</span></div>
+  </div></div>
+  <div class="gp"><h4>ALAT ADMIN</h4><div class="tl">
+   <div class="t" style="--c:#12866A"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M20 6 9 17l-5-5"/></svg></i><div><b>Selesai</b><small>Klaim yang sudah ditransfer</small></div><span class="go">›</span></div>
+   <div class="t" style="--c:#9A6400"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 7h18v12H3zM3 11h18M7 15h3"/></svg></i><div><b>Petty cash Admin</b><small>Menunggu Anda</small></div><span class="go">›</span></div>
+   <div class="t" style="--c:#6D3FD8"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h1M14 9h1M9 13h1M14 13h1"/></svg></i><div><b>Ajukan untuk divisi</b><small>Klaim di luar sales</small></div><span class="go">›</span></div>
+  </div></div>
+ </div>
+</div></div></div>
+<div class="note"><b>Catatan:</b> "Profil (WhatsApp)", "Tanda tangan", "Masuk kode cadangan" pindah ke kartu profil kiri (tetap bisa diklik). Untuk peran lain (HOS, FM, FT, Audit, SA) grup dan isinya mengikuti menu masing-masing yang sudah ada. Tampilan HP tidak berubah.</div>
+</body></html>

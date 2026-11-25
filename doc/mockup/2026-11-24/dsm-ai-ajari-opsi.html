@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup DSM - Ajari AI (Super Admin)</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:"Inter","Segoe UI",system-ui,sans-serif;background:#e9edf3;color:#0f172a;font-size:12px;-webkit-font-smoothing:antialiased}
+.top{max-width:1440px;margin:0 auto;padding:14px 20px 6px}.top h1{font-size:17px;margin:0}.top p{margin:3px 0 8px;color:#64748b;font-size:12.5px}
+.pick{display:flex;gap:6px}.pick button{font:inherit;font-size:12px;font-weight:800;border:1px solid #cfdcef;background:#fff;color:#334155;border-radius:8px;padding:6px 12px;cursor:pointer}.pick button.on{background:#0b5fb3;color:#fff;border-color:#0b5fb3}
+.app{max-width:1440px;margin:10px auto 30px;background:#f4f6fa;border-radius:14px;overflow:hidden;box-shadow:0 10px 30px rgba(15,23,42,.15);padding:12px 14px 16px}
+.ban{background:#0b5fb3;color:#fff;border-radius:12px;padding:12px 20px;display:flex;align-items:center;gap:12px;margin-bottom:10px}.ban h1{margin:0;font-size:21px;font-weight:900}.ban p{margin:2px 0 0;font-size:11px;opacity:.9}.ban .sp{flex:1}
+.ban .bk{background:rgba(255,255,255,.16);border-radius:8px;padding:7px 12px;font-weight:800;font-size:11.5px}
+.kp{display:grid;grid-template-columns:repeat(5,1fr);background:#fff;border:1px solid #e3e9f2;border-radius:10px;margin-bottom:8px;overflow:hidden}
+.kp div{padding:7px 12px;border-right:1px solid #eef2f7}.kp div:last-child{border-right:0}.kp small{display:block;font-size:9.5px;font-weight:800;color:#64748b;letter-spacing:.04em}.kp b{font-size:15px}.kp span{display:block;font-size:10.5px;color:#64748b}
+.kp .r b{color:#D2453F}.kp .g b{color:#12866A}.kp .hl{background:#fff8e6}
+.tb{display:flex;gap:2px;background:#e8edf3;border-radius:9px;padding:3px;margin-bottom:8px;width:max-content}.tb span{padding:6px 14px;font-size:11.5px;font-weight:800;border-radius:7px;color:#64748b;cursor:pointer}.tb span.on{background:#fff;color:#0f172a;box-shadow:0 1px 3px rgba(0,0,0,.08)}.tb em{font-style:normal;background:#D2453F;color:#fff;border-radius:99px;padding:0 6px;font-size:10px;margin-left:4px}
+.gr{display:grid;grid-template-columns:1fr 400px;gap:8px;align-items:start}
+.pn{background:#fff;border:1px solid #e3e9f2;border-radius:10px;overflow:hidden}
+.pn .h{display:flex;align-items:center;gap:6px;padding:7px 12px;border-bottom:1px solid #eef2f7;font-weight:800;font-size:12px;background:#f8fafc}.pn .h small{font-weight:600;color:#64748b}
+.fb{display:flex;gap:6px;align-items:center;padding:7px 10px;border-bottom:1px solid #eef2f7}
+.in{border:1px solid #dbe3ee;border-radius:7px;height:28px;padding:0 9px;display:flex;align-items:center;font-size:11.5px;color:#94a3b8;background:#fff}
+.sg{display:flex;background:#e8edf3;border-radius:7px;padding:2px}.sg span{padding:4px 10px;font-size:10.5px;font-weight:800;border-radius:5px;color:#64748b}.sg span.on{background:#fff;color:#0f172a}
+table{width:100%;border-collapse:collapse;font-size:11.5px}
+th{background:#E6EBF1;text-align:left;font-size:9.5px;letter-spacing:.04em;padding:5px 8px;border-bottom:2px solid #15303F;white-space:nowrap}th.n,td.n{text-align:right}
+td{padding:5px 8px;border-bottom:1px solid #eef2f7;vertical-align:middle}tbody tr{cursor:pointer}tbody tr:hover td{background:#f8fbff}tr.sel td{background:#eaf2fc!important}
+.q{font-weight:700;color:#0f172a}.mut{color:#94a3b8}.sm{display:block;font-size:10.5px;color:#64748b;font-weight:500}
+.pl{font-size:9.5px;font-weight:800;border-radius:5px;padding:2px 7px;white-space:nowrap}.p-b{background:#fde8e7;color:#B42318}.p-a{background:#e3f5ee;color:#12866A}.p-k{background:#efe9fd;color:#6D3FD8}.p-x{background:#f1f5f9;color:#94a3b8}.p-s{background:#fff4d6;color:#9A6400}
+.cnt{display:inline-flex;min-width:22px;height:18px;border-radius:6px;background:#eaf2fc;color:#0b5fb3;font-weight:800;font-size:10.5px;align-items:center;justify-content:center;padding:0 5px}
+.bd{padding:10px 12px}
+.qb{background:#f8fafc;border:1px solid #eef2f7;border-radius:9px;padding:9px 11px;margin-bottom:10px}.qb b{display:block;font-size:13px}.qb small{color:#64748b}
+.lb{font-size:10px;font-weight:800;color:#64748b;letter-spacing:.04em;margin:0 0 5px}
+.opt{border:1.5px solid #e3e9f2;border-radius:10px;padding:9px 11px;margin-bottom:7px;display:flex;gap:9px;cursor:pointer}.opt i{width:16px;height:16px;border-radius:50%;border:2px solid #cbd5e1;flex:none;margin-top:1px}.opt.on{border-color:#0b5fb3;background:#f5f9fe}.opt.on i{border:5px solid #0b5fb3}.opt b{display:block;font-size:12px}.opt small{color:#64748b;font-size:11px}
+.sel2{border:1px solid #dbe3ee;border-radius:7px;height:30px;padding:0 9px;display:flex;align-items:center;justify-content:space-between;font-size:12px;margin:6px 0 4px;background:#fff}
+.ta{border:1px solid #dbe3ee;border-radius:7px;padding:7px 9px;font-size:12px;min-height:70px;color:#334155;background:#fff;line-height:1.45}
+.chips{display:flex;gap:5px;flex-wrap:wrap;margin:6px 0}.chips span{font-size:11px;border:1px solid #dbe3ee;border-radius:7px;padding:4px 9px;color:#475569}.chips span.on{background:#0b5fb3;color:#fff;border-color:#0b5fb3}
+.prev{margin-top:10px;border:1px dashed #cfdcef;border-radius:10px;padding:9px 11px;background:#fbfdff}.prev .lb{color:#0b5fb3}
+.ans{display:flex;gap:8px}.ans .av{width:24px;height:24px;border-radius:7px;background:#0b5fb3;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;flex:none}.ans div{font-size:11.5px;line-height:1.5}
+.btns{display:flex;gap:6px;margin-top:10px}.bt{height:32px;border-radius:8px;padding:0 13px;font-weight:800;font-size:11.5px;display:inline-flex;align-items:center;border:1px solid #dbe3ee;background:#fff;color:#334155}.bt.b{background:#0b5fb3;color:#fff;border-color:#0b5fb3;flex:1;justify-content:center}.bt.r{color:#D2453F;border-color:#f3c4c2}
+.scr{display:none}.scr.on{display:block}
+.kg{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:10px}
+.kc{border:1px solid #e3e9f2;border-left:3px solid var(--c);border-radius:9px;padding:9px 11px;background:#fff}.kc .t{display:flex;align-items:center;gap:6px;margin-bottom:4px}.kc .t b{flex:1;font-size:12.5px}.kc p{margin:0;font-size:11.5px;color:#475569;line-height:1.45}.kc .m{font-size:10.5px;color:#94a3b8;margin-top:5px}
+.sw{width:28px;height:16px;border-radius:99px;background:#12866A;position:relative;display:inline-block}.sw:after{content:"";position:absolute;right:2px;top:2px;width:12px;height:12px;border-radius:50%;background:#fff}.sw.off{background:#cbd5e1}.sw.off:after{right:auto;left:2px}
+.note{max-width:1440px;margin:0 auto 30px;padding:0 20px;font-size:12.5px;line-height:1.6;color:#334155}
+</style></head><body>
+<div class="top"><h1>DSM · Ajari AI (khusus Super Admin)</h1><p>Dibuka dari tombol <b>AJARI AI</b> di halaman AI Assistant (hanya muncul untuk Super Admin). Tiga tab: pertanyaan yang belum terjawab, arahan (pertanyaan → jawaban yang sudah ada), dan pengetahuan (catatan yang ikut dikirim ke AI).</p>
+<div class="pick" id="pk"><button data-s="a" class="on">1 · BELUM TERJAWAB</button><button data-s="b">2 · ARAHAN</button><button data-s="c">3 · PENGETAHUAN</button></div></div>
+<div class="app">
+ <div class="ban"><div><h1>AJARI AI</h1><p>Super Admin · bantu AI menjawab pertanyaan yang belum bisa dijawab</p></div><div class="sp"></div><span class="bk">← KEMBALI KE AI ASSISTANT</span></div>
+ <div class="kp"><div class="r"><small>BELUM TERJAWAB</small><b>14</b><span>30 hari terakhir</span></div><div><small>DITANYA BERULANG</small><b>5</b><span>ditanya ≥ 3 kali</span></div><div class="g"><small>ARAHAN AKTIF</small><b>8</b><span>dipakai 41 kali</span></div><div><small>PENGETAHUAN</small><b>6</b><span>catatan aktif</span></div><div class="hl"><small>TINGKAT TERJAWAB</small><b>91%</b><span>dari 162 pertanyaan</span></div></div>
+ <div class="tb" id="tb"><span data-s="a" class="on">BELUM TERJAWAB<em>14</em></span><span data-s="b">ARAHAN</span><span data-s="c">PENGETAHUAN</span></div>
+
+ <div class="scr on" id="s-a"><div class="gr">
+  <div class="pn"><div class="h">Pertanyaan yang belum terjawab <small>dari catatan AI · dikelompokkan yang mirip</small></div>
+   <div class="fb"><div class="in" style="width:220px">⌕ Cari pertanyaan</div><div class="sg"><span class="on">BARU</span><span>SUDAH DIAJARI</span><span>DIABAIKAN</span><span>SEMUA</span></div><div class="in" style="margin-left:auto">30 hari terakhir ▾</div></div>
+   <table><thead><tr><th>PERTANYAAN</th><th class="n">DITANYA</th><th>OLEH</th><th>TERAKHIR</th><th>ALASAN</th><th>STATUS</th></tr></thead><tbody>
+    <tr class="sel"><td><span class="q">target kita aman ga bulan ini</span><span class="sm">mirip: "target aman?", "aman ga targetnya"</span></td><td class="n"><span class="cnt">6</span></td><td>Joko W., Rina, +2</td><td>24/11 19:40</td><td><span class="pl p-s">TIDAK DIKENALI</span></td><td><span class="pl p-b">BARU</span></td></tr>
+    <tr><td><span class="q">berapa insentif saya bulan ini</span></td><td class="n"><span class="cnt">4</span></td><td>Budi S., Dewi L.</td><td>24/11 15:12</td><td><span class="pl p-x">DATA TIDAK ADA</span></td><td><span class="pl p-b">BARU</span></td></tr>
+    <tr><td><span class="q">apa itu NOO</span></td><td class="n"><span class="cnt">3</span></td><td>Eko P.</td><td>23/11 10:05</td><td><span class="pl p-s">TIDAK DIKENALI</span></td><td><span class="pl p-b">BARU</span></td></tr>
+    <tr><td><span class="q">dealer mana yang retur paling banyak</span></td><td class="n"><span class="cnt">2</span></td><td>Rudi H.</td><td>22/11 16:30</td><td><span class="pl p-x">DATA TIDAK ADA</span></td><td><span class="pl p-b">BARU</span></td></tr>
+    <tr><td><span class="q">hallo bro</span></td><td class="n"><span class="cnt">2</span></td><td>ARI HIDAYAT</td><td>24/11 20:37</td><td><span class="pl p-x">AI SIBUK</span></td><td><span class="pl p-b">BARU</span></td></tr>
+    <tr><td><span class="q">siapa sales terbaik minggu ini</span></td><td class="n"><span class="cnt">2</span></td><td>Maya S.</td><td>21/11 09:14</td><td><span class="pl p-s">TIDAK DIKENALI</span></td><td><span class="pl p-a">SUDAH DIAJARI</span></td></tr>
+   </tbody></table></div>
+  <div class="pn"><div class="h">Ajari jawaban</div><div class="bd">
+   <div class="qb"><b>"target kita aman ga bulan ini"</b><small>ditanya 6 kali · 4 orang · terakhir 24/11 19:40</small></div>
+   <div class="lb">PILIH CARA</div>
+   <div class="opt on"><i></i><div><b>Arahkan ke jawaban yang sudah ada</b><small>Pertanyaan ini artinya sama dengan salah satu pertanyaan yang AI sudah bisa jawab.</small>
+    <div class="sel2">Proyeksi akhir bulan tembus target? <span>▾</span></div><small>Kata kunci tambahan (AI ikut mengenali): </small><div class="chips"><span class="on">target aman</span><span class="on">aman ga</span><span>+ tambah</span></div></div></div>
+   <div class="opt"><i></i><div><b>Tambah pengetahuan</b><small>Tulis penjelasan (istilah, aturan, kebijakan). Cocok untuk "apa itu NOO".</small></div></div>
+   <div class="opt"><i></i><div><b>Belum bisa · catat untuk developer</b><small>Butuh data baru (mis. insentif, retur). Masuk daftar permintaan fitur.</small></div></div>
+   <div class="prev"><div class="lb">PRATINJAU JAWABAN AI</div><div class="ans"><div class="av">✦</div><div>Proyeksi Sell Thru akhir bulan <b>92%</b> dari target (Rp 18,4 M dari Rp 20 M). Masih kurang sekitar Rp 1,6 M, butuh ±580 jt per hari.</div></div></div>
+   <div class="btns"><span class="bt r">ABAIKAN</span><span class="bt">UJI DULU</span><span class="bt b">SIMPAN &amp; AKTIFKAN</span></div>
+  </div></div>
+ </div></div>
+
+ <div class="scr" id="s-b"><div class="pn"><div class="h">Arahan aktif <small>pertanyaan / kata kunci → jawaban yang sudah ada</small></div>
+  <div class="fb"><div class="in" style="width:220px">⌕ Cari</div><span class="bt b" style="flex:none;margin-left:auto;height:28px">+ ARAHAN BARU</span></div>
+  <table><thead><tr><th>KATA KUNCI / CONTOH PERTANYAAN</th><th>DIARAHKAN KE</th><th class="n">DIPAKAI</th><th>DIBUAT</th><th>AKTIF</th><th></th></tr></thead><tbody>
+   <tr><td><b>target aman</b>, aman ga, tembus ga<span class="sm">contoh: "target kita aman ga bulan ini"</span></td><td><span class="pl p-a">PROYEKSI &amp; CAPAIAN</span></td><td class="n">18</td><td>ARI · 24/11</td><td><span class="sw"></span></td><td class="mut">ubah · hapus</td></tr>
+   <tr><td><b>sales terbaik</b>, top sales, paling tinggi<span class="sm">contoh: "siapa sales terbaik minggu ini"</span></td><td><span class="pl p-a">PERINGKAT TIM</span></td><td class="n">9</td><td>ARI · 21/11</td><td><span class="sw"></span></td><td class="mut">ubah · hapus</td></tr>
+   <tr><td><b>toko sepi</b>, dealer sepi<span class="sm">contoh: "toko mana yang sepi order"</span></td><td><span class="pl p-a">DEALER BELUM ORDER</span></td><td class="n">14</td><td>ARI · 18/11</td><td><span class="sw off"></span></td><td class="mut">ubah · hapus</td></tr>
+  </tbody></table></div></div>
+
+ <div class="scr" id="s-c"><div class="pn"><div class="h">Pengetahuan <small>catatan singkat yang ikut dikirim ke AI setiap pertanyaan · maks. 2.000 karakter total</small><span class="bt b" style="flex:none;margin-left:auto;height:26px">+ PENGETAHUAN</span></div>
+  <div class="kg">
+   <div class="kc" style="--c:#6D3FD8"><div class="t"><span class="pl p-k">ISTILAH</span><b>NOO</b><span class="sw"></span></div><p>NOO = New Open Outlet, dealer yang pertama kali transaksi di bulan berjalan.</p><div class="m">ARI · 24/11 · dipakai 3 kali</div></div>
+   <div class="kc" style="--c:#6D3FD8"><div class="t"><span class="pl p-k">ISTILAH</span><b>Dealer Aktif (DA)</b><span class="sw"></span></div><p>Dealer dihitung aktif bila ada Sell Thru di bulan berjalan. Dealer tutup tidak dihitung.</p><div class="m">ARI · 20/11 · dipakai 7 kali</div></div>
+   <div class="kc" style="--c:#C25A12"><div class="t"><span class="pl p-s">ATURAN</span><b>Kredit penjualan</b><span class="sw"></span></div><p>Penjualan tetap dikredit ke sales yang menjual walaupun sales pindah wilayah di bulan yang sama.</p><div class="m">ARI · 19/11 · dipakai 2 kali</div></div>
+   <div class="kc" style="--c:#0E7C6B"><div class="t"><span class="pl p-a">GAYA JAWAB</span><b>Panggilan</b><span class="sw off"></span></div><p>Sapa pengguna dengan "Kak", jangan "Bro".</p><div class="m">ARI · 18/11 · nonaktif</div></div>
+  </div></div></div>
+</div>
+<div class="note"><b>Catatan teknis:</b> data "belum terjawab" diambil dari catatan AI yang sudah ada (tabel <code>sh_ai_audit_log</code>, status UNSUPPORTED / FALLBACK). Yang baru: tabel arahan &amp; pengetahuan, 4–5 fungsi di api.php (khusus Super Admin), dan AI membaca arahan/pengetahuan saat menjawab. AI <b>tidak belajar sendiri</b>; yang diajarkan berlaku setelah disimpan. Pertanyaan yang butuh data baru (insentif, retur) tetap harus dibuatkan fungsinya oleh developer. "Mirip" dikelompokkan dengan pencocokan kata sederhana, bukan AI.</div>
+<script>function go(s){document.querySelectorAll('.scr').forEach(e=>e.classList.toggle('on',e.id=='s-'+s));document.querySelectorAll('[data-s]').forEach(e=>e.classList.toggle('on',e.dataset.s==s));}document.querySelectorAll('[data-s]').forEach(e=>e.onclick=()=>go(e.dataset.s));</script>
+</body></html>

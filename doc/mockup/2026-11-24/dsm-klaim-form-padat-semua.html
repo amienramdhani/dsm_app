@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup DSM Klaim - Semua form versi padat</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:"Inter","Segoe UI",system-ui,sans-serif;background:#eef2f7;color:#0f172a;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1260px;margin:0 auto;padding:20px}h1{font-size:18px;margin:0 0 4px}.sub{color:#64748b;font-size:13px;margin:0 0 14px;line-height:1.5}
+.nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;position:sticky;top:0;background:#eef2f7;padding:8px 0;z-index:5}
+.nav a{font-size:12px;font-weight:700;color:#0b5fb3;background:#fff;border:1px solid #cfdcef;border-radius:8px;padding:5px 10px;text-decoration:none}
+.grid{display:flex;flex-wrap:wrap;gap:22px}
+.col{width:380px}.lbl{font-size:12px;font-weight:800;letter-spacing:.4px;color:#0b5fb3;margin:0 0 6px}.lbl i{font-style:normal;color:#64748b;font-weight:600}
+.ph{background:#f1f5f9;border-radius:18px;overflow:hidden;box-shadow:0 8px 24px rgba(15,23,42,.12)}
+.hd{background:#0b5fb3;color:#fff;padding:10px 14px 12px}.hd .p{font-size:10px;opacity:.8}.hd h2{margin:2px 0 0;font-size:17px}
+.bd{padding:10px}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:11px;padding:10px;margin-bottom:8px}
+.row{display:flex;gap:7px}.row>.f{flex:1;min-width:0}.f.a{flex:0 0 auto}
+.f{margin-bottom:7px}.f:last-child,.row:last-child>.f{margin-bottom:0}
+.f label{display:block;font-size:9.5px;font-weight:700;letter-spacing:.4px;color:#64748b;margin-bottom:2px;text-transform:uppercase}
+.in{border:1px solid #cbd5e1;border-radius:7px;padding:6px 9px;font-size:12.5px;background:#fff;min-height:32px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.in.h{color:#94a3b8}.in.ta{min-height:46px;white-space:normal}
+.ch{display:flex;gap:5px;flex-wrap:wrap}.ch span{border:1px solid #cbd5e1;border-radius:7px;padding:6px 9px;font-size:11.5px;font-weight:700;color:#1e40af;background:#eef4ff}
+.ch span.on{background:#0b5fb3;color:#fff;border-color:#0b5fb3}
+.pt{display:flex;gap:6px;align-items:center}.tl{flex:0 0 auto;width:46px;height:32px;border:1.5px dashed #93b4f0;background:#eef4ff;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#2563eb;font-size:9.5px;font-weight:700;text-align:center;line-height:1.05}
+.th{flex:0 0 auto;width:32px;height:32px;border-radius:7px;background:linear-gradient(135deg,#cbd5e1,#94a3b8)}
+.sh{display:flex;justify-content:space-between;background:#fff4d6;border-radius:9px;padding:7px 11px;font-size:12.5px;font-weight:800;color:#7c4a03;margin:2px 0 6px}
+.nt{font-size:11.5px;font-weight:800;margin:0 0 6px;display:flex;justify-content:space-between}.nt i{font-style:normal;color:#dc2626;font-weight:600;font-size:10.5px}
+.ad{text-align:center;font-size:11.5px;font-weight:800;color:#0b5fb3;border:1px dashed #9db8e0;border-radius:9px;padding:7px;margin-bottom:8px;background:#fff}
+.hint{font-size:10px;color:#64748b;margin-top:3px;line-height:1.35}
+.nb{font-size:10.5px;background:#eef4ff;border-left:3px solid #2563eb;border-radius:6px;padding:5px 8px;color:#1e3a8a;margin-top:6px}
+.nr{background:#fef2f2;border-left-color:#dc2626;color:#991b1b}
+.ri{display:flex;gap:5px;align-items:center;margin-bottom:5px}.ri .no{width:20px;height:20px;border-radius:6px;background:#0b5fb3;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:0 0 auto}.ri .in{flex:1}.ri .x{color:#dc2626;font-size:12px;font-weight:800;padding:0 3px}
+.sm{display:inline-block;font-size:11px;font-weight:800;color:#0b5fb3;background:#eef4ff;border-radius:7px;padding:5px 9px}
+.tg{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;font-weight:800}.sw{width:32px;height:18px;border-radius:99px;background:#0b5fb3;position:relative}.sw:after{content:"";position:absolute;right:2px;top:2px;width:14px;height:14px;border-radius:50%;background:#fff}.sw.off{background:#cbd5e1}.sw.off:after{right:auto;left:2px}
+.seg{display:flex;background:#f1f5f9;border-radius:7px;padding:2px;margin:6px 0}.seg span{flex:1;text-align:center;font-size:11px;font-weight:700;padding:4px;color:#64748b;border-radius:6px}.seg span.on{background:#fff;color:#0f172a;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.sub2{background:#f8fafc;border:1px solid #e2e8f0;border-radius:9px;padding:8px;margin-top:6px}
+.tot{display:flex;justify-content:space-between;font-size:11.5px;margin-top:6px}.tot b{color:#0b5fb3}
+.bar{height:7px;border-radius:99px;background:#e8eef6;overflow:hidden;margin:5px 0}.bar i{display:block;height:100%;width:62%;background:#12866a}
+.rk{display:flex;gap:7px;align-items:center;border:1px solid #cbd5e1;border-radius:8px;padding:7px 9px;font-size:11.5px;margin-top:5px}.rk.on{border-color:#0b5fb3;background:#eef4ff}.rk .d{width:13px;height:13px;border-radius:50%;border:2px solid #94a3b8;flex:0 0 auto}.rk.on .d{border:4px solid #0b5fb3}.rk small{color:#64748b;display:block;font-size:10px}
+.ft{display:flex;gap:7px;padding:9px 10px;background:#fff;border-top:1px solid #e2e8f0}.ft div{flex:1;text-align:center;border-radius:9px;padding:9px;font-weight:800;font-size:12px}.ft .g{background:#f1f5f9;color:#334155}.ft .p{background:#0b5fb3;color:#fff}
+.note{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px 16px;margin-top:22px;font-size:13px;line-height:1.6}
+
+/* OPSI B: lebih hidup */
+body.b .ph{background:#eef3f9}
+body.b .hd{background:#0b5fb3;padding-bottom:22px}
+body.b .bd{margin-top:-12px;position:relative}
+body.b .card{border:1px solid #e3e9f2;border-radius:13px;box-shadow:0 1px 2px rgba(15,23,42,.04),0 6px 16px rgba(15,23,42,.07);border-top:3px solid var(--c,#0b5fb3)}
+body.b .f label{color:#475569}
+body.b .in{background:#f6f8fc;border-color:#dbe3ee;box-shadow:inset 0 1px 2px rgba(15,23,42,.04)}
+body.b .in:not(.h){color:#0f172a;font-weight:600}
+body.b .ch span{background:#fff;color:#334155;border-color:#d4dce8;box-shadow:0 1px 2px rgba(15,23,42,.06)}
+body.b .ch span.on{background:var(--c,#0b5fb3);color:#fff;border-color:var(--c,#0b5fb3);box-shadow:0 3px 8px rgba(11,95,179,.3)}
+body.b .tl{background:#fff;border-color:var(--c,#2563eb);color:var(--c,#2563eb)}
+body.b .sh{background:#fff;color:#0f172a;border:1px solid #e3e9f2;border-left:4px solid #F0A400;box-shadow:0 2px 6px rgba(15,23,42,.05);border-radius:10px}
+body.b .sh span{color:#9A6400}
+body.b .nt{color:var(--c,#0b5fb3)}
+body.b .ad{background:#f8fbff;border-style:dashed;border-color:var(--c,#0b5fb3);color:var(--c,#0b5fb3)}
+body.b .sm{background:#fff;border:1px solid #cfdcef;box-shadow:0 1px 2px rgba(15,23,42,.06)}
+body.b .ri .no{background:var(--c,#0b5fb3)}
+body.b .sub2{background:#f6f8fc}
+body.b .ft{box-shadow:0 -4px 14px rgba(15,23,42,.08)}
+body.b .ft .p{box-shadow:0 4px 12px rgba(11,95,179,.35)}
+body.b .col[data-k=Transportasi]{--c:#0B5CAD}body.b .col[data-k=Entertain]{--c:#C2410C}body.b .col[data-k=Perdin]{--c:#6D3FD8}body.b .col[data-k=Operasional]{--c:#0E7C6B}
+.opt{display:flex;gap:6px;margin-bottom:10px}.opt button{font:inherit;font-size:12px;font-weight:800;border:1px solid #cfdcef;background:#fff;color:#334155;border-radius:8px;padding:6px 12px;cursor:pointer}.opt button.on{background:#0b5fb3;color:#fff;border-color:#0b5fb3}
+
+/* OPSI C: kartu bertint warna kategori */
+body.c .col[data-k=Transportasi]{--c:#0B5CAD;--t:#eaf2fc}body.c .col[data-k=Entertain]{--c:#C2410C;--t:#fdf0e8}body.c .col[data-k=Perdin]{--c:#6D3FD8;--t:#f1ecfd}body.c .col[data-k=Operasional]{--c:#0E7C6B;--t:#e6f5f2}
+body.c .ph{background:#fff}
+body.c .hd{background:var(--c)}
+body.c .card{background:var(--t);border:none;border-left:4px solid var(--c);border-radius:10px;box-shadow:0 2px 6px rgba(15,23,42,.06)}
+body.c .f label{color:var(--c);opacity:.85}
+body.c .in{background:#fff;border-color:transparent;box-shadow:0 1px 3px rgba(15,23,42,.1)}
+body.c .ch span{background:#fff;border-color:transparent;color:#334155;box-shadow:0 1px 3px rgba(15,23,42,.1)}
+body.c .ch span.on{background:var(--c);color:#fff}
+body.c .tl{background:#fff;border-color:var(--c);color:var(--c)}
+body.c .sh{background:var(--c);color:#fff;border-radius:9px}
+body.c .nt{color:var(--c)}body.c .ri .no{background:var(--c)}
+body.c .ad{border-color:var(--c);color:var(--c)}
+body.c .sub2{background:#fff}
+body.c .ft .p{background:var(--c)}
+/* OPSI D: nomor langkah + kartu putih timbul */
+body.d .col[data-k=Transportasi]{--c:#0B5CAD}body.d .col[data-k=Entertain]{--c:#C2410C}body.d .col[data-k=Perdin]{--c:#6D3FD8}body.d .col[data-k=Operasional]{--c:#0E7C6B}
+body.d .ph{background:#f4f6fa}
+body.d .bd{counter-reset:st;padding-left:34px;position:relative}
+body.d .bd:before{content:"";position:absolute;left:19px;top:14px;bottom:14px;width:2px;background:#dbe3ee}
+body.d .card{position:relative;counter-increment:st;border:1px solid #e6ebf2;border-radius:12px;box-shadow:0 4px 14px rgba(15,23,42,.07)}
+body.d .card:before{content:counter(st);position:absolute;left:-30px;top:8px;width:22px;height:22px;border-radius:7px;background:var(--c);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(15,23,42,.2)}
+body.d .sub2:before{display:none}
+body.d .in{border:none;border-bottom:2px solid #dbe3ee;border-radius:6px 6px 0 0;background:#f6f8fb}
+body.d .ch span{background:#fff;color:#334155;border-color:#dbe3ee}
+body.d .ch span.on{background:var(--c);color:#fff;border-color:var(--c)}
+body.d .tl{border-color:var(--c);color:var(--c);background:#fff}
+body.d .sh{background:transparent;color:var(--c);padding:4px 2px;font-size:13px;border-bottom:2px solid var(--c);border-radius:0}
+body.d .nt,body.d .ad{color:var(--c)}body.d .ad{border-color:var(--c)}body.d .ri .no{background:var(--c)}
+body.d .ft .p{background:var(--c)}
+
+/* OPSI E: C versi lembut */
+body.e .col[data-k=Transportasi]{--c:#3B78C2;--t:#f5f9fe;--l:#dce8f7}body.e .col[data-k=Entertain]{--c:#C97A4A;--t:#fefaf6;--l:#f3e3d6}body.e .col[data-k=Perdin]{--c:#8268C9;--t:#f9f7fe;--l:#e5def7}body.e .col[data-k=Operasional]{--c:#3E9486;--t:#f5fbfa;--l:#d6ece8}
+body.e .ph{background:#f7f9fc}
+body.e .hd{background:#0b5fb3}
+body.e .card{background:var(--t);border:1px solid var(--l);border-left:3px solid var(--l);border-radius:11px;box-shadow:0 1px 4px rgba(15,23,42,.04)}
+body.e .f label{color:#64748b}
+body.e .in{background:#fff;border-color:#e2e8f0}
+body.e .ch span{background:#fff;border-color:#e2e8f0;color:#475569}
+body.e .ch span.on{background:var(--t);border-color:var(--c);color:var(--c)}
+body.e .tl{background:#fff;border-color:var(--l);color:var(--c)}
+body.e .sh{background:#fff;color:#334155;border:1px solid #e8edf3;border-radius:9px}
+body.e .sh:before{content:"";display:inline-block;width:8px;height:8px;border-radius:3px;background:var(--c);margin-right:7px;opacity:.7}
+body.e .sh{justify-content:flex-start}body.e .sh span{margin-left:auto;color:#64748b}
+body.e .nt{color:#334155}body.e .ri .no{background:var(--l);color:var(--c)}
+body.e .ad{border-color:var(--l);color:var(--c);background:#fff}
+body.e .sm{background:#fff;color:var(--c);border:1px solid var(--l)}
+body.e .sub2{background:#fff;border-color:var(--l)}
+body.e .sw{background:var(--c);opacity:.8}body.e .sw.off{background:#d5dbe3;opacity:1}
+body.e .nt{margin:-10px -10px 8px;padding:7px 10px;background:var(--l);color:var(--c);border-radius:9px 9px 0 0;font-size:12px}
+body.e .nt i{background:#fff;border-radius:6px;padding:1px 7px;font-weight:700}
+body.e .sub2 .nt{margin:-8px -8px 7px;padding:6px 8px;border-radius:8px 8px 0 0}
+body.e .sh{padding:8px 10px;align-items:center;border-left:3px solid var(--c);margin-top:10px}
+body.e .sh:before{display:none}
+body.e .sh .ic{width:26px;height:26px;border-radius:8px;background:var(--l);color:var(--c);display:flex;align-items:center;justify-content:center;margin-right:8px;flex:0 0 auto}
+body.e .sh .ic svg{width:15px;height:15px}
+body.e .sh small{display:block;font-size:10px;font-weight:600;color:#94a3b8}
+body.e .sh span{font-size:13px;color:#0f172a}
+.mx{background:#fff;border:1px solid #e3e9f2;border-radius:11px;padding:9px 10px;margin-bottom:8px;box-shadow:0 1px 4px rgba(15,23,42,.04)}
+.mx .t{font-size:10px;font-weight:800;color:#64748b;letter-spacing:.4px;margin-bottom:6px}
+.mx .jj{display:flex;gap:6px}.mx .jj a{flex:1;border:1px solid var(--l,#dce8f7);background:var(--t,#f5f9fe);border-radius:8px;padding:5px 8px;font-size:11px;color:#334155;text-decoration:none}
+.mx .jj a b{display:block;color:var(--c,#3B78C2);font-size:12px}
+.mx .sum{display:flex;justify-content:space-between;border-top:1px dashed #e2e8f0;margin-top:7px;padding-top:6px;font-size:12px;font-weight:800}.mx .sum b{color:#0b5fb3}
+body.e .sh{background:var(--sc,#3B78C2);border:none;color:#fff;padding:9px 11px;border-radius:11px;box-shadow:0 4px 12px color-mix(in srgb,var(--sc,#3B78C2) 35%,transparent)}
+body.e .sh .ic{background:rgba(255,255,255,.22);color:#fff}
+body.e .sh small{color:rgba(255,255,255,.85)}
+body.e .sh span:last-child{background:#fff;color:var(--sc,#3B78C2);border-radius:8px;padding:3px 9px;font-size:12.5px}
+body.e .sh+.card{border-left:3px solid var(--sc);}
+.mx .jj a{border-left:4px solid var(--sc)!important}.mx .jj a b{color:var(--sc)!important}
+body.e .sh{justify-content:flex-start;text-align:left}body.e .sh .ic{margin-left:0!important}body.e .sh span:last-child{margin-left:auto}
+</style></head><body class="e"><div class="wrap">
+<h1>DSM Klaim · Semua form versi padat</h1>
+<p class="sub">Aturannya sama untuk semua form: isian 32px, label kecil abu, isian pendek disejajarkan dua-dua, foto jadi tombol kecil <b>+ foto</b> di samping isiannya (foto yang sudah diambil muncul sebagai thumbnail kecil). Bagian bawah (keterangan, rekening, tombol) sama di semua form, ditampilkan sekali di contoh terakhir.</p>
+<div class="opt" id="opt"><button data-o="">A · FLAT</button><button data-o="b">B · LEBIH HIDUP</button><button data-o="c">C · KARTU BERWARNA</button><button data-o="d">D · LANGKAH BERNOMOR</button><button data-o="e" class="on">E · C VERSI LEMBUT</button></div><div class="nav" id="nav"></div>
+<div class="grid" id="g"></div>
+<div class="note"><b>Yang tidak berubah:</b> isian, aturan wajib, dan urutan bagian tetap sama persis dengan form sekarang. Yang berubah hanya ukuran dan susunan. Validasi merah (mockup <i>dsm-klaim-validasi-opsi.html</i>) berlaku di semua form.</div>
+</div>
+<script>
+const I=(l,v,h)=>`<div class="f"><label>${l}</label><div class="in${h?' h':''}">${v||'&nbsp;'}</div></div>`;
+const T=(l,v,h)=>`<div class="f"><label>${l}</label><div class="in ta${h?' h':''}">${v||''}</div></div>`;
+const R=(...a)=>`<div class="row">${a.join('')}</div>`;
+const C=(l,o,on)=>`<div class="f a"><label>${l}</label><div class="ch">${o.map(x=>`<span class="${x===on?'on':''}">${x}</span>`).join('')}</div></div>`;
+const P=(l,n)=>`<div class="f a"><label>${l}</label><div class="pt">${'<div class="th"></div>'.repeat(n||0)}<div class="tl">+ foto</div></div></div>`;
+const IP=(l,v,h)=>`<div class="f"><label>${l}</label><div class="pt"><div class="in${h?' h':''}" style="flex:1">${v||'&nbsp;'}</div><div class="tl">+ foto</div></div></div>`;
+const K=(x,t)=>`<div class="card">${t?`<p class="nt">${t}</p>`:''}${x}</div>`;
+const NOTA=(n,tp,ex='')=>K(`<p class="nt">Nota ${n} <i>Hapus</i></p>${ex}${R(I('Tanggal','24/11/2026'),I('Nominal (Rp)','0'),P('Nota (0)'))}`);
+const HEAD=K(R(I('Brand','ITEL ▾'),I('Refnote (opsional)','bandung'))+I('Lokasi (kota/kabupaten)','Bandung'),'Info klaim');
+const RUTE=`<div class="f"><label>Rute (tempat tujuan spesifik)</label><div class="ri"><span class="no">1</span><div class="in">Toko Samsung Ahmad Yani, Tegal</div><span class="x">✕</span></div><div class="ri"><span class="no">2</span><div class="in h">Tempat tujuan</div><span class="x">✕</span></div><span class="sm">+ Tambah tujuan</span></div>`;
+const PES=`<div class="f"><label>Peserta (min. 2, nama & jabatan wajib)</label><div class="row" style="margin-bottom:5px">${'<div class="in" style="flex:1.3">Joko Widodo</div><div class="in" style="flex:1">Sales</div>'}</div><div class="row" style="margin-bottom:5px"><div class="in h" style="flex:1.3">Nama peserta</div><div class="in h" style="flex:1">Jabatan / asal</div></div><span class="sm">+ Peserta</span></div>`;
+const TRIP=K(R(I('Tgl berangkat','24/11/2026'),I('Tgl pulang','26/11/2026'))+I('Tujuan perjalanan','Kunjungan dealer Tegal')+RUTE+R(P('Screenshot Maps'),I('Total jarak Maps (km)','182')),'Perjalanan');
+const BOTTOM=K(T('Keterangan tambahan (opsional)','Tulis jika ada hal yang perlu diketahui pemeriksa',1),'Keterangan')+K(`<div class="f" style="margin:0"><label>Rekening tujuan</label><div class="rk on"><span class="d"></span><div><b>Rekening saya</b><small>BRI 0231456789 a.n. Joko Widodo</small></div></div><div class="rk"><span class="d"></span><div><b>Rekening lain</b><small>Vendor, pemilik kost, hotel</small></div></div></div>`,'Rekening tujuan');
+const F=[
+['bbm','BBM + Tol','Transportasi',HEAD+'<div class="mx"><div class="t">PENGAJUAN SEKALIGUS · 2 JENIS</div><div class="jj"><a style="--sc:#D97706">BBM · 1 nota<b>Rp 150.000</b></a><a style="--sc:#0E7C6B">Tol · 1 nota<b>Rp 37.500</b></a></div><div class="sum"><span>Total klaim</span><b>Rp 187.500</b></div></div><div class="sh" style="--sc:#D97706"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v15M3 20h12M14 9h2a2 2 0 0 1 2 2v5a1.5 1.5 0 0 0 3 0V8l-3-3M7 7h4"/></svg></span><div>BBM<small>1 nota</small></div><span>Rp 150.000</span></div>'+K(R(C('Kendaraan',['Mobil','Motor'],'Mobil'),I('Plat','E 1234 AB',1))+R(IP('KM awal + foto','12.400'),IP('KM akhir + foto','',1)),'Kendaraan & odometer')+NOTA(1,'',C('Jenis BBM',['Pertalite','Pertamax']).replace('f a','f'))+'<div class="ad">+ Tambah nota BBM</div><div class="sh" style="--sc:#0E7C6B"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 21V7l8-4 8 4v14M4 11h16M9 21v-6h6v6"/></svg></span><div>Tol<small>1 nota</small></div><span>Rp 37.500</span></div>'+K(`<p class="nt">Nota 2 <i>Hapus</i></p>${R(I('Gerbang asal','GT Kalikangkung',1),I('Gerbang tujuan','GT Cikampek',1))}${R(I('Tanggal','24/11/2026'),I('Nominal (Rp)','0'),P('Nota (0)'))}<div class="hint">Struk tol / riwayat e-toll yang memperlihatkan tanggal, gerbang, nominal.</div>`)],
+['trans','Parkir / Ojol & taksi online','Transportasi',HEAD+K(T('Keterangan (opsional untuk parkir)','Parkir di Mall BIP saat visit dealer')+P('Foto dokumentasi',1),'Detail')+'<div class="sh">Daftar nota <span>Rp 15.000</span></div>'+NOTA(1)+'<div class="ad">+ Tambah nota</div>'],
+['tiket','Tiket perjalanan','Transportasi',HEAD+K(C('Moda',['Pesawat','Kereta','Bus / travel'],'Kereta')+R(I('Kota asal','Cirebon'),I('Kota tujuan','Jakarta'))+R(I('Tgl berangkat','24/11/2026'),I('Tgl pulang (opsional)','',1))+R(I('Operator','KAI Argo Bromo'),I('Nama penumpang','Joko Widodo'))+T('Tujuan perjalanan','Training brand')+'<div class="nb">Tiket untuk Perdin diajukan lewat Perdin. Lampirkan e-tiket / invoice di nota.</div>','Detail perjalanan')+NOTA(1)],
+['meet','Meeting','Entertain',HEAD+K(I('Tujuan meeting','Review target Q4')+I('Tempat meeting','Cafe Kopi Kenangan Paskal')+R(I('Jam mulai','10:00'),I('Jam selesai','12:00'))+PES+P('Foto dokumentasi')+'<div class="hint">Tanpa foto, klaim tetap bisa dikirim tapi wajib dengan BA.</div>','Detail meeting')+NOTA(1)],
+['party','Makan-makan / Kue ulang tahun','Entertain',HEAD+K(I('Nama yang dirayakan (kue)','Bpk. Hendra (owner dealer)')+R(I('Tempat acara','Toko Maju Jaya'),I('Keterangan','Ulang tahun owner'))+PES+P('Foto dokumentasi acara'),'Detail acara')+NOTA(1)],
+['ent','Karangan bunga / Reward','Entertain',HEAD+K(R(I('Nama penerima','Toko Sinar Cell'),I('Tempat (opsional)','',1))+T('Keterangan','Pembukaan cabang baru')+P('Foto dokumentasi'),'Detail penerima')+NOTA(1)],
+['kost','Kost','Operasional',HEAD+K(R(I('Nama kost','Kost Melati'),I('Periode sewa','Nov - Des 2026'))+I('Nama pemilik','Ibu Sari')+'<div class="nb">Jika rekening pemilik bukan milik Anda, klaim wajib melewati HOS.</div>','Detail kost')+NOTA(1)],
+['hotel','Penginapan / Hotel','Operasional',HEAD+K(I('Nama hotel','Hotel Santika Tegal')+R(I('Check-in','24/11/2026'),I('Check-out','26/11/2026'))+I('Tujuan menginap','Visit dealer Tegal'),'Detail hotel')+NOTA(1)],
+['lain','Operasional lainnya / ATK / Ongkir / Servis','Operasional',HEAD+K(I('Judul pengeluaran','Sewa tenda event gathering')+T('Kebutuhan / alasan','Event dealer gathering, tidak masuk jenis lain')+`<div class="f"><label>Rincian barang / jasa</label><div class="row" style="margin-bottom:5px"><div class="in" style="flex:2">Tenda 3x3</div><div class="in" style="flex:.6">2</div><div class="in" style="flex:1.2">350.000</div><span class="x" style="color:#dc2626;font-weight:800;align-self:center">✕</span></div><span class="sm">+ Baris rincian</span><div class="tot"><span>Total rincian harus = total nota</span><b>Rp 700.000</b></div></div>`,'Detail pengeluaran')+NOTA(1)],
+['makan','Uang makan','Transportasi',HEAD+TRIP+'<div class="sh">Nota makan <span>Rp 120.000</span></div>'+NOTA(1)+'<div class="ad">+ Tambah nota makan</div>'+K(`<div class="tot" style="margin:0"><span>Batas: Rp 75.000/hari × 3 hari</span><b>Rp 225.000</b></div><div class="bar"><i style="width:53%"></i></div><div class="hint">Terpakai Rp 120.000 · sisa Rp 105.000</div>`,'Batas uang makan')],
+['perdin','Perdin','Perdin',HEAD+TRIP+K(`<div class="tg"><div>Uang makan<div class="hint" style="margin:0;font-weight:500">Otomatis: tarif × durasi, terkunci</div></div><div class="sw"></div></div>`)+K(`<div class="tg">Transportasi <div class="sw"></div></div><div class="seg"><span class="on">Per hari</span><span>Sekali</span></div><div class="sub2"><p class="nt">Transportasi 1 <i>Hapus</i></p>${I('Jenis','Sewa motor')}${R(I('Nominal / hari','50.000'),I('Jumlah hari (maks 3)','3'),P('Nota'))}<div class="hint">= Rp 150.000</div></div><div style="margin-top:6px"><span class="sm">+ Tambah transportasi</span></div>`)+K('<div class="tg">Penginapan <div class="sw off"></div></div>')+K('<div class="tg">Entertain (opsional) <div class="sw off"></div></div>')+BOTTOM+'<div class="ft" style="margin:0 -10px -10px"><div class="g">SIMPAN DRAFT</div><div class="p">LANJUTKAN</div></div>'],
+];
+document.getElementById('nav').innerHTML=F.map(f=>`<a href="#${f[0]}">${f[1].split(' / ')[0]}</a>`).join('');
+document.getElementById('g').innerHTML=F.map(f=>`<div class="col" id="${f[0]}" data-k="${f[2]}"><p class="lbl">${f[1]} <i>· ${f[2]}</i></p><div class="ph"><div class="hd"><div class="p">P17</div><h2>Form ${f[1].split(' / ')[0]}</h2></div><div class="bd">${f[3]}</div></div></div>`).join('');
+document.querySelectorAll('#opt button').forEach(b=>b.onclick=()=>{document.body.className=b.dataset.o;document.querySelectorAll('#opt button').forEach(x=>x.classList.toggle('on',x===b))});
+</script></body></html>

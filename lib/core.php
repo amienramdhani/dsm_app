@@ -424,10 +424,12 @@ final class PortalCore {
 
     public static function groupedTransactions(array $rows, array $meta): array {
         $groups = [];
+        /* Transaksi memakai kode toko (KODE_UNIQ_CUSTOMER/ID_DEALER); master dikunci kode induk. Peta alias -> induk supaya nama dealer tetap ketemu. */
+        $al = []; foreach ($meta['customers'] ?? [] as $cid => $cc) foreach ($cc['aliases'] ?? [] as $a) if (truthy($a) && !isset($al[$a])) $al[$a] = $cid;
         foreach ($rows as $t) {
             $p = $meta['products'][$t['sku']]; $type = js_or($p['type'] ?? '', js_or($p['nama'] ?? '', $t['sku']));
             $sj = js_or($t['sj'] ?? '', ''); $id = jkey([$t['date'], $t['company'], js_or($sj, 'DOC:' . $t['doc']), $t['customer'], $t['nik'], $p['brand'], $type]);
-            if (!isset($groups[$id])) $groups[$id] = ['date' => $t['date'], 'company' => $t['company'], 'sj' => $sj, 'customer' => $t['customer'], 'nik' => $t['nik'], 'nama' => $meta['customers'][$t['customer']]['nama'] ?? $t['customer'], 'brand' => $p['brand'], 'type' => $type, 'qty' => 0, 'amount' => 0, 'sourceRows' => 0, 'deviceQty' => 0];
+            if (!isset($groups[$id])) $groups[$id] = ['date' => $t['date'], 'company' => $t['company'], 'sj' => $sj, 'customer' => $t['customer'], 'nik' => $t['nik'], 'nama' => $meta['customers'][$t['customer']]['nama'] ?? (isset($al[$t['customer']]) ? ($meta['customers'][$al[$t['customer']]]['nama'] ?? $t['customer']) : $t['customer']), 'brand' => $p['brand'], 'type' => $type, 'qty' => 0, 'amount' => 0, 'sourceRows' => 0, 'deviceQty' => 0];
             $groups[$id]['qty'] += $t['qty']; $groups[$id]['amount'] += $t['amount']; $groups[$id]['deviceQty'] += truthy($p['device'] ?? false) ? $t['qty'] : 0; $groups[$id]['sourceRows']++;
         }
         $out = array_map(function ($g) { $g['amount'] = self::round($g['amount']); return $g; }, array_values($groups));

@@ -45,10 +45,10 @@ async function uploadFile(file, slot) {
 }
 const fileUrl = id => 'api.php?a=file&id=' + id;
 function thumbs(files, opt = {}) {
-  return `<div class="thumbs">${(files || []).map(f => `<div class="th" data-view="${f.id}">${/pdf/.test(f.mime || '') ? 'PDF' : `<img loading="lazy" src="${fileUrl(f.id)}" alt="">`}${opt.rm ? `<b data-rm="${f.id}">×</b>` : ''}</div>`).join('')}${opt.add ? `<div class="th add" data-addfile="${esc(opt.add)}">+</div>` : ''}</div>`;
+  return `<div class="thumbs">${(files || []).map(f => `<div class="th" data-view="${f.id}"${/pdf/.test(f.mime || '') ? ' data-pdf="1"' : ''}>${/pdf/.test(f.mime || '') ? 'PDF' : `<img loading="lazy" src="${fileUrl(f.id)}" alt="">`}${opt.rm ? `<b data-rm="${f.id}">×</b>` : ''}</div>`).join('')}${opt.add ? `<div class="th add" data-addfile="${esc(opt.add)}">+</div>` : ''}</div>`;
 }
 document.addEventListener('click', e => {
-  const v = e.target.closest('[data-view]'); if (v && !e.target.closest('[data-rm]')) { const id = v.dataset.view; sheet(`<img src="${fileUrl(id)}" style="width:100%;border-radius:12px" alt=""><a class="btn g" style="display:block;text-align:center;margin-top:10px;text-decoration:none" href="${fileUrl(id)}" target="_blank">BUKA UKURAN PENUH</a>`); }
+  const v = e.target.closest('[data-view]'); if (v && !e.target.closest('[data-rm]')) { const id = v.dataset.view; if (v.dataset.pdf) { sheet(`<iframe src="${fileUrl(id)}" style="width:100%;height:70vh;border:0;border-radius:12px;background:#F1F5F9" title="PDF"></iframe><a class="btn" style="display:block;text-align:center;margin-top:10px;text-decoration:none" href="${fileUrl(id)}" target="_blank">BUKA PDF</a><div class="mut" style="text-align:center;margin-top:6px">Kalau PDF tidak tampil di atas, ketuk BUKA PDF.</div>`); return; } sheet(`<img src="${fileUrl(id)}" style="width:100%;border-radius:12px" alt=""><a class="btn g" style="display:block;text-align:center;margin-top:10px;text-decoration:none" href="${fileUrl(id)}" target="_blank">BUKA UKURAN PENUH</a>`); }
 });
 
 /* ---------- komponen ---------- */

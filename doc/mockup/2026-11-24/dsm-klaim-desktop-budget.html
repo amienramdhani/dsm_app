@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup DSM Klaim desktop - Budget & Realisasi</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:"Inter","Segoe UI",system-ui,sans-serif;background:#e9edf3;color:#0f172a;font-size:13px;-webkit-font-smoothing:antialiased}
+.top{max-width:1440px;margin:0 auto;padding:14px 20px 6px}.top h1{font-size:17px;margin:0}.top p{margin:3px 0 8px;color:#64748b;font-size:12.5px}
+.pick{display:flex;gap:6px}.pick button{font:inherit;font-size:12px;font-weight:800;border:1px solid #cfdcef;background:#fff;color:#334155;border-radius:8px;padding:6px 12px;cursor:pointer}.pick button.on{background:#0b5fb3;color:#fff;border-color:#0b5fb3}
+.app{max-width:1440px;height:900px;margin:10px auto 30px;background:#f4f6fa;border-radius:14px;overflow:hidden;display:flex;box-shadow:0 10px 30px rgba(15,23,42,.15)}
+.sb{width:224px;background:#fff;border-right:1px solid #e3e9f2;flex:none;padding:16px 12px;font-size:12px}.sb b{display:block;font-size:14px;margin-bottom:14px}.sb div{padding:8px 10px;border-radius:9px;color:#334155;font-weight:600}.sb div.on{background:#eaf2fc;color:#0b5fb3}
+.mn{flex:1;display:flex;flex-direction:column;min-width:0}
+.hd{height:56px;background:#0b5fb3;color:#fff;display:flex;align-items:center;padding:0 24px;gap:12px}.hd small{display:block;font-size:11px;opacity:.8}.hd h2{margin:0;font-size:16px}.hd .sp{flex:1}
+.seg{display:flex;background:rgba(255,255,255,.15);border-radius:9px;padding:3px}.seg span{padding:6px 14px;font-size:12px;font-weight:800;border-radius:7px;color:#dbe7f7;cursor:pointer}.seg span.on{background:#fff;color:#0b5fb3}
+.ct{flex:1;overflow:auto;padding:16px 24px}.scr{display:none}.scr.on{display:block}
+.fb{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.in{border:1px solid #dbe3ee;border-radius:8px;height:32px;padding:0 10px;display:flex;align-items:center;font-size:12px;color:#475569;background:#fff;gap:6px}.in.s{width:240px;color:#94a3b8}
+.bt{height:32px;border-radius:8px;padding:0 13px;font-weight:800;font-size:12px;display:inline-flex;align-items:center;border:1px solid #dbe3ee;background:#fff;color:#334155}.ml{margin-left:auto}
+.tb2{display:flex;background:#e8edf3;border-radius:9px;padding:3px}.tb2 span{padding:6px 14px;font-size:12px;font-weight:800;border-radius:7px;color:#64748b}.tb2 span.on{background:#fff;color:#0f172a;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.kp{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:14px}.kp.k4{grid-template-columns:repeat(4,1fr)}
+.k{background:#fff;border:1px solid #e3e9f2;border-radius:12px;padding:12px 14px;display:flex;gap:12px;align-items:center}
+.k i{width:42px;height:42px;border-radius:11px;background:color-mix(in srgb,var(--c) 12%,#fff);color:var(--c);display:flex;align-items:center;justify-content:center;flex:none}.k svg{width:20px;height:20px}
+.k small{display:block;font-size:10.5px;font-weight:800;color:#64748b;letter-spacing:.04em}.k b{font-size:19px;display:block}.k span{font-size:11px;color:#64748b}
+.k.hl{background:#fff8e6;border-color:#f6e2b0}
+.use{background:#fff;border:1px solid #e3e9f2;border-radius:12px;padding:12px 14px;margin-bottom:14px}
+.use .r{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px}.use .r b{font-size:13px}
+.st{height:12px;border-radius:99px;background:#eef2f7;overflow:hidden;display:flex}.st i{display:block;height:100%}
+.lg{display:flex;gap:16px;margin-top:7px;font-size:11.5px;color:#475569}.lg span:before{content:"";display:inline-block;width:9px;height:9px;border-radius:3px;background:var(--c);margin-right:5px;vertical-align:-1px}
+.pn{background:#fff;border:1px solid #e3e9f2;border-radius:12px;overflow:hidden}
+.pn .h{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #eef2f7;font-weight:800;font-size:12.5px}.pn .h small{font-weight:600;color:#64748b}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#E6EBF1;text-align:left;font-size:10.5px;letter-spacing:.04em;padding:8px 12px;border-bottom:2px solid #15303F;white-space:nowrap}th.n{text-align:right}
+td{padding:8px 12px;border-bottom:1px solid #eef2f7;white-space:nowrap}td.n{text-align:right;font-family:Consolas,monospace}tbody tr:hover td{background:#f8fbff}
+.nm b{display:block}.nm small{color:#64748b;font-size:11px}
+.pb{display:flex;align-items:center;gap:8px;min-width:200px}.pb .b{flex:1;height:8px;border-radius:99px;background:#eef2f7;overflow:hidden;display:flex}.pb .b i{display:block;height:100%}.pb em{font-style:normal;font-weight:800;font-size:11.5px;width:38px;text-align:right}
+.neg{color:#D2453F;font-weight:800}
+.chip{font-size:10.5px;font-weight:800;border-radius:6px;padding:2px 7px;background:#f1f5f9;color:#475569;margin-right:3px}.chip.ba{background:#fde8e7;color:#B42318}
+tfoot td{background:#E6EBF1;font-weight:800;border-top:2px solid #15303F}
+/* realisasi */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}.g3{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.bd{padding:12px 14px}
+.dn{display:flex;gap:18px;align-items:center}.dn svg{width:130px;height:130px;flex:none}
+.dl{flex:1}.dl div{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px dashed #eef2f7;font-size:12px}.dl i{width:9px;height:9px;border-radius:3px;background:var(--c)}.dl b{margin-left:auto}.dl small{color:#64748b;width:42px;text-align:right}
+.hb div{margin-bottom:9px}.hb .r{display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px}.hb .t{height:8px;border-radius:99px;background:#eef2f7;overflow:hidden}.hb .t i{display:block;height:100%;background:var(--c)}
+.rk div{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:12px}.rk em{font-style:normal;width:22px;height:22px;border-radius:7px;background:#eaf2fc;color:#0b5fb3;font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center}.rk b{margin-left:auto}
+.tr{display:flex;align-items:flex-end;gap:14px;height:150px;padding:6px 4px 0}.tr div{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;color:#64748b}.tr i{width:100%;max-width:46px;border-radius:6px 6px 0 0;background:#3B78C2;display:block}.tr div.on i{background:#0b5fb3}.tr b{font-size:10.5px;color:#0f172a}
+.ba div{padding:7px 0;border-bottom:1px solid #f1f5f9;font-size:12px;display:flex;gap:8px}.ba b{margin-left:auto}
+.note{max-width:1440px;margin:0 auto 30px;padding:0 20px;font-size:12.5px;line-height:1.6;color:#334155}
+
+/* OPSI B budget */
+.ov{display:flex;gap:6px;margin:0 0 12px}.ov button{font:inherit;font-size:11.5px;font-weight:800;border:1px solid #cfdcef;background:#fff;color:#334155;border-radius:8px;padding:5px 11px;cursor:pointer}.ov button.on{background:#0f172a;color:#fff;border-color:#0f172a}
+.vA,.vB{display:none}.vA.on,.vB.on{display:block}
+.sum{display:flex;background:#fff;border:1px solid #e3e9f2;border-radius:12px;margin-bottom:14px;overflow:hidden}
+.sum div{flex:1;padding:12px 18px;border-right:1px solid #eef2f7;white-space:nowrap}.sum div:last-child{border-right:0}
+.sum small{display:block;font-size:10.5px;font-weight:800;color:#64748b;letter-spacing:.05em}.sum b{display:block;font-size:20px;margin-top:2px;font-variant-numeric:tabular-nums}.sum span{font-size:11px;color:#64748b}
+.sum .a b{color:#0b5fb3}.sum .o b{color:#D2453F}
+.cg{display:grid;grid-template-columns:1.6fr 1fr;gap:14px;margin-bottom:14px}
+.ch{padding:12px 14px}
+.lg2{display:flex;gap:14px;font-size:11.5px;color:#475569;margin-bottom:8px}.lg2 span:before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--c);margin-right:5px;vertical-align:-1px}
+.pct{font-weight:800}.pct.g{color:#12866A}.pct.a{color:#C27C00}.pct.r{color:#D2453F}
+.cs{display:flex;background:#f1f5f9;border-radius:8px;padding:2px}.cs button{font:inherit;font-size:10.5px;font-weight:800;border:0;background:none;color:#64748b;padding:4px 10px;border-radius:6px;cursor:pointer}.cs button.on{background:#fff;color:#0f172a;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.gg{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:6px 0}.gg div{text-align:center;border:1px solid #eef2f7;border-radius:12px;padding:12px 6px}.gg svg{width:86px;height:86px}.gg b{display:block;font-size:12px;margin-top:4px}.gg small{font-size:10.5px;color:#64748b}
+</style></head><body>
+<div class="top"><h1>DSM Klaim desktop · Monitoring Budget &amp; Realisasi</h1><p>Budget: ringkasan angka sejajar + satu bar pemakaian + tabel per orang. Realisasi: filter satu baris, 4 kartu angka putih (bukan gradasi), grafik ditata 2–3 kolom, semua terbuka (tidak perlu klik buka).</p>
+<div class="pick" id="pk"><button data-s="b" class="on">1 · BUDGET</button><button data-s="r">2 · REALISASI</button></div></div>
+<div class="app">
+<aside class="sb"><b>DSM Klaim</b><div>Antrean</div><div>BA</div><div>Semua</div><div class="on">Budget</div><div style="margin-top:10px">Notifikasi</div><div>Menu</div></aside>
+<div class="mn"><div class="hd"><div><small id="hs">READ-ONLY</small><h2 id="ht">Monitoring Budget</h2></div><div class="sp"></div><div class="seg"><span data-s="b" class="on">BUDGET</span><span data-s="r">REALISASI</span></div></div>
+<div class="ct">
+
+<div class="scr on" id="s-b">
+ <div class="ov" id="ov"><button data-v="A">A · TADI</button><button data-v="B" class="on">B · CHART</button></div><div class="vA">
+ <div class="kp">
+  <div class="k" style="--c:#1E5FB8"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 7h18v12H3zM3 11h18M7 15h3"/></svg></i><div><small>BUDGET</small><b>Rp 14.000.000</b><span>5 orang · Nov 2026</span></div></div>
+  <div class="k" style="--c:#12866A"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M20 6 9 17l-5-5"/></svg></i><div><small>TERPAKAI</small><b>Rp 649.100</b><span>4,6% dari budget</span></div></div>
+  <div class="k" style="--c:#F07A0C"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 7v5l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18"/></svg></i><div><small>DIPROSES</small><b>Rp 87.000</b><span>masih di approval</span></div></div>
+  <div class="k hl" style="--c:#9A6400"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 3v18M17 7H9.5a3 3 0 0 0 0 6h5a3 3 0 0 1 0 6H6"/></svg></i><div><small>AVAILABLE</small><b>Rp 13.263.900</b><span>sisa bisa dipakai</span></div></div>
+  <div class="k" style="--c:#D2453F"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 8v5M12 16h.01M10.3 3.9 2 18a2 2 0 0 0 1.7 3h16.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0"/></svg></i><div><small>OVER BUDGET</small><b>Rp 0</b><span>1 orang minus</span></div></div>
+ </div>
+ <div class="use"><div class="r"><span>Pemakaian budget seluruh tim</span><b>5,2%</b></div><div class="st"><i style="width:4.6%;background:#12866A"></i><i style="width:.6%;background:#F0A400"></i></div><div class="lg"><span style="--c:#12866A">Terpakai Rp 649.100</span><span style="--c:#F0A400">Diproses Rp 87.000</span><span style="--c:#e2e8f0">Available Rp 13.263.900</span></div></div>
+ <div class="fb"><div class="in s">⌕ Cari nama</div><div class="in">Region: Semua ▾</div><div class="in">Kategori: Semua ▾</div><div class="tb2"><span class="on">SEMUA</span><span>HAMPIR HABIS</span><span>MINUS</span></div><span class="bt ml">⬇ EXPORT</span></div>
+ <div class="pn"><table><thead><tr><th>NAMA</th><th>REGION</th><th class="n">BUDGET</th><th class="n">TERPAKAI</th><th class="n">DIPROSES</th><th class="n">AVAILABLE</th><th>PEMAKAIAN</th><th>KLAIM</th></tr></thead><tbody id="bb"></tbody>
+ <tfoot><tr><td>TOTAL · 5 orang</td><td></td><td class="n">14.000.000</td><td class="n">649.100</td><td class="n">87.000</td><td class="n">13.263.900</td><td></td><td>6 klaim</td></tr></tfoot></table></div>
+</div>
+
+ </div>
+ <div class="vB on">
+  <div class="sum"><div><small>BUDGET</small><b>Rp 14.000.000</b><span>5 orang · Nov 2026</span></div><div><small>TERPAKAI</small><b>Rp 649.100</b><span>4,6%</span></div><div><small>DIPROSES</small><b>Rp 87.000</b><span>0,6%</span></div><div class="a"><small>AVAILABLE</small><b>Rp 13.263.900</b><span>94,8% sisa</span></div><div class="o"><small>OVER BUDGET</small><b>Rp 370.000</b><span>1 orang minus</span></div></div>
+  <div class="cg">
+   <div class="pn"><div class="h"><span id="cht">% pemakaian budget per region <small style="font-weight:600;color:#64748b">· klik kolom untuk saring tabel</small></span><span class="cs" id="cs"><button data-c="1" class="on">KOLOM</button><button data-c="2">GAUGE</button></span></div><div class="ch">
+    <div id="c1"><svg viewBox="0 0 640 250" width="100%" font-family="Inter,Segoe UI" font-size="11" id="col"></svg></div>
+    <div id="c2" style="display:none"><div class="gg" id="gg"></div></div></div></div>
+   <div class="pn"><div class="h">Pemakaian per kategori</div><div class="ch">
+    <div class="dn"><svg viewBox="0 0 42 42"><circle cx="21" cy="21" r="15.9" fill="none" stroke="#eef2f7" stroke-width="7"/><circle cx="21" cy="21" r="15.9" fill="none" stroke="#8268C9" stroke-width="7" stroke-dasharray="50 50" stroke-dashoffset="25"/><circle cx="21" cy="21" r="15.9" fill="none" stroke="#C97A4A" stroke-width="7" stroke-dasharray="28 72" stroke-dashoffset="-25"/><circle cx="21" cy="21" r="15.9" fill="none" stroke="#3B78C2" stroke-width="7" stroke-dasharray="22 78" stroke-dashoffset="-53"/><text x="21" y="20" text-anchor="middle" font-size="4" font-weight="800">Rp 736rb</text><text x="21" y="25" text-anchor="middle" font-size="2.8" fill="#64748b">terpakai+diproses</text></svg>
+     <div class="dl"><div style="--c:#8268C9"><i></i>Perdin<b>Rp 370.000</b><small>50%</small></div><div style="--c:#C97A4A"><i></i>Entertain<b>Rp 207.000</b><small>28%</small></div><div style="--c:#3B78C2"><i></i>Transportasi<b>Rp 159.100</b><small>22%</small></div><div style="--c:#3E9486"><i></i>Operasional<b>Rp 0</b><small>0%</small></div></div></div></div></div>
+  </div>
+  <div class="fb"><div class="in s">⌕ Cari nama</div><div class="in">Region: Semua ▾</div><div class="in">Kategori: Semua ▾</div><div class="tb2"><span class="on">SEMUA</span><span>HAMPIR HABIS</span><span>MINUS</span></div><span class="bt ml">⬇ EXPORT</span></div>
+  <div class="pn"><table><thead><tr><th>NAMA</th><th>JABATAN</th><th>REGION</th><th class="n">BUDGET</th><th class="n">TERPAKAI</th><th class="n">DIPROSES</th><th class="n">AVAILABLE</th><th class="n">PEMAKAIAN</th><th class="n">KLAIM</th><th class="n">BA</th></tr></thead><tbody id="bb2"></tbody>
+  <tfoot><tr><td>TOTAL · 5 orang</td><td></td><td></td><td class="n">14.000.000</td><td class="n">649.100</td><td class="n">87.000</td><td class="n">13.263.900</td><td class="n">5,2%</td><td class="n">6</td><td class="n">3</td></tr></tfoot></table></div>
+ </div>
+<div class="scr" id="s-r">
+ <div class="fb"><div class="in">Rentang tanggal ▾</div><div class="in">01/11/2026 – 24/11/2026</div><div class="in">Badan usaha: Semua ▾</div><div class="tb2"><span class="on">RINGKASAN</span><span>TREN</span><span>BUDGET</span><span>DETAIL</span></div><span class="bt ml">⬇ EXPORT</span></div>
+ <div class="sum"><div><small>TOTAL REALISASI</small><b>Rp 649.100</b><span>vs periode lalu · baru</span></div><div><small>KLAIM TERTRANSFER</small><b>3 klaim</b><span>rata-rata Rp 216.366</span></div><div><small>KLAIM MEMAKAI BA</small><b>1 (33%)</b><span>Rp 69.100</span></div><div><small>PETTY CASH BELUM DIPERTANGGUNGJAWABKAN</small><b>Rp 0</b><span>0 petty cash</span></div></div>
+ <div class="g3">
+  <div class="pn"><div class="h">Komposisi kategori</div><div class="bd dn"><svg viewBox="0 0 42 42"><circle cx="21" cy="21" r="15.9" fill="none" stroke="#eef2f7" stroke-width="7"/><circle cx="21" cy="21" r="15.9" fill="none" stroke="#3B78C2" stroke-width="7" stroke-dasharray="57 43" stroke-dashoffset="25"/><circle cx="21" cy="21" r="15.9" fill="none" stroke="#8268C9" stroke-width="7" stroke-dasharray="32 68" stroke-dashoffset="-32"/><circle cx="21" cy="21" r="15.9" fill="none" stroke="#C97A4A" stroke-width="7" stroke-dasharray="11 89" stroke-dashoffset="-64"/><text x="21" y="20" text-anchor="middle" font-size="4" font-weight="800">Rp 649rb</text><text x="21" y="25" text-anchor="middle" font-size="2.8" fill="#64748b">3 kategori</text></svg>
+   <div class="dl"><div style="--c:#3B78C2"><i></i>Perdin<b>Rp 370.000</b><small>57%</small></div><div style="--c:#8268C9"><i></i>Entertain<b>Rp 207.000</b><small>32%</small></div><div style="--c:#C97A4A"><i></i>Transportasi<b>Rp 72.100</b><small>11%</small></div></div></div></div>
+  <div class="pn"><div class="h">Per badan usaha</div><div class="bd dn"><svg viewBox="0 0 42 42"><circle cx="21" cy="21" r="15.9" fill="none" stroke="#eef2f7" stroke-width="7"/><circle cx="21" cy="21" r="15.9" fill="none" stroke="#1E5FB8" stroke-width="7" stroke-dasharray="72 28" stroke-dashoffset="25"/><circle cx="21" cy="21" r="15.9" fill="none" stroke="#12866A" stroke-width="7" stroke-dasharray="28 72" stroke-dashoffset="-47"/><text x="21" y="20" text-anchor="middle" font-size="4" font-weight="800">2 BU</text><text x="21" y="25" text-anchor="middle" font-size="2.8" fill="#64748b">badan usaha</text></svg>
+   <div class="dl"><div style="--c:#1E5FB8"><i></i>PT. MSI<b>Rp 467.000</b><small>72%</small></div><div style="--c:#12866A"><i></i>RISM<b>Rp 182.100</b><small>28%</small></div></div></div></div>
+  <div class="pn"><div class="h">Top pemohon</div><div class="bd rk"><div><em>1</em>Rudi Hartono (uji)<b>Rp 370.000</b></div><div><em>2</em>Budi Santoso (uji)<b>Rp 202.000</b></div><div><em>3</em>Joko Widodo (uji)<b>Rp 77.100</b></div></div></div>
+ </div>
+ <div class="g2">
+  <div class="pn"><div class="h">Tren realisasi per minggu <small>Nov 2026 · klik minggu untuk lihat detail</small></div><div class="bd"><div class="tr"><div><b>72rb</b><i style="height:20%"></i>M1</div><div><b>207rb</b><i style="height:55%"></i>M2</div><div class="on"><b>370rb</b><i style="height:100%"></i>M3</div><div><b>0</b><i style="height:2%"></i>M4</div></div></div></div>
+  <div class="pn"><div class="h">Sorotan BA &amp; petty cash</div><div class="bd ba"><div><span class="chip ba">BA</span>KLM-2611-0005 · Budi Santoso · Nota di luar hari normal<b>Rp 69.100</b></div><div><span class="chip">PC</span>Tidak ada petty cash terbuka<b>—</b></div></div></div>
+ </div>
+</div>
+
+</div></div></div>
+<div class="note"><b>Catatan:</b> angka &amp; isi sama dengan yang sekarang, hanya tata letak. Kartu gradasi Realisasi diganti strip angka putih (tanpa kartu). Per badan usaha jadi donut (tanpa bar). Panel lipat (Komposisi, Per badan usaha, Top pemohon, Sorotan BA, Petty cash) dibuka semua dan disusun berdampingan. Tab Tren/Budget/Detail mengikuti gaya yang sama. Tampilan HP tidak berubah.</div>
+<script>
+const B=[['Budi Santoso (uji)','RGM','Cirebon',3500000,202000,88000,3,2],['Dewi Lestari (uji)','Sales','Cirebon',3500000,0,0,0,0],['Eko Prasetyo (uji)','Sales','Cirebon',3500000,0,0,0,0],['Joko Widodo (uji)','ASM','Cirebon',3500000,77100,0,2,1],['Rudi Hartono (uji)','Sales','Jakarta',0,370000,0,1,0]];
+const f=n=>n.toLocaleString('id-ID');
+document.getElementById('bb').innerHTML=B.map(r=>{const av=r[3]-r[4]-r[5],p=r[3]?Math.round((r[4]+r[5])/r[3]*100):100,c=av<0?'#D2453F':p>=85?'#F0A400':'#12866A';return `<tr><td class="nm"><b>${r[0]}</b><small>${r[1]}</small></td><td>${r[2]}</td><td class="n">${f(r[3])}</td><td class="n">${f(r[4])}</td><td class="n">${f(r[5])}</td><td class="n ${av<0?'neg':''}"><b>${f(av)}</b></td><td><div class="pb"><div class="b"><i style="width:${Math.min(100,r[3]?r[4]/r[3]*100:100)}%;background:${av<0?'#D2453F':'#12866A'}"></i><i style="width:${r[3]?r[5]/r[3]*100:0}%;background:#F0A400"></i></div><em style="color:${c}">${av<0?'MINUS':p+'%'}</em></div></td><td>${r[6]} klaim${r[7]?` <span class="chip ba">${r[7]} BA</span>`:''}</td></tr>`}).join('');
+
+document.getElementById('bb2').innerHTML=B.map(r=>{const av=r[3]-r[4]-r[5],p=r[3]?Math.round((r[4]+r[5])/r[3]*100):0,c=av<0?'r':p>=85?'a':'g';return `<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td class="n">${f(r[3])}</td><td class="n">${f(r[4])}</td><td class="n">${f(r[5])}</td><td class="n ${av<0?'neg':''}"><b>${f(av)}</b></td><td class="n"><span class="pct ${c}">${av<0?'MINUS':p+'%'}</span></td><td class="n">${r[6]}</td><td class="n">${r[7]||'-'}</td></tr>`}).join('');
+/*hb*/0&&(B.map((r,i)=>{const y=14+i*43,sc=120/1e6;return `<text x="0" y="${y+15}" fill="#0f172a" font-weight="700">${r[0].replace(' (uji)','')}</text><rect x="140" y="${y}" width="${r[3]*sc}" height="10" rx="3" fill="#CBD5E1"/><rect x="140" y="${y+13}" width="${r[4]*sc}" height="10" rx="3" fill="${r[3]-r[4]-r[5]<0?'#D2453F':'#1E5FB8'}"/><rect x="${140+r[4]*sc}" y="${y+13}" width="${r[5]*sc}" height="10" rx="0" fill="#F0A400"/><text x="${146+Math.max(r[3],r[4]+r[5])*sc}" y="${y+21}" fill="#64748b" font-size="10">${f(r[4]+r[5])}</text>`}).join(''));
+document.querySelectorAll('#ov button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#ov button').forEach(x=>x.classList.toggle('on',x===b));document.querySelector('.vA').classList.toggle('on',b.dataset.v=='A');document.querySelector('.vB').classList.toggle('on',b.dataset.v=='B')});
+
+(()=>{const RG=[['Cirebon',8,28e6,21.8e6],['Jakarta',12,42e6,39.1e6],['Bandung',10,35e6,18.2e6],['Semarang',7,24.5e6,25.3e6],['Surabaya',9,31.5e6,14.9e6],['Jawa Timur',4,14e6,6.3e6],['Banten',5,17.5e6,15.4e6]];const P=RG.map(r=>({n:r[0],o:r[1],b:r[2],u:r[3],p:Math.round(r[3]/r[2]*100)})).sort((a,b)=>b.p-a.p);
+const col=c=>c.p>=100?'#D2453F':c.p>=85?'#F0A400':'#1E5FB8';
+let h='';[0,25,50,75,100].forEach(v=>{const y=210-v*1.8;h+=`<line x1="40" x2="630" y1="${y}" y2="${y}" stroke="#eef2f7"/><text x="32" y="${y+4}" text-anchor="end" fill="#94a3b8" font-size="10">${v}%</text>`});
+h+=`<line x1="40" x2="630" y1="${210-85*1.8}" y2="${210-85*1.8}" stroke="#F0A400" stroke-dasharray="4 3"/><text x="630" y="${210-85*1.8-5}" text-anchor="end" fill="#C27C00" font-size="10" font-weight="700">batas waspada 85%</text>`;
+const w=590/P.length;P.forEach((c,k)=>{const v=c.p==null?100:Math.min(c.p,100),x=40+k*w+w*.28,bw=w*.44,hh=Math.max(v*1.8,2);h+=`<rect x="${x}" y="${210-hh}" width="${bw}" height="${hh}" rx="5" fill="${col(c)}" style="cursor:pointer"><title>${c.n}: ${c.u.toLocaleString('id-ID')} dari ${c.b.toLocaleString('id-ID')}</title></rect><text x="${x+bw/2}" y="${204-hh}" text-anchor="middle" font-weight="800" fill="${col(c)}">${c.p>=100?'OVER '+c.p+'%':c.p+'%'}</text><text x="${x+bw/2}" y="228" text-anchor="middle" fill="#0f172a" font-weight="700">${c.n}</text><text x="${x+bw/2}" y="242" text-anchor="middle" fill="#94a3b8" font-size="10">${c.o} orang · ${(c.u/1e6).toLocaleString('id-ID',{maximumFractionDigits:1})} jt</text>`});
+document.getElementById('col').innerHTML=h;
+document.getElementById('gg').innerHTML=P.map(c=>{const v=c.p==null?100:Math.min(c.p,100);return `<div><svg viewBox="0 0 42 42"><circle cx="21" cy="21" r="16" fill="none" stroke="#eef2f7" stroke-width="5"/><circle cx="21" cy="21" r="16" fill="none" stroke="${col(c)}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${v} ${100-v}" pathLength="100" transform="rotate(-90 21 21)"/><text x="21" y="23.5" text-anchor="middle" font-size="7" font-weight="800" fill="${col(c)}">${c.p==null?'!':c.p+'%'}</text></svg><b>${c.n}</b><small>${c.o} orang · ${(c.u/1e6).toLocaleString('id-ID',{maximumFractionDigits:1})} / ${(c.b/1e6).toLocaleString('id-ID',{maximumFractionDigits:1})} jt</small></div>`}).join('');
+document.querySelectorAll('#cs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#cs button').forEach(x=>x.classList.toggle('on',x===b));c1.style.display=b.dataset.c=='1'?'':'none';c2.style.display=b.dataset.c=='2'?'':'none'});})();
+const H={b:['READ-ONLY','Monitoring Budget'],r:['F05 · READ-ONLY','Realisasi']};
+function go(s){document.querySelectorAll('.scr').forEach(e=>e.classList.toggle('on',e.id=='s-'+s));document.querySelectorAll('[data-s]').forEach(e=>e.classList.toggle('on',e.dataset.s==s));hs.textContent=H[s][0];ht.textContent=H[s][1];}
+document.querySelectorAll('[data-s]').forEach(e=>e.onclick=()=>go(e.dataset.s));
+</script></body></html>

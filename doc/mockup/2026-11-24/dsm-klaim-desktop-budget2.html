@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup DSM Klaim desktop - Monitoring Budget (gaya Realisasi)</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:"Inter","Segoe UI",system-ui,sans-serif;background:#e9edf3;color:#0f172a;font-size:12px;-webkit-font-smoothing:antialiased}
+.top{max-width:1440px;margin:0 auto;padding:14px 20px 6px}.top h1{font-size:17px;margin:0}.top p{margin:3px 0 0;color:#64748b;font-size:12.5px}
+.app{max-width:1440px;margin:10px auto 30px;background:#f4f6fa;border-radius:14px;overflow:hidden;display:flex;box-shadow:0 10px 30px rgba(15,23,42,.15)}
+.sb{width:210px;background:#fff;border-right:1px solid #e3e9f2;flex:none;padding:14px 10px}.sb b{display:block;font-size:14px;margin-bottom:12px}.sb div{padding:7px 10px;border-radius:8px;color:#334155;font-weight:600}.sb div.on{background:#eaf2fc;color:#0b5fb3}
+.mn{flex:1;min-width:0}
+.hd{height:50px;background:#0b5fb3;color:#fff;display:flex;align-items:center;padding:0 18px;gap:12px}.hd small{display:block;font-size:10.5px;opacity:.8}.hd h2{margin:0;font-size:15px}.hd .sp{flex:1}
+.sg{display:flex;background:rgba(255,255,255,.15);border-radius:8px;padding:2px}.sg span{padding:5px 12px;font-size:11.5px;font-weight:800;border-radius:6px;color:#dbe7f7}.sg span.on{background:#fff;color:#0b5fb3}
+.ct{padding:10px 14px 14px}
+.fb{display:flex;gap:6px;align-items:center;margin-bottom:8px}
+.in{border:1px solid #dbe3ee;border-radius:7px;height:28px;padding:0 9px;display:flex;align-items:center;font-size:11.5px;color:#334155;background:#fff}.in.s{width:200px;color:#94a3b8}
+.seg{display:flex;background:#e8edf3;border-radius:7px;padding:2px}.seg span{padding:4px 10px;font-size:10.5px;font-weight:800;border-radius:5px;color:#64748b}.seg span.on{background:#fff;color:#0f172a}
+.bt{height:28px;border-radius:7px;padding:0 11px;font-weight:800;font-size:11px;display:inline-flex;align-items:center;border:1px solid #dbe3ee;background:#fff}.ml{margin-left:auto}
+.kp{display:grid;grid-template-columns:repeat(6,1fr);background:#fff;border:1px solid #e3e9f2;border-radius:10px;margin-bottom:8px;overflow:hidden}
+.kp div{padding:7px 12px;border-right:1px solid #eef2f7;white-space:nowrap}.kp div:last-child{border-right:0}
+.kp small{display:block;font-size:9.5px;font-weight:800;color:#64748b;letter-spacing:.04em}.kp b{font-size:15px;font-variant-numeric:tabular-nums}.kp span{display:block;font-size:10.5px;color:#64748b}
+.kp .bl b{color:#0b5fb3}.kp .rd b{color:#D2453F}.kp .hl{background:#fff8e6}
+.gr{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;align-items:stretch}.s2{grid-column:span 2}.s3{grid-column:span 3}
+.pn{background:#fff;border:1px solid #e3e9f2;border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+.pn .h{display:flex;align-items:center;gap:6px;padding:6px 10px;border-bottom:1px solid #eef2f7;font-weight:800;font-size:11.5px;background:#f8fafc}.pn .h small{font-weight:600;color:#64748b}
+.bd{padding:7px 10px;flex:1}
+table{width:100%;border-collapse:collapse;font-size:11.5px}
+th{background:#E6EBF1;text-align:left;font-size:9.5px;letter-spacing:.04em;padding:5px 8px;border-bottom:2px solid #15303F;white-space:nowrap}th.n{text-align:right}
+td{padding:4px 8px;border-bottom:1px solid #eef2f7;white-space:nowrap}td.n{text-align:right;font-variant-numeric:tabular-nums}
+tbody tr{cursor:pointer}tbody tr:hover td{background:#f8fbff}
+tfoot td{background:#E6EBF1;font-weight:800;border-top:2px solid #15303F}
+.p{font-weight:800}.p.g{color:#12866A}.p.a{color:#C27C00}.p.r{color:#D2453F}.neg{color:#D2453F;font-weight:800}.mut{color:#94a3b8}
+.rn{display:inline-flex;align-items:center;gap:6px;font-weight:800;color:var(--bc)}.rn i{width:4px;height:14px;border-radius:2px;background:var(--bc)}
+tr.r1 td{border-top:2px solid var(--bc)}tbody tr.r1:first-child td{border-top:0}
+tr.sub td{background:color-mix(in srgb,var(--bc) 7%,#fff);font-weight:800;border-bottom:1px solid color-mix(in srgb,var(--bc) 25%,#fff)}tr.sub td:first-child{color:var(--bc)}
+.dn{display:flex;gap:10px;align-items:center}.dn svg{width:84px;height:84px;flex:none}
+.dl{flex:1}.dl div{display:flex;align-items:center;padding:3px 0;border-bottom:1px dashed #eef2f7}.dl b{margin-left:auto}.dl small{color:#64748b;width:32px;text-align:right}
+.dot{display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--c);margin-right:6px}
+.sub2{margin:7px 0 3px;font-weight:800;font-size:10px;color:#64748b}
+.at div{display:flex;align-items:center;gap:7px;padding:3px 0;border-bottom:1px solid #f1f5f9}.at b{margin-left:auto}
+.tg{font-size:9.5px;font-weight:800;border-radius:5px;padding:1px 6px}.tg.r{background:#fde8e7;color:#B42318}.tg.a{background:#fff4d6;color:#9A6400}
+.mini{display:inline-block;width:46px;height:5px;border-radius:9px;background:#eef2f7;vertical-align:middle;margin-left:6px;overflow:hidden}.mini i{display:block;height:100%}
+.note{max-width:1440px;margin:0 auto 30px;padding:0 20px;font-size:12.5px;line-height:1.6;color:#334155}
+</style></head><body>
+<div class="top"><h1>DSM Klaim desktop · Monitoring Budget (gaya sama dengan Realisasi)</h1><p>Chart kolom region dihapus. Diganti tabel ringkas per region + donut status + daftar "perlu perhatian", lalu tabel per orang yang dikelompokkan per region (pembeda warna + subtotal), padat seperti DSM.</p></div>
+<div class="app">
+<aside class="sb"><b>DSM Klaim</b><div>Antrean</div><div>BA</div><div>Semua</div><div class="on">Budget</div><div>Notifikasi</div><div>Menu</div></aside>
+<div class="mn"><div class="hd"><div><small>READ-ONLY</small><h2>Monitoring Budget</h2></div><div class="sp"></div><div class="sg"><span class="on">BUDGET</span><span>REALISASI</span></div></div>
+<div class="ct">
+ <div class="fb"><div class="in">November 2026</div><div class="in">Region: Semua ▾</div><div class="in">Kategori: Semua ▾</div><div class="in s">⌕ Cari nama</div><div class="seg"><span class="on">SEMUA</span><span>HAMPIR HABIS</span><span>MINUS</span></div><span class="bt ml">⬇ EXPORT</span></div>
+ <div class="kp">
+  <div><small>BUDGET</small><b>Rp 14.000.000</b><span>5 orang · 2 region</span></div>
+  <div><small>TERPAKAI</small><b>Rp 649.100</b><span>4,6% dari budget</span></div>
+  <div><small>DIPROSES</small><b>Rp 87.000</b><span>masih di approval</span></div>
+  <div class="bl"><small>AVAILABLE</small><b>Rp 13.263.900</b><span>94,7% sisa</span></div>
+  <div class="rd"><small>OVER BUDGET</small><b>Rp 370.000</b><span>1 orang minus</span></div>
+  <div class="hl"><small>PERLU PERHATIAN</small><b>1 orang</b><span>0 hampir habis · 1 minus</span></div>
+ </div>
+ <div class="gr">
+  <div class="pn s2"><div class="h">Pemakaian per region <small>klik baris untuk saring tabel orang</small></div>
+   <table><thead><tr><th>REGION</th><th class="n">ORANG</th><th class="n">BUDGET</th><th class="n">TERPAKAI</th><th class="n">DIPROSES</th><th class="n">AVAILABLE</th><th class="n">PEMAKAIAN</th><th class="n">MINUS</th></tr></thead><tbody>
+    <tr><td><span class="rn" style="--bc:#1E5FB8"><i></i>Cirebon</span></td><td class="n">4</td><td class="n">14.000.000</td><td class="n">279.100</td><td class="n">87.000</td><td class="n"><b>13.633.900</b></td><td class="n"><span class="p g">2,6%</span><span class="mini"><i style="width:3%;background:#12866A"></i></span></td><td class="n mut">0</td></tr>
+    <tr><td><span class="rn" style="--bc:#12866A"><i></i>Jakarta</span></td><td class="n">1</td><td class="n">0</td><td class="n">370.000</td><td class="n">0</td><td class="n neg">-370.000</td><td class="n"><span class="p r">TANPA BUDGET</span></td><td class="n"><span class="tg r">1</span></td></tr>
+   </tbody><tfoot><tr><td>TOTAL · 2 region</td><td class="n">5</td><td class="n">14.000.000</td><td class="n">649.100</td><td class="n">87.000</td><td class="n">13.263.900</td><td class="n">5,3%</td><td class="n">1</td></tr></tfoot></table></div>
+  <div class="pn"><div class="h">Status pemakaian</div><div class="bd">
+   <div class="dn"><svg viewBox="0 0 42 42"><circle cx="21" cy="21" r="15.9" fill="none" stroke="#eef2f7" stroke-width="7"/><circle cx="21" cy="21" r="15.9" fill="none" stroke="#12866A" stroke-width="7" stroke-dasharray="80 20" stroke-dashoffset="25"/><circle cx="21" cy="21" r="15.9" fill="none" stroke="#D2453F" stroke-width="7" stroke-dasharray="20 80" stroke-dashoffset="-55"/><text x="21" y="22.5" text-anchor="middle" font-size="5.5" font-weight="800">5</text></svg>
+   <div class="dl"><div><span class="dot" style="--c:#12866A"></span>Aman<b>4 orang</b><small>80%</small></div><div><span class="dot" style="--c:#F0A400"></span>Hampir habis ≥85%<b>0 orang</b><small>0%</small></div><div><span class="dot" style="--c:#D2453F"></span>Minus<b>1 orang</b><small>20%</small></div></div></div>
+   <div class="sub2">PERLU PERHATIAN</div>
+   <div class="at"><div><span class="tg r">MINUS</span>Rudi Hartono (uji) · Jakarta<b class="neg">-370.000</b></div></div>
+  </div></div>
+ </div>
+ <div class="gr">
+  <div class="pn s3"><div class="h">Budget per orang <small>dikelompokkan per region · klik baris untuk rincian klaim</small></div>
+   <table><thead><tr><th>REGION</th><th>NAMA</th><th>JABATAN</th><th class="n">BUDGET</th><th class="n">TERPAKAI</th><th class="n">DIPROSES</th><th class="n">AVAILABLE</th><th class="n">PEMAKAIAN</th><th class="n">KLAIM</th><th class="n">BA</th></tr></thead><tbody>
+    <tr class="r1" style="--bc:#1E5FB8"><td><span class="rn"><i></i>Cirebon</span></td><td><b>Budi Santoso (uji)</b></td><td>RGM</td><td class="n">3.500.000</td><td class="n">210.000</td><td class="n">80.000</td><td class="n"><b>3.210.000</b></td><td class="n"><span class="p g">8%</span></td><td class="n">3</td><td class="n">2</td></tr>
+    <tr><td></td><td><b>Joko Widodo (uji)</b></td><td>ASM</td><td class="n">3.500.000</td><td class="n">69.100</td><td class="n">7.000</td><td class="n"><b>3.423.900</b></td><td class="n"><span class="p g">2%</span></td><td class="n">2</td><td class="n">1</td></tr>
+    <tr><td></td><td><b>Dewi Lestari (uji)</b></td><td>Sales</td><td class="n">3.500.000</td><td class="n">0</td><td class="n">0</td><td class="n"><b>3.500.000</b></td><td class="n"><span class="p g">0%</span></td><td class="n">0</td><td class="n mut">-</td></tr>
+    <tr><td></td><td><b>Eko Prasetyo (uji)</b></td><td>Sales</td><td class="n">3.500.000</td><td class="n">0</td><td class="n">0</td><td class="n"><b>3.500.000</b></td><td class="n"><span class="p g">0%</span></td><td class="n">0</td><td class="n mut">-</td></tr>
+    <tr class="sub" style="--bc:#1E5FB8"><td colspan="3">Subtotal Cirebon · 4 orang</td><td class="n">14.000.000</td><td class="n">279.100</td><td class="n">87.000</td><td class="n">13.633.900</td><td class="n"><span class="p g">2,6%</span></td><td class="n">5</td><td class="n">3</td></tr>
+    <tr class="r1" style="--bc:#12866A"><td><span class="rn"><i></i>Jakarta</span></td><td><b>Rudi Hartono (uji)</b></td><td>Sales</td><td class="n">0</td><td class="n">370.000</td><td class="n">0</td><td class="n neg">-370.000</td><td class="n"><span class="p r">MINUS</span></td><td class="n">1</td><td class="n mut">-</td></tr>
+    <tr class="sub" style="--bc:#12866A"><td colspan="3">Subtotal Jakarta · 1 orang</td><td class="n">0</td><td class="n">370.000</td><td class="n">0</td><td class="n neg">-370.000</td><td class="n"><span class="p r">MINUS</span></td><td class="n">1</td><td class="n mut">-</td></tr>
+   </tbody><tfoot><tr><td colspan="3">TOTAL · 5 orang</td><td class="n">14.000.000</td><td class="n">649.100</td><td class="n">87.000</td><td class="n">13.263.900</td><td class="n">5,3%</td><td class="n">6</td><td class="n">3</td></tr></tfoot></table></div>
+ </div>
+</div></div></div>
+<div class="note"><b>Catatan:</b> semua filter jadi satu baris di atas (sama dengan Realisasi). Angka dari data yang sudah ada; tidak ada data baru. Urutan orang dalam region: pemakaian tertinggi dulu. Tampilan HP tidak berubah.</div>
+</body></html>

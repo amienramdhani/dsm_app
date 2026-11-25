@@ -14,27 +14,45 @@ function pickFiles(cb, multiple = true, accept = 'image/*,application/pdf') {
 const fmtN = v => v === '' || v == null ? '' : Number(v).toLocaleString('id-ID');
 const num = v => parseInt(String(v).replace(/[^\d-]/g, ''), 10) || 0;
 
-/* ---------- P03 pilih kategori dan jenis ---------- */
+/* ---------- P03 pilih kategori dan jenis (retouch 2026-11-24, mockup doc/mockup/2026-11-24/dsm-klaim-ajukan-opsi.html B2) ----------
+   Ketuk = centang (bisa beberapa dalam satu kategori; Perdin hanya satu), lalu tombol LANJUT AJUKAN. */
+const KCAT = { Transportasi: ['#1E5FB8', 'fuel'], Entertain: ['#C25A12', 'food'], Perdin: ['#0E7C6B', 'bag'], Operasional: ['#6D3FD8', 'build'] };
+const KPIC = { fuel: 'M4 20V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v15M3 20h12M6 8h6M14 9h2a2 2 0 0 1 2 2v5a1.5 1.5 0 0 0 3 0V8l-3-3', food: 'M5 3v8a3 3 0 0 0 6 0V3M8 3v18M16 21V3c3 1 4 4 4 8h-4', bag: 'M4 7h16v13H4zM9 7V5a3 3 0 0 1 6 0v2M4 12h16', build: 'M3 21h18M5 21V7l7-4 7 4v14M9 9h1M14 9h1M9 13h1M14 13h1M10 21v-4h4v4',
+  toll: 'M4 20 8 4M20 20 16 4M12 6v2M12 11v2M12 16v2', park: 'M4 4h16v16H4zM10 16V8h3a2.5 2.5 0 0 1 0 5h-3', car: 'M5 17h14M6 17v2M18 17v2M4 13l2-6h12l2 6v4H4z', tick: 'M4 8a2 2 0 0 0 0 4v4h16v-4a2 2 0 0 0 0-4V4H4zM14 4v12', meet: 'M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6M3 20c0-3 3-5 6-5s6 2 6 5M17 11.5a2.5 2.5 0 1 0 0-5M15 15c3 0 6 1.5 6 5',
+  cake: 'M4 21h16v-8H4zM4 16c2 1 4 1 4 0s2-1 4 0 4 1 4 0 4 1 4 0M12 13V9M12 6a1 1 0 0 0 0-2', flower: 'M12 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6M12 11v10M12 16c-3 0-5-2-5-4M12 18c3 0 5-2 5-4', gift: 'M3 8h18v5H3zM5 13v8h14v-8M12 8v13M12 8c-2-4-6-3-4 0M12 8c2-4 6-3 4 0', plane: 'M3 13l18-7-5 14-4-6-9-1z', bed: 'M3 18V7M3 13h18v5M7 13V10h5v3',
+  box: 'M3 8l9-5 9 5v8l-9 5-9-5zM3 8l9 5 9-5M12 13v8', wrench: 'M14 6a4 4 0 0 0-5 5L3 17l4 4 6-6a4 4 0 0 0 5-5l-3 3-3-3z', dots: 'M6 12h.01M12 12h.01M18 12h.01', search: 'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14M20 20l-4-4' };
+const KTYPE = { BBM: 'fuel', Tol: 'toll', Parkir: 'park', 'Ojol & taksi online': 'car', 'Tiket perjalanan': 'tick', Meeting: 'meet', 'Makan-makan': 'food', 'Kue ulang tahun': 'cake', 'Karangan bunga': 'flower', 'Reward / Hadiah': 'gift', Perdin: 'plane', 'Uang makan': 'food', Kost: 'bed', 'Penginapan / Hotel': 'bed', 'ATK & perlengkapan kantor': 'box', 'Ongkir & kurir': 'box', 'Servis kendaraan': 'wrench', 'Operasional lainnya': 'dots' };
+const kpic = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${KPIC[k] || KPIC.dots}"/></svg>`;
 R.new = async () => {
   const div = QP.get('div') === '1'; const b = await api('budget');
   const cats = ['Transportasi', 'Entertain', 'Perdin', 'Operasional'];
   const en = c => div || (b.budget[c] && b.budget[c].enabled);
-  shell(hero(div ? 'Ajukan untuk divisi' : 'Ajukan klaim', div ? 'ADMIN · DI LUAR SALES' : 'PEMOHON', { back: true }) +
-    `<div class="sec">${b.blocked ? `<div class="note red">Pengajuan diblokir: petty cash ${esc(b.blocked.number)} melewati tenggat.</div>` : ''}${cats.map(c => { const types = S.L.types.filter(t => t.category === c && t.name !== 'Reimburse petty cash'); const bb = b.budget[c];
-      return `<div class="card" style="${en(c) ? '' : 'opacity:.5'}"><div class="row"><b>${CATIC[c]} ${c}</b>${!div && bb && bb.enabled && !bb.none ? `<span class="mut" style="${bb.available < 0 ? 'color:#D2453F;font-weight:800' : ''}">Sisa ${rp(bb.available)}</span>` : ''}</div>
-      ${en(c) ? `<div class="chips">${types.map(t => `<span class="chip" data-new="${t.id}" data-cat="${c}">${esc(t.name)}</span>`).join('')}</div>${types.length > 1 && c !== 'Perdin' ? `<div class="gab" data-gab="${c}"><span>＋ Gabung beberapa jenis dalam satu klaim</span></div>` : ''}` : '<div class="mut" style="margin-top:6px">Belum diaktifkan oleh Admin.</div>'}</div>`; }).join('')}
-      <div id="gabbar" class="hide"><div class="mut" id="gabinfo" style="text-align:center;margin-bottom:8px"></div><div class="two"><button class="btn g" id="gabx">BATAL</button><button class="btn" id="gabok">LANJUT</button></div></div></div>`, { hero: false });
+  const single = c => c === 'Perdin';
+  shell(hero(div ? 'Ajukan untuk divisi' : 'Ajukan klaim', div ? 'ADMIN · DI LUAR SALES' : 'PEMOHON', { back: true, small: true }) +
+    `<div class="sec kpwrap">${b.blocked ? `<div class="note red">Pengajuan diblokir: petty cash ${esc(b.blocked.number)} melewati tenggat.</div>` : ''}
+    <label class="kpsr">${kpic('search')}<input id="ksr" placeholder="Cari jenis klaim, mis. bensin, hotel" autocomplete="off"></label>
+    <div class="kphint">Ketuk satu atau beberapa jenis dalam satu kategori, lalu <b>Lanjut ajukan</b>.</div><div id="kmsg"></div>
+    ${cats.map(c => { const types = S.L.types.filter(t => t.category === c && t.name !== 'Reimburse petty cash'); const bb = b.budget[c], cc = KCAT[c] || ['#0B5CAD', 'dots'];
+      return `<div class="kpc${en(c) ? '' : ' off'}" style="--c:${cc[0]}" data-kc="${c}"><div class="kpt"><span class="kpic2">${kpic(cc[1])}</span><b>${c}</b>${!div && bb && bb.enabled && !bb.none ? `<small style="${bb.available < 0 ? 'color:#D2453F;font-weight:800' : ''}">sisa <b>${rp(bb.available)}</b></small>` : en(c) ? '<small>tanpa batas budget</small>' : ''}</div>
+      ${en(c) ? `<div class="kpg">${types.map(t => `<button type="button" class="kpj" data-new="${t.id}" data-cat="${c}" data-nm="${esc(t.name.toLowerCase())}"><span class="kpji">${kpic(KTYPE[t.name] || cc[1])}</span>${esc(t.name)}</button>`).join('')}</div>${single(c) && types.length > 1 ? '<div class="kpone">Perdin: pilih salah satu</div>' : ''}` : '<div class="mut" style="margin-top:4px">Belum diaktifkan oleh Admin.</div>'}</div>`; }).join('')}
+    <div class="kpbar" id="kbar"><div id="ksel" class="kpsel">Belum ada jenis dipilih</div><button class="btn" id="kgo" disabled>LANJUT AJUKAN →</button></div></div>`, { hero: false });
   let gc = null; const sel = [];
-  const paint = () => { $$('[data-new]').forEach(e => { const on = sel.includes(+e.dataset.new); e.classList.toggle('on', on); e.style.opacity = gc && e.dataset.cat !== gc ? '.35' : ''; });
-    $$('[data-gab]').forEach(g => g.classList.toggle('on', g.dataset.gab === gc)); $('#gabbar').classList.toggle('hide', !gc);
-    const nm = sel.map(id => S.L.types.find(t => t.id == id)?.name); $('#gabinfo').innerHTML = gc ? (sel.length ? `Dipilih: <b>${nm.map(esc).join(' + ')}</b>` : `Ketuk jenis ${esc(gc)} yang mau digabung (minimal 2).`) : '';
-    $('#gabok').textContent = sel.length > 1 ? 'LANJUT · ' + sel.length + ' JENIS' : 'PILIH MINIMAL 2'; $('#gabok').disabled = sel.length < 2; };
-  $$('[data-gab]').forEach(g => g.onclick = () => { gc = gc === g.dataset.gab ? null : g.dataset.gab; sel.length = 0; paint(); });
-  $('#gabx').onclick = () => { gc = null; sel.length = 0; paint(); };
-  $('#gabok').onclick = () => { if (sel.length < 2) return; location.hash = '#/form/' + sel[0] + '?multi=' + sel.join(',') + (div ? '&div=1' : ''); };
+  const nameOf = id => S.L.types.find(t => t.id == id)?.name || '';
+  const msg = t => { $('#kmsg').innerHTML = t ? `<div class="kpwarn">${esc(t)}</div>` : ''; };
+  const paint = () => { $$('[data-new]').forEach(e => { e.classList.toggle('on', sel.includes(+e.dataset.new)); e.classList.toggle('dim', !!gc && e.dataset.cat !== gc); });
+    const cc = gc ? (KCAT[gc] || ['#0B5CAD'])[0] : '#0B5CAD'; $('#kbar').style.setProperty('--c', cc);
+    $('#ksel').innerHTML = sel.length ? `${esc(gc)}: ${sel.map(id => `<span>${esc(nameOf(id))}</span>`).join('')}` : 'Belum ada jenis dipilih';
+    $('#kgo').disabled = !sel.length; $('#kgo').textContent = sel.length ? `LANJUT AJUKAN (${sel.length} jenis) →` : 'LANJUT AJUKAN →'; };
   $$('[data-new]').forEach(e => e.onclick = () => { if (b.blocked) return toast('Pengajuan diblokir.', true);
-    if (gc) { if (e.dataset.cat !== gc) return toast('Satu klaim hanya boleh jenis dari satu kategori (' + gc + ').', true); const id = +e.dataset.new, i = sel.indexOf(id); i >= 0 ? sel.splice(i, 1) : sel.push(id); paint(); return; }
-    location.hash = '#/form/' + e.dataset.new + (div ? '?div=1' : ''); });
+    const id = +e.dataset.new, c = e.dataset.cat; msg('');
+    if (gc && c !== gc) { sel.length = 0; msg('Pilihan sebelumnya dihapus: satu klaim hanya untuk satu kategori (' + c + ').'); }
+    gc = c; const i = sel.indexOf(id);
+    if (i >= 0) sel.splice(i, 1); else if (single(c)) { sel.length = 0; sel.push(id); } else sel.push(id);
+    if (!sel.length) gc = null; paint(); });
+  $('#kgo').onclick = () => { if (!sel.length) return; location.hash = '#/form/' + sel[0] + (sel.length > 1 ? '?multi=' + sel.join(',') + (div ? '&div=1' : '') : (div ? '?div=1' : '')); };
+  $('#ksr').oninput = () => { const q = $('#ksr').value.trim().toLowerCase(); $$('[data-new]').forEach(e => e.classList.toggle('hide', !!q && !e.dataset.nm.includes(q) && !e.dataset.cat.toLowerCase().includes(q)));
+    $$('[data-kc]').forEach(k => k.classList.toggle('hide', !!q && !k.querySelector('[data-new]:not(.hide)'))); };
+  paint();
 };
 
 /* ---------- inisialisasi form ---------- */
@@ -133,69 +151,82 @@ const pesSplit = p => { const [n, ...j] = (p || '').split(' — '); return [n, j
 function pesInputs(pes, label, hint) {
   return `<div class="fld"><label>${label}</label>${pes.map((p, i) => { const [n, j] = pesSplit(p); return `<div style="display:flex;gap:6px;margin-bottom:6px"><input data-pp="${i}:n" value="${esc(n)}" placeholder="Nama peserta" style="flex:1.3"><input data-pp="${i}:j" value="${esc(j)}" placeholder="Jabatan / asal" style="flex:1">${pes.length > 2 ? `<button class="btn g sm" data-pesrm="${i}" style="width:auto;padding:0 12px;color:#D2453F">✕</button>` : ''}</div>`; }).join('')}<button class="btn g sm" id="pesadd">+ Peserta</button>${hint ? `<div class="mut" style="margin-top:6px">${hint}</div>` : ''}</div>`;
 }
+/* form padat + strip judul + warna jenis (2026-11-24, mockup doc/mockup/2026-11-24/dsm-klaim-form-padat-semua.html opsi E) */
+const kt = (t, right = '') => `<div class="kft"><span>${t}</span>${right}</div>`;
+const fp = (label, input, files, add) => `<div class="fld"><label>${label}</label><div class="kfp">${input}${thumbs(files, { rm: 1, add })}</div></div>`;
+const KCOL = { BBM: '#D97706', Tol: '#0E7C6B', Parkir: '#2563EB', 'Ojol & taksi online': '#7C3AED', 'Servis kendaraan': '#475569', 'Tiket perjalanan': '#0891B2', Meeting: '#C2410C', 'Makan-makan': '#DB2777', 'Kue ulang tahun': '#E11D48', 'Karangan bunga': '#16A34A', 'Reward / Hadiah': '#9333EA', Kost: '#0D9488', 'Penginapan / Hotel': '#4F46E5', 'ATK & perlengkapan kantor': '#CA8A04', 'Ongkir & kurir': '#EA580C', 'Operasional lainnya': '#64748B' };
+const kcol = n => KCOL[n] || '#3B78C2';
 function kindBody(multi) {
   const k = F.kind, m = F.meta, t = F.type.name; let body = '';
-  if (k === 'bbm') body += `<div class="card"><div class="fld"><label>Kendaraan</label><div class="chips" style="margin-top:2px">${['Mobil', 'Motor'].map(v => `<span class="chip${m.kendaraan === v ? ' on' : ''}" data-kend="${v}">${v === 'Mobil' ? '🚗' : '🛵'} ${v}</span>`).join('')}</div>${m.kendaraan === 'Motor' ? '<div class="mut">Motor: nominal nota bebas, tanpa aturan digit.</div>' : ''}</div><div class="two">${fld('Plat kendaraan', inp('meta.plat', m.plat, 'placeholder="E 1234 AB"'))}<div></div></div><div class="two">${fld('KM awal', inp('meta.km_awal', m.km_awal, 'inputmode="numeric"'))}${fld('KM akhir', inp('meta.km_akhir', m.km_akhir, 'inputmode="numeric"'))}</div><div id="kmcalc" class="mut"></div>
-    ${fld('Foto odometer awal', thumbs(F.files.odo_awal, { rm: 1, add: 'odo_awal' }))}${fld('Foto odometer akhir', thumbs(F.files.odo_akhir, { rm: 1, add: 'odo_akhir' }))}</div>`;
-  if (k === 'trans' || k === 'ops') body += `<div class="card">${fld('Keterangan' + (F.type.name === 'Parkir' ? ' (opsional)' : ''), `<textarea data-f="meta.keterangan">${esc(m.keterangan || '')}</textarea>`)}${fld('Foto dokumentasi' + (F.type.name === 'Parkir' ? ' (opsional)' : ''), thumbs(F.files.doc, { rm: 1, add: 'doc' }))}</div>`;
-  if (k === 'meeting') body += `<div class="card">${fld('Tujuan meeting', inp('meta.tujuan', m.tujuan))}${fld('Tempat meeting', inp('meta.tempat', m.tempat, 'placeholder="mis. Cafe Kopi Kenangan Paskal / Aula Hotel X"'))}<div class="two">${fld('Jam mulai', inp('meta.jam_mulai', m.jam_mulai, 'type="time"'))}${fld('Jam selesai', inp('meta.jam_selesai', m.jam_selesai, 'type="time"'))}</div>
-    ${pesInputs(m.peserta || [], 'Peserta (minimal 2 orang, nama dan jabatan wajib)', 'Tulis jabatan atau asal tiap peserta, mis. Sales / Owner dealer / Supervisor.')}${fld('Foto dokumentasi meeting', thumbs(F.files.doc, { rm: 1, add: 'doc' }) + '<div class="mut" style="margin-top:4px">Tanpa foto dokumentasi, klaim tetap bisa dikirim tetapi wajib dengan BA.</div>')}</div>`;
+  const ta = (path, v, ph) => `<textarea data-f="${path}"${ph ? ` placeholder="${ph}"` : ''}>${esc(v || '')}</textarea>`;
+  const docF = (label, hint) => fld(label, thumbs(F.files.doc, { rm: 1, add: 'doc' }), hint);
+  const TANPA = 'Tanpa foto dokumentasi, klaim tetap bisa dikirim tetapi wajib dengan BA.';
+  if (k === 'bbm') body += `<div class="card">${kt('Kendaraan &amp; odometer')}<div class="kfr"><div class="fld"><label>Kendaraan</label><div class="chips">${['Mobil', 'Motor'].map(v => `<span class="chip${m.kendaraan === v ? ' on' : ''}" data-kend="${v}">${v}</span>`).join('')}</div></div>${fld('Plat kendaraan', inp('meta.plat', m.plat, 'placeholder="E 1234 AB"'))}</div>${m.kendaraan === 'Motor' ? '<div class="mut">Motor: nominal nota bebas, tanpa aturan digit.</div>' : ''}
+    <div class="two">${fp('KM awal + foto', inp('meta.km_awal', m.km_awal, 'inputmode="numeric"'), F.files.odo_awal, 'odo_awal')}${fp('KM akhir + foto', inp('meta.km_akhir', m.km_akhir, 'inputmode="numeric"'), F.files.odo_akhir, 'odo_akhir')}</div><div id="kmcalc" class="mut"></div></div>`;
+  if (k === 'trans' || k === 'ops') { const op = F.type.name === 'Parkir' ? ' (opsional)' : '';
+    body += `<div class="card">${kt('Detail')}${fld('Keterangan' + op, ta('meta.keterangan', m.keterangan))}${docF('Foto dokumentasi' + op)}</div>`; }
+  if (k === 'meeting') body += `<div class="card">${kt('Detail meeting')}${fld('Tujuan meeting', inp('meta.tujuan', m.tujuan))}${fld('Tempat meeting', inp('meta.tempat', m.tempat, 'placeholder="mis. Cafe Kopi Kenangan Paskal / Aula Hotel X"'))}<div class="two">${fld('Jam mulai', inp('meta.jam_mulai', m.jam_mulai, 'type="time"'))}${fld('Jam selesai', inp('meta.jam_selesai', m.jam_selesai, 'type="time"'))}</div>
+    ${pesInputs(m.peserta || [], 'Peserta (minimal 2 orang, nama dan jabatan wajib)', 'Tulis jabatan atau asal tiap peserta, mis. Sales / Owner dealer / Supervisor.')}${docF('Foto dokumentasi meeting', TANPA)}</div>`;
   if (k === 'party') { const pes = m.peserta || [];
-    body += `<div class="card">${t === 'Kue ulang tahun' ? fld('Nama yang dirayakan', inp('meta.penerima', m.penerima, 'placeholder="mis. Bpk. Hendra (owner dealer)"')) : ''}${fld('Tempat acara', inp('meta.tempat', m.tempat, 'placeholder="mis. Cafe Kopi Kenangan Paskal / Aula Hotel X"'))}${fld('Keterangan', `<textarea data-f="meta.keterangan" placeholder="Acara apa">${esc(m.keterangan || '')}</textarea>`)}
-    ${pesInputs(pes, 'Daftar peserta (wajib, minimal 2 orang, nama dan jabatan wajib)', 'Tidak bisa dirayakan sendiri: minimal 2 orang berbeda. Pemohon otomatis jadi peserta pertama.')}</div><div class="card">${fld('Foto dokumentasi acara', thumbs(F.files.doc, { rm: 1, add: 'doc' }) + '<div class="mut" style="margin-top:4px">Tanpa foto dokumentasi, klaim tetap bisa dikirim tetapi wajib dengan BA.</div>')}</div>`; }
-  if (k === 'tiket') body += `<div class="card"><div class="fld"><label>Moda</label><div class="chips" style="margin-top:2px">${['Pesawat', 'Kereta', 'Bus / travel'].map(v => `<span class="chip${m.moda === v ? ' on' : ''}" data-moda="${v}">${v === 'Pesawat' ? '✈️' : v === 'Kereta' ? '🚆' : '🚌'} ${v}</span>`).join('')}</div></div>
+    body += `<div class="card">${kt('Detail acara')}${t === 'Kue ulang tahun' ? fld('Nama yang dirayakan', inp('meta.penerima', m.penerima, 'placeholder="mis. Bpk. Hendra (owner dealer)"')) : ''}<div class="two">${fld('Tempat acara', inp('meta.tempat', m.tempat, 'placeholder="mis. Aula Hotel X"'))}${fld('Keterangan', inp('meta.keterangan', m.keterangan, 'placeholder="Acara apa"'))}</div>
+    ${pesInputs(pes, 'Daftar peserta (wajib, minimal 2 orang, nama dan jabatan wajib)', 'Tidak bisa dirayakan sendiri: minimal 2 orang berbeda. Pemohon otomatis jadi peserta pertama.')}${docF('Foto dokumentasi acara', TANPA)}</div>`; }
+  if (k === 'tiket') body += `<div class="card">${kt('Detail perjalanan')}<div class="fld"><label>Moda</label><div class="chips">${['Pesawat', 'Kereta', 'Bus / travel'].map(v => `<span class="chip${m.moda === v ? ' on' : ''}" data-moda="${v}">${v}</span>`).join('')}</div></div>
     <div class="two">${fld('Kota asal', inp('meta.asal', m.asal, 'placeholder="mis. Jakarta (CGK)"'))}${fld('Kota tujuan', inp('meta.tujuan_kota', m.tujuan_kota, 'placeholder="mis. Surabaya (SUB)"'))}</div>
     <div class="two">${fld('Tanggal berangkat', inp('meta.tgl_berangkat', m.tgl_berangkat, 'type="date"'))}${fld('Tanggal pulang (opsional)', inp('meta.tgl_pulang', m.tgl_pulang, 'type="date"'))}</div>
-    ${fld(m.moda === 'Pesawat' ? 'Maskapai' : 'Operator', inp('meta.operator', m.operator, `placeholder="${m.moda === 'Pesawat' ? 'mis. Garuda Indonesia' : m.moda === 'Kereta' ? 'mis. KAI Argo Bromo' : 'mis. Cititrans'}"`))}${fld('Nama penumpang', inp('meta.penumpang', m.penumpang))}${fld('Tujuan perjalanan', `<textarea data-f="meta.keterangan" placeholder="Kunjungan dealer, training, ...">${esc(m.keterangan || '')}</textarea>`)}
+    <div class="two">${fld(m.moda === 'Pesawat' ? 'Maskapai' : 'Operator', inp('meta.operator', m.operator, `placeholder="${m.moda === 'Pesawat' ? 'mis. Garuda Indonesia' : m.moda === 'Kereta' ? 'mis. KAI Argo Bromo' : 'mis. Cititrans'}"`))}${fld('Nama penumpang', inp('meta.penumpang', m.penumpang))}</div>${fld('Tujuan perjalanan', ta('meta.keterangan', m.keterangan, 'Kunjungan dealer, training, ...'))}
     <div class="note">Tiket untuk Perdin diajukan sebagai komponen Perdin. Di sini untuk perjalanan di luar Perdin. Lampirkan e-tiket / invoice di nota.</div></div>`;
   if (k === 'lain') { const rin = m.rincian || []; const sum = rin.reduce((a, r) => a + num(r.qty) * num(r.harga), 0);
-    body += `<div class="card">${fld('Judul pengeluaran', inp('meta.judul', m.judul, 'placeholder="mis. Sewa tenda event dealer gathering"'))}${fld('Kebutuhan / alasan', `<textarea data-f="meta.keterangan" placeholder="Kenapa perlu dan kenapa tidak masuk jenis lain">${esc(m.keterangan || '')}</textarea>`)}
-    <div class="fld"><label>Rincian barang / jasa</label>${rin.map((r, i) => `<div style="display:flex;gap:6px;margin-bottom:6px"><input data-rin="${i}:uraian" value="${esc(r.uraian || '')}" placeholder="Uraian" style="flex:2"><input data-rin="${i}:qty" inputmode="numeric" value="${esc(r.qty ?? '')}" placeholder="Qty" style="flex:.6"><input data-rin="${i}:harga" inputmode="numeric" value="${fmtN(r.harga)}" placeholder="Harga" style="flex:1.2">${rin.length > 1 ? `<button class="btn g sm" data-rinrm="${i}" style="width:auto;padding:0 12px;color:#D2453F">✕</button>` : ''}</div>`).join('')}<button class="btn g sm" id="rinadd">+ Baris rincian</button>
+    body += `<div class="card">${kt('Detail pengeluaran')}${fld('Judul pengeluaran', inp('meta.judul', m.judul, 'placeholder="mis. Sewa tenda event dealer gathering"'))}${fld('Kebutuhan / alasan', ta('meta.keterangan', m.keterangan, 'Kenapa perlu dan kenapa tidak masuk jenis lain'))}
+    <div class="fld"><label>Rincian barang / jasa</label>${rin.map((r, i) => `<div class="kfrin"><input data-rin="${i}:uraian" value="${esc(r.uraian || '')}" placeholder="Uraian" style="flex:2"><input data-rin="${i}:qty" inputmode="numeric" value="${esc(r.qty ?? '')}" placeholder="Qty" style="flex:.6"><input data-rin="${i}:harga" inputmode="numeric" value="${fmtN(r.harga)}" placeholder="Harga" style="flex:1.2">${rin.length > 1 ? `<button class="kfx" data-rinrm="${i}">✕</button>` : ''}</div>`).join('')}<button class="btn g sm" id="rinadd">+ Baris rincian</button>
     <div class="mut" id="rinsum" style="margin-top:6px">Total rincian <b>${rp(sum)}</b> harus sama dengan total nota.</div></div><div class="note">Jenis ini bebas, jadi judul, alasan, dan rincian wajib diisi supaya Admin bisa menilai.</div></div>`; }
-  if (k === 'ent') body += `<div class="card">${fld('Nama penerima', inp('meta.penerima', m.penerima))}${fld('Tempat (opsional)', inp('meta.tempat', m.tempat, 'placeholder="mis. Rumah duka / Aula Hotel X"'))}${fld('Keterangan', `<textarea data-f="meta.keterangan">${esc(m.keterangan || '')}</textarea>`)}${fld('Foto dokumentasi', thumbs(F.files.doc, { rm: 1, add: 'doc' }) + '<div class="mut" style="margin-top:4px">Tanpa foto dokumentasi, klaim tetap bisa dikirim tetapi wajib dengan BA.</div>')}</div>`;
-  if (k === 'kost') body += `<div class="card">${fld('Nama kost', inp('meta.nama_kost', m.nama_kost))}${fld('Periode sewa', inp('meta.periode', m.periode, 'placeholder="mis. Nov 2026 - Des 2026"'))}${fld('Nama pemilik', inp('meta.pemilik', m.pemilik))}<div class="note">Jika rekening pemilik bukan milik Anda, klaim wajib melewati HOS.</div></div>`;
-  if (k === 'hotel') body += `<div class="card">${fld('Nama hotel', inp('meta.nama_hotel', m.nama_hotel))}<div class="two">${fld('Check-in', inp('meta.checkin', m.checkin, 'type="date"'))}${fld('Check-out', inp('meta.checkout', m.checkout, 'type="date"'))}</div>${fld('Tujuan menginap', inp('meta.tujuan', m.tujuan))}</div>`;
+  if (k === 'ent') body += `<div class="card">${kt('Detail penerima')}<div class="two">${fld('Nama penerima', inp('meta.penerima', m.penerima))}${fld('Tempat (opsional)', inp('meta.tempat', m.tempat, 'placeholder="mis. Rumah duka"'))}</div>${fld('Keterangan', ta('meta.keterangan', m.keterangan))}${docF('Foto dokumentasi', TANPA)}</div>`;
+  if (k === 'kost') body += `<div class="card">${kt('Detail kost')}<div class="two">${fld('Nama kost', inp('meta.nama_kost', m.nama_kost))}${fld('Periode sewa', inp('meta.periode', m.periode, 'placeholder="mis. Nov - Des 2026"'))}</div>${fld('Nama pemilik', inp('meta.pemilik', m.pemilik))}<div class="note">Jika rekening pemilik bukan milik Anda, klaim wajib melewati HOS.</div></div>`;
+  if (k === 'hotel') body += `<div class="card">${kt('Detail hotel')}${fld('Nama hotel', inp('meta.nama_hotel', m.nama_hotel))}<div class="two">${fld('Check-in', inp('meta.checkin', m.checkin, 'type="date"'))}${fld('Check-out', inp('meta.checkout', m.checkout, 'type="date"'))}</div>${fld('Tujuan menginap', inp('meta.tujuan', m.tujuan))}</div>`;
   if (k === 'perdin') body += perdinHtml();
   else if (k === 'makan') body += makanHtml();
-  else if (multi) body += `<div class="sec" style="padding:0">${F.notes.map((n, i) => n.detail?.type_id == F.type.id ? notaHtml(n, i) : '').join('')}<button class="btn g" data-notaadd="${F.type.id}" style="margin-top:8px">+ Tambah nota ${esc(F.type.name)}</button>`
-  else body += `<div class="sec" style="padding:0"><h3>Daftar nota</h3>${F.notes.map((n, i) => notaHtml(n, i)).join('')}<button class="btn g" id="notaadd" style="margin-top:8px">+ Tambah nota</button></div>`;
+  else if (multi) body += `${F.notes.map((n, i) => n.detail?.type_id == F.type.id ? notaHtml(n, i) : '').join('')}<button class="btn g kfadd" data-notaadd="${F.type.id}">+ Tambah nota ${esc(F.type.name)}</button>`;
+  else body += `${F.notes.map((n, i) => notaHtml(n, i)).join('')}<button class="btn g kfadd" id="notaadd">+ Tambah nota</button>`;
   return body;
 }
 function renderForm() {
   const _y = window.scrollY; useBase();
   const k = F.kind, m = F.meta, t = typeLabel(); const total = formTotal();
   const editRev = F.rev;
-  let body = `<div class="card">${editRev ? `<div class="note blue">Versi klaim saat ini: <b>v${F.ver}</b>. Catatan peminta revisi: “${esc(editRev.note || '')}”</div><div id="nomwarn"></div>` : ''}
-  ${fld('Brand', brandSel(F.brand))}${fld('Refnote (opsional, bisa diisi Admin)', inp('refnote', F.refnote, 'placeholder="mis. IT-SEMARANG"'))}
+  let body = `<div class="card">${kt('Info klaim')}${editRev ? `<div class="note blue">Versi klaim saat ini: <b>v${F.ver}</b>. Catatan peminta revisi: “${esc(editRev.note || '')}”</div><div id="nomwarn"></div>` : ''}
+  <div class="two">${fld('Brand', brandSel(F.brand))}${fld('Refnote (opsional)', inp('refnote', F.refnote, 'placeholder="mis. IT-SEMARANG"'))}</div>
   ${k !== 'perdin' && k !== 'makan' ? fld('Lokasi (kota/kabupaten)', `<input id="floc" value="${esc(F.location || '')}" placeholder="Ketik kota/kabupaten" autocomplete="off">`, 'Detail tempat tulis di keterangan.') : ''}</div>`;
-  if (F.secs) { F.secs.forEach((sc, si) => { useSec(si); const sub = F.notes.filter(n => n.detail?.type_id == sc.type.id).reduce((x, n) => x + noteClaim(n), 0);
-      body += `<div data-sec="${si}"><div class="secHead"><span>${KIC[sc.kind] || '•'}</span><b>${esc(sc.type.name)}</b><em data-subt="${sc.type.id}">${rp(sub)}</em></div>${kindBody(true)}</div>`; }); useBase(); }
+  if (F.secs) {
+    const sub = sc => F.notes.filter(n => n.detail?.type_id == sc.type.id).reduce((x, n) => x + noteClaim(n), 0), cnt = sc => F.notes.filter(n => n.detail?.type_id == sc.type.id).length;
+    body += `<div class="kfmx"><div class="t">PENGAJUAN SEKALIGUS · ${F.secs.length} JENIS</div><div class="jj">${F.secs.map((sc, si) => `<a data-jsec="${si}" style="--sc:${kcol(sc.type.name)}">${esc(sc.type.name)} · ${cnt(sc)} nota<b data-subt="${sc.type.id}">${rp(sub(sc))}</b></a>`).join('')}</div><div class="sum"><span>Total klaim</span><b data-tot>${rp(total)}</b></div></div>`;
+    F.secs.forEach((sc, si) => { useSec(si);
+      body += `<div data-sec="${si}"><div class="secHead kfsh" style="--sc:${kcol(sc.type.name)}"><span class="ic">${kpic(KTYPE[sc.type.name] || 'dots')}</span><div><b>${esc(sc.type.name)}</b><small>${cnt(sc)} nota</small></div><em data-subt="${sc.type.id}">${rp(sub(sc))}</em></div>${kindBody(true)}</div>`; }); useBase(); }
   else body += kindBody(false);
-  body += `<div class="card">${fld('Keterangan tambahan (opsional)', `<textarea data-f="meta.catatan" placeholder="Tulis jika ada hal yang perlu diketahui pemeriksa">${esc(m.catatan || '')}</textarea>`)}</div>`;
-  body += `<div class="card" id="rekbox">${rekHtml()}</div><div class="card row"><b>Total</b><b id="tot" style="font-size:18px">${rp(total)}</b></div>
-   <div class="two" style="margin-top:6px"><button class="btn g" id="bsave">Simpan draft</button><button class="btn" id="bnext">${editRev ? 'Lanjut kirim perbaikan' : 'Lanjut ringkasan'}</button></div>`;
-  shell(hero((editRev ? 'Perbaiki: ' : 'Form ') + t, F.division ? 'ADMIN · DI LUAR SALES' : 'P' + (F.id ? '17' : '04'), { back: true, small: true }) + `<div class="sec">${body}</div>`, { hero: false });
-  bindForm(); updNom(); window.scrollTo(0, _y);
+  body += `<div class="card">${kt('Keterangan')}${fld('Keterangan tambahan (opsional)', `<textarea data-f="meta.catatan" placeholder="Tulis jika ada hal yang perlu diketahui pemeriksa">${esc(m.catatan || '')}</textarea>`)}</div>`;
+  body += `<div class="card" id="rekbox">${rekHtml()}</div><div class="card row kftot"><b>Total</b><b id="tot" data-tot>${rp(total)}</b></div>
+   <div class="two" style="margin-top:8px"><button class="btn g" id="bsave">Simpan draft</button><button class="btn" id="bnext">${editRev ? 'Lanjut kirim perbaikan' : 'Lanjut ringkasan'}</button></div>`;
+  shell(hero((editRev ? 'Perbaiki: ' : 'Form ') + t, F.division ? 'ADMIN · DI LUAR SALES' : 'P' + (F.id ? '17' : '04'), { back: true, small: true }) + `<div class="sec kf" data-kc="${esc(F.category || F.type.category || '')}"><div id="kfban"></div>${body}</div>`, { hero: false });
+  bindForm(); updNom(); kfApply(); window.scrollTo(0, _y);
 }
 function notaHtml(n, i) {
   const tol = F.kind === 'tol';
-  return `<div class="card" data-nota="${i}"><div class="row"><b>Nota ${i + 1}</b>${(F.secs ? F.notes.filter(x => x.detail?.type_id == n.detail?.type_id).length : F.notes.length) > 1 ? `<span class="mut" data-notarm="${i}" style="color:#D2453F;cursor:pointer">Hapus</span>` : ''}</div>
+  const rm = (F.secs ? F.notes.filter(x => x.detail?.type_id == n.detail?.type_id).length : F.notes.length) > 1 ? `<span data-notarm="${i}">Hapus</span>` : '';
+  return `<div class="card" data-nota="${i}">${kt('Nota ' + (i + 1), rm)}
    ${tol ? `<div class="two">${fld('Gerbang asal', typed('ga' + i, S.L.gate, n.detail.asal, 'Contoh: GT Kalikangkung', false))}${fld('Gerbang tujuan', typed('gt' + i, S.L.gate, n.detail.tujuan, 'Contoh: GT Cikampek Utama', false))}</div>` : ''}
-   <div class="two">${fld('Tanggal nota', `<input type="date" data-n="${i}:date" value="${n.date || ''}" max="${today()}"${F.kind === 'makan' ? ` min="${F.meta.tgl_berangkat}"` : ''}>`)}${fld(F.kind === 'bbm' ? 'Nominal nota (Rp)' : 'Nominal (Rp)', `<input inputmode="numeric" data-n="${i}:nominal" value="${fmtN(n.nominal)}" placeholder="0">`)}</div>
-   ${F.kind === 'bbm' ? `<div class="fld"><label>Jenis BBM</label><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${['Pertalite', 'Pertamax'].map(v => `<div class="chip${n.detail?.bbm === v ? ' on' : ''}" data-bbm="${i}:${v}" style="text-align:center;padding:12px 0;font-size:14px;border-radius:12px">${v}</div>`).join('')}</div></div><div data-calc="${i}" style="margin-bottom:8px"></div>` : ''}
-   ${fld('Lampiran nota (' + n.files.length + ')', thumbs(n.files, { rm: 1, add: 'nota:' + i }), tol ? 'Struk tol atau screenshot riwayat e-toll yang memperlihatkan tanggal, gerbang, dan nominal. Foto kartu saja tidak sah.' : '')}</div>`;
+   <div class="kf3">${fld('Tanggal nota', `<input type="date" data-n="${i}:date" value="${n.date || ''}" max="${today()}"${F.kind === 'makan' ? ` min="${F.meta.tgl_berangkat}"` : ''}>`)}${fld('Nominal (Rp)', `<input inputmode="numeric" data-n="${i}:nominal" value="${fmtN(n.nominal)}" placeholder="0">`)}${fld('Nota (' + n.files.length + ')', thumbs(n.files, { rm: 1, add: 'nota:' + i }))}</div>
+   ${F.kind === 'bbm' ? `<div class="fld"><label>Jenis BBM</label><div class="chips">${['Pertalite', 'Pertamax'].map(v => `<span class="chip${n.detail?.bbm === v ? ' on' : ''}" data-bbm="${i}:${v}">${v}</span>`).join('')}</div></div><div data-calc="${i}"></div>` : ''}
+   ${tol ? '<div class="mut">Struk tol atau screenshot riwayat e-toll yang memperlihatkan tanggal, gerbang, dan nominal. Foto kartu saja tidak sah.</div>' : ''}</div>`;
 }
 function rekHtml() {
   const a = F.account, sa = F.selfAcct || {};
-  return `<b>Rekening tujuan</b><div class="opt ${a.mode === 'self' ? 'on' : ''}" data-acc="self" style="margin-top:8px"><div class="dotr"></div><div><b>Rekening saya</b><span class="mut">${esc(sa.bank || '-')} ${esc(sa.no || '')} a.n. ${esc(sa.name || '')}</span></div></div>
+  return `${kt('Rekening tujuan')}<div class="opt ${a.mode === 'self' ? 'on' : ''}" data-acc="self"><div class="dotr"></div><div><b>Rekening saya</b><span class="mut">${esc(sa.bank || '-')} ${esc(sa.no || '')} a.n. ${esc(sa.name || '')}</span></div></div>
   <div class="opt ${a.mode === 'other' ? 'on' : ''}" data-acc="other"><div class="dotr"></div><div><b>Rekening lain</b><span class="mut">Vendor, pemilik kost, hotel, atau pihak lain</span></div></div>
   ${a.mode === 'other' ? `<div class="note">Rekening bukan milik pemohon <b>wajib melewati HOS</b>.</div>${fld('Bank', typed('fbank', S.L.bank, a.bank, 'Pilih bank'))}${fld('Nomor rekening', inp('account.no', a.no, 'inputmode="numeric"'))}${fld('Atas nama', inp('account.name', a.name))}${fld('Alasan lengkap', `<textarea data-f="account.reason">${esc(a.reason || '')}</textarea>`)}` : ''}`;
 }
 function tripCard(m, dur) {
-  return `<div class="card"><div class="two">${fld('Tanggal berangkat', `<input type="date" data-f="meta.tgl_berangkat" value="${m.tgl_berangkat}">`)}${fld('Tanggal pulang', `<input type="date" data-f="meta.tgl_pulang" value="${m.tgl_pulang}" min="${m.tgl_berangkat}">`)}</div><div class="pill p-adm" id="dur">Durasi ${dur} hari (berangkat dan pulang dihitung penuh)</div>
+  return `<div class="card">${kt('Perjalanan')}<div class="two">${fld('Tanggal berangkat', `<input type="date" data-f="meta.tgl_berangkat" value="${m.tgl_berangkat}">`)}${fld('Tanggal pulang', `<input type="date" data-f="meta.tgl_pulang" value="${m.tgl_pulang}" min="${m.tgl_berangkat}">`)}</div><div class="pill p-adm" id="dur">Durasi ${dur} hari (berangkat dan pulang dihitung penuh)</div>
    ${fld('Tujuan perjalanan', inp('meta.tujuan', m.tujuan))}
    <div class="fld"><label>Rute (tempat tujuan spesifik)</label>${m.rute.map((r, i) => `<div class="ruteitem"><div class="no">${i + 1}</div><input data-rt="${i}" value="${esc(r)}" placeholder="mis. Toko Samsung Ahmad Yani, Tegal"><button data-rtup="${i}">↑</button><button data-rtdn="${i}">↓</button>${m.rute.length > 1 ? `<button data-rtrm="${i}">✕</button>` : ''}</div>`).join('')}<button class="btn g sm" id="rtadd">+ Tambah tujuan</button><div class="mut" style="margin-top:4px">Rute berhenti di tujuan akhir.</div></div>
-   ${fld('Screenshot Google Maps (satu gambar, semua titik terlihat)', thumbs(F.files.maps, { rm: 1, add: F.files.maps.length ? '' : 'maps' }))}${fld('Total jarak dari Maps (km)', inp('meta.km_total', m.km_total, 'inputmode="decimal"'))}${makanLocked(m) && num(m.km_total) > 0 ? `<div class="note red">Uang makan belum bisa diklaim — jarak Perdin ${num(m.km_total)} km, minimal ${+(S.L?.rules?.min_km_makan ?? 80)} km.</div>` : (num(m.km_total) > 0 ? `<div class="note ok">Jarak ${num(m.km_total)} km memenuhi minimal ${+(S.L?.rules?.min_km_makan ?? 80)} km.</div>` : '')}</div>`;
+   <div class="kfr">${fld('Screenshot Maps', thumbs(F.files.maps, { rm: 1, add: F.files.maps.length ? '' : 'maps' }))}${fld('Total jarak dari Maps (km)', inp('meta.km_total', m.km_total, 'inputmode="decimal"'), 'Satu gambar, semua titik terlihat.')}</div>${makanLocked(m) && num(m.km_total) > 0 ? `<div class="note red">Uang makan belum bisa diklaim — jarak Perdin ${num(m.km_total)} km, minimal ${+(S.L?.rules?.min_km_makan ?? 80)} km.</div>` : (num(m.km_total) > 0 ? `<div class="note ok">Jarak ${num(m.km_total)} km memenuhi minimal ${+(S.L?.rules?.min_km_makan ?? 80)} km.</div>` : '')}</div>`;
 }
 function makanCap() {
   const m = F.meta, dur = durDays(m.tgl_berangkat, m.tgl_pulang), rate = F.meal || 0, cap = rate * dur, tot = F.notes.reduce((a, n) => a + num(n.nominal), 0), over = tot > cap, pct = cap ? Math.min(100, Math.round(tot * 100 / cap)) : 0;
@@ -203,20 +234,20 @@ function makanCap() {
 }
 function makanHtml() {
   const m = F.meta, dur = durDays(m.tgl_berangkat, m.tgl_pulang);
-  return tripCard(m, dur) + `<div class="sec" style="padding:0"><h3>Nota makan</h3>${F.notes.map((n, i) => notaHtml(n, i)).join('')}<button class="btn g" id="notaadd" style="margin-top:8px">+ Tambah nota makan</button></div>
-   <div class="card" id="makancap">${makanCap()}</div>`;
+  return tripCard(m, dur) + `${F.notes.map((n, i) => notaHtml(n, i)).join('')}<button class="btn g kfadd" id="notaadd">+ Tambah nota makan</button>
+   <div class="card">${kt('Batas uang makan')}<div id="makancap">${makanCap()}</div></div>`;
 }
 function perdinHtml() {
   const m = F.meta, pd = F.pd, dur = durDays(m.tgl_berangkat, m.tgl_pulang);
   const grp = (key, label, g) => `<div class="card"><div class="row"><b>${label}</b>${sw(g.on, 'pd.' + key)}</div>${g.on ? `<div class="tabs" style="padding:8px 0 0"><span class="${g.mode === 'hari' ? 'a' : ''}" data-gmode="${key}:hari">Per hari</span><span class="${g.mode === 'sekali' ? 'a' : ''}" data-gmode="${key}:sekali">Sekali</span></div>
-    ${g.items.map((it, i) => `<div class="card" style="background:var(--soft);margin-top:8px"><div class="row"><b>${label} ${i + 1}</b><span style="color:#D2453F;cursor:pointer" data-gitrm="${key}:${i}">Hapus</span></div>${fld('Jenis', `<input data-gi="${key}:${i}:jenis" value="${esc(it.jenis)}" placeholder="${key === 'transport' ? 'Travel, sewa motor, tol, BBM...' : 'Hotel, kost...'}">`)}
+    ${g.items.map((it, i) => `<div class="card kfsub">${kt(label + ' ' + (i + 1), `<span data-gitrm="${key}:${i}">Hapus</span>`)}${fld('Jenis', `<input data-gi="${key}:${i}:jenis" value="${esc(it.jenis)}" placeholder="${key === 'transport' ? 'Travel, sewa motor, tol, BBM...' : 'Hotel, kost...'}">`)}
     <div class="two">${fld(g.mode === 'hari' ? 'Nominal per hari' : 'Nominal total', `<input inputmode="numeric" data-gi="${key}:${i}:nominal" value="${fmtN(it.nominal)}">`)}${fld(g.mode === 'hari' ? `Jumlah hari (maks ${dur})` : 'Hari tercakup', `<input inputmode="numeric" data-gi="${key}:${i}:hari" value="${it.hari}">`)}</div>
     ${g.mode === 'hari' ? `<div class="mut" data-gisum="${key}:${i}">= ${rp(num(it.nominal) * num(it.hari))}</div>` : ''}${fld('Lampiran nota (' + it.files.length + ')' + ' · opsional', thumbs(it.files, { rm: 1, add: 'gi:' + key + ':' + i }))}</div>`).join('')}
     <button class="btn g sm" data-giadd="${key}" style="margin-top:8px">+ Tambah ${label.toLowerCase()}</button>` : ''}</div>`;
-  return `<div class="card"><div class="two">${fld('Tanggal berangkat', `<input type="date" data-f="meta.tgl_berangkat" value="${m.tgl_berangkat}">`)}${fld('Tanggal pulang', `<input type="date" data-f="meta.tgl_pulang" value="${m.tgl_pulang}" min="${m.tgl_berangkat}">`)}</div><div class="pill p-adm" id="dur">Durasi ${dur} hari (berangkat dan pulang dihitung penuh)</div>
+  return `<div class="card">${kt('Perjalanan')}<div class="two">${fld('Tanggal berangkat', `<input type="date" data-f="meta.tgl_berangkat" value="${m.tgl_berangkat}">`)}${fld('Tanggal pulang', `<input type="date" data-f="meta.tgl_pulang" value="${m.tgl_pulang}" min="${m.tgl_berangkat}">`)}</div><div class="pill p-adm" id="dur">Durasi ${dur} hari (berangkat dan pulang dihitung penuh)</div>
    ${fld('Tujuan perjalanan', inp('meta.tujuan', m.tujuan))}
    <div class="fld"><label>Rute (tempat tujuan spesifik)</label>${m.rute.map((r, i) => `<div class="ruteitem"><div class="no">${i + 1}</div><input data-rt="${i}" value="${esc(r)}" placeholder="mis. Toko Samsung Ahmad Yani, Tegal"><button data-rtup="${i}">↑</button><button data-rtdn="${i}">↓</button>${m.rute.length > 1 ? `<button data-rtrm="${i}">✕</button>` : ''}</div>`).join('')}<button class="btn g sm" id="rtadd">+ Tambah tujuan</button><div class="mut" style="margin-top:4px">Rute berhenti di tujuan akhir.</div></div>
-   ${fld('Screenshot Google Maps (satu gambar, semua titik terlihat)', thumbs(F.files.maps, { rm: 1, add: F.files.maps.length ? '' : 'maps' }))}${fld('Total jarak dari Maps (km)', inp('meta.km_total', m.km_total, 'inputmode="decimal"'))}</div>
+   <div class="kfr">${fld('Screenshot Maps', thumbs(F.files.maps, { rm: 1, add: F.files.maps.length ? '' : 'maps' }))}${fld('Total jarak dari Maps (km)', inp('meta.km_total', m.km_total, 'inputmode="decimal"'), 'Satu gambar, semua titik terlihat.')}</div></div>
    <div class="card"><div class="row"><div><b>Uang makan</b><div class="mut">Otomatis: tarif per hari × durasi. Terkunci.</div></div>${makanLocked(m) ? '<span class="pill p-no">Belum bisa</span>' : sw(pd.makan, 'pd.makan')}</div>${makanLocked(m) ? `<div class="note red">Uang makan belum bisa diklaim — jarak Perdin ${num(m.km_total) || 0} km, minimal ${+(S.L?.rules?.min_km_makan ?? 80)} km.</div>` : ''}${pd.makan && !makanLocked(m) ? `<div class="kv"><span>Tarif per hari (diatur Admin)</span><span>${F.meal ? rp(F.meal) : '<span style="color:#D2453F">Belum diatur</span>'}</span></div><div class="kv"><span>${dur} hari</span><span>${rp((F.meal || 0) * dur)}</span></div>` : ''}</div>
    ${grp('transport', 'Transportasi', pd.transport)}${grp('inap', 'Penginapan', pd.inap)}
    <div class="card"><div class="row"><b>Entertain (opsional)</b>${sw(pd.ent.on, 'pd.ent')}</div>${pd.ent.on ? `${fld('Keterangan', inp('pd.ent.ket', pd.ent.ket))}${fld('Nominal', `<input inputmode="numeric" data-f="pd.ent.nominal" value="${fmtN(pd.ent.nominal)}">`)}${fld('Lampiran nota (' + pd.ent.files.length + ') · opsional', thumbs(pd.ent.files, { rm: 1, add: 'pdent' }))}` : ''}</div>`;
@@ -246,8 +277,8 @@ function updNom() {
     if ($('#kmcalc')) { const a = num(F.meta.km_awal), b = num(F.meta.km_akhir); $('#kmcalc').textContent = b > a ? `Jarak ${b - a} km · biaya per km ${rp(Math.round(bbmTot / (b - a)))}` : ''; }
   } finally { if (bi >= 0) useBase(); }
   if (F.kind === 'makan' && $('#makancap')) $('#makancap').innerHTML = makanCap();
-  const t = formTotal(); const el = $('#tot'); if (el) el.textContent = rp(t);
-  if (F.secs) F.secs.forEach(sc => { const e = $(`[data-subt="${sc.type.id}"]`); if (e) e.textContent = rp(F.notes.filter(n => n.detail?.type_id == sc.type.id).reduce((x, n) => x + noteClaim(n), 0)); });
+  const t = formTotal(); $$('[data-tot]').forEach(el => el.textContent = rp(t));
+  if (F.secs) F.secs.forEach(sc => { $$(`[data-subt="${sc.type.id}"]`).forEach(e => e.textContent = rp(F.notes.filter(n => n.detail?.type_id == sc.type.id).reduce((x, n) => x + noteClaim(n), 0))); });
   $$('[data-gisum]').forEach(e => { const [k, i] = e.dataset.gisum.split(':'); const it = F.pd[k].items[i]; e.textContent = '= ' + rp(num(it.nominal) * num(it.hari)); });
   if ($('#dur')) $('#dur').textContent = `Durasi ${durDays(F.meta.tgl_berangkat, F.meta.tgl_pulang)} hari (berangkat dan pulang dihitung penuh)`;
   const w = $('#nomwarn'); if (w && F.rev) w.innerHTML = t !== +F.lastTotal ? `<div class="note red">Nominal berubah dari ${rp(F.lastTotal)} ke ${rp(t)}. Perubahan nominal membuat <b>versi klaim baru</b> dan membutuhkan approval ulang untuk versi terbaru${F.kind === 'perdin' ? '' : ''}. Jika klaim ber-BA, tanda tangan dan approval BA juga diulang.</div>` : '';
@@ -273,6 +304,7 @@ function bindForm() {
     const t = e.target;
     const add = t.closest('[data-addfile]'); if (add && add.dataset.addfile) { const w = add.dataset.addfile; pickFiles(fs => { addFiles(w, fs); renderForm(); }, w !== 'maps'); return; }
     const rm = t.closest('[data-rm]'); if (rm) { e.stopPropagation(); const id = +rm.dataset.rm; const strip = a => { const i = a.findIndex(f => f.id == id); if (i >= 0) a.splice(i, 1); }; for (const s in F.files) strip(F.files[s]); F.notes.forEach(n => strip(n.files)); if (F.pd) { F.pd.transport.items.forEach(i => strip(i.files)); F.pd.inap.items.forEach(i => strip(i.files)); strip(F.pd.ent.files); } renderForm(); return; }
+    const js = t.closest('[data-jsec]'); if (js) { $(`[data-sec="${js.dataset.jsec}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     if (t.closest('[data-view]')) return;
     const sv = t.closest('[data-sw]'); if (sv) { const [a, k] = sv.dataset.sw.split('.'); if (k === 'makan') F.pd.makan = !F.pd.makan; else F.pd[k].on = !F.pd[k].on; renderForm(); return; }
     const ac = t.closest('[data-acc]'); if (ac) { F.account.mode = ac.dataset.acc; $('#rekbox').innerHTML = rekHtml(); return; }
@@ -302,11 +334,64 @@ function addFiles(w, fs) {
   else if (w.startsWith('nota:')) F.notes[+w.split(':')[1]].files.push(...o);
   else if (w.startsWith('gi:')) { const [, k, i] = w.split(':'); F.pd[k].items[i].files.push(...o); } else if (w === 'pdent') F.pd.ent.files.push(...o);
 }
+/* ---------- validasi di form: isian kurang ditandai merah ---------- */
+const KF_LBL = { 'Plat kendaraan': 'meta.plat', 'Keterangan': 'meta.keterangan', 'Nama penerima': 'meta.penerima', 'Tempat acara': 'meta.tempat', 'Nama yang dirayakan': 'meta.penerima', 'Kota asal': 'meta.asal', 'Kota tujuan': 'meta.tujuan_kota', 'Tanggal berangkat': 'meta.tgl_berangkat', 'Maskapai / operator': 'meta.operator', 'Nama penumpang': 'meta.penumpang', 'Tujuan perjalanan': 'meta.tujuan|meta.keterangan', 'Judul pengeluaran': 'meta.judul', 'Kebutuhan / alasan': 'meta.keterangan', 'Tujuan meeting': 'meta.tujuan', 'Tempat meeting': 'meta.tempat', 'Jam mulai': 'meta.jam_mulai', 'Jam selesai': 'meta.jam_selesai', 'Nama kost': 'meta.nama_kost', 'Periode sewa': 'meta.periode', 'Nama pemilik': 'meta.pemilik', 'Nama hotel': 'meta.nama_hotel', 'Check-in': 'meta.checkin', 'Check-out': 'meta.checkout', 'Tujuan menginap': 'meta.tujuan' };
+function kfSel(msg) {
+  let m = msg, si = null;
+  if (F.secs) F.secs.forEach((sc, i) => { if (si == null && m.startsWith(sc.type.name + ': ')) { si = i; m = m.slice(sc.type.name.length + 2); } });
+  const nm = /^Nota (\d+)[: ]/.exec(m);
+  if (nm) { const i = nm[1] - 1, r = m.slice(nm[0].length);
+    const s = /nominal/i.test(r) ? `[data-n="${i}:nominal"]` : /tanggal/i.test(r) ? `[data-n="${i}:date"]` : /foto nota/i.test(r) ? `[data-addfile="nota:${i}"]` : /BBM/.test(r) ? `[data-bbm^="${i}:"]` : /gerbang/i.test(r) ? `#ga${i}` : `[data-nota="${i}"] .kft`;
+    return { si: null, sel: s, msg: r.replace(/^\s+/, '') }; }
+  let s = null; const w = /^(.+?) wajib diisi\.$/.exec(m);
+  if (/Brand/.test(m)) s = '#fbrand'; else if (/^Lokasi/.test(m)) s = '#floc';
+  else if (/kendaraan \(/.test(m)) s = '[data-kend]'; else if (/KM akhir/.test(m)) s = '[data-f="meta.km_akhir"]';
+  else if (/odometer awal/i.test(m)) s = '[data-addfile="odo_awal"]'; else if (/odometer akhir/i.test(m)) s = '[data-addfile="odo_akhir"]';
+  else if (w && KF_LBL[w[1]]) s = KF_LBL[w[1]].split('|').map(x => `[data-f="${x}"]`).join(',');
+  else if (/eserta/.test(m)) s = '#pesadd'; else if (/Total rincian/.test(m)) s = '#rinsum'; else if (/incian|qty/.test(m)) s = '#rinadd';
+  else if (/^Rute/.test(m)) s = '#rtadd'; else if (/Google Maps/.test(m)) s = '[data-addfile="maps"],.kf [data-f="meta.km_total"]';
+  else if (/jarak \(km\)/.test(m)) s = '[data-f="meta.km_total"]'; else if (/moda/.test(m)) s = '[data-moda]';
+  else if (/Tanggal (pulang|berangkat)/.test(m)) s = '[data-f="meta.tgl_pulang"]'; else if (/minimal satu nota/i.test(m)) s = '[data-notaadd],#notaadd';
+  else if (/[Rr]ekening/.test(m)) s = '#rekbox .kft';
+  return { si, sel: s, msg: m };
+}
+function kfMark(errs) { F.errs = errs.map((e, i) => ({ k: 'e' + i, raw: e, ...kfSel(e) })); kfApply(true); toast('Lengkapi isian yang merah dulu.', true); }
+function kfApply(scroll) {
+  const ban = $('#kfban'); if (!ban || !F) return; const errs = F.errs || [];
+  $$('.kerr').forEach(e => { e.classList.remove('kerr'); delete e.dataset.ek; }); $$('.kerrm').forEach(e => e.remove());
+  const left = [], grp = {}; let first = null;
+  errs.forEach(x => {
+    const sc = x.si != null ? $(`[data-sec="${x.si}"]`) : $('.kf'); const el = x.sel && sc ? sc.querySelector(x.sel) : null;
+    if (!el) { left.push(x.raw); return; }
+    const box = el.closest('.fld') || el.closest('.card'); if (!box) { left.push(x.raw); return; }
+    box.classList.add('kerr'); box.dataset.ek = (box.dataset.ek ? box.dataset.ek + '|' : '') + x.k;
+    if (box.classList.contains('fld')) box.insertAdjacentHTML('beforeend', `<div class="kerrm">${esc(x.msg)}</div>`);
+    const card = box.closest('.card'); const g = (x.si != null ? F.secs[x.si].type.name + ' · ' : '') + (card?.querySelector('.kft span')?.textContent || 'Lainnya');
+    if (!grp[g]) grp[g] = { n: 0, el: box }; grp[g].n++; first ||= box;
+  });
+  if (!errs.length) { ban.innerHTML = ''; return; }
+  ban.innerHTML = `<div class="kfban"><b>Masih ada ${errs.length} isian yang belum lengkap</b>Isian yang ditandai merah wajib diisi dulu.${Object.keys(grp).length ? `<div class="jp">${Object.entries(grp).map(([g, o], i) => `<span data-kfj="${i}">${esc(g)} · ${o.n}</span>`).join('')}</div>` : ''}${left.length ? `<div class="lf">${left.map(x => '• ' + esc(x)).join('<br>')}</div>` : ''}</div>`;
+  const gl = Object.values(grp); $$('[data-kfj]').forEach(e => e.onclick = () => gl[+e.dataset.kfj].el.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+  if (scroll) (first || ban).scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+function kfClear(e) {
+  if (!F || !F.errs || !F.errs.length || !$('.kf')) return;
+  if (e.type === 'click' && !e.target.closest('[data-kend],[data-bbm],[data-moda],[data-addfile],#pesadd,#rinadd,#rtadd,[data-notaadd],#notaadd,[data-acc]')) return;
+  const box = e.target.closest('.kerr'); if (!box) return;
+  const ks = (box.dataset.ek || '').split('|'); F.errs = F.errs.filter(x => !ks.includes(x.k)); kfApply();
+}
+['input', 'change', 'click'].forEach(ev => document.addEventListener(ev, kfClear, true));
+
 async function saveForm(next) {
   await guard(async () => {
     const j = await api('claim_save', payload()); F.id = j.id;
+    /* 2026-11-24: setelah draft tersimpan, entri riwayat form diganti #/edit/id supaya tombol "← Kembali" (dan back browser/HP) dari Ringkasan membuka draft yang sama, bukan form kosong */
+    if (!/^#\/edit\//.test(location.hash)) history.replaceState(null, '', location.pathname + location.search + '#/edit/' + j.id);
     if (!next) { toast('Draft tersimpan.'); return; }
-    location.hash = '#/ringkas/' + j.id;
+    /* 2026-11-24: cek kelengkapan dulu; kalau ada yang kurang tetap di form, isian ditandai merah (mockup dsm-klaim-validasi-opsi.html) */
+    const ck = await api('claim_check', { id: j.id });
+    if (ck.errors && ck.errors.length) { kfMark(ck.errors); return; }
+    F.errs = []; location.hash = '#/ringkas/' + j.id;
   });
 }
 

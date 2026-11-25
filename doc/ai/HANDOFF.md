@@ -677,3 +677,8 @@ Sudah dikoding: tabel padat + TOTAL berwarna, tombol Tandai tutup terlihat, Kont
 ## 2026-11-24 · Brand RINGKASAN SUDAH DIKODEKAN
 - Rombakan RINGKASAN (layout B, tabel G2, kartu M3d, tren gap A) sudah masuk kode. Perlu dicek di Laragon/server dengan data asli: angka Sell Out LMTD per brand, tampilan role Top/Me, sticky tab.
 - Keputusan sementara gue: chip SEMUA BRAND jadi default; tab MINGGUAN/DEALER pakai chip brand sendiri (tanpa SEMUA BRAND).
+
+## DSM Klaim desktop non-sales — tahap 2 (disetujui mockup dsm-klaim-desktop-nonsales.html, belum dikodekan)
+- Detail klaim 2 kolom (info+nota+BA kiri, foto besar+rute+riwayat kanan), bar aksi menempel bawah, tombol Sebelumnya/Berikutnya.
+- Budget (HOS/FM): kartu per kategori + tabel per orang dengan bar %. Transfer (FT): tabel centang + tandai sudah ditransfer (FILE TRANSFER = fitur baru, konfirmasi dulu).
+- Menu Balik nota: daftar perdin (perlu diperiksa/menunggu pemohon/lewat tenggat/selesai) + panel kanan; butuh API daftar balik nota + angka dana belum dipertanggungjawabkan.

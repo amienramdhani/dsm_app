@@ -1162,3 +1162,33 @@ Validation:
 - Filter BIG REGION / REGION / ASM / SALES / BRAND (berurutan; HP: tombol FILTER + sheet). Wilayah/ASM/Sales → backend baru `apiTrxDaily` (lib/api_main.php, + DSM_ALLOWED): report harian untuk sales yang lolos filter (cache per kombinasi). Brand dihitung di browser (`v6BrandReport`).
 - Strip ringkasan (hari bertransaksi, ST, SO, omzet + hari tertinggi, rata-rata hari kerja vs target, hari capai target), kalender B2 (warna lembut tanpa bar, chip % target, label TERTINGGI, kolom TOTAL MINGGU; HP: kotak MG di bawah), pola hari batang solid + chip %, pola per brand chip indeks + kotak insight biru muda.
 - Catatan: popup klik tanggal masih memakai data cakupan penuh (belum ikut filter).
+
+## 2026-11-24 · DSM Klaim · layar Ajukan klaim (P03) di-retouch (mockup dsm-klaim-ajukan-opsi B2)
+- klaim/assets/form.js `R.new`: kategori pakai ikon garis berwarna (bukan emoji), sisa budget, jenis klaim jadi kotak berikon 4 kolom (6 di layar lebar), kotak cari jenis. Ketuk = centang (bisa beberapa dalam satu kategori; Perdin hanya satu; pindah kategori = pilihan lama diganti + pesan), bar bawah menempel berisi pilihan + tombol LANJUT AJUKAN. 1 jenis → #/form/id, >1 → #/form/id?multi=… (alur multi lama). Tombol "Gabung" lama dihapus. Hero pakai versi kecil.
+- klaim/assets/app.css: kelas baru berawalan kp* (hindari bentrok dengan .kc/.kv yang sudah ada).
+- Dites Chromium dengan stub data. BELUM dites di app asli.
+- 2026-11-24 (Klaim): fix "← Kembali" dari Ringkasan membuka form kosong. saveForm() kini mengganti entri riwayat form jadi `#/edit/{id}` (history.replaceState) begitu draft tersimpan, jadi Kembali/back HP membuka draft yang sama (sama seperti tombol KEMBALI MEMPERBAIKI).
+
+## 2026-11-24 — DSM Klaim: form padat + validasi merah
+- klaim/assets/form.js: form klaim dipadatkan (isian sejajar, foto jadi tombol kecil "+ foto"), strip judul berwarna per kartu, warna lembut per kategori (opsi E), judul jenis pada pengajuan sekaligus jadi bar warna solid per jenis + kotak ringkasan & total.
+- LANJUT: draft disimpan lalu claim_check; bila ada error tetap di form, isian ditandai merah + banner berisi chip lompat per bagian. Error yang tidak bisa dipetakan tampil sebagai daftar di banner.
+- klaim/assets/app.css: gaya .kf*, .kfban, .kerr.
+- Mockup: doc/mockup/2026-11-24/dsm-klaim-validasi-opsi.html, dsm-klaim-form-padat-semua.html. Belum dites dengan data asli.
+
+## 2026-11-24 — DSM Klaim: tampilan desktop non-sales (tahap 1)
+- Baru: klaim/assets/desk.js + desk.css (dimuat di klaim/index.php). Tampilan HP tidak diubah.
+- Aktif bila layar >= 1024px, peran bukan Pemohon, dan pilihan tampilan bukan HP (localStorage kl_view). Default desktop; tombol TAMPILAN HP di menu samping, tombol TAMPILAN DESKTOP mengambang saat mode HP di layar lebar.
+- Menu bawah -> menu samping (pilih peran, badge), kartu angka gaya B, daftar klaim (.li) -> tabel. Bottom sheet filter jadi dialog tengah.
+- Belum (tahap 2, lihat HANDOFF): detail klaim 2 kolom + Sebelumnya/Berikutnya, tabel Budget & Transfer gaya mockup, menu Balik nota (butuh API daftar).
+- 2026-11-24 (lanjutan): desktop detail klaim gaya mockup (total + aksi di atas, foto terkumpul di panel kanan, PDF sebagai dokumen, BA dirapikan), Menu desktop (kartu profil + petak), Beranda SA (kartu angka + petak), Pengguna jadi tabel + cari + filter peran. Popup PDF di HP juga tampil sebagai dokumen.
+
+## 2026-11-24 — DSM: AI Assistant dirombak (tahap 1)
+- assets/dsm.js (aiView, aiRenderMessages, aiSubmit + helper aiH*), assets/ai_v7.css (baru, dimuat di index.php), assets/page_header.js (ai tidak lagi di SKIP → banner biru).
+- Desktop opsi A: panel riwayat kiri (percakapan baru, kelompok hari ini/7 hari/lebih lama, hapus), bar konteks periode/cakupan, sapaan + kartu saran per kategori + terakhir ditanya, jawaban di kartu dengan Salin/Ulangi, kotak tanya besar.
+- HP: chip konteks + tombol 🕘 riwayat (panel dari kiri) dan ＋ baru, kartu saran geser, kotak tanya menempel di atas menu bawah.
+- Riwayat disimpan di perangkat (localStorage sp-aih-<nik>, maks 30). Tahap 2 (riwayat di server, export) belum.
+
+## 2026-11-24 — DSM: Ajari AI (Super Admin)
+- Baru: lib/api_ai_teach.php (tabel dsm_ai_rule, dsm_ai_know, dsm_ai_unk dibuat otomatis; API apiAITeachHome/Save/Mark/Delete/Test, khusus Super Admin), assets/ai_teach.js, gaya di assets/ai_v7.css. api.php: include + DSM_ALLOWED.
+- lib/api_ai.php: arahan dicek sebelum Gemini (model "Arahan Super Admin"), pengetahuan aktif ikut di prompt (maks 2.000 karakter) dan dipakai di mode dasar, jawaban Gemini "belum bisa" dicatat UNSUPPORTED.
+- Tombol 🎓 AJARI AI di panel samping AI Assistant (hanya Super Admin, bukan mode demo).
