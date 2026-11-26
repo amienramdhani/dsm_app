@@ -1,0 +1,91 @@
+/* Jawaban AI visual (mockup dsm-ai-visual-jawaban.html). Warna solid, font ikut DSM. */
+html body #view .aiLead{font-size:15px;font-weight:800;color:#10394E;line-height:1.35;white-space:pre-line;margin:0 0 2px}
+html body #view .aiK{gap:8px;margin-top:10px}
+html body #view .aiKi{background:#fff;border-radius:10px;padding:8px 10px;box-shadow:none;border:1px solid #E3E9EF;border-top:4px solid var(--c)}
+html body #view .aiKi small{font-size:9.5px;font-weight:800;letter-spacing:.04em;color:#5B6B7A;text-transform:uppercase}
+html body #view .aiKi b{display:block;font-size:19px;font-weight:800;color:var(--c);line-height:1.15}
+html body #view .aiKi em{display:block;font-style:normal;font-size:9.5px;color:#8A97A5}
+html body #view .aiBl{background:#fff;border:1px solid #E3E9EF;border-radius:12px;box-shadow:none;padding:10px 11px}
+html body #view .aiBl h5{font-size:10px;letter-spacing:.05em;color:#5B6B7A}
+html body #view .aiRank{counter-reset:rk}
+html body #view .aiRank .aiBr{counter-increment:rk;grid-template-columns:20px minmax(72px,1.3fr) 1fr 50px;padding:6px 0;border-top:1px solid #EEF2F6;margin:0}
+html body #view .aiRank .aiBr:first-of-type{border-top:0}
+html body #view .aiRank .aiBr:before{content:counter(rk);font-size:11px;color:#6B7B8A;font-weight:600}
+html body #view .aiRank .aiBr.w{grid-template-columns:20px minmax(90px,1.6fr) 1fr 46px}
+html body #view .aiRank .aiBr i{height:9px;border-radius:6px;background:#EEF2F6}
+html body #view .aiRank .aiBr i s{border-radius:6px;background:var(--c)}
+html body #view .aiRank .aiBr span:last-child{text-align:right;color:var(--c);font-weight:800}
+html body #view .aiTr.h{color:#5B6B7A;font-size:9.5px;letter-spacing:.03em}
+html body #view .aiTr span{display:flex;align-items:center;gap:6px;min-width:0}
+html body #view .aiTr span:first-child{font-weight:800}
+html body #view .aiPb{display:block;flex:1;min-width:28px;height:8px;border-radius:6px;background:#EEF2F6;overflow:hidden}
+html body #view .aiPb i{display:block;height:100%;border-radius:6px}
+html body #view .aiTr span b{font-size:11.5px;font-weight:800}
+html body #view .aiChip{font-style:normal;font-size:9px;font-weight:800;letter-spacing:.03em;color:#fff;padding:2px 7px;border-radius:6px;white-space:nowrap}
+html body #view .aiUp,html body #view .aiDn{font-style:normal;font-size:10.5px;font-weight:800;padding:2px 7px;border-radius:6px;white-space:nowrap}
+html body #view .aiUp{background:#E1F3EC;color:#12866A}html body #view .aiDn{background:#FBE5E3;color:#D2453F}
+html body #view .aiNote{background:#fff;border:1px solid #E3E9EF;border-left:4px solid #2E6E9E;border-radius:8px;color:#10394E;font-weight:600}
+html body #view .aiTr span{text-align:left;justify-content:flex-start}
+html body #view .aiTr.h span:first-child{font-size:inherit;font-weight:800}
+html body #view .aiKi b{font-size:17px;white-space:nowrap}
+html body #view .aiPb{flex:0 0 34px}
+html body #view .aiTr span b{white-space:nowrap;flex:none}
+html body #view .aiPb{flex:1 1 16px;min-width:12px;max-width:34px}
+html body #view .aiBl{overflow-x:auto}html body #view .aiTg{min-width:max-content}
+html body #view .aiTg{min-width:0}
+html body #view .aiTr span{flex-wrap:wrap;gap:3px 6px}
+html body #view .aiTr span b{order:1}
+html body #view .aiPb{order:2;flex:1 1 100%;max-width:none;height:6px}
+html body #view .aiTr{gap:4px}
+html body #view .aiBl{padding:9px 8px}
+/* Versi padat: huruf kecil, bold seperlunya */
+html body #view .aiLead{font-size:13px;font-weight:700}
+html body #view .aiK{gap:6px;margin-top:8px}
+html body #view .aiKi{padding:6px 8px}
+html body #view .aiKi small{font-size:8.5px;font-weight:700}
+html body #view .aiKi b{font-size:15px;font-weight:700}
+html body #view .aiKi em{font-size:8.5px}
+html body #view .aiBl{margin-top:8px;padding:7px 8px}
+html body #view .aiBl h5{font-size:9px;font-weight:700;margin-bottom:4px}
+html body #view .aiTg{font-size:11px}
+html body #view .aiTr{padding:4px 2px}
+html body #view .aiTr.h{font-size:8.5px;font-weight:700;padding:1px 2px 3px}
+html body #view .aiTr span:first-child{font-weight:600}
+html body #view .aiTr.h span:first-child{font-weight:700}
+html body #view .aiTr span b{font-size:11px;font-weight:600}
+html body #view .aiChip{font-size:8px;font-weight:700;padding:1px 6px}
+html body #view .aiUp,html body #view .aiDn{font-size:9.5px;font-weight:700;padding:1px 6px}
+html body #view .aiRank .aiBr{font-size:11px;font-weight:500;padding:4px 0}
+html body #view .aiRank .aiBr:before{font-size:10px}
+html body #view .aiRank .aiBr i{height:7px}
+html body #view .aiRank .aiBr span:last-child{font-weight:700}
+html body #view .aiNote{font-size:11px;font-weight:500;padding:6px 9px;margin-top:8px}
+html body #view .aiCols{display:flex;gap:3px;align-items:flex-end;overflow-x:auto;padding-top:2px}
+html body #view .aiCol{flex:1 0 26px;display:flex;flex-direction:column;align-items:center;gap:1px;font-size:9px;color:#5B6B7A}
+html body #view .aiCol em{font-style:normal;font-size:9px;font-weight:600;color:var(--c)}
+html body #view .aiCol i{display:flex;align-items:flex-end;width:100%;height:64px;background:#F1F4F8;border-radius:4px;overflow:hidden}
+html body #view .aiCol i s{display:block;width:100%;background:var(--c);border-radius:4px 4px 0 0}
+html body #view .aiCol span{font-size:9px;color:#10394E}html body #view .aiCol small{font-size:8px;color:#8A97A5}
+html body #view .aiRank .aiBr,html body #view .aiRank .aiBr.w{grid-template-columns:18px minmax(80px,1.5fr) minmax(40px,1fr) max-content;gap:6px}
+html body #view .aiRank .aiBr span:last-child{white-space:nowrap}
+/* Kartu KPI gaya A (mint muda), angka tetap warna indikator; batang horizontal lebih tebal; kolom tebal */
+html body #view .aiKi{background:#E3F5EE;border:1px solid #C9EADF;border-top:4px solid #2FB58F}
+html body #view .aiKi small{color:#4B6B66}html body #view .aiKi em{color:#6F8A85}
+html body #view .aiRank .aiBr i{height:12px;border-radius:6px}
+html body #view .aiRank .aiBr i s{border-radius:6px}
+html body #view .aiCols{gap:6px}
+html body #view .aiCol{flex:1 0 34px;gap:2px}
+html body #view .aiCol i{height:72px;border-radius:6px}
+html body #view .aiCol i s{border-radius:6px 6px 0 0}
+html body #view .aiCol em{font-size:10.5px;font-weight:700}
+html body #view .aiCol span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9.5px}
+html body #view .aiCol small{font-size:8.5px;white-space:nowrap}
+/* Ukuran data = ukuran judul kolom (10px); judul kolom bold, data biasa */
+html body #view .aiTg,html body #view .aiTr span,html body #view .aiTr span b,html body #view .aiTr span:first-child{font-size:10px;font-weight:400;line-height:1.3}
+html body #view .aiTr.h,html body #view .aiTr.h span,html body #view .aiTr.h span:first-child{font-size:10px;font-weight:700;letter-spacing:.02em}
+html body #view .aiTr span b{font-weight:500}
+html body #view .aiRank .aiBr,html body #view .aiRank .aiBr span{font-size:10px;font-weight:400}
+html body #view .aiRank .aiBr span:last-child{font-weight:600}
+html body #view .aiCol span{font-size:10px;font-weight:400}
+html body #view .aiCol em{font-size:10px;font-weight:600}
+html body #view .aiChip{font-size:8.5px}

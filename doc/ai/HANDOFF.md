@@ -682,3 +682,7 @@ Sudah dikoding: tabel padat + TOTAL berwarna, tombol Tandai tutup terlihat, Kont
 - Detail klaim 2 kolom (info+nota+BA kiri, foto besar+rute+riwayat kanan), bar aksi menempel bawah, tombol Sebelumnya/Berikutnya.
 - Budget (HOS/FM): kartu per kategori + tabel per orang dengan bar %. Transfer (FT): tabel centang + tandai sudah ditransfer (FILE TRANSFER = fitur baru, konfirmasi dulu).
 - Menu Balik nota: daftar perdin (perlu diperiksa/menunggu pemohon/lewat tenggat/selesai) + panel kanan; butuh API daftar balik nota + angka dana belum dipertanggungjawabkan.
+
+## AI via OpenAI — menunggu tes user
+- Penyedia OpenAI sudah dipasang (commit 163dd62), Gemini tetap bawaan/cadangan. Aktif lewat DSM_AI_PROVIDER/DSM_OPENAI_KEY/DSM_OPENAI_MODEL di config.local.php server.
+- Dicatat, BELUM dikerjakan: longgarkan `aiSysPrompt_` supaya AI boleh jawab pertanyaan umum di luar DSM. Tunggu user selesai tes dan bilang "gas".

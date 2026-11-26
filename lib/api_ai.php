@@ -21,6 +21,7 @@ function aiOpenaiModel_(): string { return defined('DSM_OPENAI_MODEL') && trim((
 function aiShownModel_(): string { return aiProvider_() === 'openai' ? aiOpenaiModel_() : aiModel_(); }
 function aiModel_(): string { return defined('DSM_GEMINI_MODEL') ? (string) DSM_GEMINI_MODEL : 'gemini-3.8-flash'; }
 function aiNum_($v): string { return number_format((float) $v, 0, ',', '.'); }
+function aiRp_($v): string { $v = (float) $v; return abs($v) >= 1e9 ? number_format($v / 1e9, 2, ',', '.') . ' M' : (abs($v) >= 1e6 ? number_format($v / 1e6, 1, ',', '.') . ' jt' : aiNum_($v)); }
 function aiPct_($v): string { return $v === null ? '—' : number_format((float) $v, 1, ',', '.') . '%'; }
 function aiCol_($p): string { return $p === null ? '#6F7B8E' : ($p < 60 ? '#E5354E' : ($p < 90 ? '#F5A623' : '#0E9F6E')); }
 function aiPill_($p): string { return $p === null ? '' : ($p < 60 ? 'r' : ($p < 90 ? 'y' : 'g')); }
@@ -284,6 +285,9 @@ function aiBrandType_(array &$x, string $brand = '', string $region = ''): array
         'brand_terbaik' => $ranked[0]['brand'] ?? null, 'brand_terlemah' => $ranked ? end($ranked)['brand'] : null, 'brand_on_track' => $onTrack, 'brand_dengan_target' => count($ranked), 'type_per_brand' => $tData];
     $blocks = [];
     $f1 = fn($v) => $v === null ? '—' : number_format((float) $v, 1, ',', '.');
+    if (!$brand && $region === '') { $tt = $d['total'] ?? []; $c0 = $tt['current'] ?? $tt; $q0 = (float) ($c0['qty'] ?? $tot);
+        $blocks[] = ['t' => 'kpi', 'items' => [['l' => 'Sell Thru', 'v' => aiNum_($q0), 's' => $onTrack . ' dari ' . count($ranked) . ' brand on track', 'c' => '#1E5FB8'], ['l' => 'Dealer Aktif', 'v' => aiNum_($c0['da'] ?? array_sum(array_column($B, 'dealer_aktif'))), 's' => '', 'c' => '#0E7C6B'], ['l' => 'NOO', 'v' => aiNum_($c0['noo'] ?? array_sum(array_column($B, 'noo'))), 's' => '', 'c' => '#6D3FD8'],
+            ['l' => 'Sell Out', 'v' => aiNum_($c0['sellout'] ?? array_sum(array_column($B, 'sell_out'))), 's' => '', 'c' => '#C25A12'], ['l' => 'Run rate/hari', 'v' => $run > 0 ? $f1($q0 / $run) : '—', 's' => $run > 0 ? 'qty ÷ ' . (int) $run . ' hari' : '', 'c' => '#1E5FB8'], ['l' => 'Omzet', 'v' => aiRp_($c0['omzet'] ?? array_sum(array_column($B, 'omzet'))), 's' => '', 'c' => '#9A6400']]]; }
     if (!$brand) {
         $blocks[] = ['t' => 'table', 'title' => 'Sell Thru per brand' . ($region ? ' · ' . $region : '') . ' · ' . $onTrack . ' dari ' . count($ranked) . ' brand on track', 'cols' => ['Brand', 'Target', 'Aktual', '% capai', 'Proyeksi', 'Growth', 'Run rate/hr', 'Butuh/hr', 'Kontribusi'],
             'rows' => array_map(fn($r) => [$r['brand'], $r['target'] === null ? '—' : aiNum_($r['target']), aiNum_($r['qty']), aiPct_($r['capai_persen']), aiPct_($r['proyeksi_persen']), aiPct_($r['growth_vs_lmtd_persen']), $f1($r['run_rate_per_hari']), $f1($r['butuh_per_hari']), aiPct_($r['kontribusi_persen'])], $B)];
@@ -317,14 +321,17 @@ function aiBrands_(array &$x, string $region = ''): array {
         $tg = !empty($b['target']['exists']) ? (float) $b['target']['value'] : null; $q = (float) $b['current']['qty'];
         $pr = aiProj_($q, $ew['run'] ?? 0, $ew['days'] ?? 0); $ac = $tg ? $q / $tg * 100 : null;
         $gr = !empty($b['previous']['qty']) ? ($q / $b['previous']['qty'] - 1) * 100 : null;
-        $rows[] = ['brand' => $b['brand'], 'qty' => $q, 'target' => $tg, 'ac' => $ac, 'pr' => ($tg && $pr !== null) ? $pr / $tg * 100 : null, 'gr' => $gr];
+        $rows[] = ['brand' => $b['brand'], 'qty' => $q, 'target' => $tg, 'ac' => $ac, 'pr' => ($tg && $pr !== null) ? $pr / $tg * 100 : null, 'gr' => $gr, 'da' => (float) ($b['current']['da'] ?? 0), 'tda' => !empty($b['targetDA']['exists']) ? (float) $b['targetDA']['value'] : null, 'om' => (float) ($b['current']['omzet'] ?? 0), 'noo' => (float) ($b['current']['noo'] ?? 0), 'tnoo' => !empty($b['targetNOO']['exists']) ? (float) $b['targetNOO']['value'] : null, 'so' => (float) ($b['current']['sellout'] ?? 0)];
     }
     usort($rows, fn($a, $b) => ($a['ac'] ?? 999) <=> ($b['ac'] ?? 999));
-    $bars = array_map(fn($r) => ['l' => $r['brand'], 'v' => $r['ac'] ?? 0, 'txt' => aiPct_($r['ac']), 'c' => aiCol_($r['ac'])], $rows);
-    $tb = array_map(fn($r) => [$r['brand'], aiNum_($r['qty']), $r['target'] ? aiNum_($r['target']) : '—', $r['pr'] === null ? '—' : aiPct_($r['pr']), $r['gr'] === null ? '—' : aiPct_($r['gr'])], $rows);
+    $tb = array_map(fn($r) => [$r['brand'], $r['target'] ? aiNum_($r['target']) : '—', aiNum_($r['qty']), $r['ac'] === null ? '—' : aiPct_($r['ac']), $r['pr'] === null ? '—' : aiPct_($r['pr']), $r['tda'] ? aiNum_($r['da']) . '/' . aiNum_($r['tda']) : aiNum_($r['da']), $r['tnoo'] ? aiNum_($r['noo']) . '/' . aiNum_($r['tnoo']) : aiNum_($r['noo']), aiNum_($r['so']), aiRp_($r['om'])], $rows);
+    $kp = [];
+    if ($region === '') { $tt = $d['total'] ?? []; $c0 = $tt['current'] ?? $tt; $run = (float) ($ew['run'] ?? 0); $q0 = (float) ($c0['qty'] ?? array_sum(array_column($rows, 'qty')));
+        $kp = [['t' => 'kpi', 'items' => [['l' => 'Sell Thru', 'v' => aiNum_($q0), 's' => 'qty periode ini', 'c' => '#1E5FB8'], ['l' => 'Dealer Aktif', 'v' => aiNum_($c0['da'] ?? array_sum(array_column($rows, 'da'))), 's' => '', 'c' => '#0E7C6B'], ['l' => 'NOO', 'v' => aiNum_($c0['noo'] ?? 0), 's' => '', 'c' => '#6D3FD8'],
+            ['l' => 'Sell Out', 'v' => aiNum_($c0['sellout'] ?? 0), 's' => '', 'c' => '#C25A12'], ['l' => 'Run rate/hari', 'v' => $run > 0 ? number_format($q0 / $run, 1, ',', '.') : '—', 's' => $run > 0 ? 'qty ÷ ' . (int) $run . ' hari' : '', 'c' => '#1E5FB8'], ['l' => 'Omzet', 'v' => aiRp_($c0['omzet'] ?? array_sum(array_column($rows, 'om'))), 's' => '', 'c' => '#9A6400']]]]; }
     $worst = $rows[0] ?? null;
     return ['data' => ['brands' => array_map(fn($r) => ['brand' => $r['brand'], 'aktual' => $r['qty'], 'target' => $r['target'], 'capai_persen' => $r['ac'], 'proyeksi_persen' => $r['pr'], 'growth_persen' => $r['gr']], $rows)],
-        'blocks' => [['t' => 'bars', 'title' => 'Capaian Sell Thru per brand' . ($region ? ' · ' . $region : ''), 'rows' => $bars], ['t' => 'table', 'title' => 'Rincian per brand' . ($region ? ' · ' . $region : ''), 'cols' => ['Brand', 'Aktual', 'Target', 'Proyeksi', 'Growth'], 'rows' => $tb]],
+        'blocks' => array_merge($kp, [['t' => 'table', 'title' => 'Per brand · ' . count($rows) . ' brand' . ($region ? ' · ' . $region : '') . ' · urut capaian terendah', 'cols' => ['Brand', 'Target', 'Sell Thru', 'Capaian', 'Proyeksi', 'Dealer Aktif', 'NOO', 'Sell Out', 'Omzet'], 'rows' => $tb]]),
         'summary' => !$worst ? 'Belum ada data brand.' : ($worst['ac'] === null ? 'Target brand untuk wilayah ini belum tersedia di data, jadi yang tampil hanya aktual per brand.' : $worst['brand'] . ' paling jauh dari target (' . aiPct_($worst['ac']) . ').')];
 }
 function aiEarly_(array &$x, string $level, string $region = '', int $lim = 8): array {
@@ -612,7 +619,7 @@ function aiDayPattern_(array &$x): array {
     ksort($S); $L = []; foreach ($S as $w => $s) $L[] = ['hari' => $nm[$w], 'rata2' => $s['q'] / max(1, $s['n']), 'jumlah_hari' => $s['n']];
     $mx = max(1, ...array_map(fn($r) => $r['rata2'], $L ?: [['rata2' => 1]])); $sorted = $L; usort($sorted, fn($a, $b) => $b['rata2'] <=> $a['rata2']);
     $wk = aiDash_($x)['weekly'] ?? []; $n = count($wk); $cmp = $n >= 2 ? ['minggu_ini' => $wk[$n - 1], 'minggu_lalu' => $wk[$n - 2]] : null;
-    $bl = [['t' => 'bars', 'title' => 'Rata-rata Sell Thru per hari', 'rows' => array_map(fn($r) => ['l' => $r['hari'], 'v' => $r['rata2'] / $mx * 100, 'txt' => number_format($r['rata2'], 1, ',', '.'), 'c' => '#1E5FB8'], $L)]];
+    $bl = [['t' => 'cols', 'title' => 'Rata-rata Sell Thru per hari', 'rows' => array_map(fn($r) => ['l' => $r['hari'], 'v' => $r['rata2'] / $mx * 100, 'txt' => number_format($r['rata2'], 1, ',', '.'), 'c' => '#1E5FB8'], $L)]];
     if ($cmp) $bl[] = ['t' => 'kpi', 'items' => [['l' => 'Minggu ' . $cmp['minggu_lalu']['week'], 'v' => aiNum_($cmp['minggu_lalu']['qty']), 's' => 'minggu lalu', 'c' => '#64748B'], ['l' => 'Minggu ' . $cmp['minggu_ini']['week'], 'v' => aiNum_($cmp['minggu_ini']['qty']), 's' => 'minggu ini (bisa belum penuh)', 'c' => '#1E5FB8']]];
     return ['data' => ['per_hari' => $L, 'minggu' => $cmp, 'catatan' => 'Minggu berjalan bisa belum penuh.'], 'blocks' => $bl,
         'summary' => $sorted ? 'Paling tinggi hari ' . $sorted[0]['hari'] . ' (rata-rata ' . number_format($sorted[0]['rata2'], 1, ',', '.') . '), paling rendah ' . end($sorted)['hari'] . '.' . ($cmp ? ' Minggu ini ' . aiNum_($cmp['minggu_ini']['qty']) . ' vs minggu lalu ' . aiNum_($cmp['minggu_lalu']['qty']) . '.' : '') : 'Belum ada data harian.'];
@@ -700,19 +707,26 @@ function aiTrans_(array &$x, string $date = '', string $region = '', string $bra
     $docs = []; $dl = []; $q = 0; $om = 0; $out = []; $tb = [];
     foreach ($rows as $r) { foreach ((array) ($r['docs'] ?? []) as $d) $docs[(string) $d] = 1; $id = (string) $r['customer']; $dl[$id] = 1; $q += (float) $r['q']; $om += (float) $r['a']; $c = $nm[$id] ?? [];
         $nota = array_slice(array_map('strval', (array) ($r['docs'] ?? [])), 0, 2); $more = count((array) ($r['docs'] ?? [])) > 2 ? ' +' . (count($r['docs']) - 2) : '';
-        $tb[] = array_merge($isAll ? [date('d/m', strtotime($r['date']))] : [], [$id, (string) ($c['nama'] ?? $id), (string) ($r['brand'] ?? ''), (string) ($r['type'] ?? ''), aiNum_($r['q']), aiNum_($r['a']), implode(', ', $nota) . $more]);
+        $tb[] = array_merge($isAll ? [date('d/m', strtotime($r['date']))] : [], [$id, (string) ($c['nama'] ?? $id), (string) ($r['brand'] ?? ''), (string) ($r['type'] ?? ''), aiNum_($r['q']), aiRp_($r['a']), implode(', ', $nota) . $more]);
         $out[] = ['tanggal' => $r['date'], 'kode' => $id, 'dealer' => $c['nama'] ?? $id, 'sales' => ($c['sales'] ?? '') ?: ($sn[(string) ($r['nik'] ?? '')] ?? ''), 'brand' => $r['brand'], 'type' => $r['type'], 'qty' => $r['q'], 'omzet' => $r['a'], 'no_sj' => array_values(array_map('strval', (array) ($r['docs'] ?? [])))]; }
     $BR = []; if ($brand === '') { foreach ($rows as $r) { $k = (string) $r['brand']; $BR[$k] ??= ['d' => [], 'sj' => [], 'q' => 0, 'a' => 0]; $BR[$k]['d'][(string) $r['customer']] = 1; foreach ((array) ($r['docs'] ?? []) as $dd) $BR[$k]['sj'][(string) $dd] = 1; $BR[$k]['q'] += (float) $r['q']; $BR[$k]['a'] += (float) $r['a']; } uasort($BR, fn($a, $b) => $b['q'] <=> $a['q']); }
     $G = []; $byU = strtolower($by);
     if ($byU === 'sales' || $byU === 'region') { foreach ($rows as $r) { $k = $byU === 'sales' ? ($sn[(string) ($r['nik'] ?? '')] ?? (string) ($r['nik'] ?? '—')) : (string) (($r['region'] ?? '') ?: '—'); $G[$k] ??= ['rg' => (string) ($r['region'] ?? ''), 'd' => [], 'sj' => [], 'q' => 0, 'a' => 0]; $G[$k]['d'][(string) $r['customer']] = 1; foreach ((array) ($r['docs'] ?? []) as $dd) $G[$k]['sj'][(string) $dd] = 1; $G[$k]['q'] += (float) $r['q']; $G[$k]['a'] += (float) $r['a']; }
         uasort($G, fn($a, $b) => $b['q'] <=> $a['q']); }
     $rg = $region ? ' · ' . $region : '';
-    return ['data' => ['tanggal' => $date, 'otomatis_tanggal_terakhir' => !empty($auto), 'jumlah_baris' => count($rows), 'jumlah_sj' => count($docs), 'dealer' => count($dl), 'qty' => $q, 'omzet' => $om, 'transaksi' => array_slice($out, 0, 200), 'per_brand' => array_map(fn($k, $g) => ['brand' => $k, 'dealer' => count($g['d']), 'sj' => count($g['sj']), 'qty' => $g['q'], 'omzet' => $g['a']], array_keys($BR), array_values($BR)), 'per_kelompok' => array_map(fn($k, $g) => ['nama' => $k, 'dealer' => count($g['d']), 'sj' => count($g['sj']), 'qty' => $g['q'], 'omzet' => $g['a']], array_keys($G), array_values($G)), 'catatan' => 'Satu baris = gabungan per dealer, brand, TYPE, dan sales di tanggal itu. Nomor yang tampil adalah nomor SJ (surat jalan).'],
+    $res = ['data' => ['tanggal' => $date, 'otomatis_tanggal_terakhir' => !empty($auto), 'jumlah_baris' => count($rows), 'jumlah_sj' => count($docs), 'dealer' => count($dl), 'qty' => $q, 'omzet' => $om, 'transaksi' => array_slice($out, 0, 200), 'per_brand' => array_map(fn($k, $g) => ['brand' => $k, 'dealer' => count($g['d']), 'sj' => count($g['sj']), 'qty' => $g['q'], 'omzet' => $g['a']], array_keys($BR), array_values($BR)), 'per_kelompok' => array_map(fn($k, $g) => ['nama' => $k, 'dealer' => count($g['d']), 'sj' => count($g['sj']), 'qty' => $g['q'], 'omzet' => $g['a']], array_keys($G), array_values($G)), 'catatan' => 'Satu baris = gabungan per dealer, brand, TYPE, dan sales di tanggal itu. Nomor yang tampil adalah nomor SJ (surat jalan).'],
         'blocks' => [['t' => 'kpi', 'items' => [['l' => 'Surat jalan', 'v' => aiNum_(count($docs)), 's' => 'No. SJ · ' . ($isAll ? $x['period'] : $date), 'c' => '#1E5FB8'], ['l' => 'Dealer', 'v' => aiNum_(count($dl)), 's' => 'bertransaksi', 'c' => '#0E7C6B'], ['l' => 'Qty', 'v' => aiNum_($q), 's' => count($rows) . ' baris', 'c' => '#C25A12'], ['l' => 'Omzet', 'v' => aiNum_($om), 's' => 'Rp', 'c' => '#9A6400']]],
             ...(count($BR) > 1 ? [['t' => 'table', 'title' => 'Per brand · ' . count($BR) . ' brand', 'cols' => ['Brand', 'Dealer', 'Jumlah SJ', 'Qty', 'Omzet (Rp)', 'Kontribusi'], 'rows' => array_map(fn($k, $g) => [$k, aiNum_(count($g['d'])), aiNum_(count($g['sj'])), aiNum_($g['q']), aiNum_($g['a']), $q > 0 ? aiPct_($g['q'] / $q * 100) : '—'], array_keys($BR), array_values($BR))]] : []),
             ...($G ? [['t' => 'table', 'title' => 'Per ' . ($byU === 'sales' ? 'sales' : 'region') . ' · ' . count($G) . ' ' . ($byU === 'sales' ? 'sales' : 'region'), 'cols' => array_merge([$byU === 'sales' ? 'Sales' : 'Region'], $byU === 'sales' ? ['Region'] : [], ['Dealer', 'Jumlah SJ', 'Qty', 'Omzet (Rp)']), 'rows' => array_map(fn($k, $g) => array_merge([$k], $byU === 'sales' ? [$g['rg']] : [], [aiNum_(count($g['d'])), aiNum_(count($g['sj'])), aiNum_($g['q']), aiNum_($g['a'])]), array_keys($G), array_values($G))]] : []),
-            ['t' => 'table', 'title' => 'Transaksi ' . ($isAll ? 'seluruh periode ' . $x['period'] : $date) . $rg . ($brand ? ' · ' . $brand : '') . ' · ' . count($rows) . ' baris', 'cols' => array_merge($isAll ? ['Tgl'] : [], ['Kode', 'Dealer', 'Brand', 'TYPE', 'Qty', 'Omzet (Rp)', 'No. SJ']), 'rows' => array_slice($tb, 0, $lim), 'fold' => count($tb) > 8 && ($BR || $G)]],
+            ['t' => 'table', 'title' => 'Transaksi ' . ($isAll ? 'seluruh periode ' . $x['period'] : $date) . $rg . ($brand ? ' · ' . $brand : '') . ' · ' . count($rows) . ' baris', 'cols' => array_merge($isAll ? ['Tanggal'] : [], ['Kode', 'Dealer', 'Brand', 'TYPE', 'Qty', 'Omzet', 'No. SJ']), 'rows' => array_slice($tb, 0, $lim), 'fold' => count($tb) > 8 && ($BR || $G)]],
         'summary' => (!empty($auto) ? 'Tanggal terakhir yang ada data: ' : '') . ($isAll ? 'Periode ' . $x['period'] : $date) . ': ' . aiNum_(count($docs)) . ' SJ dari ' . aiNum_(count($dl)) . ' dealer, qty ' . aiNum_($q) . ', omzet Rp ' . aiNum_($om) . '.' . (count($rows) > $lim ? ' Tabel menampilkan ' . $lim . ' baris pertama dari ' . count($rows) . '.' : '')];
+    $pal = ['#1E5FB8', '#0E7C6B', '#C25A12', '#6D3FD8', '#9A6400', '#2E6E9E', '#D2453F', '#12866A']; $ex = [];
+    $bq = []; $dq = []; foreach ($rows as $r) { $bk = (string) ($r['brand'] ?? '—'); $bq[$bk] ??= ['q' => 0, 'a' => 0]; $bq[$bk]['q'] += (float) $r['q']; $bq[$bk]['a'] += (float) $r['a']; $di = (string) $r['customer']; $dq[$di] ??= ['q' => 0, 'a' => 0, 'n' => (string) (($nm[$di]['nama'] ?? '') ?: $di)]; $dq[$di]['q'] += (float) $r['q']; $dq[$di]['a'] += (float) $r['a']; }
+    uasort($bq, fn($u, $v) => $v['q'] <=> $u['q']); uasort($dq, fn($u, $v) => $v['q'] <=> $u['q']);
+    if (count($bq) > 1) { $m = max(1, max(array_column($bq, 'q'))); $i = 0; $ex[] = ['t' => 'bars', 'title' => 'Per brand · qty dan omzet', 'rows' => array_map(function ($k, $g) use ($m, $pal, &$i) { return ['l' => $k, 'v' => $g['q'] / $m * 100, 'txt' => aiNum_($g['q']) . ' · ' . aiRp_($g['a']), 'c' => $pal[$i++ % count($pal)], 'wide' => true]; }, array_keys($bq), $bq)]; }
+    if (count($dq) > 1) { $top = array_slice($dq, 0, 8, true); $m = max(1, max(array_column($top, 'q'))); $ex[] = ['t' => 'bars', 'title' => 'Per dealer · qty dan omzet' . (count($dq) > 8 ? ' · 8 teratas dari ' . count($dq) : ''), 'rows' => array_map(fn($k, $g) => ['l' => $k . ' ' . mb_strimwidth($g['n'], 0, 16, '…'), 'v' => $g['q'] / $m * 100, 'txt' => aiNum_($g['q']) . ' · ' . aiRp_($g['a']), 'c' => '#1E5FB8', 'wide' => true], array_keys($top), $top)]; }
+    if ($ex) array_splice($res['blocks'], 1, 0, $ex);
+    return $res;
 }
 function aiDaily_(array &$x, int $n = 7, string $date = '', string $region = ''): array {
     $d = $region !== '' ? aiDailyRegion_($x, $region) : aiDash_($x);
@@ -728,6 +742,7 @@ function aiDaily_(array &$x, int $n = 7, string $date = '', string $region = '')
     $best = null; foreach ($D as $r) if (!$best || $r['qty'] > $best['qty']) $best = $r; $c = count($D);
     $bars = array_map(fn($r) => ['l' => $nm[(int) date('w', strtotime($r['date']))] . ' ' . date('d/m', strtotime($r['date'])), 'v' => (float) $r['qty'] / $mx * 100, 'txt' => aiNum_($r['qty']), 'c' => '#1E5FB8'], $D);
     $blocks = [['t' => 'kpi', 'items' => [['l' => 'Total ST', 'v' => aiNum_($sq), 's' => $c . ' hari kerja', 'c' => '#1E5FB8'], ['l' => 'Rata-rata/hari', 'v' => number_format($sq / $c, 1, ',', '.'), 's' => 'Sell Thru', 'c' => '#0E7C6B'], ['l' => 'Sell Out', 'v' => aiNum_($so), 's' => 'total periode ini', 'c' => '#C25A12']]]];
+    $blocks[] = ['t' => 'cols', 'title' => 'Sell Thru per hari' . ($region ? ' · ' . $region : ''), 'rows' => array_map(fn($r) => ['l' => date('d/m', strtotime($r['date'])), 'sub' => $nm[(int) date('w', strtotime($r['date']))], 'v' => (float) $r['qty'] / $mx * 100, 'txt' => aiNum_($r['qty']), 'c' => '#1E5FB8'], $D)];
     $bn = array_map(fn($b) => $b['brand'], $d['brands'] ?? []); $use = [];
     foreach ($bn as $i => $b) { foreach ($D as $r) if ((float) ($r['brands'][$i] ?? 0) > 0) { $use[$i] = $b; break; } }
     if ($use) {
@@ -735,9 +750,9 @@ function aiDaily_(array &$x, int $n = 7, string $date = '', string $region = '')
         foreach (array_reverse($D) as $r) { $row = [date('d/m/Y', strtotime($r['date'])), $hf[(int) date('w', strtotime($r['date']))]]; $one = [];
             foreach ($use as $i => $b) { $q = (float) ($r['brands'][$i] ?? 0); $tot[$i] += $q; $row[] = $q ? aiNum_($q) : '-'; $one[$b] = $q; } $row[] = aiNum_($r['qty']); $brow[] = $row; $bd[] = ['tanggal' => $r['date']] + $one + ['total' => (float) $r['qty']]; }
         $trow = ['TOTAL', '']; foreach ($use as $i => $b) $trow[] = aiNum_($tot[$i]); $trow[] = aiNum_($sq); $brow[] = $trow; 
-        $blocks[] = ['t' => 'table', 'title' => 'Sell Thru per hari per brand' . ($region ? ' · ' . $region : ''), 'cols' => array_merge(['Tanggal', 'Hari'], array_values($use), ['Total']), 'rows' => $brow];
+        $blocks[] = ['t' => 'table', 'title' => 'Sell Thru per hari per brand' . ($region ? ' · ' . $region : ''), 'cols' => array_merge(['Tanggal', 'Hari'], array_values($use), ['Total']), 'rows' => $brow, 'fold' => true];
     }
-    $blocks[] = ['t' => 'table', 'title' => 'Sell Out, omzet, dealer transaksi & NOO per hari', 'cols' => ['Tanggal', 'Hari', 'Sell Thru', 'Sell Out', 'Omzet (Rp)', 'Dealer transaksi', 'Jumlah SJ', 'NOO'], 'rows' => array_reverse($rows)];
+    $blocks[] = ['t' => 'table', 'title' => 'Sell Out, omzet, dealer transaksi & NOO per hari', 'cols' => ['Tanggal', 'Hari', 'Sell Thru', 'Sell Out', 'Omzet (Rp)', 'Dealer transaksi', 'Jumlah SJ', 'NOO'], 'rows' => array_reverse($rows), 'fold' => true];
     return ['data' => ['catatan' => 'Hari tanpa transaksi tidak muncul. Dealer transaksi = jumlah dealer berbeda yang bertransaksi di hari itu; dealer_aktif_hari_itu dihitung hanya dari transaksi hari itu (bukan DA kumulatif bulan berjalan); NOO per brand per tanggal belum tersedia.', 'harian' => $out, 'per_brand_harian' => $bd ?? [], 'total_st' => $sq, 'rata2_st' => $sq / $c],
         'blocks' => $blocks, 'summary' => ($date ?: $c . ' hari terakhir') . ': Sell Thru ' . aiNum_($sq) . ($c > 1 ? ', rata-rata ' . number_format($sq / $c, 1, ',', '.') . '/hari. Tertinggi ' . date('d/m', strtotime($best['date'])) . ' (' . aiNum_($best['qty']) . ').' : '.')];
 }
@@ -787,7 +802,7 @@ function aiWeekly_(array &$x): array {
     $d = aiDash_($x); $w = $d['weekly'] ?? []; $mx = max(1, ...array_map(fn($r) => $r['qty'], $w ?: [['qty' => 1]]));
     $best = null; foreach ($w as $r) if (!$best || $r['qty'] > $best['qty']) $best = $r;
     return ['data' => ['per_minggu' => array_map(fn($r) => ['minggu' => $r['week'], 'qty' => $r['qty']], $w)],
-        'blocks' => [['t' => 'bars', 'title' => 'Sell Thru per minggu', 'rows' => array_map(fn($r) => ['l' => 'Minggu ' . $r['week'], 'v' => $r['qty'] / $mx * 100, 'txt' => aiNum_($r['qty']), 'c' => '#2B7BE0'], $w)]],
+        'blocks' => [['t' => 'cols', 'title' => 'Sell Thru per minggu', 'rows' => array_map(fn($r) => ['l' => 'Minggu ' . $r['week'], 'v' => $r['qty'] / $mx * 100, 'txt' => aiNum_($r['qty']), 'c' => '#2B7BE0'], $w)]],
         'summary' => $best ? 'Minggu ' . $best['week'] . ' paling tinggi (' . aiNum_($best['qty']) . ' unit).' : 'Belum ada data mingguan.'];
 }
 function aiGloss_(string $term): array {
@@ -874,9 +889,10 @@ function aiGeminiOnce_(array $body, string $mdl): array {
     return $j;
 }
 function aiSysPrompt_(array $x, array $brands): string {
-    return "Kamu DSM AI, asisten data penjualan distribusi. Jawab dalam Bahasa Indonesia yang santai dan jelas, maksimal 3 kalimat.\n"
+    return "Kamu DSM AI, asisten data penjualan distribusi. Jawab dalam Bahasa Indonesia yang santai dan jelas, maksimal 2 kalimat pendek tanpa basa-basi (1 sorotan utama saja; angka detail sudah ada di grafik/tabel).\n"
         . "ATURAN: semua angka HARUS berasal dari hasil fungsi. Jangan menghitung atau mengarang angka. Tabel dan grafik sudah ditampilkan otomatis oleh aplikasi dari hasil fungsi, jadi cukup beri kesimpulan dan sorotan, jangan mengulang semua angka.\n"
-        . "Jika pertanyaan tidak bisa dijawab oleh fungsi yang ada, katakan terus terang belum bisa. Jangan menebak penyebab; hanya tunjukkan pola dari data. Kalau brand tidak jelas untuk fungsi yang butuh brand, tanyakan balik.\n"
+        . "Cakupan: kamu boleh menjawab pertanyaan apa pun selama menyangkut DSM dan data distribusi perusahaan (dealer, sales/ASM/RGM, brand, TYPE, stok/DOS, transaksi, KPI, target, NOO, insentif, istilah dan cara pakai DSM), termasuk pertanyaan bebas atau gabungan: pilih fungsi yang paling dekat, panggil lebih dari satu bila perlu, lalu simpulkan. Pertanyaan umum di luar DSM (resep, berita, coding, curhat, dsb) tolak sopan dalam satu kalimat dan arahkan ke topik DSM.
+Jika pertanyaan tentang DSM tapi tidak bisa dijawab oleh fungsi yang ada, katakan terus terang \"belum bisa gue jawab\" (akan dicatat untuk diajarkan Super Admin), lalu tawarkan data terdekat yang bisa. Jangan menebak penyebab; hanya tunjukkan pola dari data. Kalau brand tidak jelas untuk fungsi yang butuh brand, tanyakan balik.\n"
         . "Jika user menyebut wilayah (mis. Jawa Timur, Jabar), isi parameter region dengan nama wilayah itu; jika user menyebut jumlah (mis. 30 dealer) isi limit dengan angka itu. Jika user menyebut nama Sales/ASM/RGM, isi person dengan nama itu (jangan isi region). Wilayah yang ada: " . implode(', ', array_slice(aiRegionList_($x), 0, 60)) . ".\n"
         . "Brand yang ada: " . implode(', ', $brands) . ". Periode " . $x['period'] . "."
         . ((function_exists('aiKnowText_') && ($kt = aiKnowText_()) !== '') ? "\nPENGETAHUAN PERUSAHAAN dari Super Admin (ikuti bila relevan; tetap jangan mengarang angka):\n" . $kt : '');
@@ -913,7 +929,7 @@ function aiLlmOpenai_(string $q, array $context, array &$x, array $brands, array
     foreach ($context as $m) { $tx = trim((string) ($m['text'] ?? '')); if ($tx === '') continue; $msgs[] = ['role' => ($m['role'] ?? '') === 'assistant' ? 'assistant' : 'user', 'content' => mb_substr($tx, 0, 600)]; }
     $msgs[] = ['role' => 'user', 'content' => $q];
     for ($round = 0; $round < 3; $round++) {
-        $j = aiOpenai_(['model' => aiOpenaiModel_(), 'messages' => $msgs, 'tools' => $tools, 'max_completion_tokens' => 1200]);
+        $j = aiOpenai_(['model' => aiOpenaiModel_(), 'messages' => $msgs, 'tools' => $tools, 'max_completion_tokens' => 4000]);
         $m = $j['choices'][0]['message'] ?? [];
         $calls = $m['tool_calls'] ?? [];
         if (!$calls) { $text = trim((string) ($m['content'] ?? '')); if ($text === '') throw new RuntimeException('OpenAI tidak memberi jawaban.'); return $text; }
@@ -985,14 +1001,14 @@ function apiAIChat($token = null, $period = null, $selection = null, $question =
             if (function_exists('aiKnowHit_')) aiKnowHit_($q);
             if (!$intent && preg_match('/belum bisa (gue |saya |aku )?(jawab|menjawab)|tidak bisa (menjawab|dijawab)|belum (tersedia|ada data)/iu', $text)) $intent = 'UNSUPPORTED'; }
         catch (Throwable $e) { $fallback = $e->getMessage(); $blocks = []; $intent = null; }
-    } else { $fallback = 'Kunci Gemini belum dipasang'; }
+    } else { $fallback = 'Kunci AI belum dipasang'; }
     if ($model === 'Mode dasar') {
         [$fn, $args] = aiRoute_($q, $brands);
         if (in_array($fn, ['', 'perf_summary', 'dealer_insight'], true) && $m_d = preg_match('/dealer|toko|outlet|customer|detail/i', $q)) { $dc = aiDealerCands_($q, $x, $brands); if ($dc && (!empty($dc[0]['exact']) || $dc[0]['score'] >= 2 || $fn === '' || preg_match('/(dealer|toko|outlet)\\s+\\S+/i', $q)) && !preg_match('/(yang|semua|top|paling|berapa dealer|dealer aktif|belum order|hilang|turun|konsentrasi|cross)/i', $q)) { $fn = 'dealer_insight'; $args = ['mode' => 'detail', 'dealer' => $q]; } }
         if ($fn === 'transactions' && ($dc2 = aiDealerCands_($q, $x, $brands)) && !aiPersonFind_($q, $x['token'], true) && (aiRegionIn_($q, $x) === '' || $dc2[0]['score'] >= 2 || preg_match('/dealer|toko|outlet/i', $q))) $args['dealer'] = $q;
         if ($fn === 'ranking' && ($args['mode'] ?? '') === 'compare') { $two = []; foreach (aiPeople_($x['token']) as $pp) { $n = mb_strtoupper((string) ($pp['nama'] ?? '')); if ($n !== '' && strpos($n, 'VACANT') !== 0 && preg_match('/(?<![A-Z0-9])' . preg_quote($n, '/') . '(?![A-Z0-9])/u', mb_strtoupper($q))) $two[] = $pp['nama']; } $args['person'] = $two[0] ?? ''; $args['person2'] = $two[1] ?? ''; }
         if ($fn !== 'ranking' && in_array($fn, ['top_type', 'weekly_trend', 'perf_summary', 'brand_type', 'kpi_detail', 'kpi_team', 'daily_sales', 'transactions', 'da_noo_cumulative', 'stock_insight', 'dealer_insight', 'focus_plan', 'ranking', 'day_pattern', 'brand_achievement', 'dealer_potential', 'dealer_not_order', 'dealer_priority', 'dos_risk', 'early_warning'], true)) { $pe = aiPersonFind_($q, $x['token'], true); if (!$pe) { $cd = aiPersonCands_($q, $x['token'], $brands); if (count($cd) === 1) $pe = $cd[0]; elseif (count($cd) > 1) $pick = aiPersonPick_($cd, $q); } if ($pe) $args['person'] = (string) $pe['nama']; elseif (empty($pick)) { $rg = aiRegionIn_($q, $x); if ($rg !== '') $args['region'] = $rg; else { $rc = aiRegionCands_($q, $x, $brands); if (count($rc['names']) === 1) $args['region'] = $rc['names'][0]; elseif (count($rc['names']) > 1) $pick = aiRegionPick_($rc['names'], $rc['tok'], $q); elseif (($ut = aiUnknownTok_($q, $brands)) !== '') $pick = aiAskBack_($ut, $q, $x); } } $lm = aiLimitIn_($q); if ($lm > 0) $args['limit'] = $lm; }
-        if ($fn === '' && $fallback && preg_match('/(429|500|502|503|504)|Kuota|menghubungi/', $fallback)) { $text = 'AI sedang sibuk (server Gemini lagi penuh). Coba kirim ulang sebentar lagi, atau pakai salah satu pertanyaan contoh yang tetap bisa dijawab.'; $intent = 'BUSY'; }
+        if ($fn === '' && $fallback && preg_match('/(429|500|502|503|504)|Kuota|menghubungi/', $fallback)) { $text = 'AI sedang sibuk (server AI lagi penuh). Coba kirim ulang sebentar lagi, atau pakai salah satu pertanyaan contoh yang tetap bisa dijawab.'; $intent = 'BUSY'; }
         elseif ($fn === '' && function_exists('aiKnowHit_') && ($kh = aiKnowHit_($q))) { $text = $kh['title'] . ': ' . $kh['body']; $intent = 'KNOWLEDGE'; }
         elseif ($fn === '') { $text = 'Maaf, pertanyaan itu belum bisa gue jawab. Sudah dicatat supaya bisa ditambahkan. Coba salah satu pertanyaan contoh.'; $intent = 'UNSUPPORTED'; }
         elseif (!empty($pick)) { $text = $pick['summary']; $blocks = $pick['blocks']; $intent = 'PICK'; }
