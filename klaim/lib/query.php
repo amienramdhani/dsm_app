@@ -146,7 +146,7 @@ function claim_detail(array $u, int $id): array {
   $next = null;
   if ($c['status'] === 'WAIT' && $c['stage']) {
     $rest = array_values(array_filter(array_slice($route, array_search($c['stage'], $route) + 1)));
-    $hold = fn(string $st) => array_values(array_map(fn($x) => ['name' => $x['name'], 'job' => $x['job']], array_filter(stage_users($st, $c['region'], $c['entity']), fn($x) => (int) $x['id'] !== (int) $c['claimant_id'])));
+    $hold = fn(string $st) => array_values(array_map(fn($x) => ['name' => $x['name'], 'job' => $x['job']], array_filter(stage_users($st, $c['region'], $c['entity'], (int) ($c['claimant_id'] ?? 0)), fn($x) => (int) $x['id'] !== (int) $c['claimant_id'])));
     $nm = function (string $st) use ($hold) { $n = array_column($hold($st), 'name'); return $n ? ' (' . implode(', ', array_slice($n, 0, 2)) . (count($n) > 2 ? ' +' . (count($n) - 2) : '') . ')' : ''; };
     $step = [(int) array_search($c['stage'], $route) + 1, count($route)]; $restOut = array_map(fn($st) => ['stage' => $st, 'label' => STAGE_NAME[$st], 'holders' => $hold($st)], $rest);
     $then = $rest ? 'Setelah itu: ' . implode(' → ', array_map(fn($s) => STAGE_NAME[$s] . $nm($s), $rest)) . '.' : '';
@@ -155,7 +155,7 @@ function claim_detail(array $u, int $id): array {
   } elseif ($c['status'] === 'REV') $next = ['who' => $c['rev_holder'], 'text' => 'Perlu revisi di ' . ($c['rev_holder'] === 'ADMIN' ? 'Admin' : 'Pemohon') . '. Setelah diperbaiki kembali ke ' . STAGE_NAME[$c['rev_stage']] . '.', 'then' => ''];
   if ($ba && $c['status'] === 'WAIT') { $need = array_values(array_filter(ba_required_roles($c), fn($r) => !array_filter($baOut['signs'], fn($s) => $s['role'] === $r && $s['valid']))); $sp = array_map(function ($r) use ($c, $cu) {
     if ($r === 'PEMOHON') return 'Pemohon (' . $cu['name'] . ')';
-    $n = array_column(array_filter(stage_users($r, $c['region'], $c['entity']), fn($x) => (int) $x['id'] !== (int) $c['claimant_id']), 'name');
+    $n = array_column(array_filter(stage_users($r, $c['region'], $c['entity'], (int) ($c['claimant_id'] ?? 0)), fn($x) => (int) $x['id'] !== (int) $c['claimant_id']), 'name');
     return (STAGE_NAME[$r] ?? $r) . ($n ? ' (' . implode(', ', array_slice($n, 0, 2)) . (count($n) > 2 ? ' +' . (count($n) - 2) : '') . ')' : '');
   }, $need); $next = ($next ?? []) + ['sign_pending' => $sp, 'sign' => ['done' => count(ba_required_roles($c)) - count($need), 'total' => count(ba_required_roles($c)), 'pending' => array_map(fn($r, $t) => ['role' => $r, 'text' => $t], $need, $sp)]]; }
   return ['next' => $next, 'claim' => $c + ['label' => status_label($c), 'age_days' => age_days($c['stage_since']), 'aging' => row_out($c)['aging']], 'type' => $t, 'kind' => $kind, 'meta' => $meta, 'type_label' => claim_type_label($c), 'parts' => array_map(fn($p) => ['type' => ['id' => (int) $p['type']['id'], 'name' => $p['type']['name'], 'category' => $p['type']['category']], 'kind' => $p['kind'], 'meta' => (object) $p['meta']], $parts), 'notes' => $notes, 'files' => $files,

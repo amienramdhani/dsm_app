@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Klaim · Tugaskan ke Admin</title>
+<style>
+*{box-sizing:border-box;font-family:Inter,"Segoe UI",system-ui,sans-serif}
+body{margin:0;background:#EEF2F6;color:#10394E;padding:14px;font-size:10px}
+.bar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.bar input,.bar select{padding:7px 9px;border:1px solid #CBD5E0;border-radius:8px;font-size:10px;background:#fff}
+.chip{padding:5px 9px;border-radius:8px;border:1px solid #CBD5E0;background:#fff;font-weight:700;font-size:10px}
+.chip.on{background:#0B5CAD;color:#fff;border-color:#0B5CAD}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 1px 6px rgba(16,57,78,.1)}
+th{background:#E6EBF1;text-align:left;padding:8px 9px;font-weight:700;font-size:10px;border-bottom:2px solid #15303F}
+td{padding:7px 9px;border-top:1px solid #E5E9EE;font-size:10px;font-weight:400}
+tr.sel td{background:#E3F5EE}
+.cb{width:14px;height:14px;border:1.5px solid #94A3B8;border-radius:4px;display:inline-block;vertical-align:middle;background:#fff}
+.cb.on{background:#0B5CAD;border-color:#0B5CAD;position:relative}.cb.on:after{content:"";position:absolute;left:3px;top:0;width:3px;height:7px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.pill{padding:2px 6px;border-radius:5px;background:#E6EBF1;font-weight:700;font-size:9px}
+.adm{padding:2px 7px;border-radius:5px;background:#DDE9F8;color:#1E5FB8;font-weight:700;font-size:9px}
+.auto{color:#64748b}
+.act{position:sticky;bottom:10px;margin-top:10px;background:#10394E;color:#fff;border-radius:12px;padding:10px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;box-shadow:0 4px 14px rgba(16,57,78,.35)}
+.act select{padding:7px 9px;border-radius:8px;border:0;font-size:10px;font-weight:700;min-width:210px}
+.act button{padding:8px 14px;border-radius:8px;border:0;font-weight:700;font-size:10px;cursor:pointer}
+.go{background:#2FB58F;color:#fff}.no{background:transparent;color:#B8D4E3}
+.note{margin:12px 0;padding:8px 10px;background:#E3F5EE;border-left:4px solid #2FB58F;border-radius:6px;font-size:10.5px;line-height:1.5}
+</style></head><body>
+
+<div class="bar">
+  <input placeholder="Cari nama, username, NIK, region" style="width:230px">
+  <span class="chip on">SEMUA 60</span><span class="chip">PEMOHON 51</span><span class="chip">ADMIN 4</span>
+  <select><option>Semua penanganan</option><option>Belum ada Admin</option><option>Ditangani Fika Ameliya</option><option>Ditangani Dini Nadila Sari</option></select>
+  <span style="flex:1"></span><span class="chip" style="background:#0B5CAD;color:#fff">+ PENGGUNA BARU</span>
+</div>
+
+<table>
+<tr><th style="width:28px"><span class="cb"></span></th><th>NAMA</th><th>JABATAN</th><th>PERAN</th><th>REGION</th><th>DITANGANI ADMIN</th><th>BADAN USAHA</th></tr>
+<tr><td><span class="cb"></span></td><td><b>FIKA AMELIYA</b></td><td>Admin</td><td><span class="adm">ADMIN</span> <span class="pill">Pemohon</span></td><td>Jawa Tengah</td><td class="auto">-</td><td>PT. MSI</td></tr>
+<tr class="sel"><td><span class="cb on"></span></td><td><b>RIO MARDINATA</b></td><td>Rgm</td><td><span class="pill">RGM</span> <span class="pill">Pemohon</span></td><td>SUMATERA BAG. TENGAH</td><td class="auto">Otomatis (region)</td><td>PT. MSI</td></tr>
+<tr class="sel"><td><span class="cb on"></span></td><td><b>HENDRA SETIA PERMANA</b></td><td>Rgm</td><td><span class="pill">RGM</span> <span class="pill">Pemohon</span></td><td>SULAWESI</td><td><span class="adm">Dini Nadila Sari</span></td><td>PT. MSI</td></tr>
+<tr class="sel"><td><span class="cb on"></span></td><td><b>A. DESWAN FIRNANDO</b></td><td>Asm</td><td><span class="pill">ASM</span> <span class="pill">Pemohon</span></td><td>SUMATERA SELATAN</td><td class="auto">Otomatis (region)</td><td>PT. MSI</td></tr>
+<tr><td><span class="cb"></span></td><td><b>AZWAR</b></td><td>Asm</td><td><span class="pill">ASM</span> <span class="pill">Pemohon</span></td><td>JAMBI</td><td class="auto">Otomatis (region)</td><td>PT. MSI</td></tr>
+<tr><td><span class="cb"></span></td><td><b>EKI HERDIYAN</b></td><td>Asm</td><td><span class="pill">ASM</span> <span class="pill">Pemohon</span></td><td>RIAU</td><td><span class="adm">Fika Ameliya</span></td><td>PT. MSI</td></tr>
+</table>
+
+<div class="act">
+  <b>3 orang dipilih</b>
+  <select><option>Tugaskan ke Admin…</option><option>Fika Ameliya (Jawa Tengah)</option><option>Dini Nadila Sari (Semua region)</option><option>Kembalikan ke otomatis (ikut region)</option></select>
+  <button class="go">TERAPKAN</button><button class="no">BATAL PILIH</button>
+</div>
+
+<div class="note"><b>Cara kerja:</b> kolom baru <b>Ditangani Admin</b>. Kalau diisi, klaim orang itu masuk ke Admin yang dipilih (menang dari aturan region). Kalau kosong ("Otomatis"), tetap ikut Wilayah tugas Admin seperti sekarang. Centang bisa banyak sekaligus; ada filter "Belum ada Admin" dan "Ditangani si X" untuk cek hasilnya. Perubahan tercatat di riwayat.</div>
+</body></html>

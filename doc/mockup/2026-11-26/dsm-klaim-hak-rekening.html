@@ -1,0 +1,58 @@
+<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Mockup DSM Klaim — Hak Klaim, tambah user, rekening</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#EEF2F6;font-family:Inter,system-ui,sans-serif;color:#10394E;font-size:12px}
+.top{padding:14px 18px 0}h1{font-size:15px;margin:0 0 4px}p.n{margin:0 0 10px;color:#5B6B7A;font-size:12px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.tabs button{border:0;background:#fff;border-radius:10px;padding:8px 12px;font:inherit;font-weight:700;color:#5B6B7A;cursor:pointer;border:1px solid #E3E9EF}.tabs button.on{background:#10394E;color:#fff}
+.scr{display:none;padding:0 18px 24px}.scr.on{display:block}
+.app{background:#fff;border:1px solid #E3E9EF;border-radius:14px;overflow:hidden;max-width:1180px}
+.bar{background:#10394E;color:#fff;padding:10px 16px;display:flex;justify-content:space-between;font-weight:700}.bar small{font-weight:400;opacity:.8}
+.split{display:grid;grid-template-columns:330px 1fr;min-height:520px}
+.left{border-right:1px solid #E3E9EF;padding:10px;background:#F8FAFC}.left input{width:100%;padding:8px 10px;border:1px solid #D5DDE6;border-radius:8px;font:inherit;margin-bottom:8px}
+.btn{display:inline-block;border:0;border-radius:8px;padding:8px 12px;font:inherit;font-weight:700;cursor:pointer;background:#2E6E9E;color:#fff}.btn.g{background:#fff;color:#10394E;border:1px solid #D5DDE6}.btn.r{background:#D2453F}.btn.ok{background:#12866A}
+.pr{display:flex;gap:10px;padding:8px;border-radius:10px;border:1px solid transparent;margin-bottom:4px;background:#fff}.pr.on{border-color:#2FB58F;background:#E3F5EE}.pr i{width:30px;height:30px;border-radius:50%;background:#1E5FB8;color:#fff;display:grid;place-items:center;font-style:normal;font-weight:700;flex:none}.pr b{display:block}.pr small{display:block;color:#6B7B8A;font-size:10.5px;margin:1px 0 3px}
+.pl{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:6px;margin-right:4px}.pl.ok{background:#E1F3EC;color:#12866A}.pl.gr{background:#EEF2F6;color:#6B7B8A}.pl.pu{background:#EFE9FD;color:#6D3FD8}.pl.wt{background:#FFF3D6;color:#9A6400}
+.right{padding:14px 18px}.hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.hd h2{margin:0;font-size:15px}.hd small{color:#6B7B8A}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.card{border:1px solid #E3E9EF;border-radius:12px;padding:10px 12px;margin-bottom:12px}.card h3{margin:0 0 8px;font-size:11px;letter-spacing:.04em;color:#5B6B7A}
+.cr{display:grid;grid-template-columns:1fr 40px 140px;gap:8px;align-items:center;padding:6px 0;border-top:1px solid #EEF2F6}.cr:first-of-type{border-top:0}.cr em{font-style:normal;color:#6B7B8A;font-size:10.5px;text-align:right}
+.tg{display:inline-block;width:34px;height:19px;border-radius:12px;background:#CBD5E0;position:relative}.tg i{position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:#fff}.tg.on{background:#2FB58F}.tg.on i{left:17px}
+label{display:block;font-size:10px;font-weight:700;color:#5B6B7A;margin:8px 0 3px;letter-spacing:.03em}input.f,select.f{width:100%;padding:8px 10px;border:1px solid #D5DDE6;border-radius:8px;font:inherit;background:#fff}input.f[readonly]{background:#F1F4F8;color:#6B7B8A}
+.note{border-left:4px solid #2E6E9E;background:#F1F7FB;border-radius:8px;padding:8px 10px;margin:8px 0;font-size:11px}.note.w{border-color:#F0A400;background:#FFF8E6}.note.bad{border-color:#D2453F;background:#FDECEA}
+.foot{display:flex;gap:8px;justify-content:flex-end;padding-top:6px}
+.phone{width:340px;border:1px solid #D5DDE6;border-radius:22px;overflow:hidden;background:#fff}.phone .bar{border-radius:0}.phone .bd{padding:12px}
+.row2{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start}
+table{width:100%;border-collapse:collapse}th{font-size:9.5px;text-align:left;color:#5B6B7A;padding:6px 8px;letter-spacing:.03em}td{padding:8px;border-top:1px solid #EEF2F6;vertical-align:top}.old{color:#6B7B8A}.new{font-weight:700;color:#0B6B57}
+.modal{max-width:520px;border:1px solid #E3E9EF;border-radius:14px;background:#fff;box-shadow:0 10px 30px rgba(16,57,78,.15)}.modal .bd{padding:14px 16px}
+</style>
+<div class="top"><h1>DSM Klaim — Hak Klaim desktop, tambah user, rekening</h1><p class="n">4 layar. Klik tab untuk pindah. Warna solid, font sama, header kolom bold dan isi biasa.</p>
+<div class="tabs"><button class="on" data-t="a">1. Hak Klaim (desktop)</button><button data-t="b">2. Tambah user</button><button data-t="c">3. Ubah rekening (user)</button><button data-t="d">4. Approval rekening (Admin)</button></div></div>
+
+<div class="scr on" id="a"><div class="app"><div class="bar"><span>Hak klaim</span><small>Admin · Cirebon</small></div><div class="split">
+<div class="left"><input placeholder="Cari nama / jabatan"><button class="btn" style="width:100%;margin-bottom:8px">+ Tambah user</button><div class="pr on"><i>D</i><div><b>Dewi Lestari</b><small>Sales · Cirebon · RISM</small><div><span class="pl ok">Boleh mengajukan</span></div></div></div><div class="pr "><i>E</i><div><b>Eko Prasetyo</b><small>Sales · Cirebon · RISM</small><div><span class="pl ok">Boleh mengajukan</span><span class="pl pu">Petty cash</span></div></div></div><div class="pr "><i>R</i><div><b>Rudi Hartono</b><small>ASM · Cirebon · RISM</small><div><span class="pl ok">Boleh mengajukan</span></div></div></div><div class="pr "><i>S</i><div><b>Sinta Wulandari</b><small>Admin · Jakarta · MSI</small><div><span class="pl gr">Belum diberi hak</span></div></div></div><div class="pr "><i>B</i><div><b>Budi Santoso</b><small>RGM · Jawa Barat · RISM</small><div><span class="pl ok">Boleh mengajukan</span></div></div></div></div>
+<div class="right"><div class="hd"><div><h2>Dewi Lestari</h2><small>Sales · Cirebon · RISM</small></div><div><span class="pl ok">Boleh mengajukan</span> <span class="tg on"><i></i></span></div></div>
+<div class="g2"><div><div class="card"><h3>KATEGORI DAN BUDGET PER BULAN</h3><div class="cr"><b>Perdin</b><span class="tg on"><i></i></span><em>Tanpa budget bulanan</em></div><div class="cr"><b>BBM</b><span class="tg on"><i></i></span><em>600.000</em></div><div class="cr"><b>Parkir & Tol</b><span class="tg on"><i></i></span><em>250.000</em></div><div class="cr"><b>Entertainment</b><span class="tg "><i></i></span><em>0</em></div><div class="cr"><b>Reimburse</b><span class="tg on"><i></i></span><em>Tanpa budget bulanan</em></div></div>
+<div class="card"><h3>PETTY CASH</h3><div class="cr" style="grid-template-columns:1fr 40px 140px"><b>Boleh mengajukan</b><span class="tg"><i></i></span><em></em></div><label>PLAFON (RP)</label><input class="f" value="0"></div></div>
+<div><div class="card"><h3>PERDIN</h3><label>TARIF UANG MAKAN PER HARI (RP)</label><input class="f" value="75.000"><div class="note" style="margin-bottom:0">Terkunci untuk pemohon. Dipakai: tarif × durasi.</div></div>
+<div class="card"><h3>REKENING</h3><label>BANK</label><input class="f" value="BCA" readonly><label>NOMOR REKENING</label><input class="f" value="0123456789" readonly><label>ATAS NAMA</label><input class="f" value="DEWI LESTARI" readonly><div class="note w">Perubahan rekening lewat pengajuan user dan persetujuan Admin. <b>1 menunggu persetujuan</b></div></div></div></div>
+<div class="foot"><button class="btn g">Salin hak ini ke orang lain</button><button class="btn">SIMPAN</button></div></div></div></div></div>
+
+<div class="scr" id="b"><div class="modal"><div class="bar"><span>Tambah user Klaim</span><small>Region: Cirebon</small></div><div class="bd">
+<label>CARI USER DSM</label><input class="f" value="Fajar"><div style="border:1px solid #E3E9EF;border-radius:10px;margin-top:6px"><div class="pr on" style="margin:0;border:0"><i>F</i><div><b>Fajar Nugroho</b><small>NIK 20150321 · Sales · Cirebon · RISM</small></div></div><div class="pr" style="margin:0;border:0"><i>F</i><div><b>Fajar Ramadhan</b><small>NIK 20190877 · Sales · Kuningan · RISM</small></div></div></div>
+<div class="note">Hanya user DSM di region Anda. Login tetap pakai akun DSM, jadi tidak ada akun baru.</div>
+<div class="g2"><div><label>BOLEH MENGAJUKAN KLAIM</label><span class="tg on"><i></i></span></div><div><label>PETTY CASH</label><span class="tg"><i></i></span></div></div>
+<label>KATEGORI AWAL</label><input class="f" value="Perdin, BBM, Parkir & Tol"><label>TARIF UANG MAKAN / HARI (RP)</label><input class="f" placeholder="Opsional">
+<div class="note w">Rekening diisi oleh user sendiri setelah akunnya aktif, lalu disetujui Admin.</div>
+<div class="foot"><button class="btn g">Batal</button><button class="btn ok">TAMBAHKAN</button></div></div></div></div>
+
+<div class="scr" id="c"><div class="row2"><div class="phone"><div class="bar"><span>Rekening saya</span><small>Dewi Lestari</small></div><div class="bd">
+<div class="card"><h3>REKENING AKTIF</h3><b>BCA · 0123456789</b><div class="old">a.n. DEWI LESTARI</div></div>
+<div class="note w"><b>Menunggu persetujuan Admin</b><br>BCA 0123456789 → <b>Mandiri 1230004567</b><br><small>Diajukan 26/11 · rekening lama tetap dipakai sampai disetujui</small></div>
+<h3 style="font-size:11px;color:#5B6B7A">AJUKAN PERUBAHAN</h3><label>BANK</label><input class="f" value="Mandiri"><label>NOMOR REKENING</label><input class="f" value="1230004567"><label>ATAS NAMA</label><input class="f" value="DEWI LESTARI"><label>ALASAN</label><input class="f" value="Pindah rekening gaji">
+<div class="foot" style="padding-top:10px"><button class="btn" style="width:100%">AJUKAN PERUBAHAN</button></div></div></div>
+<div style="max-width:420px"><div class="note"><b>Aturan:</b> atas nama harus mirip nama user. Selama menunggu, klaim baru tetap memakai rekening lama. User dapat notifikasi saat disetujui atau ditolak. Hanya satu pengajuan aktif dalam satu waktu.</div></div></div></div>
+
+<div class="scr" id="d"><div class="app"><div class="bar"><span>Persetujuan rekening</span><small>Admin · Cirebon</small></div><div style="padding:12px 16px">
+<table><tr><th>PEMOHON</th><th>REKENING LAMA</th><th>REKENING BARU</th><th>ALASAN</th><th>DIAJUKAN</th><th></th></tr>
+<tr><td><b>Dewi Lestari</b><br><span class="old">Sales · Cirebon</span></td><td class="old">BCA<br>0123456789<br>DEWI LESTARI</td><td class="new">Mandiri<br>1230004567<br>DEWI LESTARI <span class="pl ok">nama cocok</span></td><td>Pindah rekening gaji</td><td>26/11 13:50</td><td><button class="btn ok">Setujui</button> <button class="btn r">Tolak</button></td></tr>
+<tr><td><b>Eko Prasetyo</b><br><span class="old">Sales · Cirebon</span></td><td class="old">BNI<br>0456781234<br>EKO PRASETYO</td><td class="new">BRI<br>0098123456<br>EKO P <span class="pl wt">nama beda</span></td><td>Rekening baru</td><td>25/11 09:12</td><td><button class="btn ok">Setujui</button> <button class="btn r">Tolak</button></td></tr></table>
+<div class="note w">Admin tidak bisa menyetujui rekening sendiri. Pengajuan Admin masuk ke Admin lain atau Super Admin. Tolak wajib isi alasan. Semua keputusan tercatat di riwayat (siapa, kapan, lama → baru).</div></div></div></div>
+<script>document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button,.scr').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.getElementById(b.dataset.t).classList.add('on')})</script>

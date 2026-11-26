@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Edit target · Export / Import Excel + tabel padat</title>
+<style>
+*{box-sizing:border-box;font-family:Inter,"Segoe UI",system-ui,sans-serif}
+body{margin:0;background:#EEF2F6;color:#10394E;font-size:11px;padding:16px}
+h2{font-size:13px;margin:18px 0 8px}
+.card{background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(16,57,78,.1);padding:12px;margin-bottom:12px}
+.row{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
+.f label{display:block;font-size:10px;color:#64748B;margin-bottom:3px}.f div{height:30px;border:1px solid #CBD5E0;border-radius:8px;padding:0 10px;display:flex;align-items:center;min-width:150px;background:#fff}
+.b{height:30px;border-radius:8px;padding:0 12px;display:flex;align-items:center;font-weight:700;font-size:10.5px;border:1px solid #CBD5E0;background:#fff;color:#10394E}
+.b.p{background:#0B5CAD;color:#fff;border-color:#0B5CAD}.b.g{background:#12866A;color:#fff;border-color:#12866A}
+.tg{display:flex;gap:14px;flex-wrap:wrap}.tg>div{flex:1;min-width:420px}
+table{width:100%;border-collapse:collapse;background:#fff}
+th{background:#0E5A63;color:#fff;font-size:10px;padding:6px 8px;text-align:center}th:first-child{text-align:left}
+td{border-top:1px solid #EEF2F6;padding:0 8px;font-size:10px}
+td.nm{white-space:nowrap}td.nm small{color:#64748B;font-size:9px}
+.inp{height:26px;width:70px;border:1px solid #CBD5E0;border-radius:6px;margin:3px auto;background:#fff}.inp.v{display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-weight:600}
+.big td{height:59px}.big .inp{height:38px;width:82px;margin:10px auto}
+.sm td{height:32px}
+.asm td{background:#F4F7FA;font-weight:700}
+.chg{background:#FFF6D6!important;border-color:#F0A400!important}
+.tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:5px;color:#fff}
+.modal{width:560px;max-width:100%;background:#fff;border-radius:14px;box-shadow:0 6px 24px rgba(16,57,78,.25);padding:14px}
+.kp{display:flex;gap:8px;margin:8px 0}.kp div{flex:1;background:#E3F5EE;border:1px solid #C9EADF;border-top:4px solid #2FB58F;border-radius:8px;padding:6px 8px}.kp b{display:block;font-size:14px;color:#12866A}.kp div.e{background:#FDECEA;border-color:#F5C6C2;border-top-color:#D2453F}.kp div.e b{color:#D2453F}
+.dt th{background:#E6EBF1;color:#10394E;text-align:left}.dt td{height:26px}
+.old{color:#94A3B8;text-decoration:line-through;margin-right:4px}.new{font-weight:700;color:#12866A}.er{color:#D2453F;font-weight:700}
+.note{padding:8px 10px;background:#E3F5EE;border-left:4px solid #2FB58F;border-radius:6px;line-height:1.5}
+</style></head><body>
+
+<h2>1 · Toolbar baru (tombol di sebelah "Muat target")</h2>
+<div class="card"><div class="row">
+<div class="f"><label>Bulan</label><div>2026-11</div></div><div class="f"><label>Big Region</label><div>SUMATERA BAG. SELATAN</div></div><div class="f"><label>Sub Region</label><div>Semua</div></div>
+<span style="flex:1"></span>
+<span class="b">Muat target</span><span class="b g">⬇ EXPORT TEMPLATE (.xlsx)</span><span class="b p">⬆ IMPORT EXCEL</span></div>
+<div style="margin-top:8px;color:#64748B">Export = 1 file untuk Big Region + Sub Region yang sedang dipilih. Isi: NIK, nama, sub region, semua kolom target (angka sekarang sudah terisi).</div></div>
+
+<h2>2 · Pratinjau setelah pilih file (belum ada yang tersimpan)</h2>
+<div class="modal">
+<b style="font-size:12px">Pratinjau import · SUMATERA BAG. SELATAN · 2026-11</b>
+<div class="kp"><div><b>17</b>Sales terbaca</div><div><b>96</b>Sel berubah</div><div class="e"><b>2</b>Baris ditolak</div></div>
+<table class="dt"><tr><th>NIK</th><th>NAMA</th><th>KOLOM</th><th>LAMA → BARU</th></tr>
+<tr><td>2026.11.02.03</td><td>MUHAMMAD DZAKY</td><td>ST MOTOPAD</td><td><span class="old">0</span><span class="new">120</span></td></tr>
+<tr><td>2025.11.04.01</td><td>ANGGA FRANSISKA</td><td>ST TECNO</td><td><span class="old">80</span><span class="new">95</span></td></tr>
+<tr><td>2099.00.00.00</td><td>-</td><td>-</td><td class="er">NIK tidak ditemukan di region ini</td></tr>
+<tr><td>2023.11.06.01</td><td>FAHDI RAMADHAN</td><td>DA MOTOPAD</td><td class="er">"abc" bukan angka</td></tr></table>
+<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px"><span class="b">BATAL</span><span class="b p">ISI KE TABEL (96 SEL)</span></div>
+<div style="margin-top:8px;color:#64748B">Sel yang berubah ditandai kuning di tabel. Baru tersimpan setelah klik <b>Simpan</b> seperti biasa (alasan perubahan tetap diminta). Sel kosong di Excel = tidak diubah.</div></div>
+
+<h2>3 · Tabel Edit target: SEKARANG (tinggi) vs USULAN (padat)</h2>
+<div class="tg">
+<div class="card"><span class="tag" style="background:#D2453F">SEKARANG · baris ±59px, kotak 38px</span>
+<table class="big"><tr><th>SALES</th><th>ST MOTOPAD</th><th>ST TECNO</th></tr>
+<tr><td class="nm">2026.11.02.03 — <b>MUHAMMAD DZAKY</b> <small>BENGKULU</small></td><td><div class="inp"></div></td><td><div class="inp"></div></td></tr>
+<tr class="asm"><td>ASM (tanpa ASM) <small>otomatis</small></td><td>-1</td><td>-1</td></tr>
+<tr><td class="nm">2025.11.04.01 — <b>ANGGA FRANSISKA</b> <small>BENGKULU</small></td><td><div class="inp"></div></td><td><div class="inp"></div></td></tr></table></div>
+<div class="card"><span class="tag" style="background:#12866A">USULAN · baris ±30px, kotak 22px</span>
+<table class="sm"><tr><th>SALES</th><th>ST MOTOPAD</th><th>ST TECNO</th></tr>
+<tr><td class="nm">2026.11.02.03 — <b>MUHAMMAD DZAKY</b> <small>BENGKULU</small></td><td><div class="inp v chg" style="height:22px">120</div></td><td><div class="inp" style="height:22px"></div></td></tr>
+<tr class="asm"><td>ASM (tanpa ASM) <small>otomatis</small></td><td style="text-align:center">-1</td><td style="text-align:center">-1</td></tr>
+<tr><td class="nm">2025.11.04.01 — <b>ANGGA FRANSISKA</b> <small>BENGKULU</small></td><td><div class="inp" style="height:22px"></div></td><td><div class="inp v chg" style="height:22px">95</div></td></tr></table></div></div>
+<div class="note">Padat: baris dari ±59px jadi ±30px, kotak input dari 38px jadi 22px, nama + NIK + sub region satu baris. Muat sekitar <b>2x lebih banyak sales</b> tanpa scroll. Kolom, warna header, dan urutan kolom tidak berubah. Kuning = sel yang berubah (dari import atau ketikan).</div>
+</body></html>

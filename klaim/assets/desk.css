@@ -244,3 +244,17 @@ body.dk-on #app{max-width:none;margin:0;border-radius:0;box-shadow:none;padding:
 .dk-on .dk-sm{display:block;color:#64748B;font-size:10.5px}
 .dk-on .dk-use{display:inline-flex;gap:2px;vertical-align:middle;margin-right:5px}.dk-on .dk-use i{width:6px;height:10px;border-radius:2px;background:#E2E8F0}.dk-on .dk-use i.on{background:#0B5CAD}
 .dk-on .dk-cb{border:1px solid #F3C4C2;color:#D2453F;background:#fff;border-radius:6px;font:inherit;font-weight:800;font-size:10.5px;padding:3px 9px;cursor:pointer}
+
+/* Peran klaim pengguna: centang, filter area + Admin, bar tugaskan */
+.dk-on .dk-uf2{margin-top:-6px}.dk-on .dk-lb{font-size:10px;color:#64748B;letter-spacing:.04em}
+.dk-on .dk-chp span em{font-style:normal;opacity:.7;font-weight:600}.dk-on .dk-uf2 select{height:32px;border-radius:8px;font-size:12px;padding:0 8px;border:1px solid #DBE3EE;background:#fff;color:#10394E;font-weight:700}
+.dk-on .dk-cb{display:inline-block;width:14px;height:14px;border:1.5px solid #94A3B8;border-radius:4px;background:#fff;vertical-align:middle;position:relative;cursor:pointer}
+.dk-on .dk-cb.on{background:#0B5CAD;border-color:#0B5CAD}.dk-on .dk-cb.on:after{content:"";position:absolute;left:3px;top:0;width:3px;height:7px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.dk-on .dk-tb tr.dk-sl td{background:#E3F5EE}.dk-on .dk-tb td.dk-ck{width:26px}
+.dk-on .dk-sel{position:sticky;bottom:10px;margin-top:10px;background:#10394E;color:#fff;border-radius:12px;padding:10px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;box-shadow:0 4px 14px rgba(16,57,78,.35);z-index:5}
+.dk-on .dk-sel select{height:32px;border-radius:8px;border:0;font-size:12px;font-weight:700;min-width:240px;padding:0 8px;color:#10394E}
+.dk-on .dk-sel .dk-b{background:#2FB58F;color:#fff}.dk-on .dk-sel .dk-b2{background:transparent;color:#B8D4E3;border:0;font-weight:700;font-size:12px;cursor:pointer}
+.dk-on .dk-uf2 select,.dk-on .dk-sel select{width:auto!important;display:inline-block}.dk-on .dk-uf2 select{min-width:200px}
+.dk-on .dk-sel button{width:auto!important;display:inline-block;min-height:32px;padding:0 14px;border-radius:8px;border:0}
+.dk-on .dk-tb td.dk-ck,.dk-on .dk-tb th:first-child{padding-left:12px;padding-right:4px}
+.dk-on .dk-uf2 select,.dk-on .dk-sel select{height:32px!important;min-height:32px!important}

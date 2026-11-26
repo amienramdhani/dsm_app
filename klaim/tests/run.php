@@ -423,13 +423,15 @@ t('sinkron jenis: Transportasi & Operasional sesuai daftar baru, jenis lama nona
   $act = fn($cat) => array_column(q("SELECT name FROM claim_types WHERE category=? AND active=1 ORDER BY sort_no", [$cat]), 'name');
   eq($act('Transportasi'), ['BBM', 'Tol', 'Parkir', 'Ojol & taksi online', 'Tiket perjalanan']);
   eq($act('Operasional'), ['Kost', 'Penginapan / Hotel', 'ATK & perlengkapan kantor', 'Ongkir & kurir', 'Servis kendaraan', 'Operasional lainnya']);
+  eq($act('Support dealer'), ['Kue ulang tahun', 'Karangan bunga', 'Kebutuhan support dealer']);
+  eq($act('Entertain'), ['Meeting', 'Makan-makan', 'Reward / Hadiah']); eq(no_budget_cat('Support dealer'), true, 'tanpa budget');
   eq((int) val("SELECT COUNT(*) FROM claim_types WHERE name='Listrik, air & internet' AND active=1"), 0); });
 function simple(array $u, string $type, array $meta, int $nominal = 100000): array {
   $t = one("SELECT * FROM claim_types WHERE name=? AND active=1", [$type]);
   ex("UPDATE claim_entitlement SET enabled=1 WHERE user_id=?", [$u['id']]);
   if (!val("SELECT 1 FROM claim_entitlement WHERE user_id=? AND category=?", [$u['id'], $t['category']])) ins('claim_entitlement', ['user_id' => $u['id'], 'category' => $t['category'], 'enabled' => 1, 'budget' => 50000000]);
   return ['category' => $t['category'], 'type_id' => $t['id'], 'brand' => 'Samsung', 'refnote' => 'IT-X', 'location' => 'Cirebon', 'account' => ['mode' => 'self'], 'meta' => $meta,
-    'notes' => [['nominal' => $nominal, 'date' => date('Y-m-d'), 'detail' => [], 'files' => [fakefile($u)]]]] + ($t['category'] === 'Entertain' ? ['files' => ['doc' => [fakefile($u, 'doc')]]] : []);
+    'notes' => [['nominal' => $nominal, 'date' => date('Y-m-d'), 'detail' => [], 'files' => [fakefile($u)]]]] + (($t['category'] === 'Entertain' || in_array($t['name'], ['Kue ulang tahun', 'Karangan bunga'], true)) ? ['files' => ['doc' => [fakefile($u, 'doc')]]] : []);
 }
 t('Kue ulang tahun: dirayakan sendiri ditolak, 2 orang berbeda lolos', function () use ($dewi) {
   throws(fn() => submit($dewi, simple($dewi, 'Kue ulang tahun', ['penerima' => 'Bpk. Hendra', 'keterangan' => 'Ultah owner', 'tempat' => 'Cafe Uji', 'peserta' => ['Dewi Lestari — Pemohon', 'dewi lestari']])), 'peserta');
@@ -693,5 +695,24 @@ t('ubah ke nama yang sudah ada = gabung, pengguna tidak dobel', function () use 
 t('hapus yang dipakai tanpa tujuan ditolak; nama tidak valid ditolak', function () use ($sa) {
   throws(fn() => entity_change($sa, 'PT. MSIX', 'x'), '2-30'); throws(fn() => entity_change($sa, 'TIDAK ADA', 'ABC'), 'tidak ditemukan'); });
 t('api.php: entity_del dengan tujuan memakai gabung; dipakai tanpa tujuan ditolak', function () { $s = file_get_contents(__DIR__ . '/../api.php'); if (!str_contains($s, "case 'entity_rename'") || !str_contains($s, 'Pilih badan usaha tujuan untuk menggabungkan')) throw new Exception('tidak ada'); });
+t('Tugaskan ke Admin: handler_id menang dari region, kosong = ikut region', function () {
+  $mk = fn($n) => (int) ins('claim_users', ['username' => 'hd_' . $n . mt_rand(100, 999), 'pass_hash' => 'x', 'name' => $n, 'job' => 'Admin', 'region' => 'BALI', 'roles' => 'ADMIN', 'can_submit' => 0, 'active' => 1, 'created_at' => now()]);
+  $ia = $mk('HA'); $ib = $mk('HB'); $ip = (int) ins('claim_users', ['username' => 'hp_' . mt_rand(100, 999), 'pass_hash' => 'x', 'name' => 'HP', 'job' => 'Sales', 'region' => 'BALI', 'roles' => 'SALES', 'can_submit' => 1, 'active' => 1, 'created_at' => now()]);
+  $a = user_row($ia); $b = user_row($ib);
+  eq(covers_person($a, 'BALI', $ip) && covers_person($b, 'BALI', $ip), true, 'tanpa handler: dua admin region sama');
+  ex("UPDATE claim_users SET handler_id=? WHERE id=?", [$ib, $ip]); $GLOBALS['__h'] = 1;
+  eq(in_scope($b, ['region' => 'BALI', 'claimant_id' => $ip], 'ADMIN'), true, 'handler: B boleh');
+  $ids = array_column(stage_users('ADMIN', 'BALI', '', $ip), 'id'); eq(in_array($ib, $ids) && !in_array($ia, $ids), true, 'handler: hanya B menerima');
+  ex("UPDATE claim_users SET handler_id=NULL WHERE id=?", [$ip]);
+});
+t('Kebutuhan support dealer: keterangan + nota, tanpa budget; keterangan wajib', function () use ($dewi) {
+  $p = simple($dewi, 'Kebutuhan support dealer', ['keterangan' => 'Banner promo dealer'], 750000); $id = submit($dewi, $p); eq((int) $id > 0, true, 'terkirim');
+  $c = get_claim($id); eq($c['category'], 'Support dealer', 'kategori'); eq(claim_budget($c, date('Y-m')), null, 'tanpa budget');
+  throws(fn() => submit($dewi, simple($dewi, 'Kebutuhan support dealer', ['keterangan' => ''], 1000)), 'Keterangan'); });
+t('Sinkron otomatis: Kue/Karangan pindah ke Support dealer, hak Entertain -> hak Support dealer', function () use ($dewi) {
+  ex("UPDATE claim_types SET category='Entertain' WHERE name IN ('Kue ulang tahun','Karangan bunga')"); ex("DELETE FROM claim_entitlement WHERE user_id=? AND category='Support dealer'", [$dewi['id']]);
+  if (!val("SELECT 1 FROM claim_entitlement WHERE user_id=? AND category='Entertain'", [$dewi['id']])) ins('claim_entitlement', ['user_id' => $dewi['id'], 'category' => 'Entertain', 'enabled' => 1, 'budget' => 1000]); else ex("UPDATE claim_entitlement SET enabled=1 WHERE user_id=? AND category='Entertain'", [$dewi['id']]);
+  sync_claim_types(); eq((string) val("SELECT category FROM claim_types WHERE name='Karangan bunga'"), 'Support dealer', 'pindah');
+  eq((int) val("SELECT enabled FROM claim_entitlement WHERE user_id=? AND category='Support dealer'", [$dewi['id']]), 1, 'hak otomatis'); });
 
 echo "\nHasil: $pass lolos, $failc gagal\n"; exit($failc ? 1 : 0);

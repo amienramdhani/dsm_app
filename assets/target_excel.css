@@ -1,0 +1,14 @@
+/* Edit target: tabel padat (desktop) + Export/Import Excel (mockup dsm-edit-target-excel.html) */
+@media (pointer:fine){
+  html body #app #view #v6tBox .v6tTable td{padding:0 8px!important;height:30px!important;line-height:1.2}
+  html body #app #view #v6tBox .v6tTable th{padding:6px 8px!important}
+  html body #app #view #v6tBox .v6tTable .v6tIn{min-height:22px!important;height:22px!important;padding:0 6px!important;font-size:11px!important;border-radius:6px;width:72px;margin:0}
+  html body #app #view #v6tBox .v6tTable .v6tIn.w{width:112px}
+  html body #app #view #v6tBox .v6tTable .v6tName{white-space:nowrap}
+  html body #app #view #v6tBox .v6tTable .v6tName small.cellsub{display:inline;margin-left:6px;font-size:9px}
+  html body #app #view #v6tBox .v6tTable .v6tMissN{font-size:9px}
+}
+#view .v6tXl{margin-left:6px;align-self:flex-end}#view label.v6tXl{display:inline-flex;align-items:center;cursor:pointer}#view .v6tXl.busy{opacity:.6;pointer-events:none}
+.v6tKps{display:flex;gap:8px;margin:0 0 8px}.v6tKp{flex:1;background:#E3F5EE;border:1px solid #C9EADF;border-top:4px solid #2FB58F;border-radius:8px;padding:6px 8px;font-size:10px}
+.v6tKp b{display:block;font-size:15px;color:#12866A}.v6tKp.e{background:#FDECEA;border-color:#F5C6C2;border-top-color:#D2453F}.v6tKp.e b{color:#D2453F}
+.v6tPv{width:100%;border-collapse:collapse;font-size:10px}.v6tPv th{background:#E6EBF1;text-align:left;padding:5px 8px;position:sticky;top:0}.v6tPv td{padding:4px 8px;border-top:1px solid #EEF2F6}.v6tPv s{color:#94A3B8}.v6tPv b{color:#12866A}.v6tPv .v6tEr{color:#D2453F;font-weight:700}

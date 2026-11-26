@@ -16,6 +16,7 @@ CREATE TABLE claim_users (
  meal_rate BIGINT NULL,
  sign_img {LTXT} NULL,
  wa VARCHAR(20) NULL,
+ handler_id INT NULL,
  active INT NOT NULL DEFAULT 1,
  created_at DATETIME NOT NULL
 );

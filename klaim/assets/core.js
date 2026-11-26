@@ -11,8 +11,8 @@ const wkt = d => d ? tgl(d.slice(0, 10)) + ' ' + d.slice(11, 19).replace(/:/g, '
 const wktS = d => d ? (+d.slice(8, 10)) + ' ' + BLN[+d.slice(5, 7)] + ' ' + d.slice(11, 19).replace(/:/g, '.') : '-';
 const today = () => new Date(Date.now() - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
 const STAGE = { RGM: 'RGM', ADMIN: 'Admin', AUDIT: 'Audit', HOS: 'HOS', FM: 'Finance Manager', FT: 'Finance Transfer', PEMOHON: 'Pemohon' };
-const CATCOL = { Transportasi: '#1E5FB8', Entertain: '#6D3FD8', Perdin: '#12866A', Operasional: '#F07A0C' };
-const CATIC = { Transportasi: '⛽', Entertain: '🍽', Perdin: '🧳', Operasional: '🏢' };
+const CATCOL = { Transportasi: '#1E5FB8', Entertain: '#6D3FD8', Perdin: '#12866A', Operasional: '#F07A0C', 'Support dealer': '#0E7C6B' };
+const CATIC = { Transportasi: '⛽', Entertain: '🍽', Perdin: '🧳', Operasional: '🏢', 'Support dealer': '🤝' };
 
 async function api(a, data = {}, _again = false) {
   let r;
@@ -248,7 +248,7 @@ async function listScreen(title, base, opt = {}) {
   $$('[data-td]').forEach(t => t.onclick = () => reload({ dft: '', todo: +t.dataset.td ? (opt.todoMine ? 'mine' : 1) : '' }));
   $$('[data-dft]').forEach(t => t.onclick = () => reload({ dft: 1, todo: '' }));
   $$('[data-tab]').forEach(t => t.onclick = () => reload({ tab: t.dataset.tab })); $$('[data-clr]').forEach(t => t.onclick = () => reload({ [t.dataset.clr]: '' }));
-  $('#lfb').onclick = () => { sheet(`<h3>Filter</h3><div class="fld"><label>Kategori</label><select id="fc"><option value="">Semua</option>${['Transportasi', 'Entertain', 'Perdin', 'Operasional'].map(c => `<option ${f.category === c ? 'selected' : ''}>${c}</option>`).join('')}</select></div>
+  $('#lfb').onclick = () => { sheet(`<h3>Filter</h3><div class="fld"><label>Kategori</label><select id="fc"><option value="">Semua</option>${['Transportasi', 'Entertain', 'Perdin', 'Operasional', 'Support dealer'].map(c => `<option ${f.category === c ? 'selected' : ''}>${c}</option>`).join('')}</select></div>
     ${opt.statusFilter ? `<div class="fld"><label>Status</label><select id="fs"><option value="">Semua</option>${[['WAIT', 'Menunggu'], ['REV', 'Perlu Revisi'], ['DONE', 'Selesai'], ['REJECTED', 'Ditolak']].map(s => `<option value="${s[0]}" ${f.status === s[0] ? 'selected' : ''}>${s[1]}</option>`).join('')}</select></div>` : ''}
     <div class="fld"><label>Pemohon</label>${pemohonSel('fp', (S.L.people.find(x => x.id == f.claimant_id) || {}).name)}</div>
     <div class="fld"><label>Region</label><select id="fr"><option value="">Semua</option>${S.L.regions.map(r => `<option ${f.region === r ? 'selected' : ''}>${esc(r)}</option>`).join('')}</select></div>

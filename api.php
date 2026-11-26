@@ -21,6 +21,7 @@ require_once __DIR__ . '/lib/dealer.php';
 require_once __DIR__ . '/lib/bulk.php';
 require_once __DIR__ . '/lib/api_dealer_transfer_direct.php';
 require_once __DIR__ . '/lib/users_bulk.php';
+require_once __DIR__ . '/lib/target_excel.php';
 require_once __DIR__ . '/lib/activity.php';
 require_once __DIR__ . '/lib/api_kpi.php';
 require_once __DIR__ . '/lib/api_kpikhusus.php';
@@ -60,7 +61,7 @@ const DSM_ALLOWED = ['apiBrandHomeSet','apiAITeachHome','apiAITeachSave','apiAIT
     'apiRegionBrandGet', 'apiKpiRgmPanel', 'apiRegionBrandSave', 'apiKpiGet', 'apiKpiSaveRegion', 'apiKpiSaveRgm', 'apiKpiCopy', 'apiTargetGet', 'apiTargetSave', 'apiCoverageMatrix',
     'apiActivity', 'apiCheckpoints', 'apiCheckpointRestore',
     'apiSyncStatus',
-    'apiUserTemplate', 'apiStageUsers', 'apiCommitUsers', 'apiUsersRejected', 'apiStatusBulkStage', 'apiStatusBulkCommit', 'apiStatusBulkRejected',
+    'apiTargetExport', 'apiTargetImportCheck', 'apiUserTemplate', 'apiStageUsers', 'apiCommitUsers', 'apiUsersRejected', 'apiStatusBulkStage', 'apiStatusBulkCommit', 'apiStatusBulkRejected',
     'apiProductMasterGet', 'apiProductImpact', 'apiProductMasterSave', 'apiDealerBrandSettings', 'apiDealerBrandSetCutover', 'apiDealerBrandList', 'apiDealerBrandSuggestions', 'apiDealerBrandSet', 'apiDealerSearch', 'apiDealerEditDetail', 'apiDealerIndukPeek', 'apiDealerSave', 'apiDealerDelete', 'apiDealerDeleteCheck', 'apiIndukBulkTemplate', 'apiIndukBulkStage', 'apiIndukBulkRejected', 'apiIndukBulkCommit', 'apiUserPinExport', 'apiDealerRegionGet', 'apiDealerRegionLookup', 'apiDealerRegionSave', 'apiDealerUploadStage', 'apiDealerUploadRejected', 'apiDealerUploadCommit', 'apiDealerDownloadAll', 'apiDealerTemplate', 'apiStageDealers', 'apiCommitDealers', 'apiAddDealer', 'apiCustomerBulkExport', 'apiStageCustomerBulk', 'apiCommitCustomerBulk', 'apiTransferDealerTemplate', 'apiStageDealerTransfer', 'apiTransferRejected', 'apiCommitDealerTransfer', 'apiMasterBulkTemplate', 'apiStageMasterBulk', 'apiMasterBulkRejected', 'apiCommitMasterBulk',
     // Login & akun
     'apiLogin', 'apiLogin2fa', 'apiTotpSetup', 'apiTotpEnable', 'apiSecurityPanel', 'apiResetTfa', 'apiUnlockAccount', 'apiLogout', 'apiChangePin', 'apiDemoOptions', 'apiStartDemo', 'apiStopDemo',

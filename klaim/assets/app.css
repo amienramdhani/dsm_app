@@ -261,7 +261,7 @@ details.rf-sc summary{font-size:10.5px;font-weight:800;letter-spacing:.6px;color
 @media(min-width:900px){.kpg{grid-template-columns:repeat(6,1fr)}}
 /* ---- Form klaim padat + strip judul + validasi merah (2026-11-24, mockup dsm-klaim-form-padat-semua.html opsi E & dsm-klaim-validasi-opsi.html) ---- */
 .kf{--c:#3B78C2;--t:#F5F9FE;--l:#DCE8F7}
-.kf[data-kc=Entertain]{--c:#C97A4A;--t:#FEFAF6;--l:#F3E3D6}.kf[data-kc=Perdin]{--c:#8268C9;--t:#F9F7FE;--l:#E5DEF7}.kf[data-kc=Operasional]{--c:#3E9486;--t:#F5FBFA;--l:#D6ECE8}
+.kf[data-kc=Entertain]{--c:#C97A4A;--t:#FEFAF6;--l:#F3E3D6}.kf[data-kc=Perdin]{--c:#8268C9;--t:#F9F7FE;--l:#E5DEF7}.kf[data-kc=Operasional]{--c:#3E9486;--t:#F5FBFA;--l:#D6ECE8}.kf[data-kc='Support dealer']{--c:#0E7C6B;--t:#F2FBF8;--l:#CDEEE6}
 .kf .card{background:var(--t);border:1px solid var(--l);border-left:3px solid var(--l);border-radius:11px;padding:10px;box-shadow:0 1px 4px rgba(15,23,42,.04)}
 .kf .card+.card,.kf .card+[data-sec],.kf [data-sec]+.card{margin-top:8px}
 .kf .kft{display:flex;justify-content:space-between;align-items:center;margin:-10px -10px 8px;padding:7px 10px;background:var(--l);color:var(--c);border-radius:9px 9px 0 0;font-size:12px;font-weight:800}

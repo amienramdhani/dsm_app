@@ -2,7 +2,7 @@
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/bridge.php';
 
-const CATS = ['Transportasi', 'Entertain', 'Perdin', 'Operasional'];
+const CATS = ['Transportasi', 'Entertain', 'Perdin', 'Operasional', 'Support dealer'];
 const STAGE_NAME = ['RGM' => 'RGM', 'ADMIN' => 'Admin', 'AUDIT' => 'Audit', 'HOS' => 'HOS', 'FM' => 'Finance Manager', 'FT' => 'Finance Transfer'];
 const ROLE_NAME = ['SA' => 'Super Admin', 'ADMIN' => 'Admin', 'AUDIT' => 'Audit', 'HOS' => 'HOS', 'FM' => 'Finance Manager', 'FT' => 'Finance Transfer', 'RGM' => 'RGM'];
 
@@ -26,6 +26,13 @@ function covers_region(array $u, ?string $region): bool {
   $a = $u['area_list'] ?? [];
   if ($a) return !$region || in_array($region, $a, true);
   return !$u['region'] || !$region || $u['region'] === $region;
+}
+/** Admin penangan khusus (claim_users.handler_id): kalau diisi, klaim orang itu hanya ditangani Admin tsb (menang dari region). Kosong = ikut region. */
+function handler_of(int $claimantId): int { return $claimantId ? (int) val("SELECT handler_id FROM claim_users WHERE id=?", [$claimantId]) : 0; }
+function covers_person(array $u, ?string $region, int $claimantId): bool {
+  if (!($u['area_list'] ?? []) && empty($u['region'])) return true; // Admin tanpa wilayah = semua (tidak berubah)
+  $h = handler_of($claimantId); if ($h) return $h === (int) $u['id'];
+  return covers_region($u, $region);
 }
 function me(): ?array {
   sess();
@@ -78,10 +85,12 @@ function demo_of_user(int $uid): int { return is_demo_nik((string) val("SELECT n
 /** Potongan SQL untuk menyaring pengguna sesuai konteks (asli / demo). */
 function demo_user_sql(string $col = 'nik'): string { return demo_ctx() ? "$col LIKE 'UJI-%'" : "($col IS NULL OR $col NOT LIKE 'UJI-%')"; }
 /** Saringan region Admin/RGM, sama dengan covers_region(): daftar wilayah menang, region tunggal cadangan, keduanya kosong = semua. */
-function region_scope(array $u, string $col = 'region'): ?array {
+function region_scope(array $u, string $col = 'region', string $who = 'claimant_id'): ?array {
   $a = $u['area_list'] ?: ($u['region'] ? [$u['region']] : []);
   if (!$a) return null;
-  return [$col . ' IN (' . implode(',', array_fill(0, count($a), '?')) . ')', $a];
+  $in = $col . ' IN (' . implode(',', array_fill(0, count($a), '?')) . ')';
+  if ($who === 'id') return ["((handler_id IS NULL AND $in) OR handler_id=?)", array_merge($a, [(int) $u['id']])]; // daftar pengguna
+  return ["(($who IN (SELECT id FROM claim_users WHERE handler_id IS NULL) AND $in) OR $who IN (SELECT id FROM claim_users WHERE handler_id=?))", array_merge($a, [(int) $u['id']])];
 }
 /** Transfer milik klaim/petty cash dalam konteks yang sama (asli atau demo). */
 function demo_transfer_sql(string $t): string {
@@ -91,8 +100,8 @@ function demo_transfer_sql(string $t): string {
 /** Pastikan kolom penanda demo sudah ada (sekali, lalu diingat di setting). */
 function ensure_demo_schema(): void {
   static $done = false; if ($done) return; $done = true;
-  try { if (setting('schema_demo') === '2') return; } catch (Throwable $e) { return; }
-  migrate_schema(); set_setting('schema_demo', '2'); // '2' = + kolom balik nota (nota_*, claim_rnotes)
+  try { if (setting('schema_demo') === '4') return; } catch (Throwable $e) { return; }
+  migrate_schema(); if (function_exists('sync_claim_types') && val("SELECT 1 FROM claim_types LIMIT 1")) sync_claim_types(); set_setting('schema_demo', '4'); // '4' = jenis klaim + hak Support dealer disinkron otomatis; '3' = + kolom handler_id (ditangani Admin); '2' = + kolom balik nota (nota_*, claim_rnotes)
 }
 function setting(string $k, ?string $d = null): ?string { $v = val("SELECT sval FROM claim_settings WHERE skey=?", [$k]); return $v ?? $d; }
 function set_setting(string $k, ?string $v): void { if (val("SELECT 1 FROM claim_settings WHERE skey=?", [$k])) ex("UPDATE claim_settings SET sval=? WHERE skey=?", [$v, $k]); else ex("INSERT INTO claim_settings (skey,sval) VALUES (?,?)", [$k, $v]); }
@@ -130,19 +139,19 @@ function uncovered_entities(string $role): array {
   if ($any || !$users) return [];
   return array_values(array_diff(entity_options(), array_keys($covered)));
 }
-function stage_users(string $stage, ?string $region, ?string $entity): array {
+function stage_users(string $stage, ?string $region, ?string $entity, int $claimantId = 0): array {
   $out = [];
   foreach (q("SELECT * FROM claim_users WHERE active=1 AND " . demo_user_sql()) as $r) {
     $u = shape_user($r);
     if (!has_role($u, $stage)) continue;
-    if (in_array($stage, ['ADMIN', 'RGM'], true) && !covers_region($u, $region)) continue;
+    if (in_array($stage, ['ADMIN', 'RGM'], true) && !covers_person($u, $region, $claimantId)) continue;
     if (in_array($stage, ['AUDIT', 'FM', 'FT'], true) && $u['entities'] && $entity && !in_array($entity, $u['entities'], true) && !in_array($entity, uncovered_entities($stage), true)) continue;
     $out[] = $u;
   }
   return $out;
 }
 function notify_stage(string $stage, array $claim, string $text, string $rt = 'claim'): void {
-  foreach (stage_users($stage, $claim['region'] ?? null, $claim['entity'] ?? null) as $u)
+  foreach (stage_users($stage, $claim['region'] ?? null, $claim['entity'] ?? null, (int) ($claim['claimant_id'] ?? 0)) as $u)
     if ($u['id'] != ($claim['claimant_id'] ?? 0)) notify($u['id'], 'tugas', $text, $rt, (int) $claim['id']);
 }
 
@@ -159,7 +168,7 @@ function next_number(string $prefix, ?string $entity): string {
 function in_scope(array $u, array $c, string $role): bool {
   if (sa_free($u) || has_role($u, 'SA')) return true;
   return match ($role) {
-    'ADMIN', 'RGM' => ($u['area_list'] || $u['region']) ? (($c['region'] ?? null) !== null && covers_region($u, $c['region'])) : true,
+    'ADMIN', 'RGM' => ($u['area_list'] || $u['region']) ? ((handler_of((int) ($c['claimant_id'] ?? 0)) !== 0 || ($c['region'] ?? null) !== null) && covers_person($u, $c['region'] ?? null, (int) ($c['claimant_id'] ?? 0))) : true,
     'AUDIT', 'FM', 'FT' => !$u['entities'] || in_array($c['entity'] ?? '', $u['entities'], true) || in_array($c['entity'] ?? '', uncovered_entities($role), true),
     'HOS' => true,
     default => false,
@@ -175,8 +184,8 @@ function same_person(array $u, array $c): bool { return (int) $c['claimant_id'] 
 
 /* ---------- budget (dihitung langsung dari klaim; reservasi penuh sejak submit) ---------- */
 function budget_of(int $uid, string $cat): int { return (int) val("SELECT budget FROM claim_entitlement WHERE user_id=? AND category=? AND enabled=1", [$uid, $cat]); }
-/** Perdin dan Operasional tidak punya budget bulanan: tidak pernah over budget, tidak memicu BA budget. */
-function no_budget_cat(string $cat): bool { return in_array($cat, ['Perdin', 'Operasional'], true); }
+/** Perdin, Operasional, dan Support dealer tidak punya budget bulanan: tidak pernah over budget, tidak memicu BA budget. */
+function no_budget_cat(string $cat): bool { return in_array($cat, ['Perdin', 'Operasional', 'Support dealer'], true); }
 function claim_budget(array $c, string $period, ?int $excludeClaim = null): ?array { return ($c['outside_sales'] || no_budget_cat((string) $c['category'])) ? null : budget_info((int) $c['claimant_id'], $c['category'], $period, $excludeClaim); }
 function budget_info(int $uid, string $cat, string $period, ?int $excludeClaim = null): array {
   $b = no_budget_cat($cat) ? 0 : budget_of($uid, $cat); $ex = $excludeClaim ?: 0;

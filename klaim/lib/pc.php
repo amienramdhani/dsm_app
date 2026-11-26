@@ -41,7 +41,7 @@ function pc_submit(array $u, array $in): int {
   foreach ($plan as $r) foreach (($r['perdin']['maps'] ?? []) as $fid) link_files($u, [(int) $fid], 'pc', $id, null, 'maps');
   $p = get_pc($id);
   hist('pc', $id, 'Petty cash diajukan', $u, null, null, $p['number'] . ' · ' . rp($amount));
-  foreach (stage_users($route[0], $p['region'], $p['entity']) as $a) notify($a['id'], 'tugas', "Petty cash {$p['number']} menunggu giliran Anda.", 'pc', $id);
+  foreach (stage_users($route[0], $p['region'], $p['entity'], (int) ($p['claimant_id'] ?? 0)) as $a) notify($a['id'], 'tugas', "Petty cash {$p['number']} menunggu giliran Anda.", 'pc', $id);
   return $id;
 }
 function pc_next(array $p): ?string { $r = jdec($p['route']) ?: []; $i = array_search($p['stage'], $r, true); return $i === false ? null : ($r[$i + 1] ?? null); }
@@ -57,7 +57,7 @@ function pc_act(array $u, int $id, array $in): array {
     $resume = $p['rev_stage'];
     ex("UPDATE claim_pc SET status='WAIT', stage=?, rev_holder=NULL, rev_stage=NULL, stage_since=?, updated_at=? WHERE id=?", [$resume, now(), now(), $id]);
     hist('pc', $id, 'Perbaikan selesai', $u, null, 'Perlu Revisi', 'Kembali ke ' . STAGE_NAME[$resume]);
-    foreach (stage_users($resume, $p['region'], $p['entity']) as $a) notify($a['id'], 'tugas', "Petty cash {$p['number']} kembali ke Anda.", 'pc', $id);
+    foreach (stage_users($resume, $p['region'], $p['entity'], (int) ($p['claimant_id'] ?? 0)) as $a) notify($a['id'], 'tugas', "Petty cash {$p['number']} kembali ke Anda.", 'pc', $id);
     return ['ok' => 1];
   }
   if ($p['status'] !== 'WAIT') fail('Petty cash tidak sedang menunggu keputusan.');
@@ -90,7 +90,7 @@ function pc_act(array $u, int $id, array $in): array {
   $next = pc_next($p);
   ex("UPDATE claim_pc SET stage=?, stage_since=?, updated_at=? WHERE id=?", [$next, now(), now(), $id]);
   hist('pc', $id, 'Disetujui ' . STAGE_NAME[$stage], $u, $notes ?: null, null, 'Lanjut ke ' . STAGE_NAME[$next], $stage);
-  foreach (stage_users($next, $p['region'], $p['entity']) as $a) notify($a['id'], 'tugas', "Petty cash {$p['number']} menunggu Anda.", 'pc', $id);
+  foreach (stage_users($next, $p['region'], $p['entity'], (int) ($p['claimant_id'] ?? 0)) as $a) notify($a['id'], 'tugas', "Petty cash {$p['number']} menunggu Anda.", 'pc', $id);
   return ['ok' => 1, 'next' => $next];
 }
 function pc_add_note(array $u, int $id, array $in): int {
@@ -138,7 +138,7 @@ function pc_send_report(array $u, int $id): array {
   $new = $sisa > 0 ? 'SETOR' : 'TUTUP';
   ex("UPDATE claim_pc SET status=?, realized=?, sisa=?, nota_sent_at=?, excess_claim_id=?, updated_at=? WHERE id=?", [$new, $real, $sisa, now(), $claimId, now(), $id]);
   hist('pc', $id, 'Pertanggungjawaban dikirim', $u, null, 'Terpakai ' . rp($real), $sisa > 0 ? 'Sisa ' . rp($sisa) . ' perlu disetor' : ($excess ? 'Kelebihan ' . rp($excess) . ' jadi klaim reimburse' : 'Sisa nol'));
-  foreach (stage_users('FT', $p['region'], $p['entity']) as $a) notify($a['id'], 'tugas', "Petty cash {$p['number']} " . ($sisa > 0 ? 'menunggu setoran sisa.' : 'siap ditutup.'), 'pc', $id);
+  foreach (stage_users('FT', $p['region'], $p['entity'], (int) ($p['claimant_id'] ?? 0)) as $a) notify($a['id'], 'tugas', "Petty cash {$p['number']} " . ($sisa > 0 ? 'menunggu setoran sisa.' : 'siap ditutup.'), 'pc', $id);
   return ['sisa' => $sisa, 'excess' => $excess, 'status' => $new];
 }
 function pc_setoran(array $u, int $id, array $in): void {
@@ -150,7 +150,7 @@ function pc_setoran(array $u, int $id, array $in): void {
   link_files($u, $files, 'pc', $id, null, 'setoran');
   ex("UPDATE claim_pc SET setoran_no=?, setoran_amount=?, updated_at=? WHERE id=?", [$no, $p['sisa'], now(), $id]);
   hist('pc', $id, 'Bukti setoran dikirim', $u, $no, null, rp((int) $p['sisa']));
-  foreach (stage_users('FT', $p['region'], $p['entity']) as $a) notify($a['id'], 'tugas', "Bukti setoran {$p['number']} menunggu konfirmasi.", 'pc', $id);
+  foreach (stage_users('FT', $p['region'], $p['entity'], (int) ($p['claimant_id'] ?? 0)) as $a) notify($a['id'], 'tugas', "Bukti setoran {$p['number']} menunggu konfirmasi.", 'pc', $id);
 }
 function pc_close(array $u, int $id): void {
   $p = get_pc($id);

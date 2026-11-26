@@ -5,7 +5,7 @@ const TRIG = [
   'OVER_BUDGET' => 'Klaim melebihi sisa budget', 'DIGIT_BBM' => 'Nominal BBM tidak mengikuti aturan digit', 'NOTA_LAMA' => 'Nota terlalu lama',
   'BIAYA_KM' => 'Biaya per km melebihi batas', 'ENT_PAX' => 'Entertain per peserta melebihi batas', 'KM_BBM' => 'Selisih jarak Perdin dengan KM BBM melebihi batas',
   'TEMUAN_ADMIN' => 'Temuan Admin saat pemeriksaan', 'KEHILANGAN_NOTA' => 'Kehilangan nota', 'NOMINAL_TIDAK_SESUAI' => 'Ketidaksesuaian nominal',
-  'TEMUAN_LAIN' => 'Temuan / kendala lain', 'NOTA_HARI' => 'Nota di luar hari nota normal', 'TANPA_DOK' => 'Tanpa foto dokumentasi (Entertain)',
+  'TEMUAN_LAIN' => 'Temuan / kendala lain', 'NOTA_HARI' => 'Nota di luar hari nota normal', 'TANPA_DOK' => 'Tanpa foto dokumentasi',
 ];
 /** [label pendek kapital, kelompok warna] untuk badge jenis BA */
 const TRIG_BADGE = [
@@ -576,7 +576,7 @@ function claim_act(array $u, int $id, array $in, bool $auto = false): array {
     ex("UPDATE claims SET rev_notes=" . ($ln ? "'" . str_replace("'", "''", jenc($ln)) . "'" : 'NULL') . ", status='REV', rev_stage=?, rev_holder=?, rev_by=?, rev_note=?, stage=NULL, stage_since=?, updated_at=? WHERE id=?", [$stage, $target, $u['id'], $notes, now(), now(), $id]);
     $pos = 'Perlu Revisi · di ' . ($target === 'ADMIN' ? 'Admin' : 'Pemohon');
     hist('claim', $id, 'Minta revisi' . $star, $u, $notes, null, $pos . ' (diminta ' . STAGE_NAME[$stage] . ')', $role);
-    if ($target === 'ADMIN') foreach (stage_users('ADMIN', $c['region'], $c['entity']) as $a) { if ($a['id'] != $c['claimant_id']) notify($a['id'], 'revisi', "Klaim {$c['number']} perlu revisi (di Admin).", 'claim', $id); }
+    if ($target === 'ADMIN') foreach (stage_users('ADMIN', $c['region'], $c['entity'], (int) ($c['claimant_id'] ?? 0)) as $a) { if ($a['id'] != $c['claimant_id']) notify($a['id'], 'revisi', "Klaim {$c['number']} perlu revisi (di Admin).", 'claim', $id); }
     else notify((int) $c['claimant_id'], 'revisi', "Klaim {$c['number']} perlu revisi (di Pemohon): $notes", 'claim', $id);
     return ['ok' => 1];
   }
@@ -721,7 +721,7 @@ function followup_info(array $u, int $id): array {
   $c = get_claim($id); if (!followup_ok($u, $c)) fail('Tombol hubungi muncul setelah klaim lebih dari ' . FOLLOWUP_DAYS . ' hari menunggu di tahap yang sama.', 422);
   $days = (int) floor((time() - strtotime($c['stage_since'])) / 86400); $st = STAGE_NAME[$c['stage']];
   $people = [];
-  foreach (stage_users($c['stage'], $c['region'], $c['entity']) as $p) { if ((int) $p['id'] === (int) $c['claimant_id']) continue;
+  foreach (stage_users($c['stage'], $c['region'], $c['entity'], (int) ($c['claimant_id'] ?? 0)) as $p) { if ((int) $p['id'] === (int) $c['claimant_id']) continue;
     $people[] = ['id' => (int) $p['id'], 'name' => $p['name'], 'job' => $p['job'], 'region' => $p['region'], 'wa' => $p['wa'] ?? null]; }
   $msg = fn($nm) => "Halo $nm, mohon dibantu cek klaim {$c['number']} (" . claim_type_label($c) . ', ' . rp((int) $c['total']) . ") yang menunggu persetujuan $st sejak $days hari. Terima kasih. - {$u['name']}";
   foreach ($people as &$p) $p['text'] = $msg($p['name']); unset($p);

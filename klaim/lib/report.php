@@ -9,7 +9,7 @@ function monitor_budget(array $u, array $f): array {
   $global = has_role($u, 'HOS') || has_role($u, 'SA');
   if (!$global) {
     if ((has_role($u, 'AUDIT') || has_role($u, 'FM')) && $u['entities']) { $w[] = '(' . implode(' OR ', array_fill(0, count($u['entities']), "entity LIKE ?")) . ')'; foreach ($u['entities'] as $e) $p[] = "%$e%"; }
-    elseif (has_role($u, 'ADMIN') && ($rs = region_scope($u))) { $w[] = $rs[0]; array_push($p, ...$rs[1]); }
+    elseif (has_role($u, 'ADMIN') && ($rs = region_scope($u, 'region', 'id'))) { $w[] = $rs[0]; array_push($p, ...$rs[1]); }
   }
   if (!empty($f['region'])) { $w[] = 'region=?'; $p[] = $f['region']; }
   if (!empty($f['claimant_id'])) { $w[] = 'id=?'; $p[] = (int) $f['claimant_id']; }

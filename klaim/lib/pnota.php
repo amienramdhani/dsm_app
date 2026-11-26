@@ -84,7 +84,7 @@ function pn_submit(array $u, int $id, array $in): array {
     hist('claim', $id, 'Balik nota dikirim', $u, null, 'Terpakai ' . rp($real), 'Dana ' . rp((int) $c['total']) . ' · ' . count($clean) . ' nota');
     db()->commit();
   } catch (Throwable $e) { if (db()->inTransaction()) db()->rollBack(); throw $e; }
-  foreach (stage_users('ADMIN', $c['region'], $c['entity']) as $x) if ((int) $x['id'] !== (int) $c['claimant_id']) notify((int) $x['id'], 'tugas', "Balik nota klaim Perdin {$c['number']} menunggu pemeriksaan.", 'claim', $id);
+  foreach (stage_users('ADMIN', $c['region'], $c['entity'], (int) ($c['claimant_id'] ?? 0)) as $x) if ((int) $x['id'] !== (int) $c['claimant_id']) notify((int) $x['id'], 'tugas', "Balik nota klaim Perdin {$c['number']} menunggu pemeriksaan.", 'claim', $id);
   return ['ok' => 1, 'terpakai' => $real, 'sisa' => (int) $c['total'] - $real];
 }
 
@@ -150,7 +150,7 @@ function pn_setoran(array $u, int $id, array $in): void {
     hist('claim', $id, 'Bukti setoran dikirim', $u, $no, null, rp((int) $c['nota_sisa']));
     db()->commit();
   } catch (Throwable $e) { if (db()->inTransaction()) db()->rollBack(); throw $e; }
-  foreach (stage_users('FT', $c['region'], $c['entity']) as $a) notify((int) $a['id'], 'tugas', "Bukti setoran klaim Perdin {$c['number']} menunggu konfirmasi.", 'claim', $id);
+  foreach (stage_users('FT', $c['region'], $c['entity'], (int) ($c['claimant_id'] ?? 0)) as $a) notify((int) $a['id'], 'tugas', "Bukti setoran klaim Perdin {$c['number']} menunggu konfirmasi.", 'claim', $id);
 }
 /** Finance Transfer mengonfirmasi setoran -> balik nota selesai. */
 function pn_close(array $u, int $id): void {

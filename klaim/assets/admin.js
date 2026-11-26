@@ -1,6 +1,6 @@
 /* DSM Klaim - Admin (A07-A10), pengaturan, monitoring budget (H05), realisasi (F05), Super Admin (X01/X02) */
 'use strict';
-const NOBUD = ['Perdin', 'Operasional']; // kategori tanpa budget bulanan
+const NOBUD = ['Perdin', 'Operasional', 'Support dealer']; // kategori tanpa budget bulanan
 R.a = async (sub, id) => {
   if (sub === 'hak' && id) return hakEdit(+id);
   if (sub === 'hak') return hakList();
@@ -36,7 +36,7 @@ function copyHak(src, rows) {
   const st = { parts: { submit: 1, cats: 1, meal: 1, petty: 0 }, skip: 0, sel: new Set(), q: '', job: '', region: '', entity: '' };
   const cands = rows.filter(r => r.id != src.id && r.id != S.me.id);
   const uniq = k => [...new Set(cands.map(r => (k === 'entity' ? (r.entity || '') : (r[k] || ''))).filter(Boolean))].sort();
-  const PT = [['submit', 'Boleh mengajukan klaim', ''], ['cats', 'Kategori dan budget per bulan', 'Transportasi, Entertain, Perdin, Operasional'], ['meal', 'Tarif uang makan Perdin', ''], ['petty', 'Petty cash dan plafon', '']];
+  const PT = [['submit', 'Boleh mengajukan klaim', ''], ['cats', 'Kategori dan budget per bulan', 'Transportasi, Entertain, Perdin, Operasional, Support dealer'], ['meal', 'Tarif uang makan Perdin', ''], ['petty', 'Petty cash dan plafon', '']];
   const cb = on => `<span class="cbx${on ? ' on' : ''}">${on ? '✓' : ''}</span>`;
   const vis = () => cands.filter(r => (!st.q || (r.name + ' ' + (r.job || '')).toLowerCase().includes(st.q)) && (!st.job || r.job === st.job) && (!st.region || r.region === st.region) && (!st.entity || (r.entity || '').split(',').map(x => x.trim()).includes(st.entity)));
   sheet(`<div id="cpx"></div>`, (el, close) => {
@@ -108,7 +108,7 @@ async function massalScreen() {
 }
 async function jenisScreen() {
   const j = await api('types_all');
-  shell(hero('Jenis klaim', 'A10', { back: true }) + `<div class="sec">${['Transportasi', 'Entertain', 'Perdin', 'Operasional'].map(c => `<div class="card"><div class="row"><b>${CATIC[c]} ${c}</b>${c !== 'Perdin' ? `<span class="chip" data-addt="${c}">+ Jenis</span>` : ''}</div>${j.rows.filter(t => t.category === c).map(t => `<div class="row" style="margin-top:8px"><span style="${+t.active ? '' : 'text-decoration:line-through;color:#5B7285'}">${esc(t.name)} ${+t.locked ? '<span class="pill p-gr">terkunci</span>' : ''}</span>${+t.locked ? '' : `<span class="chip" data-tt="${t.id}:${+t.active ? 0 : 1}">${+t.active ? 'Nonaktifkan' : 'Aktifkan'}</span>`}</div>`).join('')}</div>`).join('')}<div class="note">Tidak ada jenis “Lainnya”. Jenis baru ditambah di sini.</div></div>`, { hero: false });
+  shell(hero('Jenis klaim', 'A10', { back: true }) + `<div class="sec">${['Transportasi', 'Entertain', 'Perdin', 'Operasional', 'Support dealer'].map(c => `<div class="card"><div class="row"><b>${CATIC[c]} ${c}</b>${c !== 'Perdin' ? `<span class="chip" data-addt="${c}">+ Jenis</span>` : ''}</div>${j.rows.filter(t => t.category === c).map(t => `<div class="row" style="margin-top:8px"><span style="${+t.active ? '' : 'text-decoration:line-through;color:#5B7285'}">${esc(t.name)} ${+t.locked ? '<span class="pill p-gr">terkunci</span>' : ''}</span>${+t.locked ? '' : `<span class="chip" data-tt="${t.id}:${+t.active ? 0 : 1}">${+t.active ? 'Nonaktifkan' : 'Aktifkan'}</span>`}</div>`).join('')}</div>`).join('')}<div class="note">Tidak ada jenis “Lainnya”. Jenis baru ditambah di sini.</div></div>`, { hero: false });
   $$('[data-tt]').forEach(e => e.onclick = () => guard(async () => { const [id, a] = e.dataset.tt.split(':'); await api('type_save', { id, active: +a }); S.L = await api('lookups'); jenisScreen(); }));
   $$('[data-addt]').forEach(e => e.onclick = () => sheet(`<h3>Jenis baru · ${e.dataset.addt}</h3>${fld('Nama jenis', '<input id="tn">')}<button class="btn" id="tok">TAMBAH</button>`, (el, close) => $('#tok', el).onclick = () => guard(async () => { await api('type_save', { category: e.dataset.addt, name: $('#tn', el).value }); close(); S.L = await api('lookups'); jenisScreen(); })));
 }
@@ -144,7 +144,7 @@ R.monitor = async () => {
     pemohonUp(el, 'mc'); $('#mrs', el).onclick = () => { MF = { period: new Date().toISOString().slice(0, 7) }; close(); R.monitor(); };
     $('#mok', el).onclick = () => { const p = S.L.people.find(x => x.name === $('#mc', el).value); MF = { period: $('#mp', el).value || MF.period, region: $('#mr', el).value, claimant_id: p ? p.id : '', category: $('#mk', el).value }; close(); R.monitor(); }; });
 };
-const CATG = { Transportasi: ['#F0643C', '#D2453F'], Entertain: ['#9A5BE8', '#6D3FD8'], Perdin: ['#3C8DE0', '#1E5FB8'], Operasional: ['#F0A400', '#C25A12'] };
+const CATG = { Transportasi: ['#F0643C', '#D2453F'], Entertain: ['#9A5BE8', '#6D3FD8'], Perdin: ['#3C8DE0', '#1E5FB8'], Operasional: ['#F0A400', '#C25A12'], 'Support dealer': ['#16A394', '#0E7C6B'] };
 /** Kartu budget per kategori (ringkas): batang terpakai/diproses/over, status hampir habis dan over budget. */
 function budgetCats(p) {
   const ents = Object.entries(p.cats), tb = ents.reduce((a, [, b]) => a + b.budget, 0), tu = ents.reduce((a, [, b]) => a + b.realized + b.reserved, 0);
@@ -184,7 +184,7 @@ R.realisasi = async () => {
 
 /* ---------- Realisasi untuk HoS / Finance Manager (tab + bagian lipat) ---------- */
 const jt = n => Math.abs(n) >= 1e6 ? (n < 0 ? '-' : '') + 'Rp ' + (Math.abs(n) / 1e6).toFixed(1).replace('.', ',') + ' jt' : rp(n);
-const CATCLR = { Transportasi: '#F0643C', Entertain: '#9A5BE8', Perdin: '#3C8DE0', Operasional: '#F0A400' };
+const CATCLR = { Transportasi: '#F0643C', Entertain: '#9A5BE8', Perdin: '#3C8DE0', Operasional: '#F0A400', 'Support dealer': '#0E7C6B' };
 function rfSec(title, inner, open = true) { return `<details class="rf-sc" ${open ? 'open' : ''}><summary>${title}</summary><div>${inner}</div></details>`; }
 function rfBars(o, max) { const e = Object.entries(o || {}); if (!e.length) return '<div class="mut">Belum ada data.</div>'; const m = max || Math.max(...e.map(x => x[1]), 1); return e.map(([k, v]) => `<div class="rf-hb"><div class="t"><span>${esc(k)}</span><b>${jt(v)}</b></div><div class="tr"><i style="width:${Math.max(2, v * 100 / m)}%"></i></div></div>`).join(''); }
 function rfTren(tren, gran) {

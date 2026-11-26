@@ -202,15 +202,39 @@ function dkUsers(mn) {
   bar.innerHTML = `<input id="dkuq" placeholder="Cari nama, username, NIK, region"><div class="dk-chp"><span class="on" data-rf="">SEMUA <em>${DKU.rows.length}</em></span><span data-rf="PEMOHON">PEMOHON <em>${nSub}</em></span>${['ADMIN', 'RGM', 'HOS', 'FM', 'FT', 'AUDIT', 'SA'].filter(x => cnt[x]).map(x => `<span data-rf="${x}">${x} <em>${cnt[x]}</em></span>`).join('')}</div>`;
   nb.before(bar); bar.appendChild(nb);
   const tw = document.createElement('div'); tw.className = 'dk-tw';
-  tw.innerHTML = `<table class="dk-tb"><thead><tr><th>NAMA</th><th>USERNAME</th><th>JABATAN</th><th>PERAN</th><th>REGION</th><th>WILAYAH TUGAS</th><th>BADAN USAHA</th><th>AKTIF</th><th></th></tr></thead><tbody>${lis.map(li => { const r = by[li.dataset.u] || {}; const rs = roles(r); const c = RCOL[rs[0]] || '#64748B';
+  tw.innerHTML = `<table class="dk-tb"><thead><tr><th style="width:26px"><span class="dk-cb" id="dkall"></span></th><th>NAMA</th><th>USERNAME</th><th>JABATAN</th><th>PERAN</th><th>REGION</th><th>WILAYAH TUGAS</th><th>DITANGANI ADMIN</th><th>BADAN USAHA</th><th>AKTIF</th><th></th></tr></thead><tbody>${lis.map(li => { const r = by[li.dataset.u] || {}; const rs = roles(r); const c = RCOL[rs[0]] || '#64748B';
     const ar = r.areas ? String(r.areas).split(',').filter(Boolean).join(', ') : ''; const adm = rs.some(x => x === 'ADMIN' || x === 'RGM');
-    return `<tr data-u="${r.id}" data-rs="${rs.join(',')}${+r.can_submit ? ',PEMOHON' : ''}" data-q="${esc([r.name, r.username, r.nik, r.region, r.job].join(' ').toLowerCase())}"><td><div class="dk-av" style="--c:${c}"><i>${esc((r.name || '?')[0])}</i><b>${esc(r.name || '')}</b></div></td><td>${esc(r.username || '-')}</td><td>${esc(r.job || '-')}</td>
-      <td>${rs.map(x => `<span class="dk-rlc" style="--c:${RCOL[x] || '#64748B'}">${x}</span>`).join('')}${+r.can_submit ? '<span class="dk-rlc" style="--c:#64748B">Pemohon</span>' : ''}</td><td>${esc(r.region || '-')}</td><td>${adm ? (ar ? esc(ar) : r.region ? esc(r.region) : '<b>Semua region</b>') : '<span class="mut">-</span>'}</td><td>${esc(r.entity || '-')}</td>
+    return `<tr data-u="${r.id}" data-rs="${rs.join(',')}${+r.can_submit ? ',PEMOHON' : ''}" data-q="${esc([r.name, r.username, r.nik, r.region, r.job].join(' ').toLowerCase())}"><td class="dk-ck"><span class="dk-cb" data-ck="${r.id}"></span></td><td><div class="dk-av" style="--c:${c}"><i>${esc((r.name || '?')[0])}</i><b>${esc(r.name || '')}</b></div></td><td>${esc(r.username || '-')}</td><td>${esc(r.job || '-')}</td>
+      <td>${rs.map(x => `<span class="dk-rlc" style="--c:${RCOL[x] || '#64748B'}">${x}</span>`).join('')}${+r.can_submit ? '<span class="dk-rlc" style="--c:#64748B">Pemohon</span>' : ''}</td><td>${esc(r.region || '-')}</td><td>${adm ? (ar ? esc(ar) : r.region ? esc(r.region) : '<b>Semua region</b>') : '<span class="mut">-</span>'}</td><td>${+r.can_submit ? (r.handler_id && by[r.handler_id] ? `<span class="dk-rlc" style="--c:#1E5FB8">${esc(by[r.handler_id].name)}</span>` : '<span class="mut">Otomatis (region)</span>') : '<span class="mut">-</span>'}</td><td>${esc(r.entity || '-')}</td>
       <td><span class="dk-tg ${+r.active ? '' : 'off'}"></span></td><td class="dk-ac">UBAH ›</td></tr>`; }).join('')}</tbody></table>`;
   lis[0].parentElement.replaceWith(tw);
-  let rf = '';
-  const apply = () => { const q = $('#dkuq').value.trim().toLowerCase(); tw.querySelectorAll('tbody tr').forEach(tr => tr.style.display = (!q || tr.dataset.q.includes(q)) && (!rf || tr.dataset.rs.split(',').includes(rf)) ? '' : 'none'); };
+  // filter area (chip, boleh lebih dari satu) + filter Admin penangan (Admin pilihan = yang menangani orang itu, manual atau lewat wilayah tugasnya)
+  const admins = DKU.rows.filter(r => +r.active && roles(r).includes('ADMIN')); const regs = {}; DKU.rows.forEach(r => { if (+r.can_submit && r.region) regs[r.region] = (regs[r.region] || 0) + 1; });
+  const covers = (a, reg) => { const al = a.areas ? String(a.areas).split(',').filter(Boolean) : []; return al.length ? al.includes(reg) : (!a.region || a.region === reg); };
+  const handledBy = (r, a) => r.handler_id ? +r.handler_id === +a.id : covers(a, r.region);
+  const bar2 = document.createElement('div'); bar2.className = 'dk-ufb dk-uf2';
+  bar2.innerHTML = `<b class="dk-lb">AREA</b><div class="dk-chp" id="dkar"><span class="on" data-ar="">SEMUA</span>${Object.keys(regs).sort().map(x => `<span data-ar="${esc(x)}">${esc(x)} <em>${regs[x]}</em></span>`).join('')}</div>
+    <select id="dkadm"><option value="">Semua penanganan</option><option value="-">Belum ada Admin</option>${admins.map(a => `<option value="${a.id}">Ditangani ${esc(a.name)}</option>`).join('')}</select>`;
+  bar.after(bar2);
+  let rf = '', arSel = new Set(), admF = ''; const sel = new Set();
+  const adm1 = id => admins.find(a => +a.id === +id);
+  const apply = () => { const q = $('#dkuq').value.trim().toLowerCase(); tw.querySelectorAll('tbody tr').forEach(tr => { const r = by[tr.dataset.u]; let ok = (!q || tr.dataset.q.includes(q)) && (!rf || tr.dataset.rs.split(',').includes(rf));
+      if (ok && arSel.size) ok = arSel.has(r.region);
+      if (ok && admF) ok = admF === '-' ? (!r.handler_id && !admins.some(a => covers(a, r.region))) : (+r.can_submit && handledBy(r, adm1(admF)));
+      tr.style.display = ok ? '' : 'none'; }); paint(); };
   $('#dkuq').oninput = apply; bar.querySelectorAll('[data-rf]').forEach(c => c.onclick = () => { rf = c.dataset.rf; bar.querySelectorAll('[data-rf]').forEach(x => x.classList.toggle('on', x === c)); apply(); });
+  bar2.querySelectorAll('[data-ar]').forEach(c => c.onclick = () => { const v = c.dataset.ar; if (!v) arSel.clear(); else arSel.has(v) ? arSel.delete(v) : arSel.add(v); bar2.querySelectorAll('[data-ar]').forEach(x => x.classList.toggle('on', x.dataset.ar ? arSel.has(x.dataset.ar) : !arSel.size)); apply(); });
+  $('#dkadm').onchange = e => { admF = e.target.value; apply(); };
+  // centang + bar tugaskan ke Admin
+  const act = document.createElement('div'); act.className = 'dk-sel'; act.style.display = 'none'; tw.after(act);
+  act.innerHTML = `<b id="dkselN"></b><select id="dkselA"><option value="">Tugaskan ke Admin…</option>${admins.map(a => `<option value="${a.id}">${esc(a.name)} (${esc((a.areas ? String(a.areas).split(',').filter(Boolean).join(', ') : a.region) || 'Semua region')})</option>`).join('')}<option value="0">Kembalikan ke otomatis (ikut region)</option></select><button class="dk-b" id="dkselOk">TERAPKAN</button><button class="dk-b2" id="dkselX">BATAL PILIH</button>`;
+  const vis = () => [...tw.querySelectorAll('tbody tr')].filter(tr => tr.style.display !== 'none');
+  function paint() { tw.querySelectorAll('[data-ck]').forEach(c => { const on = sel.has(c.dataset.ck); c.classList.toggle('on', on); c.closest('tr').classList.toggle('dk-sl', on); });
+    const v = vis(); $('#dkall').classList.toggle('on', !!v.length && v.every(tr => sel.has(tr.dataset.u))); act.style.display = sel.size ? '' : 'none'; $('#dkselN').textContent = sel.size + ' orang dipilih'; }
+  tw.querySelectorAll('td.dk-ck').forEach(td => td.onclick = e => { e.stopPropagation(); const id = td.parentElement.dataset.u; sel.has(id) ? sel.delete(id) : sel.add(id); paint(); });
+  $('#dkall').onclick = e => { e.stopPropagation(); const v = vis(); const all = v.every(tr => sel.has(tr.dataset.u)); v.forEach(tr => all ? sel.delete(tr.dataset.u) : sel.add(tr.dataset.u)); paint(); };
+  $('#dkselX').onclick = () => { sel.clear(); paint(); };
+  $('#dkselOk').onclick = () => { const h = $('#dkselA').value; if (h === '') return toast('Pilih Admin dulu.'); guard(async () => { const r = await api('sa_handler_set', { ids: [...sel].map(Number), handler_id: +h }); toast(r.updated + ' orang diperbarui' + (r.skipped ? ', ' + r.skipped + ' dilewati (Admin tidak menangani dirinya sendiri)' : '') + '.'); saUsers(); }); };
 }
 
 /* ---------- Monitoring Budget desktop (mockup dsm-klaim-desktop-budget.html opsi B + chart per region) ---------- */
@@ -282,7 +306,7 @@ realisasiFM = function (j, x) {
   if (!isDesk()) return _realFM(j, x);
   /* satu halaman tanpa tab (mockup dsm-klaim-desktop-realisasi.html) */
   const f = j.fm, k = f.kpi; const d = k.prev ? Math.round((k.total - k.prev) * 100 / k.prev) : null;
-  const CC = { Transportasi: '#3B78C2', Entertain: '#C97A4A', Perdin: '#8268C9', Operasional: '#3E9486' }, EC = ['#1E5FB8', '#12866A', '#6D3FD8', '#D97706', '#DB2777', '#475569'];
+  const CC = { Transportasi: '#3B78C2', Entertain: '#C97A4A', Perdin: '#8268C9', Operasional: '#3E9486', 'Support dealer': '#0E7C6B' }, EC = ['#1E5FB8', '#12866A', '#6D3FD8', '#D97706', '#DB2777', '#475569'];
   const dot = c => `<span class="dk-dot" style="--c:${c}"></span>`;
   const pn = (t, inner, sub = '', cls = '') => `<div class="dk-rp ${cls}"><div class="h">${t}${sub ? ` <small>${sub}</small>` : ''}</div>${inner}</div>`;
   const list = (o, col) => { const e = Object.entries(o || {}), tot = e.reduce((a, x) => a + x[1], 0); return e.map(([n, v], i) => `<div>${dot(col(n, i))}${esc(n)}<b>${dkNum(v)}</b><small>${tot ? Math.round(v * 100 / tot) : 0}%</small></div>`).join('') || '<div class="mut">Belum ada data.</div>'; };

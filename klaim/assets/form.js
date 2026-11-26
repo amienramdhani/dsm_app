@@ -16,16 +16,16 @@ const num = v => parseInt(String(v).replace(/[^\d-]/g, ''), 10) || 0;
 
 /* ---------- P03 pilih kategori dan jenis (retouch 2026-11-24, mockup doc/mockup/2026-11-24/dsm-klaim-ajukan-opsi.html B2) ----------
    Ketuk = centang (bisa beberapa dalam satu kategori; Perdin hanya satu), lalu tombol LANJUT AJUKAN. */
-const KCAT = { Transportasi: ['#1E5FB8', 'fuel'], Entertain: ['#C25A12', 'food'], Perdin: ['#0E7C6B', 'bag'], Operasional: ['#6D3FD8', 'build'] };
+const KCAT = { Transportasi: ['#1E5FB8', 'fuel'], Entertain: ['#C25A12', 'food'], Perdin: ['#0E7C6B', 'bag'], Operasional: ['#6D3FD8', 'build'], 'Support dealer': ['#0E7C6B', 'gift'] };
 const KPIC = { fuel: 'M4 20V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v15M3 20h12M6 8h6M14 9h2a2 2 0 0 1 2 2v5a1.5 1.5 0 0 0 3 0V8l-3-3', food: 'M5 3v8a3 3 0 0 0 6 0V3M8 3v18M16 21V3c3 1 4 4 4 8h-4', bag: 'M4 7h16v13H4zM9 7V5a3 3 0 0 1 6 0v2M4 12h16', build: 'M3 21h18M5 21V7l7-4 7 4v14M9 9h1M14 9h1M9 13h1M14 13h1M10 21v-4h4v4',
   toll: 'M4 20 8 4M20 20 16 4M12 6v2M12 11v2M12 16v2', park: 'M4 4h16v16H4zM10 16V8h3a2.5 2.5 0 0 1 0 5h-3', car: 'M5 17h14M6 17v2M18 17v2M4 13l2-6h12l2 6v4H4z', tick: 'M4 8a2 2 0 0 0 0 4v4h16v-4a2 2 0 0 0 0-4V4H4zM14 4v12', meet: 'M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6M3 20c0-3 3-5 6-5s6 2 6 5M17 11.5a2.5 2.5 0 1 0 0-5M15 15c3 0 6 1.5 6 5',
   cake: 'M4 21h16v-8H4zM4 16c2 1 4 1 4 0s2-1 4 0 4 1 4 0 4 1 4 0M12 13V9M12 6a1 1 0 0 0 0-2', flower: 'M12 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6M12 11v10M12 16c-3 0-5-2-5-4M12 18c3 0 5-2 5-4', gift: 'M3 8h18v5H3zM5 13v8h14v-8M12 8v13M12 8c-2-4-6-3-4 0M12 8c2-4 6-3 4 0', plane: 'M3 13l18-7-5 14-4-6-9-1z', bed: 'M3 18V7M3 13h18v5M7 13V10h5v3',
   box: 'M3 8l9-5 9 5v8l-9 5-9-5zM3 8l9 5 9-5M12 13v8', wrench: 'M14 6a4 4 0 0 0-5 5L3 17l4 4 6-6a4 4 0 0 0 5-5l-3 3-3-3z', dots: 'M6 12h.01M12 12h.01M18 12h.01', search: 'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14M20 20l-4-4' };
-const KTYPE = { BBM: 'fuel', Tol: 'toll', Parkir: 'park', 'Ojol & taksi online': 'car', 'Tiket perjalanan': 'tick', Meeting: 'meet', 'Makan-makan': 'food', 'Kue ulang tahun': 'cake', 'Karangan bunga': 'flower', 'Reward / Hadiah': 'gift', Perdin: 'plane', 'Uang makan': 'food', Kost: 'bed', 'Penginapan / Hotel': 'bed', 'ATK & perlengkapan kantor': 'box', 'Ongkir & kurir': 'box', 'Servis kendaraan': 'wrench', 'Operasional lainnya': 'dots' };
+const KTYPE = { BBM: 'fuel', Tol: 'toll', Parkir: 'park', 'Ojol & taksi online': 'car', 'Tiket perjalanan': 'tick', Meeting: 'meet', 'Makan-makan': 'food', 'Kue ulang tahun': 'cake', 'Karangan bunga': 'flower', 'Kebutuhan support dealer': 'gift', 'Reward / Hadiah': 'gift', Perdin: 'plane', 'Uang makan': 'food', Kost: 'bed', 'Penginapan / Hotel': 'bed', 'ATK & perlengkapan kantor': 'box', 'Ongkir & kurir': 'box', 'Servis kendaraan': 'wrench', 'Operasional lainnya': 'dots' };
 const kpic = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${KPIC[k] || KPIC.dots}"/></svg>`;
 R.new = async () => {
   const div = QP.get('div') === '1'; const b = await api('budget');
-  const cats = ['Transportasi', 'Entertain', 'Perdin', 'Operasional'];
+  const cats = ['Transportasi', 'Entertain', 'Perdin', 'Operasional', 'Support dealer'];
   const en = c => div || (b.budget[c] && b.budget[c].enabled);
   const single = c => c === 'Perdin';
   shell(hero(div ? 'Ajukan untuk divisi' : 'Ajukan klaim', div ? 'ADMIN · DI LUAR SALES' : 'PEMOHON', { back: true, small: true }) +
@@ -154,7 +154,7 @@ function pesInputs(pes, label, hint) {
 /* form padat + strip judul + warna jenis (2026-11-24, mockup doc/mockup/2026-11-24/dsm-klaim-form-padat-semua.html opsi E) */
 const kt = (t, right = '') => `<div class="kft"><span>${t}</span>${right}</div>`;
 const fp = (label, input, files, add) => `<div class="fld"><label>${label}</label><div class="kfp">${input}${thumbs(files, { rm: 1, add })}</div></div>`;
-const KCOL = { BBM: '#D97706', Tol: '#0E7C6B', Parkir: '#2563EB', 'Ojol & taksi online': '#7C3AED', 'Servis kendaraan': '#475569', 'Tiket perjalanan': '#0891B2', Meeting: '#C2410C', 'Makan-makan': '#DB2777', 'Kue ulang tahun': '#E11D48', 'Karangan bunga': '#16A34A', 'Reward / Hadiah': '#9333EA', Kost: '#0D9488', 'Penginapan / Hotel': '#4F46E5', 'ATK & perlengkapan kantor': '#CA8A04', 'Ongkir & kurir': '#EA580C', 'Operasional lainnya': '#64748B' };
+const KCOL = { BBM: '#D97706', Tol: '#0E7C6B', Parkir: '#2563EB', 'Ojol & taksi online': '#7C3AED', 'Servis kendaraan': '#475569', 'Tiket perjalanan': '#0891B2', Meeting: '#C2410C', 'Makan-makan': '#DB2777', 'Kue ulang tahun': '#E11D48', 'Karangan bunga': '#16A34A', 'Kebutuhan support dealer': '#0E7C6B', 'Reward / Hadiah': '#9333EA', Kost: '#0D9488', 'Penginapan / Hotel': '#4F46E5', 'ATK & perlengkapan kantor': '#CA8A04', 'Ongkir & kurir': '#EA580C', 'Operasional lainnya': '#64748B' };
 const kcol = n => KCOL[n] || '#3B78C2';
 function kindBody(multi) {
   const k = F.kind, m = F.meta, t = F.type.name; let body = '';
@@ -512,7 +512,7 @@ function renderPcForm(plaf, b) {
     if (t.id === 'pcgo') guard(async () => { const plan = PF.plan.map(r => ({ ...r, nominal: num(r.nominal), perdin: r.kategori === 'Perdin' ? { ...r.perdin, rute: (r.perdin?.rute || []).filter(x => x.trim()) } : undefined })); await api('pc_submit', { ...PF, plan, amount: plan.reduce((a, r) => a + r.nominal, 0) }); PF = null; toast('Petty cash terkirim.'); location.hash = '#/pc'; });
   };
 }
-const CATS_LIST = ['Transportasi', 'Entertain', 'Perdin', 'Operasional'];
+const CATS_LIST = ['Transportasi', 'Entertain', 'Perdin', 'Operasional', 'Support dealer'];
 function pcPerdin(r, i) {
   const p = r.perdin ??= { rute: [''], tgl_berangkat: PF.p_start, tgl_pulang: PF.p_end };
   return `<div class="note blue">Perdin mengikuti aturan Perdin reguler: rute, satu screenshot Maps, total jarak.</div><div class="two">${fld('Berangkat', `<input type="date" data-pd="${i}:tgl_berangkat" value="${p.tgl_berangkat || ''}">`)}${fld('Pulang', `<input type="date" data-pd="${i}:tgl_pulang" value="${p.tgl_pulang || ''}">`)}</div>

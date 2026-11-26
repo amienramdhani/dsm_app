@@ -24,7 +24,7 @@ function insert_user_row(array $r, string $pw, ?string $nik = null, string $user
   $id = ins('claim_users', ['username' => $username ?? $r[0], 'pass_hash' => $pw, 'name' => $r[1], 'job' => $r[2], 'region' => $r[3], 'entity' => $r[4], 'roles' => $r[5], 'can_submit' => $r[6],
     'bank' => $r[7], 'bank_no' => $r[8], 'bank_name' => $r[9], 'can_petty' => $r[10], 'petty_ceiling' => $r[11], 'meal_rate' => $r[12], 'active' => 1, 'created_at' => now()]);
   ex("UPDATE claim_users SET nik=? WHERE id=?", [$nik ?? (($r[4] ?: 'DSM') . '-' . str_pad((string) $id, 4, '0', STR_PAD_LEFT)), $id]);
-  if ($r[6]) foreach (['Transportasi' => 2000000, 'Entertain' => 1500000, 'Perdin' => 3000000, 'Operasional' => 1000000] as $cat => $b) ins('claim_entitlement', ['user_id' => $id, 'category' => $cat, 'enabled' => 1, 'budget' => $b]);
+  if ($r[6]) foreach (['Transportasi' => 2000000, 'Entertain' => 1500000, 'Perdin' => 3000000, 'Operasional' => 1000000, 'Support dealer' => 0] as $cat => $b) ins('claim_entitlement', ['user_id' => $id, 'category' => $cat, 'enabled' => 1, 'budget' => $b]);
   return $id;
 }
 /** Akun uji untuk Super Admin (Ganti peran). Tidak bisa dipakai login: NIK berawalan UJI- tidak ada di DSM. Idempoten. */
@@ -40,15 +40,23 @@ function seed_uji_users(): int {
 /** Daftar jenis klaim yang berlaku (urutan = urutan tampil). Nilai 1 = terkunci (tidak bisa dimatikan Admin). */
 const TYPE_SPEC = [
   'Transportasi' => ['BBM' => 1, 'Tol' => 0, 'Parkir' => 0, 'Ojol & taksi online' => 0, 'Tiket perjalanan' => 0],
-  'Entertain' => ['Meeting' => 0, 'Makan-makan' => 0, 'Kue ulang tahun' => 0, 'Karangan bunga' => 0, 'Reward / Hadiah' => 0],
+  'Entertain' => ['Meeting' => 0, 'Makan-makan' => 0, 'Reward / Hadiah' => 0],
   'Perdin' => ['Perdin' => 1, 'Uang makan' => 0],
   'Operasional' => ['Kost' => 0, 'Penginapan / Hotel' => 0, 'ATK & perlengkapan kantor' => 0, 'Ongkir & kurir' => 0, 'Servis kendaraan' => 0, 'Operasional lainnya' => 0],
+  'Support dealer' => ['Kue ulang tahun' => 0, 'Karangan bunga' => 0, 'Kebutuhan support dealer' => 0],
 ];
 /** Jenis lama yang dipensiunkan (dinonaktifkan, tidak dihapus agar klaim lama tetap utuh). */
 const TYPE_RETIRED = [['Transportasi', 'Servis kendaraan'], ['Operasional', 'Listrik, air & internet'], ['Operasional', 'Kebersihan & keamanan'], ['Operasional', 'Perbaikan & maintenance']];
 /** Aman dijalankan berulang: menambah jenis yang belum ada, mengaktifkan yang berlaku, menonaktifkan yang dipensiunkan. Jenis buatan Admin tidak disentuh. */
 function sync_claim_types(): array {
   $log = []; $s = 0;
+  // Kue ulang tahun & Karangan bunga pindah ke grup Support dealer (tanpa budget, tidak mengurangi budget Entertain). Klaim lama tetap utuh (kategori tersimpan di klaimnya).
+  foreach ([['Entertain', 'Kue ulang tahun'], ['Entertain', 'Karangan bunga'], ['Operasional', 'Kue ulang tahun'], ['Operasional', 'Karangan bunga'], ['Operasional', 'Support dealer']] as [$from, $nm]) {
+    $to = $nm === 'Support dealer' ? 'Kebutuhan support dealer' : $nm;
+    if (!val("SELECT 1 FROM claim_types WHERE category='Support dealer' AND name=?", [$to])) { $n = ex("UPDATE claim_types SET category='Support dealer', name=? WHERE category=? AND name=?", [$to, $from, $nm]); if ($n) $log[] = "~ $from / $nm → Support dealer"; }
+  }
+  // hak grup Support dealer: otomatis hidup untuk yang hak Entertain-nya hidup (hanya yang belum punya barisnya; tidak menimpa pilihan Admin)
+  foreach (q("SELECT user_id FROM claim_entitlement WHERE category='Entertain' AND enabled=1") as $r) if (!val("SELECT 1 FROM claim_entitlement WHERE user_id=? AND category='Support dealer'", [$r['user_id']])) { ins('claim_entitlement', ['user_id' => $r['user_id'], 'category' => 'Support dealer', 'enabled' => 1, 'budget' => 0]); $log[] = '+ hak Support dealer #' . $r['user_id']; }
   foreach (TYPE_SPEC as $cat => $list) foreach ($list as $name => $lock) {
     $s++; $r = one("SELECT id, active FROM claim_types WHERE category=? AND name=?", [$cat, $name]);
     if (!$r) { ins('claim_types', ['category' => $cat, 'name' => $name, 'active' => 1, 'locked' => $lock, 'sort_no' => $s]); $log[] = "+ $cat / $name"; }

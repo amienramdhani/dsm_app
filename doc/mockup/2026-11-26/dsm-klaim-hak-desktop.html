@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Klaim · Hak klaim desktop</title>
+<style>
+*{box-sizing:border-box;font-family:Inter,"Segoe UI",system-ui,sans-serif}
+body{margin:0;background:#F1F4F8;color:#10394E;font-size:11px;display:flex;min-height:100vh}
+aside{width:190px;background:#fff;border-right:1px solid #E5E9EE;padding:14px 10px;flex:none}
+.lg{font-weight:800;font-size:14px;color:#0B5CAD;margin:0 6px 14px}
+.g{font-size:9px;font-weight:700;color:#94A3B8;letter-spacing:.06em;margin:12px 6px 4px}
+.nv{display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;font-weight:600;color:#334155;margin-bottom:2px}
+.nv i{width:14px;height:14px;border:1.6px solid #64748B;border-radius:4px;display:inline-block}
+.nv.on{background:#0B5CAD;color:#fff}.nv.on i{border-color:#fff}
+.nv.new{background:#E3F5EE}.tg{margin-left:auto;font-size:8.5px;font-weight:800;background:#2FB58F;color:#fff;border-radius:5px;padding:1px 5px}
+main{flex:1;padding:16px 20px;min-width:0}
+h1{font-size:16px;margin:0 0 2px}.sub{color:#64748B;margin-bottom:12px}
+.bar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.bar input,.bar select{height:32px;padding:0 10px;border:1px solid #CBD5E0;border-radius:8px;font-size:11px;background:#fff}
+.chip{padding:6px 10px;border-radius:8px;border:1px solid #DBE3EE;background:#fff;font-weight:700;color:#475569}.chip.on{background:#0B5CAD;color:#fff;border-color:#0B5CAD}
+.chip em{font-style:normal;opacity:.7;margin-left:3px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 1px 6px rgba(16,57,78,.08)}
+th{background:#E6EBF1;text-align:left;padding:8px 9px;font-weight:700;border-bottom:2px solid #15303F;white-space:nowrap}
+td{padding:7px 9px;border-top:1px solid #EEF2F6;white-space:nowrap}
+.n{text-align:right}
+.ok{background:#DDF3EA;color:#0E7C6B;padding:2px 7px;border-radius:5px;font-weight:700;font-size:10px}.no{background:#E6EBF1;color:#64748B;padding:2px 7px;border-radius:5px;font-weight:700;font-size:10px}
+.pc{background:#EDE5FB;color:#6D3FD8;padding:2px 7px;border-radius:5px;font-weight:700;font-size:10px}
+.cb{display:inline-block;width:14px;height:14px;border:1.5px solid #94A3B8;border-radius:4px;vertical-align:middle;background:#fff}.cb.on{background:#0B5CAD;border-color:#0B5CAD}
+tr.sl td{background:#E3F5EE}
+.act{position:sticky;bottom:10px;margin-top:10px;background:#10394E;color:#fff;border-radius:12px;padding:10px 14px;display:flex;gap:10px;align-items:center}
+.act select{height:32px;border-radius:8px;border:0;padding:0 8px;font-weight:700;color:#10394E}.act .b{background:#2FB58F;border-radius:8px;padding:8px 14px;font-weight:700}
+.note{margin:12px 0;padding:8px 10px;background:#E3F5EE;border-left:4px solid #2FB58F;border-radius:6px;line-height:1.5}
+.sp{font-size:9px;color:#64748B;display:block}
+</style></head><body>
+<aside><div class="lg">DSM Klaim</div>
+<div class="g">KERJA</div>
+<div class="nv"><i></i>Antrian</div><div class="nv"><i></i>Monitoring</div><div class="nv"><i></i>Rekap</div>
+<div class="nv on"><i></i>Hak klaim<span class="tg" style="background:#fff;color:#0B5CAD">BARU</span></div>
+<div class="g">LAINNYA</div><div class="nv"><i></i>Notifikasi</div><div class="nv"><i></i>Menu</div></aside>
+<main>
+<h1>Hak klaim</h1><div class="sub">Budget dan akses pemohon. Klik baris untuk atur detail.</div>
+<div class="bar"><input placeholder="Cari nama, jabatan, region" style="width:240px">
+<span class="chip on">SEMUA <em>51</em></span><span class="chip">BOLEH MENGAJUKAN <em>44</em></span><span class="chip">BELUM DIBERI HAK <em>7</em></span><span class="chip">PETTY CASH <em>12</em></span>
+<select><option>Semua region</option></select><select><option>Semua badan usaha</option></select></div>
+<table><tr><th style="width:24px"><span class="cb"></span></th><th>NAMA</th><th>JABATAN</th><th>REGION</th><th>BADAN USAHA</th><th>PENGAJUAN</th><th class="n">TRANSPORTASI</th><th class="n">ENTERTAIN</th><th>PERDIN</th><th>OPERASIONAL</th><th>SUPPORT DEALER</th><th>PETTY CASH</th><th></th></tr>
+<tr class="sl"><td><span class="cb on"></span></td><td><b>Dewi Lestari</b></td><td>Sales</td><td>Cirebon</td><td>RISM</td><td><span class="ok">BOLEH</span></td><td class="n">2.000.000</td><td class="n">1.500.000</td><td>Tanpa batas</td><td>Tanpa batas</td><td><span class="ok">AKTIF</span></td><td><span class="pc">PLAFON 2.000.000</span></td><td style="color:#0B5CAD;font-weight:700">ATUR ›</td></tr>
+<tr class="sl"><td><span class="cb on"></span></td><td><b>Eko Prasetyo</b></td><td>Sales</td><td>Cirebon</td><td>RISM</td><td><span class="ok">BOLEH</span></td><td class="n">2.000.000</td><td class="n">1.500.000</td><td>Tanpa batas</td><td>Tanpa batas</td><td><span class="ok">AKTIF</span></td><td>-</td><td style="color:#0B5CAD;font-weight:700">ATUR ›</td></tr>
+<tr><td><span class="cb"></span></td><td><b>Joko Widodo</b></td><td>ASM</td><td>Cirebon</td><td>RISM</td><td><span class="ok">BOLEH</span></td><td class="n">3.000.000</td><td class="n">2.500.000</td><td>Tanpa batas</td><td>Tanpa batas</td><td><span class="ok">AKTIF</span></td><td><span class="pc">PLAFON 5.000.000</span></td><td style="color:#0B5CAD;font-weight:700">ATUR ›</td></tr>
+<tr><td><span class="cb"></span></td><td><b>Budi Santoso</b></td><td>RGM</td><td>Cirebon</td><td>RISM</td><td><span class="ok">BOLEH</span></td><td class="n">3.000.000</td><td class="n">2.500.000</td><td>Tanpa batas</td><td>Tanpa batas</td><td><span class="no">MATI</span></td><td><span class="pc">PLAFON 5.000.000</span></td><td style="color:#0B5CAD;font-weight:700">ATUR ›</td></tr>
+<tr><td><span class="cb"></span></td><td><b>Rina</b></td><td>Admin</td><td>Cirebon</td><td>RISM</td><td><span class="no">BELUM</span></td><td class="n">-</td><td class="n">-</td><td>-</td><td>-</td><td><span class="no">MATI</span></td><td>-</td><td style="color:#0B5CAD;font-weight:700">ATUR ›</td></tr>
+</table>
+<div class="act"><b>2 orang dipilih</b><select><option>Salin hak dari…</option></select><span class="b">SALIN HAK KE YANG DIPILIH</span><span style="color:#B8D4E3;font-weight:700">BATAL PILIH</span></div>
+<div class="note"><b>Usulan:</b> (1) menu <b>Hak klaim</b> masuk ke sidebar grup KERJA (desktop), tidak perlu lewat Menu lagi. (2) Daftar jadi tabel padat, semua hak terlihat sekaligus, tanpa buka satu-satu. (3) Centang banyak orang lalu <b>Salin hak</b> (fitur salin yang sudah ada, dipindah ke bar bawah). (4) Klik baris tetap buka halaman atur detail yang sekarang. Tampilan HP tidak berubah.</div>
+</main></body></html>
