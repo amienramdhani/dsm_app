@@ -1,0 +1,47 @@
+/* Sub Region (Admin) — sesuai mockup dsm-sub-region-asm-rgm.html */
+#view .v6sr{color:#10394E;font-size:11px}
+#view .v6sr *{font-family:inherit}
+#view .v6srBar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:8px 0 10px}
+#view .v6srBar input,#view .v6srBar select{height:32px;width:auto;padding:0 10px;border:1px solid #CBD5E0;border-radius:8px;font-size:11px;background:#fff}
+#view .v6srBar input{width:260px}
+#view .v6srC{height:auto;width:auto;padding:6px 10px;border-radius:8px;border:1px solid #DBE3EE;background:#fff;font-size:11px;font-weight:700;color:#475569;cursor:pointer}
+#view .v6srC em{font-style:normal;opacity:.7}
+#view .v6srC.on{background:#0B5CAD;color:#fff;border-color:#0B5CAD}
+#view table.v6srT{width:100%;border-collapse:collapse;font-size:11px}
+#view table.v6srT th{background:#E6EBF1;color:#10394E;text-align:left;padding:8px 9px;font-weight:700;font-size:11px;border-bottom:2px solid #15303F;white-space:nowrap}
+#view table.v6srT td{padding:6px 9px;border-top:1px solid #EEF2F6;white-space:nowrap;font-size:11px;font-weight:400;background:#fff;color:#10394E}
+#view table.v6srT td b{font-weight:700}
+#view table.v6srT .n{text-align:right}
+#view table.v6srT small{color:#B45309;font-weight:700}
+#view .v6srS{display:inline-block;background:#DDF3EA;color:#0E7C6B;padding:2px 7px;border-radius:5px;font-weight:700;font-size:10px}
+#view .v6srS.w,#view .v6srW{background:#FFF0CC;color:#7A5200;padding:2px 7px;border-radius:5px;font-weight:700;font-size:10px}
+#view .v6srE{color:#0B5CAD;font-weight:700;cursor:pointer}
+#view .v6srX{color:#D2453F;font-weight:700;cursor:pointer}
+#view .v6sr h4{font-size:13px;margin:16px 0 8px}
+#view .v6srb,.v6srO .v6srb{height:auto;width:auto;display:inline-block;border-radius:8px;padding:8px 14px;font-size:11px;font-weight:700;border:1px solid #CBD5E0;background:#fff;color:#10394E;cursor:pointer}
+.v6srO .v6srb.p{background:#0B5CAD;color:#fff;border-color:#0B5CAD}
+.v6srO .v6srb:disabled{opacity:.5;cursor:default}
+.v6srO{position:fixed;inset:0;z-index:99999;background:rgba(16,57,78,.45);display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 12px;color:#10394E;font-size:11px}
+.v6srO *{box-sizing:border-box;font-family:inherit}
+.v6srMd{width:520px;max-width:100%;background:#fff;border-radius:14px;box-shadow:0 6px 24px rgba(16,57,78,.25);padding:14px}
+.v6srH{font-size:12px;display:block;margin-bottom:6px}
+.v6srF{margin:8px 0}.v6srF label,.v6srL{display:block;font-size:10px;font-weight:700;margin:8px 0 3px;color:#64748B}
+.v6srF select,.v6srF input,.v6srO input[type=date]{width:100%;height:30px;border:1px solid #CBD5E0;border-radius:6px;padding:0 8px;font-size:11px;background:#fff;color:#10394E}
+.v6srO input[type=date]{width:160px;margin:4px 0 0 22px}
+.v6srKp{display:flex;gap:8px;margin:10px 0}
+.v6srKp div{flex:1;background:#E3F5EE;border:1px solid #C9EADF;border-top:4px solid #2FB58F;border-radius:8px;padding:6px 8px}
+.v6srKp b{display:block;font-size:15px;color:#12866A}
+.v6srR{display:flex;gap:8px;align-items:flex-start;padding:7px 9px;border:1px solid #DBE3EE;border-radius:8px;margin:5px 0;line-height:1.4;cursor:pointer}
+.v6srR.on{border-color:#0B5CAD;background:#EEF4FF}
+.v6srR input{display:none}
+.v6srR i{width:13px;height:13px;border:1.6px solid #94A3B8;border-radius:50%;flex:none;margin-top:1px}
+.v6srR.on i{border-color:#0B5CAD;background:radial-gradient(#0B5CAD 40%,#fff 45%)}
+.v6srR span{color:#64748B}
+.v6srWn{background:#FFF0CC;color:#7A5200;padding:6px 8px;border-radius:6px;margin:6px 0}
+.v6srEr{background:#FDE8E6;color:#B91C1C;padding:6px 8px;border-radius:6px;margin:6px 0}
+.v6srAct{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
+
+html body #view table.v6srT thead th,html body #view table.v6srT thead tr th{background:#E6EBF1!important;color:#10394E!important;border-bottom:2px solid #15303F!important;font-size:11px!important;font-weight:700!important;padding:8px 9px!important}
+html body #view table.v6srT th.n,html body #view table.v6srT td.n{text-align:right!important}
+html body #view table.v6srT tbody td{font-size:11px!important;padding:6px 9px!important}
+html body #view table.v6srT small{font-size:10px!important}

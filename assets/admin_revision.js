@@ -24,7 +24,7 @@ const GROUPS=[
   ['SERING DIPAKAI',[T(/^download & upload master/i,'massal upload download bulk master dealer customer product sales target kpi region'),T(/bulk master/i,'massal upload download master'),T(/download data master/i,'download working file master'),T(/master product/i,'type barang produk brand'),T(/cek kesehatan/i,'health error master'),T(/^master & kebijakan/i,'publish kebijakan terbitkan publikasi',{name:'Publikasi Master'})]],
   ['WILAYAH & KALENDER',[T(/region map/i,'wilayah peta region'),T(/hari libur/i,'kalender libur cuti')]],
   ['FORM ORDER & TELEMARKETING',[T(/badan usaha/i,'order pt cv form order'),T(/penugasan telemarketing/i,'telemarketing follow up telepon')]]]],
- ['u','Pengguna & Akses','#2B7BE0','👤','Akun, PIN, izin',[['',[T(/akun pengguna/i,'user login pin role'),T(/tambah user/i,'user massal'),T(/keamanan akun/i,'security pin 2fa sesi'),T(/hak export/i,'download izin export'),T(/kredit tetap ke penjual/i,'kredit sales penjual'),T(/sambungan telegram|telegram/i,'bot notif telegram')]]]],
+ ['u','Pengguna & Akses','#2B7BE0','👤','Akun, PIN, izin',[['',[T(/akun pengguna/i,'user login pin role'),T(/sub region/i,'asm rgm atasan wilayah vacant jadwal'),T(/tambah user/i,'user massal'),T(/keamanan akun/i,'security pin 2fa sesi'),T(/hak export/i,'download izin export'),T(/kredit tetap ke penjual/i,'kredit sales penjual'),T(/sambungan telegram|telegram/i,'bot notif telegram')]]]],
  ['s','Sistem','#6F7B8E','⚙️','Backup & log',[['',[T(/autobackup|backup/i,'cadangan backup'),T(/riwayat aktivitas/i,'audit log aktivitas'),T(/notifikasi khusus/i,'push pesan notifikasi')]],['LAINNYA',[T(/.*/,'',{rest:1})]]]],
 ];
 const HOME=['home','Beranda Admin','#0B5CAD','🏠','Ringkasan & sematan'];

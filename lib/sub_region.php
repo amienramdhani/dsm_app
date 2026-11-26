@@ -107,17 +107,18 @@ function srApplyDue_(): void {
 function apiSubRegionList($token) {
     srApplyDue_();
     $db = snapshot_(); $u = adminGuard_($token, $db); [$st, $by] = srState_($db); $rows = [];
-    foreach ($st as $s) if (srAllowed_($u, $s)) $rows[] = ['sub' => $s['sub'], 'big' => $s['big'], 'sales' => count($s['sales']), 'asm' => srNm_($by, $s['asm']), 'rgm' => srNm_($by, $s['rgm'])];
+    foreach ($st as $s) if (srAllowed_($u, $s)) $rows[] = ['sub' => $s['sub'], 'big' => $s['big'], 'sales' => count($s['sales']), 'dealer' => srDealers_($db, $s['sales']), 'asm' => srNm_($by, $s['asm']), 'rgm' => srNm_($by, $s['rgm'])];
     $cand = fn($role) => array_values(array_map(fn($p) => ['nik' => $p['nik'], 'nama' => $p['nama'], 'region' => $p['region']], array_filter($db['meta']['people'], fn($p) => $p['role'] === $role)));
     $pend = array_values(array_filter(srJson_(SUBREGION_PENDING), fn($p) => isset($st[$p['sub']]) && srAllowed_($u, $st[$p['sub']])));
     foreach ($pend as &$p) { $p['asmNama'] = $p['asm'] === '' ? 'Vacant' : ($by[$p['asm']]['nama'] ?? $p['asm']); $p['rgmNama'] = $p['rgm'] === '' ? 'Vacant' : ($by[$p['rgm']]['nama'] ?? $p['rgm']); } unset($p);
     return ['rows' => $rows, 'asmList' => $cand('ASM'), 'rgmList' => $cand('RGM'), 'pending' => $pend, 'today' => srToday_()];
 }
+function srDealers_(array $db, array $niks): int { $set = array_flip($niks); $n = 0; foreach ($db['meta']['customers'] ?? [] as $c) if (isset($set[(string) ($c['nik'] ?? '')])) $n++; return $n; }
 function srArgs_($asm, $rgm, $scope): array { return [text_($asm), text_($rgm), $scope === 'unassigned' ? 'unassigned' : 'all']; }
 function apiSubRegionPreview($token, $sub, $asm = '', $rgm = '', $scope = 'all') {
     [$db, $u, $s, $by] = srGuard_($token, $sub); [$asm, $rgm, $scope] = srArgs_($asm, $rgm, $scope);
     $pl = srPlan_($db, $s, $by, $asm, $rgm, $scope);
-    return ['sub' => $s['sub'], 'asmNow' => srNm_($by, $s['asm']), 'rgmNow' => srNm_($by, $s['rgm']), 'asmNew' => $asm === '' ? null : srNm_($by, $asm), 'rgmNew' => $rgm === '' ? null : srNm_($by, $rgm), 'asmVacant' => $asm === '', 'rgmVacant' => $rgm === '', 'move' => $pl['move'], 'asmMove' => $pl['asmMove'], 'rgmChange' => $pl['rgmChange'], 'warn' => $pl['warn'], 'block' => $pl['block'], 'total' => count($s['sales'])];
+    return ['sub' => $s['sub'], 'asmNow' => srNm_($by, $s['asm']), 'rgmNow' => srNm_($by, $s['rgm']), 'asmNew' => $asm === '' ? null : srNm_($by, $asm), 'rgmNew' => $rgm === '' ? null : srNm_($by, $rgm), 'asmVacant' => $asm === '', 'rgmVacant' => $rgm === '', 'move' => $pl['move'], 'asmMove' => $pl['asmMove'], 'rgmChange' => $pl['rgmChange'], 'warn' => $pl['warn'], 'block' => $pl['block'], 'total' => count($s['sales']), 'dealer' => srDealers_($db, $s['sales'])];
 }
 function apiSubRegionSave($token, $sub, $asm, $rgm, $reason, $eff = '', $scope = 'all') {
     $reason = text_($reason); if (mb_strlen($reason) < 5) fail_('Isi alasan minimal 5 karakter.');
