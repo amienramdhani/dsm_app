@@ -12,7 +12,13 @@
  */
 require_once __DIR__ . '/common.php';
 
-function aiKey_(): string { return defined('DSM_GEMINI_KEY') ? (string) DSM_GEMINI_KEY : ''; }
+function aiGeminiKey_(): string { return defined('DSM_GEMINI_KEY') ? (string) DSM_GEMINI_KEY : ''; }
+function aiOpenaiKey_(): string { return defined('DSM_OPENAI_KEY') ? trim((string) DSM_OPENAI_KEY) : ''; }
+/** Penyedia AI: 'openai' hanya bila DSM_AI_PROVIDER = 'openai' DAN kunci OpenAI terpasang; selain itu Gemini (bawaan, tidak berubah). */
+function aiProvider_(): string { return (defined('DSM_AI_PROVIDER') && strtolower((string) DSM_AI_PROVIDER) === 'openai' && aiOpenaiKey_() !== '') ? 'openai' : 'gemini'; }
+function aiKey_(): string { return aiProvider_() === 'openai' ? aiOpenaiKey_() : aiGeminiKey_(); }
+function aiOpenaiModel_(): string { return defined('DSM_OPENAI_MODEL') && trim((string) DSM_OPENAI_MODEL) !== '' ? trim((string) DSM_OPENAI_MODEL) : 'gpt-4.1-mini'; }
+function aiShownModel_(): string { return aiProvider_() === 'openai' ? aiOpenaiModel_() : aiModel_(); }
 function aiModel_(): string { return defined('DSM_GEMINI_MODEL') ? (string) DSM_GEMINI_MODEL : 'gemini-3.8-flash'; }
 function aiNum_($v): string { return number_format((float) $v, 0, ',', '.'); }
 function aiPct_($v): string { return $v === null ? '—' : number_format((float) $v, 1, ',', '.') . '%'; }
@@ -859,7 +865,7 @@ function aiGeminiOnce_(array $body, string $mdl): array {
     $url = (defined('DSM_GEMINI_BASE') ? (string) DSM_GEMINI_BASE : 'https://generativelanguage.googleapis.com/v1beta') . '/models/' . rawurlencode($mdl) . ':generateContent';
     $ch = curl_init($url);
     curl_setopt_array($ch, [CURLOPT_POST => true, CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 30, CURLOPT_CONNECTTIMEOUT => 8,
-        CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'x-goog-api-key: ' . aiKey_()], CURLOPT_POSTFIELDS => json_encode($body, JSON_UNESCAPED_UNICODE)]);
+        CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'x-goog-api-key: ' . aiGeminiKey_()], CURLOPT_POSTFIELDS => json_encode($body, JSON_UNESCAPED_UNICODE)]);
     $res = curl_exec($ch); $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE); $err = curl_error($ch); curl_close($ch);
     if ($res === false) throw new RuntimeException('Tidak bisa menghubungi Gemini: ' . $err);
     $j = json_decode((string) $res, true);
@@ -867,14 +873,63 @@ function aiGeminiOnce_(array $body, string $mdl): array {
     if ($code >= 400 || !is_array($j)) throw new RuntimeException('Gemini error ' . $code . ': ' . substr((string) ($j['error']['message'] ?? $res), 0, 160));
     return $j;
 }
-function aiLlm_(string $q, array $context, array &$x, array $brands, array &$blocks, ?string &$intent): string {
-    $decl = []; foreach (aiTools_() as $t) { $f = ['name' => $t['name'], 'description' => $t['description']]; if ($t['parameters']) $f['parameters'] = ['type' => 'object', 'properties' => $t['parameters']]; $decl[] = $f; }
-    $sys = "Kamu DSM AI, asisten data penjualan distribusi. Jawab dalam Bahasa Indonesia yang santai dan jelas, maksimal 3 kalimat.\n"
+function aiSysPrompt_(array $x, array $brands): string {
+    return "Kamu DSM AI, asisten data penjualan distribusi. Jawab dalam Bahasa Indonesia yang santai dan jelas, maksimal 3 kalimat.\n"
         . "ATURAN: semua angka HARUS berasal dari hasil fungsi. Jangan menghitung atau mengarang angka. Tabel dan grafik sudah ditampilkan otomatis oleh aplikasi dari hasil fungsi, jadi cukup beri kesimpulan dan sorotan, jangan mengulang semua angka.\n"
         . "Jika pertanyaan tidak bisa dijawab oleh fungsi yang ada, katakan terus terang belum bisa. Jangan menebak penyebab; hanya tunjukkan pola dari data. Kalau brand tidak jelas untuk fungsi yang butuh brand, tanyakan balik.\n"
         . "Jika user menyebut wilayah (mis. Jawa Timur, Jabar), isi parameter region dengan nama wilayah itu; jika user menyebut jumlah (mis. 30 dealer) isi limit dengan angka itu. Jika user menyebut nama Sales/ASM/RGM, isi person dengan nama itu (jangan isi region). Wilayah yang ada: " . implode(', ', array_slice(aiRegionList_($x), 0, 60)) . ".\n"
         . "Brand yang ada: " . implode(', ', $brands) . ". Periode " . $x['period'] . "."
         . ((function_exists('aiKnowText_') && ($kt = aiKnowText_()) !== '') ? "\nPENGETAHUAN PERUSAHAAN dari Super Admin (ikuti bila relevan; tetap jangan mengarang angka):\n" . $kt : '');
+}
+/** Pintu masuk LLM: OpenAI bila dipilih; bila gagal dan kunci Gemini ada, jatuh ke Gemini. */
+function aiLlm_(string $q, array $context, array &$x, array $brands, array &$blocks, ?string &$intent): string {
+    if (aiProvider_() === 'openai') {
+        try { return aiLlmOpenai_($q, $context, $x, $brands, $blocks, $intent); }
+        catch (Throwable $e) { if (aiGeminiKey_() === '') throw $e; $blocks = []; $intent = null; }
+    }
+    return aiLlmGemini_($q, $context, $x, $brands, $blocks, $intent);
+}
+function aiOpenai_(array $body): array {
+    $url = (defined('DSM_OPENAI_BASE') ? rtrim((string) DSM_OPENAI_BASE, '/') : 'https://api.openai.com/v1') . '/chat/completions';
+    $last = null;
+    for ($try = 0; $try < 3; $try++) {
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [CURLOPT_POST => true, CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 40, CURLOPT_CONNECTTIMEOUT => 8,
+            CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'Authorization: Bearer ' . aiOpenaiKey_()], CURLOPT_POSTFIELDS => json_encode($body, JSON_UNESCAPED_UNICODE)]);
+        $res = curl_exec($ch); $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE); $err = curl_error($ch); curl_close($ch);
+        if ($res === false) { $last = new RuntimeException('Tidak bisa menghubungi OpenAI: ' . $err); usleep(900000); continue; }
+        $j = json_decode((string) $res, true);
+        if (in_array($code, [429, 500, 502, 503, 504], true)) { $last = new RuntimeException('OpenAI error ' . $code . ': ' . substr((string) ($j['error']['message'] ?? ''), 0, 120)); usleep(900000); continue; }
+        if ($code >= 400 || !is_array($j)) throw new RuntimeException('OpenAI error ' . $code . ': ' . substr((string) ($j['error']['message'] ?? $res), 0, 160));
+        $GLOBALS['AI_MODEL_USED'] = aiOpenaiModel_();
+        return $j;
+    }
+    throw $last ?: new RuntimeException('OpenAI error');
+}
+function aiLlmOpenai_(string $q, array $context, array &$x, array $brands, array &$blocks, ?string &$intent): string {
+    $tools = [];
+    foreach (aiTools_() as $t) $tools[] = ['type' => 'function', 'function' => ['name' => $t['name'], 'description' => $t['description'], 'parameters' => ['type' => 'object', 'properties' => $t['parameters'] ? $t['parameters'] : new stdClass()]]];
+    $msgs = [['role' => 'system', 'content' => aiSysPrompt_($x, $brands)]];
+    foreach ($context as $m) { $tx = trim((string) ($m['text'] ?? '')); if ($tx === '') continue; $msgs[] = ['role' => ($m['role'] ?? '') === 'assistant' ? 'assistant' : 'user', 'content' => mb_substr($tx, 0, 600)]; }
+    $msgs[] = ['role' => 'user', 'content' => $q];
+    for ($round = 0; $round < 3; $round++) {
+        $j = aiOpenai_(['model' => aiOpenaiModel_(), 'messages' => $msgs, 'tools' => $tools, 'max_completion_tokens' => 1200]);
+        $m = $j['choices'][0]['message'] ?? [];
+        $calls = $m['tool_calls'] ?? [];
+        if (!$calls) { $text = trim((string) ($m['content'] ?? '')); if ($text === '') throw new RuntimeException('OpenAI tidak memberi jawaban.'); return $text; }
+        $msgs[] = ['role' => 'assistant', 'content' => $m['content'] ?? null, 'tool_calls' => $calls];
+        foreach ($calls as $c) {
+            $name = (string) ($c['function']['name'] ?? ''); $args = json_decode((string) ($c['function']['arguments'] ?? '{}'), true); if (!is_array($args)) $args = [];
+            try { $r = aiRun_($name, $args, $x); } catch (Throwable $e) { $r = ['data' => ['error' => $e->getMessage()], 'blocks' => [], 'summary' => '']; }
+            $intent = $intent ?: $name; foreach ($r['blocks'] as $b) $blocks[] = $b;
+            $msgs[] = ['role' => 'tool', 'tool_call_id' => (string) ($c['id'] ?? ''), 'content' => mb_substr(json_encode(['hasil' => $r['data']], JSON_UNESCAPED_UNICODE), 0, 24000)];
+        }
+    }
+    throw new RuntimeException('OpenAI terlalu banyak langkah.');
+}
+function aiLlmGemini_(string $q, array $context, array &$x, array $brands, array &$blocks, ?string &$intent): string {
+    $decl = []; foreach (aiTools_() as $t) { $f = ['name' => $t['name'], 'description' => $t['description']]; if ($t['parameters']) $f['parameters'] = ['type' => 'object', 'properties' => $t['parameters']]; $decl[] = $f; }
+    $sys = aiSysPrompt_($x, $brands);
     $contents = [];
     foreach ($context as $m) { $t = trim((string) ($m['text'] ?? '')); if ($t === '') continue; $contents[] = ['role' => ($m['role'] ?? '') === 'assistant' ? 'model' : 'user', 'parts' => [['text' => mb_substr($t, 0, 600)]]]; }
     $contents[] = ['role' => 'user', 'parts' => [['text' => $q]]];
@@ -898,7 +953,7 @@ function aiLlm_(string $q, array $context, array &$x, array $brands, array &$blo
 /* ---------- API ---------- */
 function apiAIOptions($token = null) {
     $u = guard_($token);
-    return ['model' => aiKey_() !== '' ? aiModel_() : 'Mode dasar', 'role' => $u['role'], 'groups' => AI_GROUPS, 'geminiOn' => aiKey_() !== ''];
+    return ['model' => aiKey_() !== '' ? aiShownModel_() : 'Mode dasar', 'role' => $u['role'], 'groups' => AI_GROUPS, 'geminiOn' => aiKey_() !== ''];
 }
 function aiAudit_(array $u, string $q, string $intent, string $scope, int $rows, string $model, string $status, int $ms): void {
     try { db_()->prepare('INSERT INTO sh_ai_audit_log (TIMESTAMP,NIK,ROLE,QUESTION,INTENT,SCOPE,ROWS_RETURNED,MODEL,STATUS,DURATION_MS) VALUES (?,?,?,?,?,?,?,?,?,?)')
@@ -926,7 +981,7 @@ function apiAIChat($token = null, $period = null, $selection = null, $question =
     }
     if ($rule) {}
     elseif (aiKey_() !== '') {
-        try { $text = aiLlm_($q, is_array($context) ? array_slice($context, -6) : [], $x, $brands, $blocks, $intent); $model = $GLOBALS['AI_MODEL_USED'] ?: aiModel_();
+        try { $text = aiLlm_($q, is_array($context) ? array_slice($context, -6) : [], $x, $brands, $blocks, $intent); $model = $GLOBALS['AI_MODEL_USED'] ?: aiShownModel_();
             if (function_exists('aiKnowHit_')) aiKnowHit_($q);
             if (!$intent && preg_match('/belum bisa (gue |saya |aku )?(jawab|menjawab)|tidak bisa (menjawab|dijawab)|belum (tersedia|ada data)/iu', $text)) $intent = 'UNSUPPORTED'; }
         catch (Throwable $e) { $fallback = $e->getMessage(); $blocks = []; $intent = null; }
