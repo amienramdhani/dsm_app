@@ -1309,11 +1309,16 @@ function templateXlsx_(string $name, string $sheet, array $heads, ?array $rows, 
 
 
 /** Working file XLSX: data existing + petunjuk, kode selalu text, kolom referensi diberi warna abu-abu. */
-function workingXlsx_(string $name, string $sheet, array $heads, array $rows, array $notes = [], array $locked = [], array $reference = []): array {
+function workingXlsx_(string $name, string $sheet, array $heads, array $rows, array $notes = [], array $locked = [], array $reference = [], array $general = [], bool $plainAll = false): array {
     $ss = SpreadsheetApp::create('TMP_' . now_ms()); $ss->setSpreadsheetTimeZone('Asia/Jakarta');
     $sh = $ss->getSheets()[0]; $sh->setName($sheet); $heads = array_values($heads);
     $data = array_merge([$heads], array_values($rows));
-    $sh->getRange(1, 1, count($data), count($heads))->setNumberFormat('@')->setValues($data)->setFontFamily('Calibri')->setFontSize(11);
+    $sh->getRange(1, 1, count($data), count($heads))->setNumberFormat($plainAll ? 'General' : '@')->setValues($data)->setFontFamily('Calibri')->setFontSize(11);
+    // Kolom bertipe General (angka asli, bisa dirumus): nilai numerik ditulis ulang sebagai angka setelah format Text diganti.
+    foreach ($heads as $i => $h) if (in_array($h, $general, true) && count($data) > 1) {
+        $col = []; foreach (array_slice($data, 1) as $r) { $v = $r[$i] ?? ''; $col[] = [($v === '' || $v === null) ? '' : (is_numeric($v) ? $v + 0 : $v)]; }
+        $rg = $sh->getRange(2, $i + 1, count($data) - 1, 1); $rg->setNumberFormat('General'); $rg->setValues($col);
+    }
     $sh->setFrozenRows(1); $sh->getRange(1, 1, 1, count($heads))->setBackground('#10394E')->setFontColor('#ffffff')->setFontWeight('bold');
     if (count($data) > 1) {
         foreach ($heads as $i => $h) {

@@ -35,7 +35,7 @@ function apiTargetExport($token, $period = null, $big = null, $sub = null) {
         'Periode: ' . $T['period'] . ' · Big Region: ' . (trim((string) $big) ?: 'Semua') . ($sub ? ' · Sub Region: ' . $sub : ''),
         'Isi atau ubah hanya kolom target. NIK, NAMA SALES, dan SUB REGION adalah acuan (jangan diubah).',
         'Sel KOSONG = tidak diubah. Untuk target nol tulis 0. Angka: 6500, 6.500 (ribuan), atau 6,5 (desimal).',
-        'Baris ASM otomatis tidak ada di file ini karena dihitung dari total timnya.'], TARGET_XL_FIXED, []);
+        'Baris ASM otomatis tidak ada di file ini karena dihitung dari total timnya.'], TARGET_XL_FIXED, [], array_map(fn($c) => $c['head'], $cols), true);
 }
 
 /** Baca file lalu bandingkan dengan target sekarang. TIDAK menyimpan: hasilnya dipakai layar untuk mengisi kotak. */
