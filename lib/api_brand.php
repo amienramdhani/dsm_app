@@ -21,6 +21,16 @@ function brandStatusThresholds_(): array {
 }
 function brandInactive_(): array { $o = []; foreach (brandMaster_() as $k => $v) if (!$v['aktif']) $o[$v['brand']] = true; return $o; }
 function brandGuard_($token): array { return guard_($token, true); }
+/** Brand yang disembunyikan dari chip Beranda (tetap aktif: tetap bisa diupload & masuk laporan). Disimpan di _props agar tidak mengubah tabel Master_Brand. */
+function brandHiddenHome_(): array { $j = json_decode((string) (prop_get_('BRAND_HIDE_HOME') ?? '[]'), true); return is_array($j) ? array_values(array_unique(array_map('js_upper', array_map('strval', $j)))) : []; }
+function apiBrandHomeSet($token, $brand = null, $show = null) {
+    $u = brandGuard_($token); $brand = js_upper(text_($brand)); if ($brand === '') fail_('Brand kosong.');
+    return with_lock_(function () use ($u, $brand, $show) {
+        $on = $show === true || $show === 'true' || $show === 1 || $show === '1'; $h = array_values(array_filter(brandHiddenHome_(), fn($b) => $b !== $brand)); if (!$on) $h[] = $brand;
+        prop_set_('BRAND_HIDE_HOME', json_encode(array_values($h), JSON_UNESCAPED_UNICODE)); audit_($u['nik'], $on ? 'BRAND_TAMPIL_BERANDA' : 'BRAND_SEMBUNYI_BERANDA', $brand);
+        return ['hiddenHome' => $h];
+    });
+}
 function brandRows_(array $meta): array {
     $use = [];
     foreach ($meta['products'] ?? [] as $p) { $b = text_($p['brand'] ?? null); if ($b === '') continue; $k = js_upper($b);
@@ -32,7 +42,7 @@ function brandRows_(array $meta): array {
     }
     return js_sort($rows, fn($a, $b) => lcn_($a['brand'], $b['brand']));
 }
-function apiBrandAdmin($token) { brandGuard_($token); $db = snapshot_(); return ['thresholds' => ['std' => brandStatusThresholds_()['*']], 'rows' => brandRows_($db['meta']), 'classifications'=>brandRuleRows_(), 'parents'=>brandRuleParents_(), 'categories'=>brandRuleCategories_()]; }
+function apiBrandAdmin($token) { brandGuard_($token); $db = snapshot_(); return ['hiddenHome' => brandHiddenHome_(), 'thresholds' => ['std' => brandStatusThresholds_()['*']], 'rows' => brandRows_($db['meta']), 'classifications'=>brandRuleRows_(), 'parents'=>brandRuleParents_(), 'categories'=>brandRuleCategories_()]; }
 function brandWrite_(string $brand, bool $aktif, string $catatan, string $nik): void {
     ensureTable_('Master_Brand', BRAND_HEADS); $g = readGrid_('Master_Brand'); $rows = array_slice($g, 1); $now = gmdate('c'); $hit = false;
     foreach ($rows as $i => $r) if (js_upper(text_($r[0] ?? null)) === js_upper($brand)) { $rows[$i] = [text_($r[0]), $aktif ? 'TRUE' : 'FALSE', $catatan, $nik, $now, $r[5] ?? '', $r[6] ?? '']; $hit = true; }

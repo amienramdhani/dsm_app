@@ -89,3 +89,7 @@ html body #view .aiRank .aiBr span:last-child{font-weight:600}
 html body #view .aiCol span{font-size:10px;font-weight:400}
 html body #view .aiCol em{font-size:10px;font-weight:600}
 html body #view .aiChip{font-size:8.5px}
+/* Tombol geser "Tampil di Beranda" (tab BRAND di Admin) */
+html body .v6tg{display:inline-block;width:34px;height:19px;border-radius:12px;background:#CBD5E0;position:relative;border:0;padding:0;cursor:pointer}
+html body .v6tg i{position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:#fff;transition:left .15s}
+html body .v6tg.on{background:#2FB58F}html body .v6tg.on i{left:17px}

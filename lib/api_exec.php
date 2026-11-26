@@ -554,10 +554,11 @@ function apiExec($token, $period, $selection = null) {
     }
     // Brand yang dinonaktifkan di menu Admin Brand disembunyikan dari chip/kolom Beranda (walau masih ada penjualan di periode ini). Total tetap menghitung semua brand.
     $shownBrands = $brands;
+    if (function_exists('brandHiddenHome_') && ($hh = brandHiddenHome_())) $shownBrands = array_values(array_filter($shownBrands, fn($b) => !in_array(js_upper($b), $hh, true)));
     if (function_exists('brandInactive_')) {
         $off = array_change_key_case(brandInactive_(), CASE_UPPER);
         if ($off) {
-            $shownBrands = array_values(array_filter($brands, fn($b) => !isset($off[js_upper($b)])));
+            $shownBrands = array_values(array_filter($shownBrands, fn($b) => !isset($off[js_upper($b)])));
         }
     }
     return ['onlineBigs' => $level === 'TOP' || $level === 'RGM' ? js_keys($ON['bigs']) : [], 'level' => $level, 'me' => $uNik, 'kpiMe' => $kpiMe, 'dealers' => $dealers, 'ownSub' => js_keys($ownSub), 'period' => $period, 'prev' => $prev, 'cutoff' => $cut, 'prevCutoff' => $prevCut, 'closed' => $c['closed'], 'days' => $wk['days'], 'run' => $wk['run'], 'brands' => $shownBrands, 'soReady' => $soReady,
