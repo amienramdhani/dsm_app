@@ -89,6 +89,21 @@ function apiDealerRegionGet($token, $q = null) {
     usort($rows, fn($a, $b) => (lc($a['dealer'], $b['dealer']) ?: strcmp((string) $b['from'], (string) $a['from'])));
     return ['rows' => array_slice($rows, 0, 500), 'total' => count($rows), 'bigs' => $bigs, 'minDate' => dealerRegionMin_($db)];
 }
+function apiDealerRegionValidate($token, $big = null, $q = null) {
+    $c = drSuper_($token); $db = $c['db']; $today = jkt_date('Y-m-d'); $big = js_upper(text_($big)); $q = js_upper(text_($q)); $rows = []; $bad = 0; $tot = 0;
+    foreach (js_keys($db['meta']['customers'] ?? []) as $id) {
+        $cu = $db['meta']['customers'][$id]; $now = text_(RegionCore::route($db, ['customer' => $id, 'date' => $today, 'nik' => $cu['nik'] ?? ''], 'ST'));
+        if ($big !== '' && js_upper($now) !== $big) continue;
+        $p = PortalCore::person($db['meta']['people'], $cu['nik'] ?? ''); $sb = $p ? text_($p['wilayah'] ?? null) : '';
+        $nama = js_or($cu['nama'] ?? '', ''); $sales = $p ? js_or($p['nama'] ?? '', '') : '';
+        if ($q !== '' && mb_strpos(js_upper($id . ' ' . $nama . ' ' . $sales), $q) === false) continue;
+        $tot++; $flag = ($sb === '' ? 'Sales tanpa wilayah' : (js_upper($sb) !== js_upper($now) ? 'Beda dengan wilayah sales' : ''));
+        if ($flag !== '') $bad++;
+        $rows[] = ['dealer' => (string) $id, 'nama' => $nama, 'sales' => $sales, 'salesBig' => $sb, 'now' => $now, 'flag' => $flag];
+    }
+    usort($rows, fn($a, $b) => (($b['flag'] !== '') <=> ($a['flag'] !== '')) ?: lc($a['dealer'], $b['dealer']));
+    return ['rows' => array_slice($rows, 0, 800), 'total' => $tot, 'bad' => $bad, 'bigs' => js_sort_default($db['meta']['regionList'] ?? []), 'minDate' => dealerRegionMin_($db)];
+}
 function apiDealerRegionLookup($token, $dealer) {
     $c = drSuper_($token); $db = $c['db']; $id = text_($dealer); $cu = $db['meta']['customers'][$id] ?? null;
     if (!$cu) fail_('Dealer ' . $id . ' tidak ditemukan di Master_Customer.');

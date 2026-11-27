@@ -1,0 +1,44 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mockup validasi dealer per Big Region</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:12px Inter,Segoe UI,sans-serif;background:#f4f6f9;color:#0f172a;padding:12px}
+h3{margin:14px 0 6px;font-size:13px}.tabs{display:flex;gap:6px;margin-bottom:10px}
+.tabs button{flex:1;padding:8px;border:1px solid #cbd5e1;background:#fff;border-radius:8px;font-weight:700;font-size:11px}.tabs button.on{background:#0E5A63;color:#fff;border-color:#0E5A63}
+.card{background:#fff;border:1px solid #e3eaf7;border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.card .nm{font-weight:700;font-size:13px}.card small{color:#64748b}.chip{display:inline-block;margin-top:6px;background:#fff3dc;border:1px solid #f1c36a;color:#a35a00;font-size:10px;font-weight:700;padding:3px 8px;border-radius:99px}
+.btn{display:inline-block;margin-top:8px;background:#0E5A63;color:#fff;border-radius:8px;padding:6px 10px;font-size:10.5px;font-weight:700}
+.sheet{background:#fff;border:1px solid #cbd5e1;border-radius:14px;overflow:hidden;box-shadow:0 8px 24px rgba(15,23,42,.12)}
+.sh{padding:10px 12px;border-bottom:1px solid #e5e7eb;font-weight:700}.sh small{display:block;color:#64748b;font-weight:400;margin-top:2px}
+.f{display:flex;gap:6px;padding:8px 12px;flex-wrap:wrap}.f span{border:1px solid #cbd5e1;border-radius:99px;padding:3px 9px;font-size:10px;font-weight:700;background:#fff}.f span.on{background:#E6EBF1;border-color:#15303F}.f span.warn.on{background:#fde8e6;border-color:#D2453F;color:#9b1c1c}
+.s{margin:0 12px 6px;border:1px solid #cbd5e1;border-radius:8px;padding:6px 9px;color:#94a3b8;font-size:11px}
+table{width:100%;border-collapse:collapse;font-size:10.5px}th{background:#E6EBF1;text-align:left;padding:6px 8px;font-weight:700;border-bottom:2px solid #15303F;font-size:9.5px;text-transform:uppercase}
+td{padding:6px 8px;border-bottom:1px solid #eef2f7;font-weight:400}td.n{text-align:right}tr.bad td:first-child{box-shadow:inset 4px 0 #D2453F}
+.tag{font-size:9px;font-weight:700;border-radius:5px;padding:1px 5px}.tag.r{background:#fde8e6;color:#9b1c1c}.tag.g{background:#e3f6ee;color:#12866A}
+.ub{color:#0B5CAD;font-weight:700}.note{font-size:11px;color:#475569;margin:6px 0}.opt{display:none}.opt.on{display:block}
+</style></head><body>
+<div class="tabs"><button class="on" onclick="p('A',this)">A · Popup dari kartu</button><button onclick="p('B',this)">B · Halaman validasi</button><button onclick="p('C',this)">C · Buka di kartu</button></div>
+
+<div class="opt on" id="A">
+<p class="note"><b>Klik kartu Big Region</b> → popup daftar dealer. Cocok buat cek cepat dari angka yang aneh.</p>
+<div class="card"><div class="nm">JABAR 1</div><small>Target 4.200 · MTD 3.150 · Hari ini 120</small><br><span class="chip">ⓘ termasuk 85 unit dijual sales luar area ›</span><br><span class="btn">LIHAT DEALER (212) ›</span></div>
+<div class="sheet"><div class="sh">Dealer · JABAR 1<small>212 dealer · SELL THRU MTD · semua brand</small></div>
+<div class="s">Cari kode / nama dealer…</div>
+<div class="f"><span class="on">SEMUA</span><span class="warn">REGION CURIGA (14)</span><span>ADA TRANSAKSI</span><span>TANPA TRANSAKSI</span></div>
+<table><tr><th>Kode</th><th>Nama Dealer</th><th>Sales</th><th>Region Sales</th><th style="text-align:right">Aktual</th><th></th></tr>
+<tr><td>C-00123</td><td>Cahaya Seluler</td><td>Andi</td><td><span class="tag g">JABAR 1</span></td><td class="n">48</td><td class="ub">UBAH</td></tr>
+<tr class="bad"><td>C-00457</td><td>Mitra Gadget</td><td>Budi</td><td><span class="tag r">JATENG</span></td><td class="n">35</td><td class="ub">UBAH</td></tr>
+<tr class="bad"><td>C-00811</td><td>Surya Phone</td><td>Citra</td><td><span class="tag r">JABAR 2</span></td><td class="n">22</td><td class="ub">UBAH</td></tr>
+<tr><td>C-00990</td><td>Berkah Cell</td><td>Andi</td><td><span class="tag g">JABAR 1</span></td><td class="n">19</td><td class="ub">UBAH</td></tr></table></div>
+<p class="note">Baris merah = Big Region dealer beda dengan wilayah sales default-nya (biasanya sumber data tidak sesuai). "UBAH" membuka edit Big Region (Super Admin).</p></div>
+
+<div class="opt" id="B"><p class="note"><b>Halaman Validasi Region</b> (menu Admin → Region). Semua region sekaligus, cocok buat bersih-bersih massal.</p>
+<div class="sheet"><div class="sh">Validasi Region Dealer<small>Semua Big Region · 1.420 dealer · 63 perlu dicek</small></div>
+<div class="f"><span>Big Region ▾</span><span>Sub Region ▾</span><span class="warn on">HANYA YANG CURIGA (63)</span></div>
+<table><tr><th>Kode</th><th>Nama Dealer</th><th>Big Region Sekarang</th><th>Wilayah Sales</th><th>Alasan</th><th></th></tr>
+<tr class="bad"><td>C-00457</td><td>Mitra Gadget</td><td>JABAR 1</td><td>JATENG</td><td>Beda dengan sales</td><td class="ub">UBAH</td></tr>
+<tr class="bad"><td>C-01302</td><td>Delta Selular</td><td>JATIM</td><td>JATIM</td><td>Penjual luar area dominan</td><td class="ub">UBAH</td></tr></table></div></div>
+
+<div class="opt" id="C"><p class="note"><b>Buka di kartu</b>: kartu melebar menampilkan daftar dealer, tanpa pindah layar. Paling cepat, tapi di HP bikin halaman panjang.</p>
+<div class="card"><div class="nm">JABAR 1 ▾</div><small>Target 4.200 · MTD 3.150</small>
+<table style="margin-top:8px"><tr><th>Kode</th><th>Nama Dealer</th><th style="text-align:right">Aktual</th></tr><tr><td>C-00123</td><td>Cahaya Seluler</td><td class="n">48</td></tr><tr class="bad"><td>C-00457</td><td>Mitra Gadget</td><td class="n">35</td></tr></table></div></div>
+<script>function p(k,b){document.querySelectorAll('.opt').forEach(e=>e.classList.toggle('on',e.id===k));document.querySelectorAll('.tabs button').forEach(e=>e.classList.toggle('on',e===b))}</script>
+</body></html>

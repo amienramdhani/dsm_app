@@ -17,7 +17,7 @@ const GROUPS=[
   ['SEMUA SETELAN BRAND',[T(/brand & klasifikasi/i,'brand aktif kelas klasifikasi'),T(/aturan status dealer/i,'ambang status dealer pola brand'),T(/brand · ambang/i,'ambang status dealer brand'),T(/pic dealer/i,'pic sales brand'),T(/product rules|aturan produk/i,'aturan produk brand type'),T(/master product/i,'type barang produk brand')]],
   ['TERKAIT',[T(null,'',{link:'region per brand',label:'Region per brand & target Big Region',sub:'Ada di tab KPI & Target'})]]]],
  ['r','Region','#0891B2','🗺️','Wilayah, sub region, kelengkapan',[
-  ['WILAYAH',[T(/region map/i,'wilayah peta region'),T(/big region per dealer/i,'wilayah region'),T(/sub region/i,'asm rgm atasan wilayah vacant jadwal')]],
+  ['WILAYAH',[T(/region map/i,'wilayah peta region'),T(/big region per dealer/i,'wilayah region'),T(/validasi region dealer/i,'cek curiga beda wilayah sales'),T(/sub region/i,'asm rgm atasan wilayah vacant jadwal')]],
   ['KELENGKAPAN DATA',[T(/kelengkapan data per region/i,'lengkap region belum upload'),T(/peta kelengkapan/i,'kalender lengkap tanggal')]],
   ['TERKAIT',[T(null,'',{link:'region per brand',label:'Region per brand & target Big Region',sub:'Ada di tab KPI & Target'})]]]],
  ['kt','KPI & Target','#7C4DCE','🎯','Target & indikator',[

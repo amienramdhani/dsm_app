@@ -738,3 +738,6 @@ Mockup: `doc/mockup/2026-11-26/dsm-edit-target-gaya-pencapaian.html` (opsi USULA
 - DIKODEKAN: tabel Edit target gaya Pencapaian. Heatmap nasional di Beranda DISEMBUNYIKAN sementara (flag HEAT_HIDE di index.php v7HeatFold; set false untuk munculkan lagi sebagai panel lipat).
 - DIKODEKAN: Status pola dealer HP 2 kolom ringkas tanpa ikon (opsi B, dealer_status.css). Persen dari total (mis. 52,7%) disembunyikan sesuai mockup.
 - DIKODEKAN: Edit dealer › Big Region default jadi dropdown (Super Admin) + Berlaku mulai; simpan lewat apiDealerRegionSave (Dealer_Region, kode induk). Admin biasa tetap readonly. Beranda mengikuti lewat RegionCore::route per tanggal.
+
+## 2026-11-27 Validasi Region Dealer
+- Panel Admin > Region "Validasi Region Dealer" (Super Admin): apiDealerRegionValidate di lib/bulk.php, v6RegionValidPanel di assets/dsm.js. Tanda curiga = wilayah sales beda dengan Big Region sekarang. Belum: popup dari kartu Beranda (opsi A), kolom Aktual. Hanya dites sintaks, belum di server.
