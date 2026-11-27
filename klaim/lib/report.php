@@ -141,14 +141,15 @@ function xlsx_build(array $head, array $rows, string $sheet = 'Data'): string {
 }
 function export_claims(array $u, array $f): array {
   if (!has_role($u, 'ADMIN') && !has_role($u, 'FT') && !has_role($u, 'AUDIT') && !has_role($u, 'SA') && !has_role($u, 'FM') && !has_role($u, 'HOS')) fail('Tidak diizinkan.', 403);
-  $f['view'] = 'all'; $f['limit'] = 200; $list = claim_list($u, $f)['rows'];
-  $head = ['Nomor', 'Tanggal', 'Pemohon', 'Region', 'Badan usaha', 'Kategori', 'Jenis', 'Brand', 'Refnote', 'Jumlah nota', 'Rekening', 'Nominal', 'Status', 'Transfer', 'Nomor BA', 'Jumlah revisi', 'Jumlah lampiran', 'Link PDF', 'Tanggal nota', 'Lokasi', 'Rute tol'];
+  $f['view'] = 'all'; $list = []; // semua halaman (200 per halaman), batas pengaman 5.000 klaim
+  for ($off = 0; $off < 5000; $off += 200) { $pg = claim_list($u, array_merge($f, ['limit' => 200, 'offset' => $off]))['rows']; $list = array_merge($list, $pg); if (count($pg) < 200) break; }
+  $head = ['Nomor', 'Tanggal', 'NIK pemohon', 'Pemohon', 'Region', 'Badan usaha', 'Kategori', 'Jenis', 'Brand', 'Refnote', 'Jumlah nota', 'Rekening', 'Nominal', 'Status', 'Transfer', 'Nomor BA', 'Jumlah revisi', 'Jumlah lampiran', 'Link PDF', 'Tanggal nota', 'Lokasi', 'Rute tol'];
   $out = [];
   foreach ($list as $r) {
     $c = get_claim($r['id']); $notes = q("SELECT * FROM claim_notes WHERE claim_id=? ORDER BY line_no", [$r['id']]);
     $tr = one("SELECT transfer_no FROM claim_transfers WHERE ref_type='claim' AND ref_id=? ORDER BY id DESC", [$r['id']]); $ba = ba_row($r['id']);
     $tol = []; foreach ($notes as $n) { $d = jdec($n['detail']) ?: []; if (!empty($d['asal'])) $tol[] = $d['asal'] . ' → ' . $d['tujuan']; }
-    $out[] = [$r['number'], substr((string) $r['submitted_at'], 0, 10), $r['claimant'], $r['region'], $r['entity'], $r['category'], $r['type'], $r['brand'], $r['refnote'], count($notes), $c['acct_bank'] . ' ' . $c['acct_no'] . ' a.n. ' . $c['acct_name'], (int) $r['total'], $r['label'], $tr['transfer_no'] ?? '', $ba['number'] ?? '',
+    $out[] = [$r['number'], substr((string) $r['submitted_at'], 0, 10), (string) ($c['claimant']['nik'] ?? ''), $r['claimant'], $r['region'], $r['entity'], $r['category'], $r['type'], $r['brand'], $r['refnote'], count($notes), $c['acct_bank'] . ' ' . $c['acct_no'] . ' a.n. ' . $c['acct_name'], (int) $r['total'], $r['label'], $tr['transfer_no'] ?? '', $ba['number'] ?? '',
       (int) val("SELECT COUNT(*) FROM claim_approvals WHERE ref_type='claim' AND ref_id=? AND action='revise'", [$r['id']]), (int) val("SELECT COUNT(*) FROM claim_files WHERE ref_type='claim' AND ref_id=? AND slot<>'removed'", [$r['id']]),
       'api.php?a=pdf&id=' . $r['id'], implode(', ', array_filter(array_map(fn($n) => $n['nota_date'], $notes))), $r['region'] ? ($c['location'] ?? '') : '', implode('; ', $tol)];
   }

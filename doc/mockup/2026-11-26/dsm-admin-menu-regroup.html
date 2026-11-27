@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin · Pengelompokan ulang menu</title>
+<style>
+*{box-sizing:border-box;font-family:Inter,"Segoe UI",system-ui,sans-serif}
+body{margin:0;background:#EEF2F6;color:#10394E;font-size:12px;padding:12px;max-width:980px;margin:0 auto}
+h1{font-size:15px;margin:4px 0 2px}.sub{color:#64748B;margin-bottom:10px}
+.mode{display:inline-flex;background:#CBD5E0;border-radius:10px;padding:3px;margin-bottom:10px}
+.mode button{border:0;background:none;padding:7px 16px;border-radius:8px;font-weight:700;font-size:11px;color:#334155;cursor:pointer}
+.mode button.on{background:#fff;color:#10394E;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.sw{display:flex;gap:8px;margin-bottom:10px;align-items:center;flex-wrap:wrap}
+.sw input{height:34px;border:1px solid #CBD5E0;border-radius:8px;padding:0 10px;font-size:12px;flex:1;min-width:180px;background:#fff}
+.legend{font-size:10.5px;color:#64748B}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:8px}
+.tab{flex:none;border:1px solid #DBE3EE;background:#fff;border-radius:10px;padding:7px 11px;font-weight:700;font-size:11px;color:#475569;cursor:pointer;border-top:4px solid var(--c);display:flex;gap:6px;align-items:center}
+.tab em{font-style:normal;background:#EEF2F6;border-radius:6px;padding:1px 6px;font-size:10px;color:#475569}
+.tab.on{background:var(--c);color:#fff;border-color:var(--c)}.tab.on em{background:rgba(255,255,255,.25);color:#fff}
+.tab.new:after{content:"BARU";background:#12866A;color:#fff;font-size:8.5px;padding:1px 5px;border-radius:5px}
+.tab.on.new:after{background:#fff;color:#12866A}
+.card{background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(16,57,78,.1);padding:12px 12px 6px;margin-bottom:10px}
+.hd{display:flex;gap:8px;align-items:center;margin-bottom:6px}.hd b{font-size:13px}.hd small{color:#64748B}
+.sec{font-size:10px;font-weight:700;color:#64748B;letter-spacing:.04em;margin:10px 0 5px;padding-left:8px;border-left:4px solid var(--c)}
+.row{display:flex;align-items:center;gap:9px;padding:9px 10px;border:1px solid #E3E9F1;border-left:4px solid var(--c);border-radius:8px;margin-bottom:6px;cursor:pointer;background:#fff}
+.row:hover{background:#F6F9FC}
+.row .t{flex:1;min-width:0}.row .t b{display:block;font-size:12px}.row .t small{color:#64748B;font-size:10.5px}
+.row .go{color:#94A3B8;font-size:16px}
+.tag{font-size:9.5px;font-weight:700;border-radius:5px;padding:2px 7px;white-space:nowrap}
+.mv{background:#E3F5EE;color:#0E7C6B}.lk{background:#EEF2FF;color:#4338CA}.wr{background:#FFE4E6;color:#BE123C}.tg{background:#E0F2FE;color:#0369A1}
+.empty{color:#94A3B8;padding:14px;text-align:center}
+.pop{position:fixed;inset:0;background:rgba(16,57,78,.4);display:none;align-items:flex-end;justify-content:center;z-index:9}
+.pop.on{display:flex}.pop>div{background:#fff;border-radius:16px 16px 0 0;padding:16px;width:100%;max-width:520px;line-height:1.5}
+.pop h3{margin:0 0 6px;font-size:14px}
+.btn{display:inline-block;border:1px solid #CBD5E0;border-radius:8px;padding:8px 14px;font-weight:700;background:#fff;margin-top:8px;cursor:pointer}
+details{background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(16,57,78,.1);padding:10px 12px;margin-top:12px}
+summary{font-weight:700;cursor:pointer}
+table{width:100%;border-collapse:collapse;margin-top:8px}
+th{background:#E6EBF1;text-align:left;padding:7px 8px;border-bottom:2px solid #15303F;font-weight:700}
+td{padding:6px 8px;border-top:1px solid #EEF2F6}
+.note{padding:8px 10px;background:#E3F5EE;border-left:4px solid #2FB58F;border-radius:6px;line-height:1.5;margin-bottom:10px}
+</style></head><body>
+<h1>Admin · Pengelompokan ulang menu</h1>
+<div class="sub">Klik tab, cari panel, atau ketuk baris. Hanya mockup, belum ada yang diubah di aplikasi.</div>
+
+<div class="mode" id="mode"><button data-m="old">SEKARANG</button><button data-m="new" class="on">USULAN</button></div>
+<div class="note" id="note"></div>
+<div class="sw"><input id="q" placeholder="Cari panel (mis. telegram, target, region, ASM)"><span class="legend"><span class="tag mv">PINDAH</span> dari tab lain &nbsp; <span class="tag lk">TAUTAN</span> pintasan &nbsp; <span class="tag tg">TELEGRAM</span></span></div>
+<div class="tabs" id="tabs"></div>
+<div id="body"></div>
+
+<details><summary>Peta perpindahan panel (apa pindah dari mana ke mana)</summary>
+<table id="map"><tr><th>PANEL</th><th>DARI</th><th>KE</th></tr></table></details>
+
+<div class="pop" id="pop"><div><h3 id="pt"></h3><div id="pd"></div><span class="btn" onclick="pop.classList.remove('on')">TUTUP</span></div></div>
+
+<script>
+// grup: key,nama,warna,[[seksi,[[panel,keterangan,{from,tag,warn}]]]]
+const OLD=[
+['ap','Approval','#E5354E',[['',[['Approval','Persetujuan yang menunggu']]]]],
+['h','Data Harian','#F07A0C',[
+ ['SERING DIPAKAI',[['Upload regional','Upload ST / SO harian'],['Publikasi Data','Antrean publikasi'],['Status Sync','Sinkron data'],['Kelengkapan data per region','Region yang belum upload'],['Peta kelengkapan','Kalender kelengkapan']]],
+ ['PENGECEKAN',[['Catatan kualitas data','Data janggal'],['Kunci periode','Kunci bulan final']]],
+ ['HATI-HATI',[['Pemulihan regional','Rollback data',{warn:1}]]]]],
+['d','Dealer','#0E9F6E',[
+ ['SERING DIPAKAI',[['Cari & edit dealer','Kontak, sales'],['Tambah dealer','Customer baru'],['Upload massal dealer','Tambah / edit massal'],['Update kontak','Massal HP, alamat, PIC']]],
+ ['KEPEMILIKAN',[['Transfer dealer','Pindah sales per brand'],['Riwayat transfer','Log transfer'],['Riwayat pemilik','Histori sales'],['Big Region per dealer','Wilayah besar dealer'],['Dealer tutup','Nonaktifkan dealer']]],
+ ['HATI-HATI',[['Ganti kode induk','Hapus / gabung kode',{warn:1}]]]]],
+['b','Brand','#B98900',[
+ ['SEMUA SETELAN BRAND',[['Brand & Klasifikasi','Brand aktif, kelas'],['Aturan status dealer','Pola status per brand'],['Brand · Ambang status dealer','Ambang per brand'],['PIC Dealer per Brand','PIC sales per brand'],['Product rules','Aturan produk per brand']]],
+ ['TERKAIT',[['Region per brand & target Big Region','Ada di tab KPI & Target',{tag:'lk'}]]]]],
+['kt','KPI & Target','#7C4DCE',[
+ ['TARGET',[['Edit target','Target bulan per sales'],['Region per brand & target Big Region','Target per Big Region']]],
+ ['KPI',[['Atur KPI','Bobot indikator'],['KPI Khusus','Indikator khusus type'],['KPI Telemarketing','Target telemarketing']]]]],
+['md','Master Data','#6D3FD8',[
+ ['SERING DIPAKAI',[['Download & upload master','Dealer, produk, sales, target'],['Master Product','Type barang & produk'],['Cek kesehatan','Cek error master'],['Publikasi Master','Terbitkan kebijakan']]],
+ ['WILAYAH & KALENDER',[['Region Map','Peta wilayah'],['Hari libur','Kalender libur']]],
+ ['FORM ORDER & TELEMARKETING',[['Badan usaha','PT / CV form order'],['Penugasan telemarketing','Follow up telepon']]]]],
+['u','Pengguna & Akses','#2B7BE0',[['',[['Akun pengguna','Login, PIN, role'],['Sub Region · ASM & RGM','Ganti ASM / RGM, vacant'],['Tambah user massal','Upload user'],['Keamanan akun','PIN, sesi'],['Hak export','Izin download'],['Kredit tetap ke penjual','Aturan kredit'],['Sambungan Telegram','Bot & notifikasi']]]]],
+['s','Sistem','#6F7B8E',[['',[['Autobackup','Cadangan data'],['Riwayat aktivitas','Log admin'],['Notifikasi khusus','Push pesan']]]]]
+];
+const NEW=[
+['ap','Approval','#E5354E',[['',[['Approval','Persetujuan yang menunggu']]]]],
+['h','Data Harian','#F07A0C',[
+ ['DATA MASUK',[['Upload regional','Upload ST / SO harian'],['Publikasi Data','Antrean publikasi']]],
+ ['HATI-HATI',[['Pemulihan regional','Rollback data',{warn:1}]]]]],
+['d','Dealer','#0E9F6E',[
+ ['SERING DIPAKAI',[['Cari & edit dealer','Kontak, sales'],['Tambah dealer','Customer baru'],['Upload massal dealer','Tambah / edit massal'],['Update kontak','Massal HP, alamat, PIC']]],
+ ['KEPEMILIKAN',[['Transfer dealer','Pindah sales per brand'],['Riwayat transfer','Log transfer'],['Riwayat pemilik','Histori sales'],['Dealer tutup','Nonaktifkan dealer']]],
+ ['HATI-HATI',[['Ganti kode induk','Hapus / gabung kode',{warn:1}]]]]],
+['b','Brand','#B98900',[
+ ['SEMUA SETELAN BRAND',[['Brand & Klasifikasi','Brand aktif, kelas'],['Aturan status dealer','Pola status per brand'],['Brand · Ambang status dealer','Ambang per brand'],['PIC Dealer per Brand','PIC sales per brand'],['Product rules','Aturan produk per brand'],['Master Product','Type barang & produk',{from:'Master Data'}]]],
+ ['TERKAIT',[['Region per brand & target Big Region','Ada di tab KPI & Target',{tag:'lk'}]]]]],
+['r','Region','#0891B2',[
+ ['WILAYAH',[['Region Map','Peta wilayah',{from:'Master Data'}],['Big Region per dealer','Wilayah besar dealer',{from:'Dealer'}],['Sub Region · ASM & RGM','Ganti ASM / RGM, vacant',{from:'Pengguna & Akses'}],['Hari libur','Kalender libur per region',{from:'Master Data'}]]],
+ ['KELENGKAPAN DATA',[['Kelengkapan data per region','Region yang belum upload',{from:'Data Harian'}],['Peta kelengkapan','Kalender kelengkapan',{from:'Data Harian'}]]],
+ ['TERKAIT',[['Region per brand & target Big Region','Ada di tab KPI & Target',{tag:'lk'}]]]],true],
+['kt','KPI & Target','#7C4DCE',[
+ ['TARGET',[['Edit target','Target bulan per sales'],['Region per brand & target Big Region','Target per Big Region']]],
+ ['KPI',[['Atur KPI','Bobot indikator'],['KPI Khusus','Indikator khusus type'],['KPI Telemarketing','Target telemarketing'],['Penugasan telemarketing','Follow up telepon',{from:'Master Data'}]]]]],
+['md','Master Data','#6D3FD8',[
+ ['SERING DIPAKAI',[['Download & upload master','Dealer, produk, sales, target'],['Cek kesehatan','Cek error master'],['Publikasi Master','Terbitkan kebijakan'],['Badan usaha','PT / CV form order']]]]],
+['u','Pengguna & Akses','#2B7BE0',[['',[['Akun pengguna','Login, PIN, role'],['Tambah user massal','Upload user'],['Keamanan akun','PIN, sesi'],['Hak export','Izin download'],['Kredit tetap ke penjual','Aturan kredit']]]]],
+['s','Sistem','#6F7B8E',[
+ ['TELEGRAM',[['Sambungan Telegram','Bot & akun tersambung',{from:'Pengguna & Akses',tag:'tg'}],['Notifikasi khusus','Push pesan & notifikasi',{tag:'tg'}]]],
+ ['DATA & PENYIMPANAN',[['Autobackup','Cadangan data'],['Status Sync','Sinkron data',{from:'Data Harian'}],['Kunci periode','Kunci bulan final',{from:'Data Harian'}]]],
+ ['LOG & PENGECEKAN',[['Riwayat aktivitas','Log admin'],['Catatan kualitas data','Data janggal',{from:'Data Harian'}]]]]]
+];
+let mode='new',cur='ap',pop=document.getElementById('pop');
+const $=id=>document.getElementById(id);
+const data=()=>mode==='old'?OLD:NEW;
+const count=g=>g[3].reduce((n,s)=>n+s[1].length,0);
+function notes(){ $('note').innerHTML=mode==='old'
+ ?'<b>SEKARANG:</b> 8 tab. Urusan region tersebar di 4 tab, produk &amp; telemarketing nyasar di Master Data, Telegram ada di Pengguna &amp; Akses.'
+ :'<b>USULAN:</b> 9 tab (nambah <b>REGION</b>). Semua urusan brand di Brand, region di Region, target di KPI &amp; Target, Telegram + sistem di Sistem. Tanda <span class="tag mv">PINDAH</span> = panel yang berpindah tab.';}
+function tabs(){
+ const d=data(); if(!d.find(g=>g[0]===cur))cur=d[0][0];
+ $('tabs').innerHTML=d.map(g=>`<div class="tab ${g[0]===cur?'on':''} ${g[4]?'new':''}" style="--c:${g[2]}" data-k="${g[0]}">${g[1]}<em>${count(g)}</em></div>`).join('');
+}
+function row(p,c,showFrom){
+ const o=p[2]||{};
+ const tags=(showFrom&&o.from?`<span class="tag mv">PINDAH · dari ${o.from}</span>`:'')+(o.tag==='lk'?'<span class="tag lk">TAUTAN</span>':'')+(o.tag==='tg'?'<span class="tag tg">TELEGRAM</span>':'')+(o.warn?'<span class="tag wr">HATI-HATI</span>':'');
+ return `<div class="row" style="--c:${o.warn?'#E5354E':c}" data-p="${p[0]}"><div class="t"><b>${p[0]}</b><small>${p[1]}</small></div>${tags}<span class="go">›</span></div>`;
+}
+function body(){
+ const d=data(),q=$('q').value.trim().toLowerCase(),showFrom=mode==='new';
+ if(q){
+  let out='',n=0;
+  d.forEach(g=>g[3].forEach(s=>s[1].forEach(p=>{if((p[0]+' '+p[1]).toLowerCase().includes(q)){n++;out+=`<div style="margin-bottom:2px;font-size:10px;color:${g[2]};font-weight:700">${g[1].toUpperCase()}</div>`+row(p,g[2],showFrom)}})));
+  $('body').innerHTML=`<div class="card">${out||'<div class="empty">Tidak ada panel yang cocok</div>'}</div>`;return;
+ }
+ const g=d.find(x=>x[0]===cur);
+ $('body').innerHTML=`<div class="card" style="--c:${g[2]}"><div class="hd"><b style="color:${g[2]}">${g[1]}</b><small>${count(g)} panel</small></div>`+
+  g[3].map(s=>(s[0]?`<div class="sec" style="--c:${g[2]}">${s[0]}</div>`:'')+s[1].map(p=>row(p,g[2],showFrom)).join('')).join('')+`</div>`;
+}
+function map(){
+ const rows=[];
+ NEW.forEach(g=>g[3].forEach(s=>s[1].forEach(p=>{if(p[2]&&p[2].from)rows.push(`<tr><td><b>${p[0]}</b></td><td>${p[2].from}</td><td>${g[1]}</td></tr>`)})));
+ $('map').innerHTML='<tr><th>PANEL</th><th>DARI</th><th>KE</th></tr>'+rows.join('');
+}
+function all(){notes();tabs();body();}
+$('mode').onclick=e=>{const b=e.target.closest('button');if(!b)return;mode=b.dataset.m;[...$('mode').children].forEach(x=>x.classList.toggle('on',x===b));all();};
+$('tabs').onclick=e=>{const t=e.target.closest('.tab');if(!t)return;cur=t.dataset.k;$('q').value='';tabs();body();};
+$('q').oninput=body;
+$('body').onclick=e=>{const r=e.target.closest('.row');if(!r)return;$('pt').textContent=r.dataset.p;$('pd').textContent='Di aplikasi, ketukan ini membuka panelnya. Isi panel tidak berubah, hanya letak tabnya.';pop.classList.add('on');};
+pop.onclick=e=>{if(e.target===pop)pop.classList.remove('on')};
+map();all();
+</script></body></html>

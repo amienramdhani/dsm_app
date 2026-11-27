@@ -10,7 +10,7 @@ R.a = async (sub, id) => {
   location.hash = '#/menu';
 };
 async function hakList() {
-  const j = await api('people_admin');
+  const j = await api('people_admin'); window.DKH = j;
   shell(hero('Hak klaim', 'A08', { back: true }) + `<div class="sec"><input id="hq" placeholder="Cari nama"><div id="hl" style="margin-top:8px"></div></div>`, { hero: false });
   const draw = () => { const q = $('#hq').value.toLowerCase(); $('#hl').innerHTML = j.rows.filter(r => r.name.toLowerCase().includes(q)).map(r => `<div class="li" data-go="#/a/hak/${r.id}"><div class="dot" style="background:#1E5FB8">${esc(r.name[0])}</div><div class="t"><b>${esc(r.name)}</b><span>${esc(r.job)} · ${esc(r.region || '-')} · ${esc(r.entity || '-')}</span><div style="margin-top:3px"><span class="pill ${+r.can_submit ? 'p-ok' : 'p-gr'}">${+r.can_submit ? 'Boleh mengajukan' : 'Belum diberi hak'}</span>${+r.can_petty ? ' <span class="pill p-pu">Petty cash</span>' : ''}</div></div>›</div>`).join('') || emptyBox('Tidak ada.'); };
   $('#hq').oninput = draw; draw();

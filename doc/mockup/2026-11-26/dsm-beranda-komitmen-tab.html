@@ -1,0 +1,23 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Beranda · Komitmen dipisah dari Aksi</title><style>
+*{box-sizing:border-box;font-family:Inter,"Segoe UI",system-ui,sans-serif}body{margin:0;background:#EEF2F6;color:#10394E;font-size:12px;padding:12px;max-width:760px;margin:auto}
+.nav{display:flex;background:#1E2D63;border-radius:14px;padding:6px;gap:4px;margin:8px 0 10px;overflow-x:auto}.nav div{flex:1;text-align:center;padding:10px 8px;border-radius:10px;font-weight:700;font-size:11px;color:#9FB0E8;cursor:pointer;white-space:nowrap}.nav div.on{background:#3A4A8F;color:#fff}
+.mode{display:inline-flex;background:#CBD5E0;border-radius:10px;padding:3px}.mode button{border:0;background:none;padding:6px 14px;border-radius:8px;font-weight:700;cursor:pointer;font-size:11px}.mode button.on{background:#fff}
+.c{background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(16,57,78,.1);padding:12px;margin-bottom:10px}.c h4{margin:0 0 8px;font-size:11px;color:#475569}
+.in{border:1px solid #CBD5E0;border-radius:10px;padding:10px;color:#94A3B8}.bd{float:right;background:#E3EEFA;color:#1F5FA8;border-radius:10px;padding:2px 8px;font-size:10px;font-weight:700}
+small{color:#64748B}
+</style></head><body><b style="font-size:14px">Beranda · Komitmen dipisah dari tab Aksi</b>
+<div style="margin:6px 0"><span class="mode" id="m"><button data-m="o">SEKARANG</button><button data-m="n" class="on">USULAN</button></span></div>
+<div class="nav" id="nav"></div><div id="v"></div>
+<script>
+const P={ringkasan:'',wilayah:'',tren:'',tim:''};
+const card=(h,b,bd)=>`<div class="c"><h4>${h}${bd?`<span class="bd">${bd}</span>`:''}</h4>${b}</div>`;
+const aksi=card('DIBANDING KEMARIN','<small>Sell Thru 431 unit · Omzet Rp 973,4 jt · Dealer baru 9 · Sell Out 0</small>','30 Sep vs 29 Sep')+card('PRIORITAS TINDAKAN','<b>1. Proyeksi SELL THRU baru 28% dari target</b><br><small>2. 3 Region jauh di bawah time gone · 3. 1.149 dealer belum repeat order</small>','3 poin');
+const km=card('KOMITMEN MINGGU INI','<div class="in">Tulis komitmen minggu ini… · Saya sendiri ▾ · Tambah</div><small>Belum ada komitmen minggu ini.</small>','23/11–29/11')+card('REVIEW MINGGU LALU','<small>Tidak ada komitmen minggu lalu.</small>','16/11–22/11')+card('KOMITMEN TIM','<div class="in">Ketik / pilih nama anggota tim… · Cari</div><small>Pilih anggota tim untuk melihat komitmennya.</small>','pilih anggota');
+let mode='n',cur='aksi';
+function draw(){const tabs=mode==='n'?['RINGKASAN','WILAYAH','TREN','TIM & KPI','AKSI','KOMITMEN']:['RINGKASAN','WILAYAH','TREN','TIM & KPI','AKSI'];
+ if(mode==='o'&&cur==='komitmen')cur='aksi';
+ nav.innerHTML=tabs.map(t=>`<div data-k="${t.toLowerCase()}" class="${(t.toLowerCase()===cur||(t==='TIM & KPI'&&cur==='tim'))?'on':''}">${t}</div>`).join('');
+ v.innerHTML=cur==='komitmen'?km:cur==='aksi'?(mode==='o'?aksi+km:aksi):'<div class="c"><small>Isi tab '+cur.toUpperCase()+' tidak berubah.</small></div>'}
+nav.onclick=e=>{const d=e.target.closest('[data-k]');if(!d)return;cur=d.dataset.k==='tim & kpi'?'tim':d.dataset.k;draw()};
+m.onclick=e=>{const b=e.target.closest('button');if(!b)return;mode=b.dataset.m;[...m.children].forEach(x=>x.classList.toggle('on',x===b));draw()};draw();
+</script></body></html>

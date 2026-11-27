@@ -1,0 +1,69 @@
+<!doctype html><html lang="id"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mockup · Form pengajuan klaim desktop</title>
+<style>
+*{box-sizing:border-box;font-family:Inter,"Segoe UI",system-ui,sans-serif}body{margin:0;background:#F1F4F8;color:#10394E;font-size:11px}
+.hd{background:#0B5CAD;color:#fff;padding:12px 24px}.hd small{opacity:.8;font-size:10px;letter-spacing:.04em}.hd b{display:block;font-size:16px;margin-top:2px}
+.wrap{display:grid;grid-template-columns:1fr 240px;gap:14px;max-width:900px;margin:16px auto;padding:0 16px;align-items:start}
+.card{background:#fff;border:1px solid #E0E6EE;border-radius:12px;margin-bottom:12px;overflow:hidden}
+.ch{padding:9px 14px;font-weight:700;font-size:12px;background:#FDF1E8;color:#B45309;border-left:5px solid #E8863A;display:flex;justify-content:space-between}
+.cb{padding:12px 14px;display:grid;grid-template-columns:repeat(12,1fr);gap:10px}
+.f{grid-column:span 4}.f.w6{grid-column:span 6}.f.w8{grid-column:span 8}.f.w12{grid-column:span 12}.f.w3{grid-column:span 3}
+label.l{display:block;font-size:9.5px;font-weight:700;color:#64748B;letter-spacing:.03em;margin-bottom:4px}
+input,select{width:100%;height:32px;border:1px solid #CBD5E0;border-radius:8px;padding:0 10px;font-size:11px;background:#fff;color:#10394E}
+.hint{font-size:10px;color:#64748B;margin-top:4px}
+.seg{display:inline-flex;background:#CBD5E0;border-radius:9px;padding:3px}.seg span{padding:6px 14px;border-radius:7px;font-weight:700;color:#334155}.seg span.on{background:#fff;color:#0B5CAD}
+.who{grid-column:span 12;display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.kp{background:#E3F5EE;border:1px solid #C9EADF;border-top:4px solid #2FB58F;border-radius:8px;padding:6px 9px}.kp b{display:block;font-size:12px;color:#12866A;margin-top:2px}.kp span{font-size:9.5px;color:#475569}
+.pr{display:grid;grid-template-columns:1fr 1fr 28px;gap:8px;grid-column:span 12}
+.add{grid-column:span 12;text-align:center;padding:8px;border:1px dashed #E8863A;border-radius:8px;color:#B45309;font-weight:700}
+.ph{width:64px;height:64px;border:1px dashed #E8863A;border-radius:8px;background:#FDF1E8;color:#B45309;display:flex;align-items:center;justify-content:center;font-weight:700}
+.side{position:sticky;top:12px}.side .card .cb{display:block}
+.row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #EEF2F6}.row:last-child{border:0}
+.tot{font-size:16px;font-weight:800;color:#10394E}
+.btn{display:block;width:100%;text-align:center;border-radius:9px;padding:10px;font-weight:700;margin-top:8px;border:1px solid #CBD5E0;background:#fff;color:#10394E}.btn.p{background:#0B5CAD;color:#fff;border-color:#0B5CAD}
+.note{margin:12px auto;max-width:900px;padding:9px 12px;background:#E3F5EE;border-left:4px solid #2FB58F;border-radius:6px;line-height:1.5}
+.warn{grid-column:span 12;background:#FFF0CC;color:#7A5200;padding:7px 10px;border-radius:7px}
+.cmb{position:relative}.cl{position:absolute;top:36px;left:0;right:0;background:#fff;border:1px solid #CBD5E0;border-radius:9px;box-shadow:0 6px 20px rgba(16,57,78,.18);max-height:220px;overflow:auto;z-index:9}.cl div{padding:7px 10px;cursor:pointer}.cl div:hover,.cl div.h{background:#EEF4FF}.cl em{font-style:normal;color:#64748B;font-size:10px;margin-left:6px}.cl mark{background:#FFE9A8;padding:0}
+</style>
+<div class="hd"><small>ADMIN · DI LUAR SALES</small><b>Form Meeting</b></div>
+<div class="note"><b>Dropdown pemohon bisa diketik</b> (cari nama / NIK / jabatan / region), coba klik kolom PEMOHON. <b>Tambahan:</b> rekening pencairan bisa <b>diinput manual</b> (bank, nomor, atas nama). Admin juga bisa mengajukan <b>untuk HOS</b>; klaim atas nama HOS tidak disetujui HOS itu sendiri (tahap HOS dilewati, lanjut ke Finance Manager). <b>Aturan alur:</b> klaim Admin sendiri (di luar sales) <b>wajib lewat HOS</b> → Finance Manager → Finance Transfer. Klaim atas nama Sales: alur Sales, dan <b>budget Sales itu yang berkurang</b> (kategori berbudget). <b>Revisi lebar:</b> maksimal 900px, rata tengah. <b>Usulan:</b> (1) layar lebar jadi 2 kolom: form di kiri, <b>ringkasan + tombol kirim</b> menempel di kanan (tidak perlu scroll ke bawah). (2) Field dikelompokkan per baris (3 kolom), tidak lagi satu baris penuh per field. (3) Bagian baru <b>ATAS NAMA</b> di paling atas: ajukan untuk diri sendiri atau orang lain. (4) HP tidak berubah.</div>
+<div class="wrap"><div>
+
+<div class="card"><div class="ch" style="background:#EAF2FB;color:#0B5CAD;border-color:#0B5CAD">Atas nama <span>BARU</span></div><div class="cb">
+ <div class="f w12"><div class="seg"><span>DIRI SENDIRI</span><span class="on">ORANG LAIN</span></div></div>
+ <div class="f w8"><label class="l">PEMOHON (CARI NAMA / NIK)</label><div class="cmb"><input id="cq" placeholder="Ketik nama, NIK, jabatan, atau region…" autocomplete="off" value="Dewi Lestari · Sales · Cirebon · RISM"><div class="cl" id="cl" hidden></div></div><div class="hint">Bisa untuk Sales, ASM, RGM, maupun <b>HOS</b>.</div></div>
+ <div class="f w4"><label class="l">REKENING PENCAIRAN</label><select><option>Rekening Dewi (BCA ···4821)</option><option>Rekening saya</option><option selected>Input manual…</option></select></div>
+ <div class="f w4"><label class="l">BANK</label><input placeholder="mis. BCA"></div><div class="f w4"><label class="l">NOMOR REKENING (BEBAS DIKETIK)</label><input placeholder="hanya angka, 5-20 digit"></div><div class="f w4"><label class="l">ATAS NAMA</label><input placeholder="nama di buku tabungan"></div>
+ <div class="warn">Rekening manual / bukan milik pemohon: klaim <b>otomatis wajib lewat HOS</b> dan tercatat di riwayat.</div>
+ <div class="who"><div class="kp"><span>JABATAN</span><b>Sales</b></div><div class="kp"><span>REGION</span><b>Cirebon</b></div><div class="kp"><span>BUDGET ENTERTAIN SISA</span><b>1.250.000</b></div><div class="kp"><span>SISA SETELAH KLAIM INI</span><b>1.250.000</b></div></div><div class="f w12"><label class="l">ALUR PERSETUJUAN</label><div class="seg" style="background:#E6EBF1"><span style="background:#fff">Admin lain</span><span>HOS*</span><span>Finance Manager</span><span>Finance Transfer</span></div><div class="hint">*HOS ikut bila perlu (BA / rekening bukan milik pemohon). Admin yang mengajukan tidak bisa menyetujui klaimnya sendiri.</div></div>
+ <div class="warn">Klaim tercatat <b>atas nama Dewi Lestari</b>, diajukan oleh <b>Anda (Admin)</b>. <b>Budget Entertain Dewi berkurang</b> (kategori tanpa budget seperti Perdin, Operasional, Support dealer tidak mengurangi). Keduanya tercatat di riwayat.</div></div></div>
+
+<div class="card"><div class="ch">Info klaim</div><div class="cb">
+ <div class="f"><label class="l">BRAND</label><select><option>Pilih brand…</option></select></div>
+ <div class="f"><label class="l">REFNOTE (OPSIONAL)</label><input placeholder="mis. IT-SEMARANG"></div>
+ <div class="f"><label class="l">LOKASI (KOTA/KABUPATEN)</label><input placeholder="Ketik kota/kabupaten"></div></div></div>
+
+<div class="card"><div class="ch">Detail meeting</div><div class="cb">
+ <div class="f w12"><label class="l">TUJUAN MEETING</label><input></div>
+ <div class="f w6"><label class="l">TEMPAT MEETING</label><input placeholder="mis. Cafe Kopi Kenangan Paskal / Aula Hotel X"></div>
+ <div class="f w3"><label class="l">JAM MULAI</label><input placeholder="-- . --"></div><div class="f w3"><label class="l">JAM SELESAI</label><input placeholder="-- . --"></div>
+ <div class="f w12"><label class="l">PESERTA (MINIMAL 2 ORANG, NAMA DAN JABATAN WAJIB)</label></div>
+ <div class="pr"><input placeholder="Nama peserta"><input placeholder="Jabatan / asal"><span style="color:#D2453F;font-weight:700;align-self:center">✕</span></div>
+ <div class="pr"><input placeholder="Nama peserta"><input placeholder="Jabatan / asal"><span style="color:#D2453F;font-weight:700;align-self:center">✕</span></div>
+ <div class="add">+ Peserta</div>
+ <div class="f w12"><label class="l">FOTO DOKUMENTASI MEETING</label><div class="ph">+ foto</div><div class="hint">Tanpa foto dokumentasi, klaim tetap bisa dikirim tetapi wajib dengan BA.</div></div></div></div>
+
+<div class="card"><div class="ch">Nota 1 <span>Rp 0</span></div><div class="cb">
+ <div class="f"><label class="l">TANGGAL NOTA</label><input value="26 / 11 / 2026"></div><div class="f"><label class="l">NOMINAL (RP)</label><input value="0"></div><div class="f"><label class="l">FOTO NOTA (0)</label><div class="ph" style="width:100%;height:32px">+ foto</div></div></div></div>
+<div class="add" style="background:#fff">+ Tambah nota</div>
+</div>
+
+<div class="side"><div class="card"><div class="ch" style="background:#EAF2FB;color:#0B5CAD;border-color:#0B5CAD">Ringkasan</div><div class="cb">
+ <div class="row"><span>Pemohon</span><b>Dewi Lestari</b></div><div class="row"><span>Diajukan oleh</span><b>Anda (Admin)</b></div><div class="row"><span>Kategori</span><b>Entertain · Meeting</b></div><div class="row"><span>Jumlah nota</span><b>1</b></div><div class="row"><span>Peserta</span><b>0 / min. 2</b></div>
+ <div class="row"><span>Total</span><span class="tot">Rp 0</span></div><div class="row"><span>Sisa budget setelah ini</span><b style="color:#12866A">1.250.000</b></div>
+ <div class="btn p">KIRIM KLAIM</div><div class="btn">SIMPAN DRAF</div></div></div></div>
+</div><script>
+const U=[["Dewi Lestari","Sales","Cirebon","RISM","2026.05.01.02"],["Eko Prasetyo","Sales","Cirebon","RISM","2026.05.01.03"],["Joko Widodo","ASM","Cirebon","RISM","2024.02.11.01"],["Budi Santoso","RGM","Cirebon","RISM","2022.01.04.01"],["Rudi Hartono","HOS","Pusat","MSI","2019.03.02.01"],["Hadi Wijaya","Sales","Jakarta","MSI","2025.07.09.04"]];
+const q=document.getElementById('cq'),l=document.getElementById('cl');
+function draw(){const t=q.value.toLowerCase().trim(),r=U.filter(u=>!t||u.join(' ').toLowerCase().includes(t));l.innerHTML=r.map(u=>`<div data-v="${u[0]} · ${u[1]} · ${u[2]} · ${u[3]}"><b>${u[0]}</b><em>${u[1]} · ${u[2]} · ${u[3]} · ${u[4]}</em></div>`).join('')||'<div style="color:#64748B">Tidak ada yang cocok</div>';l.hidden=false}
+q.onfocus=()=>{q.select();draw()};q.oninput=draw;l.onmousedown=e=>{const d=e.target.closest('[data-v]');if(d){q.value=d.dataset.v;l.hidden=true}};q.onblur=()=>l.hidden=true;
+</script></html>

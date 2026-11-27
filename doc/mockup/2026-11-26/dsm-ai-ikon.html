@@ -1,0 +1,14 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ikon tombol AI</title><style>
+*{box-sizing:border-box;font-family:Inter,"Segoe UI",system-ui,sans-serif}body{margin:0;background:#EEF2F6;color:#10394E;padding:14px;max-width:430px;margin:auto;font-size:12px}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.it{background:#fff;border-radius:12px;padding:14px;text-align:center;box-shadow:0 1px 6px rgba(16,57,78,.1);cursor:pointer;border:2px solid transparent}.it.on{border-color:#0B5CAD}
+.b{width:46px;height:46px;border-radius:50%;background:#6D3FD8;display:grid;place-items:center;margin:0 auto 8px;box-shadow:0 3px 10px rgba(109,63,216,.4)}
+.b svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.b.t{color:#fff;font-weight:800;font-size:15px}small{color:#64748B;display:block;margin-top:3px}
+</style></head><body><b style="font-size:14px">Ikon tombol AI · pilih satu</b>
+<div class="g" id="g">
+<div class="it on"><div class="b"><svg viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg></div><b>A · Kilau</b><small>Dua bintang 4 sudut. Rekomendasi.</small></div>
+<div class="it"><div class="b"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M12 8l.9 2.1L15 11l-2.1.9L12 14l-.9-2.1L9 11l2.1-.9z"/></svg></div><b>B · Chat + kilau</b><small>Gelembung chat berisi bintang.</small></div>
+<div class="it"><div class="b t">AI</div><b>C · Huruf AI</b><small>Tulisan tebal.</small></div>
+<div class="it"><div class="b"><svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="10" rx="3"/><path d="M12 4v4M9 13h.01M15 13h.01M9 18v2M15 18v2"/></svg></div><b>D · Robot</b><small>Kepala robot sederhana.</small></div>
+</div>
+<script>g.onclick=e=>{const i=e.target.closest('.it');if(!i)return;[...g.children].forEach(x=>x.classList.toggle('on',x===i))}</script></body></html>

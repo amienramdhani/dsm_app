@@ -1,0 +1,30 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Akses cepat AI Assistant</title><style>
+*{box-sizing:border-box;font-family:Inter,"Segoe UI",system-ui,sans-serif}body{margin:0;background:#EEF2F6;color:#10394E;font-size:12px;padding:12px;max-width:430px;margin:auto}
+.pk{display:flex;gap:6px;margin:8px 0;flex-wrap:wrap}.pk button{border:1px solid #CBD5E0;background:#fff;border-radius:8px;padding:7px 10px;font-weight:700;cursor:pointer;font-size:11px}.pk button.on{background:#0B5CAD;color:#fff;border-color:#0B5CAD}
+.ph{position:relative;width:100%;height:640px;background:#F6F8FB;border-radius:22px;border:6px solid #1E2D63;overflow:hidden}
+.top{height:46px;background:#fff;display:flex;align-items:center;gap:8px;padding:0 12px;border-bottom:1px solid #E3E9F1;font-weight:700}
+.top .ic{margin-left:auto;display:none;width:32px;height:32px;border-radius:50%;background:#6D3FD8;color:#fff;place-items:center}
+.ln{margin:12px;height:70px;border-radius:12px;background:#fff;box-shadow:0 1px 5px rgba(16,57,78,.1)}
+.nav{position:absolute;left:0;right:0;bottom:0;height:60px;background:#fff;border-top:1px solid #E3E9F1;display:flex;justify-content:space-around;align-items:center;font-size:9px;color:#64748B;font-weight:700}
+.nav span{display:grid;gap:3px;justify-items:center}.nav i{width:18px;height:18px;border:1.8px solid #94A3B8;border-radius:5px}.nav .on{color:#0B5CAD}
+.fab{position:absolute;left:0;top:0;touch-action:none;user-select:none;cursor:grab;transition:none;width:46px;height:46px;border-radius:50%;background:#6D3FD8;color:#fff;display:none;place-items:center;box-shadow:0 3px 10px rgba(109,63,216,.4);font-weight:800;font-size:11px}
+.tabAi{position:absolute;right:0;bottom:130px;background:#6D3FD8;color:#fff;border-radius:12px 0 0 12px;padding:10px 8px;display:none;font-weight:800;font-size:10px;writing-mode:vertical-rl}
+.ph.A .fab{display:grid}.fab.snap{transition:left .18s,top .18s}.fab.drag{cursor:grabbing;transform:scale(1.08)}.toast{position:absolute;left:50%;bottom:76px;transform:translateX(-50%);background:#10394E;color:#fff;border-radius:10px;padding:8px 12px;font-weight:700;font-size:11px;display:none}.ph.B .tabAi{display:block}.ph.C .top .ic{display:grid}
+.cap{color:#64748B;margin:6px 0;line-height:1.5}
+</style></head><body><b style="font-size:14px">AI Assistant · akses cepat (LAINNYA tetap ada)</b>
+<div class="pk" id="p"><button data-c="N">SEKARANG</button><button data-c="A" class="on">A · TOMBOL MELAYANG</button><button data-c="B">B · TAB DI TEPI</button><button data-c="C">C · IKON DI HEADER</button></div>
+<div class="cap" id="cap"></div>
+<div class="ph A" id="ph"><div class="top">DSM · Brand<span class="ic">AI</span></div><div class="ln"></div><div class="ln"></div><div class="ln"></div>
+<div class="fab" id="fab">AI</div><div class="toast" id="ts">Ketuk biasa = buka AI Assistant</div><div class="tabAi">AI ASSISTANT</div>
+<div class="nav"><span class="on"><i></i>BERANDA</span><span><i></i>DEALER</span><span><i></i>BRAND</span><span><i></i>TRANSAKSI</span><span><i></i>KLAIM</span><span><i></i>LAINNYA</span></div></div>
+<script>
+const W=()=>ph.clientWidth,H=()=>ph.clientHeight,S=46,TOP=46+8,BOT=60+8;
+let pos=(()=>{try{return JSON.parse(localStorage.getItem('aiFab'))}catch(e){return null}})()||{x:null,y:null};
+function place(x,y,snap){const w=W(),h=H();x=Math.max(8,Math.min(w-S-8,x));y=Math.max(TOP,Math.min(h-S-BOT,y));fab.classList.toggle('snap',!!snap);fab.style.left=x+'px';fab.style.top=y+'px';return{x,y}}
+function init(){const w=W(),h=H();pos=place(pos.x??w-S-14,pos.y??h-S-BOT-6)}
+let st=null;
+fab.addEventListener('pointerdown',e=>{fab.setPointerCapture(e.pointerId);st={sx:e.clientX,sy:e.clientY,x:fab.offsetLeft,y:fab.offsetTop,m:false}});
+fab.addEventListener('pointermove',e=>{if(!st)return;const dx=e.clientX-st.sx,dy=e.clientY-st.sy;if(!st.m&&Math.hypot(dx,dy)>6){st.m=true;fab.classList.add('drag')}if(st.m)place(st.x+dx,st.y+dy,false)});
+fab.addEventListener('pointerup',e=>{if(!st)return;fab.classList.remove('drag');if(st.m){const mid=fab.offsetLeft+S/2<W()/2;pos=place(mid?8:W()-S-8,fab.offsetTop,true);try{localStorage.setItem('aiFab',JSON.stringify(pos))}catch(e){}}else{ts.style.display='block';setTimeout(()=>ts.style.display='none',1400)}st=null});
+const T={N:'Sekarang: AI hanya ada di LAINNYA (2 ketukan).',A:'Bulatan ungu solid kecil. COBA: tahan lalu geser ke mana saja, lepas = otomatis nempel ke tepi kiri/kanan terdekat, posisi diingat. Ketuk biasa = buka AI. Tidak bisa menutupi header dan menu bawah.',B:'Tab ungu menempel di tepi kanan layar, tidak menutupi isi. Ketuk untuk buka AI.',C:'Ikon AI di header, sebelah kanan. Selalu kelihatan di bagian atas.'};
+const set=c=>{ph.className='ph '+c;cap.textContent=T[c];[...p.children].forEach(x=>x.classList.toggle('on',x.dataset.c===c))};p.onclick=e=>{const b=e.target.closest('button');if(b)set(b.dataset.c)};set('A');init();addEventListener('resize',init)</script></body></html>

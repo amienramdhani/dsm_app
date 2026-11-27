@@ -26,7 +26,7 @@ const kpic = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" st
 R.new = async () => {
   const div = QP.get('div') === '1'; const b = await api('budget');
   const cats = ['Transportasi', 'Entertain', 'Perdin', 'Operasional', 'Support dealer'];
-  const en = c => div || (b.budget[c] && b.budget[c].enabled);
+  const en = c => div || canBehalfRole() || (b.budget[c] && b.budget[c].enabled);
   const single = c => c === 'Perdin';
   shell(hero(div ? 'Ajukan untuk divisi' : 'Ajukan klaim', div ? 'ADMIN · DI LUAR SALES' : 'PEMOHON', { back: true, small: true }) +
     `<div class="sec kpwrap">${b.blocked ? `<div class="note red">Pengajuan diblokir: petty cash ${esc(b.blocked.number)} melewati tenggat.</div>` : ''}
@@ -91,14 +91,15 @@ function blankMulti(types, div) {
   f.secs.forEach(sc => f.notes.push({ nominal: '', date: today(), detail: { type_id: sc.type.id }, files: [] }));
   f.kind = 'multi'; f.meta = f.baseMeta; return f;
 }
+const canBehalfRole = () => (S.me.roles || []).some(r => r === 'ADMIN' || r === 'SA');
 R.form = async (typeId) => {
   const ids = (QP.get('multi') || '').split(',').filter(Boolean).map(Number);
   const tp = id => S.L.types.find(t => t.id == id) || (() => { throw new Error('Jenis tidak ditemukan'); })();
-  const b = await api('budget'); F = ids.length > 1 ? blankMulti(ids.map(tp), QP.get('div') === '1') : blankForm(tp(typeId), QP.get('div') === '1'); F.meal = b.meal_rate; F.selfAcct = b.account; renderForm();
+  const b = await api('budget'); F = ids.length > 1 ? blankMulti(ids.map(tp), QP.get('div') === '1') : blankForm(tp(typeId), QP.get('div') === '1'); F.meal = b.meal_rate; F.selfAcct = b.account; F.me = { ...b.account }; F.canBehalf = !F.division && canBehalfRole(); F.onBehalf = 0; renderForm();
 };
 R.edit = async (id) => {
   const [d, b] = await Promise.all([api('claim_get', { id }), api('budget')]); if (!d.perm.edit) throw new Error('Klaim ini tidak dapat diubah sekarang.');
-  F = fromDetail(d); F.meal = b.meal_rate; F.selfAcct = b.account; renderForm();
+  F = fromDetail(d); F.meal = b.meal_rate; F.selfAcct = b.account; F.me = { ...b.account }; if (d.claimant && d.claimant.id != S.me.id) { F.behalfName = d.claimant.name; F.behalfJob = [d.claimant.job, d.claimant.region].filter(Boolean).join(' · '); F.selfAcct = null; } renderForm();
 };
 
 /* ---------- perdin -> nota ---------- */
@@ -140,7 +141,7 @@ function payload() {
   let meta, type_ids;
   if (F.secs) { meta = { catatan: F.baseMeta.catatan || '', parts: {} }; F.secs.forEach(sc => meta.parts[sc.type.id] = clean(sc.kind, sc.meta)); type_ids = F.secs.map(sc => sc.type.id); }
   else meta = clean(F.kind, F.meta);
-  return { id: F.id, category: F.category, type_id: F.secs ? F.secs[0].type.id : F.type.id, type_ids, brand: F.brand, refnote: F.refnote, location: F.location, meta, notes, account: F.account, division: F.division, files: { odo_awal: F.files.odo_awal.map(f => f.id), odo_akhir: F.files.odo_akhir.map(f => f.id), doc: F.files.doc.map(f => f.id), maps: F.files.maps.map(f => f.id) } };
+  return { id: F.id, category: F.category, type_id: F.secs ? F.secs[0].type.id : F.type.id, type_ids, brand: F.brand, refnote: F.refnote, location: F.location, meta, notes, account: F.account, division: F.division, on_behalf: !F.id && F.other && F.onBehalf ? F.onBehalf : 0, files: { odo_awal: F.files.odo_awal.map(f => f.id), odo_akhir: F.files.odo_akhir.map(f => f.id), doc: F.files.doc.map(f => f.id), maps: F.files.maps.map(f => f.id) } };
 }
 
 /* ---------- render form ---------- */
@@ -188,11 +189,22 @@ function kindBody(multi) {
   else body += `${F.notes.map((n, i) => notaHtml(n, i)).join('')}<button class="btn g kfadd" id="notaadd">+ Tambah nota</button>`;
   return body;
 }
+function behalfHtml() {
+  if (F.behalfName) return `<div class="card kfwho">${kt('Atas nama')}<div class="note blue">Klaim ini diajukan <b>atas nama ${esc(F.behalfName)}</b>${F.behalfJob ? ' · ' + esc(F.behalfJob) : ''}. Budget dan alur persetujuan mengikuti pemohon.</div></div>`;
+  if (!F.canBehalf) return '';
+  const o = !!F.other, tg = F.target;
+  const av = tg && tg.budget && tg.budget[F.category] && !tg.budget[F.category].none ? tg.budget[F.category] : null;
+  return `<div class="card kfwho">${kt('Atas nama')}<div class="kfseg"><span class="${o ? '' : 'on'}" data-on="self">DIRI SENDIRI</span><span class="${o ? 'on' : ''}" data-on="other">ORANG LAIN</span></div>
+  ${o ? `<div class="fld"><label>Pemohon (cari nama / NIK / jabatan / region)</label><div class="kfcmb"><input id="kftq" autocomplete="off" placeholder="Ketik nama, NIK, jabatan, atau region…" value="${tg ? esc(tg.name + ' · ' + (tg.job || '') + ' · ' + (tg.region || '')) : ''}"><div class="kfcl" id="kftl" hidden></div></div></div>
+  ${tg ? `<div class="kfkp"><div><span>JABATAN</span><b>${esc(tg.job || '-')}</b></div><div><span>REGION</span><b>${esc(tg.region || '-')}</b></div>${av ? `<div><span>BUDGET ${esc(F.category.toUpperCase())} SISA</span><b>${rp(av.available)}</b></div><div><span>SISA SETELAH KLAIM INI</span><b id="kfafter">${rp(av.available - formTotal())}</b></div>` : `<div><span>BUDGET</span><b>${F.category === 'Perdin' || F.category === 'Operasional' || F.category === 'Support dealer' ? 'Kategori tanpa budget' : '-'}</b></div>`}</div>
+  ${tg.blocked ? '<div class="note red">Pemohon ini sedang diblokir (petty cash lewat tenggat).</div>' : ''}
+  <div class="note blue">Klaim tercatat <b>atas nama ${esc(tg.name)}</b>, diajukan oleh <b>Anda</b>. ${av ? '<b>Budget ' + esc(F.category) + ' ' + esc(tg.name) + ' yang berkurang.</b> ' : ''}Admin yang mengajukan tidak bisa menyetujui klaimnya sendiri. Keduanya tercatat di riwayat.</div>` : '<div class="mut">Pilih pemohon dulu.</div>'}` : ''}</div>`;
+}
 function renderForm() {
   const _y = window.scrollY; useBase();
   const k = F.kind, m = F.meta, t = typeLabel(); const total = formTotal();
   const editRev = F.rev;
-  let body = `<div class="card">${kt('Info klaim')}${editRev ? `<div class="note blue">Versi klaim saat ini: <b>v${F.ver}</b>. Catatan peminta revisi: “${esc(editRev.note || '')}”</div><div id="nomwarn"></div>` : ''}
+  let body = behalfHtml() + `<div class="card">${kt('Info klaim')}${editRev ? `<div class="note blue">Versi klaim saat ini: <b>v${F.ver}</b>. Catatan peminta revisi: “${esc(editRev.note || '')}”</div><div id="nomwarn"></div>` : ''}
   <div class="two">${fld('Brand', brandSel(F.brand))}${fld('Refnote (opsional)', inp('refnote', F.refnote, 'placeholder="mis. IT-SEMARANG"'))}</div>
   ${k !== 'perdin' && k !== 'makan' ? fld('Lokasi (kota/kabupaten)', `<input id="floc" value="${esc(F.location || '')}" placeholder="Ketik kota/kabupaten" autocomplete="off">`, 'Detail tempat tulis di keterangan.') : ''}</div>`;
   if (F.secs) {
@@ -202,8 +214,8 @@ function renderForm() {
       body += `<div data-sec="${si}"><div class="secHead kfsh" style="--sc:${kcol(sc.type.name)}"><span class="ic">${kpic(KTYPE[sc.type.name] || 'dots')}</span><div><b>${esc(sc.type.name)}</b><small>${cnt(sc)} nota</small></div><em data-subt="${sc.type.id}">${rp(sub(sc))}</em></div>${kindBody(true)}</div>`; }); useBase(); }
   else body += kindBody(false);
   body += `<div class="card">${kt('Keterangan')}${fld('Keterangan tambahan (opsional)', `<textarea data-f="meta.catatan" placeholder="Tulis jika ada hal yang perlu diketahui pemeriksa">${esc(m.catatan || '')}</textarea>`)}</div>`;
-  body += `<div class="card" id="rekbox">${rekHtml()}</div><div class="card row kftot"><b>Total</b><b id="tot" data-tot>${rp(total)}</b></div>
-   <div class="two" style="margin-top:8px"><button class="btn g" id="bsave">Simpan draft</button><button class="btn" id="bnext">${editRev ? 'Lanjut kirim perbaikan' : 'Lanjut ringkasan'}</button></div>`;
+  body += `<div class="card" id="rekbox">${rekHtml()}</div><div class="kfdock"><div class="card row kftot"><b>Total</b><b id="tot" data-tot>${rp(total)}</b></div>
+   <div class="two" style="margin-top:8px"><button class="btn g" id="bsave">Simpan draft</button><button class="btn" id="bnext">${editRev ? 'Lanjut kirim perbaikan' : 'Lanjut ringkasan'}</button></div></div>`;
   shell(hero((editRev ? 'Perbaiki: ' : 'Form ') + t, F.division ? 'ADMIN · DI LUAR SALES' : 'P' + (F.id ? '17' : '04'), { back: true, small: true }) + `<div class="sec kf" data-kc="${esc(F.category || F.type.category || '')}"><div id="kfban"></div>${body}</div>`, { hero: false });
   bindForm(); updNom(); kfApply(); window.scrollTo(0, _y);
 }
@@ -278,16 +290,24 @@ function updNom() {
   } finally { if (bi >= 0) useBase(); }
   if (F.kind === 'makan' && $('#makancap')) $('#makancap').innerHTML = makanCap();
   const t = formTotal(); $$('[data-tot]').forEach(el => el.textContent = rp(t));
+  if ($('#kfafter') && F.target?.budget?.[F.category]) $('#kfafter').textContent = rp(F.target.budget[F.category].available - t);
   if (F.secs) F.secs.forEach(sc => { $$(`[data-subt="${sc.type.id}"]`).forEach(e => e.textContent = rp(F.notes.filter(n => n.detail?.type_id == sc.type.id).reduce((x, n) => x + noteClaim(n), 0))); });
   $$('[data-gisum]').forEach(e => { const [k, i] = e.dataset.gisum.split(':'); const it = F.pd[k].items[i]; e.textContent = '= ' + rp(num(it.nominal) * num(it.hari)); });
   if ($('#dur')) $('#dur').textContent = `Durasi ${durDays(F.meta.tgl_berangkat, F.meta.tgl_pulang)} hari (berangkat dan pulang dihitung penuh)`;
   const w = $('#nomwarn'); if (w && F.rev) w.innerHTML = t !== +F.lastTotal ? `<div class="note red">Nominal berubah dari ${rp(F.lastTotal)} ke ${rp(t)}. Perubahan nominal membuat <b>versi klaim baru</b> dan membutuhkan approval ulang untuk versi terbaru${F.kind === 'perdin' ? '' : ''}. Jika klaim ber-BA, tanda tangan dan approval BA juga diulang.</div>` : '';
 }
+function tgDraw() {
+  const l = $('#kftl'), q = ($('#kftq').value || '').toLowerCase().trim(); if (!l) return;
+  const r = (S.targets || []).filter(u => !q || [u.name, u.nik, u.job, u.region, (u.entities || []).join(' ')].join(' ').toLowerCase().includes(q)).slice(0, 40);
+  l.innerHTML = r.map(u => `<div data-tgpick="${u.id}"><b>${esc(u.name)}</b><em>${esc([u.job, u.region, (u.entities || []).join(', '), u.nik].filter(Boolean).join(' · '))}</em></div>`).join('') || '<div class="mut" style="padding:8px 10px">Tidak ada yang cocok</div>'; l.hidden = false;
+}
 function bindForm() {
   const root = $('#app');
+  root.addEventListener('focusin', e => { if (e.target.id === 'kftq') { e.target.select(); tgDraw(); } });
   const ctx = h => e => { const si = e.target.closest?.('[data-sec]')?.dataset.sec; if (F.secs && si != null) useSec(+si); try { return h(e); } finally { useBase(); } };
   root.oninput = ctx(e => {
     const t = e.target;
+    if (t.id === 'kftq') { tgDraw(); return; }
     if (t.dataset.f) { let v = t.value; if (/nominal$/.test(t.dataset.f)) { v = num(v); t.value = fmtN(v); } setPath(F, t.dataset.f, v); updNom(); }
     else if (t.dataset.n) { const [i, k] = t.dataset.n.split(':'); let v = t.value; if (k === 'nominal') { v = num(v); t.value = fmtN(v); } F.notes[i][k] = v; updNom(); }
     else if (t.dataset.pes) F.meta.peserta[t.dataset.pes] = t.value;
@@ -325,6 +345,11 @@ function bindForm() {
     const nad = t.closest('[data-notaadd]'); if (nad) { F.notes.push({ nominal: '', date: today(), detail: { type_id: +nad.dataset.notaadd }, files: [] }); renderForm(); return; }
     if (t.id === 'notaadd') { F.notes.push({ nominal: '', date: today(), detail: {}, files: [] }); renderForm(); return; }
     const nr = t.closest('[data-notarm]'); if (nr) { F.notes.splice(+nr.dataset.notarm, 1); renderForm(); return; }
+    const on = t.closest?.('[data-on]'); if (on) { F.other = on.dataset.on === 'other';
+      if (F.other && !S.targets) { guard(async () => { S.targets = (await api('claim_targets')).rows; renderForm(); }); renderForm(); return; }
+      if (!F.other) { F.onBehalf = 0; F.target = null; F.selfAcct = F.me; F.account = { mode: 'self' }; } renderForm(); return; }
+    const pk = t.closest?.('[data-tgpick]'); if (pk) { const tg = (S.targets || []).find(x => x.id == pk.dataset.tgpick); if (tg) { F.target = tg; F.onBehalf = tg.id; F.selfAcct = tg.account; F.account = { mode: 'self' }; renderForm(); } return; }
+    if (!t.closest?.('.kfcmb') && $('#kftl')) $('#kftl').hidden = true;
     if (t.id === 'bsave') saveForm(false); if (t.id === 'bnext') saveForm(true);
   });
 }
@@ -383,6 +408,7 @@ function kfClear(e) {
 ['input', 'change', 'click'].forEach(ev => document.addEventListener(ev, kfClear, true));
 
 async function saveForm(next) {
+  if (F.other && !F.id && !F.onBehalf) return toast('Pilih pemohon (atas nama) dulu.', true);
   await guard(async () => {
     const j = await api('claim_save', payload()); F.id = j.id;
     /* 2026-11-24: setelah draft tersimpan, entri riwayat form diganti #/edit/id supaya tombol "← Kembali" (dan back browser/HP) dari Ringkasan membuka draft yang sama, bukan form kosong */

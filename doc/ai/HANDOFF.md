@@ -686,3 +686,55 @@ Sudah dikoding: tabel padat + TOTAL berwarna, tombol Tandai tutup terlihat, Kont
 ## AI via OpenAI — menunggu tes user
 - Penyedia OpenAI sudah dipasang (commit 163dd62), Gemini tetap bawaan/cadangan. Aktif lewat DSM_AI_PROVIDER/DSM_OPENAI_KEY/DSM_OPENAI_MODEL di config.local.php server.
 - Dicatat, BELUM dikerjakan: longgarkan `aiSysPrompt_` supaya AI boleh jawab pertanyaan umum di luar DSM. Tunggu user selesai tes dan bilang "gas".
+
+## 2026-11-26 · Klaim › Peran klaim pengguna (desktop) — DISETUJUI MOCKUP, BELUM DIKODEKAN
+Mockup: `doc/mockup/2026-11-26/dsm-klaim-peran-ringkas.html`, tab **E · Semua kolom tetap ada** (user: "oke cocok", minta dicatat dulu, jangan koding).
+- Kolom TIDAK boleh ada yang dihilangkan: centang, NAMA (avatar), USERNAME, JABATAN, PERAN, REGION, WILAYAH TUGAS, DITANGANI ADMIN, BADAN USAHA, AKTIF (toggle), UBAH ›. Tombol + PENGGUNA BARU dan chip peran lengkap (SEMUA, PEMOHON, ADMIN, RGM, HOS, FM, FT, AUDIT, SA) tetap.
+- Baris chip region/area yang panjang diganti satu dropdown **REGION: Semua ▾** (berpencarian, multi-centang, ada jumlah orang per region).
+- Kolom kiri: daftar Admin + jumlah orang (Semua / Belum ada Admin / per Admin) sebagai filter Ditangani Admin.
+- Wilayah tugas panjang: 1 area + "+N area", isi lengkap saat hover.
+- Bar tugaskan melayang di bawah tabel (Tugaskan ke Admin… / Kembali otomatis).
+- Panel detail kanan (opsi C) dibuang karena tidak ada data yang disembunyikan.
+
+## 2026-11-26 · Klaim › Hak klaim desktop + navbar — MOCKUP DISETUJUI ("oke cocok", minta dicatat dulu), BELUM DIKODEKAN
+Mockup: `doc/mockup/2026-11-26/dsm-klaim-hak-desktop.html`.
+- Tabel padat desktop menggantikan daftar kartu: NAMA, JABATAN, REGION, DITANGANI ADMIN (baru), BADAN USAHA, PENGAJUAN, TRANSPORTASI, ENTERTAIN, PERDIN, OPERASIONAL, SUPPORT DEALER, PETTY CASH, ATUR ›. Klik baris tetap buka halaman atur detail.
+- Toggle penanganan di atas tabel: SEMUA ORANG / YANG SAYA TANGANI / BUKAN YANG SAYA TANGANI (dengan jumlah), diingat per perangkat. Kolom DITANGANI ADMIN: SAYA / nama Admin lain / Otomatis. Untuk Super Admin, "saya tangani" = yang di-assign ke dia sendiri.
+- Dropdown REGION (gaya tab E), filter chip status, bar bawah Salin hak ke yang dipilih (fitur salin yang ada dipindah).
+- Menu Hak klaim masuk sidebar grup KERJA (desktop). HP tidak berubah.
+- Dikerjakan bersama Peran klaim pengguna tab E (user belum bilang "gas").
+
+## 2026-11-26 · Regroup menu Admin — MOCKUP BELUM DISETUJUI, JANGAN KODING
+Mockup: `doc/mockup/2026-11-26/dsm-admin-menu-regroup.html` (SEKARANG vs USULAN, interaktif). Tab baru **Region**; semua brand di Brand, region di Region, target di KPI & Target, KPI di KPI. Telegram (Sambungan Telegram + Notifikasi khusus) pindah ke Sistem; bukan tampilan gaya Telegram.
+- Keputusan user: **Hari libur masuk Master Data** (bukan Region; mockup masih menaruh di Region, ubah dulu).
+- Masih menunggu user: Kunci periode & Status Sync ke Sistem, Badan usaha tetap di Master Data.
+
+## 2026-11-26 · DIKODEKAN (user: "gas semua")
+- Regroup menu Admin (`assets/admin_revision.js` GROUPS): tab baru Region; Master Product → Brand; Penugasan telemarketing → KPI & Target; Hari libur & Badan usaha tetap di Master Data; Sambungan Telegram + Notifikasi khusus + Status Sync + Kunci periode + Catatan kualitas → Sistem (seksi Telegram / Data & penyimpanan / Log). Isi panel tidak berubah. Perlu dicek di server dengan akun Admin.
+- Edit target: baris ASM gaya C (sub judul #DCE6F2 + badge OTOMATIS, sales menjorok) — `v6tAsm` di dsm.css/dsm.js.
+- Edit target: warna zigzag per grup ASM opsi B (v6tz0/v6tz1), disetujui user.
+- Edit target: Enter/↓ turun, Shift+Enter/↑ naik, Tab/Shift+Tab pindah kolom (ala Excel). Menunggu user pilih gaya kotak input halus (mockup dsm-edit-target-input-halus.html) + lebar 46 (disetujui, belum dikodekan).
+
+## 2026-11-26 · Beranda › Wilayah › Heatmap bawaan tertutup — MOCKUP DISETUJUI ("oke cocok", minta dicatat dulu), BELUM DIKODEKAN
+Mockup: `doc/mockup/2026-11-26/dsm-beranda-heatmap-lipat.html`.
+- Panel HEATMAP NASIONAL · REGION × BRAND di tab WILAYAH jadi panel lipat gaya Summary History (latar #d5d4fc, garis kiri 5px #6663c4, bulatan panah, tombol BUKA/TUTUP). Bawaan TERTUTUP, status buka/tutup diingat per perangkat (localStorage).
+- Cakupan hanya heatmap ini; panel lain di Beranda tidak diubah.
+
+## Edit target — menunggu pilihan user (belum dikodekan)
+- Lebar kotak input 46 disetujui. Gaya kotak lebih halus: mockup `dsm-edit-target-input-halus.html` opsi A/B/C, user belum memilih (rekomendasi C).
+
+## 2026-11-26 · Beranda › tab KOMITMEN terpisah dari AKSI — MOCKUP DISETUJUI ("oke cocok"), BELUM DIKODEKAN
+Mockup: `doc/mockup/2026-11-26/dsm-beranda-komitmen-tab.html`. Tab baru KOMITMEN (paling kanan setelah AKSI) berisi Komitmen minggu ini, Review minggu lalu, Komitmen tim. Tab AKSI tinggal Dibanding kemarin + Prioritas tindakan. Isi panel tidak berubah. Menunggu "gas" untuk koding.
+- AI Assistant: tombol melayang HP (logo gelembung robot, bisa digeser, nempel tepi, label ASSISTANT 3 detik sekali per sesi) di assets/ai_fab.js/.css; disetujui user (mockup dsm-ai-tombol-final.html opsi 2, 3 detik). LAINNYA tetap ada. Cek di HP asli.
+- DIKODEKAN (user: gas): Beranda tab KOMITMEN (desktop) + heatmap nasional lipat bawaan tertutup; Edit target lebar input 46. Gaya kotak input halus (A/B/C) masih menunggu pilihan.
+- Edit target: gaya kotak input C (polos, border saat hover/fokus, placeholder –) dikodekan; sel wajib kosong tetap kuning.
+
+## 2026-11-26 · Edit target › bentuk tabel seperti Pencapaian — MOCKUP DISETUJUI ("oke cocok"), BELUM DIKODEKAN
+Mockup: `doc/mockup/2026-11-26/dsm-edit-target-gaya-pencapaian.html` (opsi USULAN).
+- Kolom depan: # · NAMA · SUB REGION (NIK disembunyikan dari tampilan, tetap dipakai di belakang). Header abu muda (#EEF2F6), huruf kecil tebal; baris tipis berpemisah.
+- Hanya judul kolom dan baris TOTAL yang tebal; nama, angka, baris ASM tidak tebal.
+- Baris ASM di bawah timnya: latar zigzag biru/hijau, garis kiri 4px, badge OTOMATIS, sub region di kolom sendiri.
+- Kotak input samar tapi kelihatan (garis tipis + garis bawah lebih tegas, hover biru, "–" saat kosong). Ukuran huruf seragam 12px.
+- DIKODEKAN: tabel Edit target gaya Pencapaian. Heatmap nasional di Beranda DISEMBUNYIKAN sementara (flag HEAT_HIDE di index.php v7HeatFold; set false untuk munculkan lagi sebagai panel lipat).
+- DIKODEKAN: Status pola dealer HP 2 kolom ringkas tanpa ikon (opsi B, dealer_status.css). Persen dari total (mis. 52,7%) disembunyikan sesuai mockup.
+- DIKODEKAN: Edit dealer › Big Region default jadi dropdown (Super Admin) + Berlaku mulai; simpan lewat apiDealerRegionSave (Dealer_Region, kode induk). Admin biasa tetap readonly. Beranda mengikuti lewat RegionCore::route per tanggal.

@@ -6,26 +6,32 @@
 const T=(re,kw,o)=>Object.assign({re,kw},o||{});
 const GROUPS=[
  ['ap','Approval','#E5354E','✅','Persetujuan menunggu',[['',[T(/^approval/i,'setuju persetujuan approve')]]]],
- ['h','Data Harian','#F07A0C','📊','Upload & kelengkapan data',[
-  ['SERING DIPAKAI',[T(/upload regional/i,'sell thru sell out harian st so upload'),T(/^publikasi data/i,'publikasi antrean publish tahan cron perbarui'),T(/status sync/i,'sinkron sync'),T(/kelengkapan data per region/i,'lengkap region belum upload'),T(/peta kelengkapan/i,'kalender lengkap tanggal')]],
-  ['PENGECEKAN',[T(/catatan kualitas/i,'kualitas error janggal'),T(/kunci periode/i,'lock bulan final tutup periode')]],
+ ['h','Data Harian','#F07A0C','📊','Upload & publikasi data',[
+  ['DATA MASUK',[T(/upload regional/i,'sell thru sell out harian st so upload'),T(/^publikasi data/i,'publikasi antrean publish tahan cron perbarui')]],
   ['HATI-HATI',[T(/pemulihan regional/i,'restore rollback kembalikan',{w:1})]]]],
  ['d','Dealer','#0E9F6E','🏪','Data & kepemilikan dealer',[
   ['SERING DIPAKAI',[T(/cari & edit dealer/i,'customer toko kontak sales edit'),T(/^tambah dealer/i,'customer baru noo'),T(/^upload massal dealer/i,'customer massal tambah edit upload bulk dealer field kontak telepon alamat pic hp'),T(/upload dealer/i,'customer massal tambah edit upload'),T(/bulk edit customer/i,'dealer massal field'),T(/update kontak/i,'kontak telepon alamat pic massal hp')]],
-  ['KEPEMILIKAN',[T(/transfer dealer/i,'pindah sales brand kepemilikan'),T(/riwayat transfer/i,'history log transfer'),T(/riwayat pemilik/i,'history sales pemilik'),T(/big region per dealer/i,'wilayah region'),T(/dealer tutup/i,'nonaktif tutup')]],
+  ['KEPEMILIKAN',[T(/transfer dealer/i,'pindah sales brand kepemilikan'),T(/riwayat transfer/i,'history log transfer'),T(/riwayat pemilik/i,'history sales pemilik'),T(/dealer tutup/i,'nonaktif tutup')]],
   ['HATI-HATI',[T(/ganti kode induk/i,'hapus delete kode induk',{w:1})]]]],
  ['b','Brand','#B98900','🏷️','Semua setelan brand',[
-  ['SEMUA SETELAN BRAND',[T(/brand & klasifikasi/i,'brand aktif kelas klasifikasi'),T(/aturan status dealer/i,'ambang status dealer pola brand'),T(/brand · ambang/i,'ambang status dealer brand'),T(/pic dealer/i,'pic sales brand'),T(/product rules|aturan produk/i,'aturan produk brand type')]],
+  ['SEMUA SETELAN BRAND',[T(/brand & klasifikasi/i,'brand aktif kelas klasifikasi'),T(/aturan status dealer/i,'ambang status dealer pola brand'),T(/brand · ambang/i,'ambang status dealer brand'),T(/pic dealer/i,'pic sales brand'),T(/product rules|aturan produk/i,'aturan produk brand type'),T(/master product/i,'type barang produk brand')]],
+  ['TERKAIT',[T(null,'',{link:'region per brand',label:'Region per brand & target Big Region',sub:'Ada di tab KPI & Target'})]]]],
+ ['r','Region','#0891B2','🗺️','Wilayah, sub region, kelengkapan',[
+  ['WILAYAH',[T(/region map/i,'wilayah peta region'),T(/big region per dealer/i,'wilayah region'),T(/sub region/i,'asm rgm atasan wilayah vacant jadwal')]],
+  ['KELENGKAPAN DATA',[T(/kelengkapan data per region/i,'lengkap region belum upload'),T(/peta kelengkapan/i,'kalender lengkap tanggal')]],
   ['TERKAIT',[T(null,'',{link:'region per brand',label:'Region per brand & target Big Region',sub:'Ada di tab KPI & Target'})]]]],
  ['kt','KPI & Target','#7C4DCE','🎯','Target & indikator',[
   ['TARGET',[T(/edit target/i,'target bulan sales'),T(/region per brand/i,'brand target region big region wilayah')]],
-  ['KPI',[T(/atur kpi/i,'bobot indikator brand kpi'),T(/kpi khusus/i,'type indikator khusus'),T(/kpi telemarketing/i,'telemarketing tm target')]]]],
- ['md','Master Data','#6D3FD8','🗂️','Produk, wilayah, publikasi',[
-  ['SERING DIPAKAI',[T(/^download & upload master/i,'massal upload download bulk master dealer customer product sales target kpi region'),T(/bulk master/i,'massal upload download master'),T(/download data master/i,'download working file master'),T(/master product/i,'type barang produk brand'),T(/cek kesehatan/i,'health error master'),T(/^master & kebijakan/i,'publish kebijakan terbitkan publikasi',{name:'Publikasi Master'})]],
-  ['WILAYAH & KALENDER',[T(/region map/i,'wilayah peta region'),T(/hari libur/i,'kalender libur cuti')]],
-  ['FORM ORDER & TELEMARKETING',[T(/badan usaha/i,'order pt cv form order'),T(/penugasan telemarketing/i,'telemarketing follow up telepon')]]]],
- ['u','Pengguna & Akses','#2B7BE0','👤','Akun, PIN, izin',[['',[T(/akun pengguna/i,'user login pin role'),T(/sub region/i,'asm rgm atasan wilayah vacant jadwal'),T(/tambah user/i,'user massal'),T(/keamanan akun/i,'security pin 2fa sesi'),T(/hak export/i,'download izin export'),T(/kredit tetap ke penjual/i,'kredit sales penjual'),T(/sambungan telegram|telegram/i,'bot notif telegram')]]]],
- ['s','Sistem','#6F7B8E','⚙️','Backup & log',[['',[T(/autobackup|backup/i,'cadangan backup'),T(/riwayat aktivitas/i,'audit log aktivitas'),T(/notifikasi khusus/i,'push pesan notifikasi')]],['LAINNYA',[T(/.*/,'',{rest:1})]]]],
+  ['KPI',[T(/atur kpi/i,'bobot indikator brand kpi'),T(/kpi khusus/i,'type indikator khusus'),T(/kpi telemarketing/i,'telemarketing tm target'),T(/penugasan telemarketing/i,'telemarketing follow up telepon')]]]],
+ ['md','Master Data','#6D3FD8','🗂️','Master, kalender, publikasi',[
+  ['SERING DIPAKAI',[T(/^download & upload master/i,'massal upload download bulk master dealer customer product sales target kpi region'),T(/bulk master/i,'massal upload download master'),T(/download data master/i,'download working file master'),T(/cek kesehatan/i,'health error master'),T(/^master & kebijakan/i,'publish kebijakan terbitkan publikasi',{name:'Publikasi Master'})]],
+  ['KALENDER & FORM ORDER',[T(/hari libur/i,'kalender libur cuti'),T(/badan usaha/i,'order pt cv form order')]]]],
+ ['u','Pengguna & Akses','#2B7BE0','👤','Akun, PIN, izin',[['',[T(/akun pengguna/i,'user login pin role'),T(/tambah user/i,'user massal'),T(/keamanan akun/i,'security pin 2fa sesi'),T(/hak export/i,'download izin export'),T(/kredit tetap ke penjual/i,'kredit sales penjual')]]]],
+ ['s','Sistem','#6F7B8E','⚙️','Telegram, backup & log',[
+  ['TELEGRAM',[T(/sambungan telegram|telegram/i,'bot notif telegram'),T(/notifikasi khusus/i,'push pesan notifikasi')]],
+  ['DATA & PENYIMPANAN',[T(/autobackup|backup/i,'cadangan backup'),T(/status sync/i,'sinkron sync'),T(/kunci periode/i,'lock bulan final tutup periode')]],
+  ['LOG & PENGECEKAN',[T(/riwayat aktivitas/i,'audit log aktivitas'),T(/catatan kualitas/i,'kualitas error janggal')]],
+  ['LAINNYA',[T(/.*/,'',{rest:1})]]]],
 ];
 const HOME=['home','Beranda Admin','#0B5CAD','🏠','Ringkasan & sematan'];
 const hexRgb=h=>{const x=String(h).replace('#','');const v=parseInt(x.length===3?x.split('').map(c=>c+c).join(''):x,16);return[(v>>16)&255,(v>>8)&255,v&255]};

@@ -47,6 +47,11 @@ try {
         'fuel' => q("SELECT effective_from, pertalite, pertamax FROM claim_fuel_price ORDER BY effective_from DESC, id DESC"), 'types' => q("SELECT id, category, name, active, locked FROM claim_types WHERE active=1 ORDER BY sort_no"), 'regions' => array_column(q("SELECT DISTINCT region FROM claim_users WHERE region IS NOT NULL AND " . demo_user_sql() . " ORDER BY region"), 'region'),
         'entities' => entity_options(), 'rules' => ['min_km_makan' => min_km_makan(current_rule()), 'bbm_round' => (int) (current_rule()['bbm_round'] ?? 0)],
         'people' => q("SELECT id, name, job, region FROM claim_users WHERE can_submit=1 AND active=1 AND " . demo_user_sql() . " ORDER BY name")]);
+    case 'claim_targets': // daftar pemohon untuk "Atas nama" (Admin / Super Admin)
+      if (!(has_role($u, 'ADMIN') || has_role($u, 'SA'))) fail('Tidak diizinkan.', 403);
+      $o = []; foreach (q("SELECT * FROM claim_users WHERE active=1 AND id<>? AND " . demo_user_sql() . " ORDER BY name", [$u['id']]) as $r) { $t = shape_user($r); if (!can_claim_for($u, $t) || (!(int) $t['can_submit'] && !has_role($t, 'HOS'))) continue;
+        $o[] = ['id' => (int) $t['id'], 'name' => $t['name'], 'nik' => $t['nik'] ?? '', 'job' => $t['job'], 'region' => $t['region'], 'entities' => $t['entities'], 'roles' => $t['roles'], 'account' => ['bank' => $t['bank'], 'no' => $t['bank_no'], 'name' => $t['bank_name']], 'budget' => budget_all((int) $t['id'], date('Y-m')), 'blocked' => (bool) pc_blocked((int) $t['id'])]; }
+      out(['rows' => $o, 'period' => date('Y-m')]);
     case 'budget': out(['period' => date('Y-m'), 'budget' => budget_all((int) $u['id'], date('Y-m')), 'blocked' => pc_blocked((int) $u['id']), 'meal_rate' => $u['meal_rate'], 'account' => ['bank' => $u['bank'], 'no' => $u['bank_no'], 'name' => $u['bank_name']]]);
     case 'upload':
       if (empty($_FILES['file'])) fail('File tidak ditemukan.');

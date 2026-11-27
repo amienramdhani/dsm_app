@@ -84,6 +84,8 @@ function build_route(array $c): array {
   $hos = $c['requires_hos'] || !$c['acct_own'] || $c['outside_sales'];
   $r = $c['ba_required'] ? ['ADMIN', 'HOS', 'AUDIT', 'FM', 'FT'] : ($hos ? ['ADMIN', 'HOS', 'FM', 'FT'] : ['ADMIN', 'FM', 'FT']);
   if ($c['outside_sales']) $r = array_values(array_diff($r, ['ADMIN']));
+  $cl = !empty($c['claimant_id']) ? user_row((int) $c['claimant_id']) : null;
+  if ($cl && has_role($cl, 'HOS')) $r = array_values(array_diff($r, ['HOS'])); // pemohon HOS tidak menyetujui klaimnya sendiri
   return $r;
 }
 function duration_days(?string $a, ?string $b): int { if (!$a || !$b) return 0; $d = (strtotime($b) - strtotime($a)) / 86400; return $d < 0 ? 0 : (int) round($d) + 1; }
@@ -108,8 +110,13 @@ function pc_blocked(int $uid): ?array {
   return date('Y-m-d') > $deadline ? $p + ['deadline' => $deadline] : null;
 }
 
+/** Admin / Super Admin boleh mengajukan atas nama orang lain: Admin hanya untuk orang di cakupannya atau HOS. */
+function can_claim_for(array $u, array $t): bool {
+  if (sa_free($u) || has_role($u, 'SA')) return true;
+  return has_role($u, 'ADMIN') && (covers_person($u, (string) $t['region'], (int) $t['id']) || has_role($t, 'HOS'));
+}
 function claim_save(array $u, array $in): int {
-  $id = (int) ($in['id'] ?? 0);
+  $id = (int) ($in['id'] ?? 0); $onBehalf = (int) ($in['on_behalf'] ?? 0);
   $t = type_row((int) ($in['type_id'] ?? 0));
   $division = !empty($in['division']);
   if ($id) {
@@ -118,13 +125,20 @@ function claim_save(array $u, array $in): int {
     $claimant = (int) $c['claimant_id'];
   } else {
     if ($division) { if (!has_role($u, 'ADMIN')) fail('Hanya Admin yang dapat mengajukan untuk divisi.', 403); $claimant = (int) $u['id']; }
+    elseif ($onBehalf && $onBehalf !== (int) $u['id']) {
+      $tg = user_row($onBehalf); if (!$tg || !(int) $tg['active']) fail('Pemohon tidak ditemukan.', 404);
+      if (!(has_role($u, 'ADMIN') || has_role($u, 'SA'))) fail('Hanya Admin atau Super Admin yang dapat mengajukan atas nama orang lain.', 403);
+      if (!can_claim_for($u, $tg)) fail('Pemohon di luar cakupan Anda.', 403);
+      if (!(int) $tg['can_submit'] && !has_role($tg, 'HOS')) fail('Orang ini belum diberi hak mengajukan klaim.', 403);
+      $claimant = $onBehalf;
+    }
     else { if (!is_claimant($u)) fail('Anda belum diberi hak mengajukan klaim.', 403); $claimant = (int) $u['id']; }
     if (pc_blocked($claimant)) fail('Pengajuan klaim diblokir sampai petty cash dipertanggungjawabkan.', 403);
   }
   $cu = user_row($claimant);
   if (!$division && empty($c['outside_sales'] ?? 0)) {
     $en = val("SELECT enabled FROM claim_entitlement WHERE user_id=? AND category=?", [$claimant, $t['category']]);
-    if (!$en) fail('Kategori ' . $t['category'] . ' belum diaktifkan untuk Anda.', 403);
+    if (!$en) fail('Kategori ' . $t['category'] . ' belum diaktifkan untuk ' . ((int) $claimant === (int) $u['id'] ? 'Anda' : $cu['name']) . '.', 403);
   }
   if ($t['category'] !== (string) ($in['category'] ?? $t['category'])) fail('Jenis tidak sesuai kategori.');
   $meta = is_array($in['meta'] ?? null) ? $in['meta'] : [];
@@ -523,6 +537,7 @@ function claim_submit(array $u, int $id, array $in): array {
     $route = build_route($c);
     ex("UPDATE claims SET route=?, status='WAIT', stage=?, stage_since=? WHERE id=?", [jenc($route), $route[0], now(), $id]);
     hist('claim', $id, 'Klaim dikirim', $u, null, null, $number . ' · ' . rp((int) $c['total']));
+    if ((int) $c['claimant_id'] !== (int) $u['id']) { hist('claim', $id, 'Diajukan atas nama ' . (user_row((int) $c['claimant_id'])['name'] ?? '-'), $u, null, null, 'oleh ' . $u['name']); notify((int) $c['claimant_id'], 'info', "Klaim {$number} diajukan atas nama Anda oleh {$u['name']}.", 'claim', $id); }
     $c = get_claim($id);
     notify_stage($route[0], $c, "Klaim $number menunggu pemeriksaan Anda.");
     db()->commit();

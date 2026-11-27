@@ -23,7 +23,7 @@ shell = function (inner, opt = {}) {
 
 function dkBuild() {
   const ap = $('#app'), mode = curMode(), c = S.counts || {};
-  const nav = MODES[mode].nav.filter(n => n[2] !== '#/menu');
+  const nav = MODES[mode].nav.filter(n => n[2] !== '#/menu'); if (mode === 'admin' || mode === 'sa') nav.splice(Math.max(0, nav.length - 1), 0, ['👥', 'Hak klaim', '#/a/hak']);
   const hp = (location.hash || '#/home').split('?')[0];
   const nb = { '#/revisi': c.revisi_admin || 0, '#/ba': c['ba_' + ({ admin: 'ADMIN', hos: 'HOS', fm: 'FM' }[mode] || '')] || 0, '#/home': c['queue_' + ({ admin: 'ADMIN', audit: 'AUDIT', hos: 'HOS', fm: 'FM', ft: 'FT' }[mode] || '')] || 0 };
   const item = (l, go, ic, n) => `<a class="${hp === go || (go === '#/monitor' && hp === '#/realisasi') ? 'on' : ''}" data-go="${go}">${navIcon(ic || l)}<span>${esc(l)}</span>${n ? `<em>${n}</em>` : ''}</a>`;
@@ -43,6 +43,7 @@ function dkBuild() {
   if (/^#\/claim\//.test(location.hash)) dkClaim(mn);
   if (mode === 'sa' && /^#\/(home)?$|^$/.test((location.hash || '#/home').split('?')[0]) || (mode === 'sa' && (location.hash || '#/home') === '#/home')) dkSaHome(mn);
   if (/^#\/sa\/users/.test(location.hash)) dkUsers(mn);
+  if (/^#\/a\/hak\/?$/.test(location.hash) && window.DKH) dkHak(mn);
   if (/^#\/sa\/codes/.test(location.hash)) dkCodes(mn);
 }
 
@@ -205,7 +206,7 @@ function dkUsers(mn) {
   tw.innerHTML = `<table class="dk-tb"><thead><tr><th style="width:26px"><span class="dk-cb" id="dkall"></span></th><th>NAMA</th><th>USERNAME</th><th>JABATAN</th><th>PERAN</th><th>REGION</th><th>WILAYAH TUGAS</th><th>DITANGANI ADMIN</th><th>BADAN USAHA</th><th>AKTIF</th><th></th></tr></thead><tbody>${lis.map(li => { const r = by[li.dataset.u] || {}; const rs = roles(r); const c = RCOL[rs[0]] || '#64748B';
     const ar = r.areas ? String(r.areas).split(',').filter(Boolean).join(', ') : ''; const adm = rs.some(x => x === 'ADMIN' || x === 'RGM');
     return `<tr data-u="${r.id}" data-rs="${rs.join(',')}${+r.can_submit ? ',PEMOHON' : ''}" data-q="${esc([r.name, r.username, r.nik, r.region, r.job].join(' ').toLowerCase())}"><td class="dk-ck"><span class="dk-cb" data-ck="${r.id}"></span></td><td><div class="dk-av" style="--c:${c}"><i>${esc((r.name || '?')[0])}</i><b>${esc(r.name || '')}</b></div></td><td>${esc(r.username || '-')}</td><td>${esc(r.job || '-')}</td>
-      <td>${rs.map(x => `<span class="dk-rlc" style="--c:${RCOL[x] || '#64748B'}">${x}</span>`).join('')}${+r.can_submit ? '<span class="dk-rlc" style="--c:#64748B">Pemohon</span>' : ''}</td><td>${esc(r.region || '-')}</td><td>${adm ? (ar ? esc(ar) : r.region ? esc(r.region) : '<b>Semua region</b>') : '<span class="mut">-</span>'}</td><td>${+r.can_submit ? (r.handler_id && by[r.handler_id] ? `<span class="dk-rlc" style="--c:#1E5FB8">${esc(by[r.handler_id].name)}</span>` : '<span class="mut">Otomatis (region)</span>') : '<span class="mut">-</span>'}</td><td>${esc(r.entity || '-')}</td>
+      <td>${rs.map(x => `<span class="dk-rlc" style="--c:${RCOL[x] || '#64748B'}">${x}</span>`).join('')}${+r.can_submit ? '<span class="dk-rlc" style="--c:#64748B">Pemohon</span>' : ''}</td><td>${esc(r.region || '-')}</td><td>${adm ? (ar ? (() => { const l = ar.split(', '); return `<span title="${esc(ar)}">${esc(l[0])}</span>${l.length > 1 ? ` <span class="dk-more" title="${esc(ar)}">+${l.length - 1} area</span>` : ''}`; })() : r.region ? esc(r.region) : '<b>Semua region</b>') : '<span class="mut">-</span>'}</td><td>${+r.can_submit ? (r.handler_id && by[r.handler_id] ? `<span class="dk-rlc" style="--c:#1E5FB8">${esc(by[r.handler_id].name)}</span>` : '<span class="mut">Otomatis (region)</span>') : '<span class="mut">-</span>'}</td><td>${esc(r.entity || '-')}</td>
       <td><span class="dk-tg ${+r.active ? '' : 'off'}"></span></td><td class="dk-ac">UBAH ›</td></tr>`; }).join('')}</tbody></table>`;
   lis[0].parentElement.replaceWith(tw);
   // filter area (chip, boleh lebih dari satu) + filter Admin penangan (Admin pilihan = yang menangani orang itu, manual atau lewat wilayah tugasnya)
@@ -213,8 +214,7 @@ function dkUsers(mn) {
   const covers = (a, reg) => { const al = a.areas ? String(a.areas).split(',').filter(Boolean) : []; return al.length ? al.includes(reg) : (!a.region || a.region === reg); };
   const handledBy = (r, a) => r.handler_id ? +r.handler_id === +a.id : covers(a, r.region);
   const bar2 = document.createElement('div'); bar2.className = 'dk-ufb dk-uf2';
-  bar2.innerHTML = `<b class="dk-lb">AREA</b><div class="dk-chp" id="dkar"><span class="on" data-ar="">SEMUA</span>${Object.keys(regs).sort().map(x => `<span data-ar="${esc(x)}">${esc(x)} <em>${regs[x]}</em></span>`).join('')}</div>
-    <select id="dkadm"><option value="">Semua penanganan</option><option value="-">Belum ada Admin</option>${admins.map(a => `<option value="${a.id}">Ditangani ${esc(a.name)}</option>`).join('')}</select>`;
+  bar2.innerHTML = `<div class="dk-pop"><button class="dk-b2" id="dkrb" type="button">REGION: Semua ▾</button><div class="dk-pp" id="dkrl" hidden><input id="dkrq" placeholder="Cari region…">${Object.keys(regs).sort().map(x => `<label data-rg="${esc(x)}"><input type="checkbox"> ${esc(x)} <em>${regs[x]}</em></label>`).join('')}</div></div>`;
   bar.after(bar2);
   let rf = '', arSel = new Set(), admF = ''; const sel = new Set();
   const adm1 = id => admins.find(a => +a.id === +id);
@@ -223,10 +223,17 @@ function dkUsers(mn) {
       if (ok && admF) ok = admF === '-' ? (!r.handler_id && !admins.some(a => covers(a, r.region))) : (+r.can_submit && handledBy(r, adm1(admF)));
       tr.style.display = ok ? '' : 'none'; }); paint(); };
   $('#dkuq').oninput = apply; bar.querySelectorAll('[data-rf]').forEach(c => c.onclick = () => { rf = c.dataset.rf; bar.querySelectorAll('[data-rf]').forEach(x => x.classList.toggle('on', x === c)); apply(); });
-  bar2.querySelectorAll('[data-ar]').forEach(c => c.onclick = () => { const v = c.dataset.ar; if (!v) arSel.clear(); else arSel.has(v) ? arSel.delete(v) : arSel.add(v); bar2.querySelectorAll('[data-ar]').forEach(x => x.classList.toggle('on', x.dataset.ar ? arSel.has(x.dataset.ar) : !arSel.size)); apply(); });
-  $('#dkadm').onchange = e => { admF = e.target.value; apply(); };
+  $('#dkrb').onclick = () => { $('#dkrl').hidden = !$('#dkrl').hidden; };
+  $('#dkrq').oninput = e => { const t = e.target.value.toLowerCase(); bar2.querySelectorAll('[data-rg]').forEach(l => l.style.display = l.dataset.rg.toLowerCase().includes(t) ? '' : 'none'); };
+  bar2.querySelectorAll('[data-rg] input').forEach(i => i.onchange = () => { const v = i.parentElement.dataset.rg; i.checked ? arSel.add(v) : arSel.delete(v); $('#dkrb').textContent = 'REGION: ' + (arSel.size ? arSel.size + ' dipilih' : 'Semua') + ' ▾'; apply(); });
+  // daftar Admin di kiri (filter Ditangani Admin)
+  const nUn = DKU.rows.filter(r => +r.can_submit && !r.handler_id && !admins.some(a => covers(a, r.region))).length;
+  const side = document.createElement('div'); side.className = 'dk-adl';
+  const sideHtml = () => `<div class="g">DITANGANI ADMIN</div><a data-af="" class="${admF === '' ? 'on' : ''}">Semua <em>${DKU.rows.length}</em></a><a data-af="-" class="${admF === '-' ? 'on' : ''}">Belum ada Admin <em>${nUn}</em></a>${admins.map(a => `<a data-af="${a.id}" class="${admF == a.id ? 'on' : ''}">${esc(a.name)} <em>${DKU.rows.filter(r => +r.can_submit && handledBy(r, a)).length}</em></a>`).join('')}`;
+  const wrap = document.createElement('div'); wrap.className = 'dk-uw'; tw.before(wrap); wrap.append(side, tw);
+  const drawSide = () => { side.innerHTML = sideHtml(); side.querySelectorAll('[data-af]').forEach(a => a.onclick = () => { admF = a.dataset.af; drawSide(); apply(); }); }; drawSide();
   // centang + bar tugaskan ke Admin
-  const act = document.createElement('div'); act.className = 'dk-sel'; act.style.display = 'none'; tw.after(act);
+  const act = document.createElement('div'); act.className = 'dk-sel'; act.style.display = 'none'; wrap.after(act);
   act.innerHTML = `<b id="dkselN"></b><select id="dkselA"><option value="">Tugaskan ke Admin…</option>${admins.map(a => `<option value="${a.id}">${esc(a.name)} (${esc((a.areas ? String(a.areas).split(',').filter(Boolean).join(', ') : a.region) || 'Semua region')})</option>`).join('')}<option value="0">Kembalikan ke otomatis (ikut region)</option></select><button class="dk-b" id="dkselOk">TERAPKAN</button><button class="dk-b2" id="dkselX">BATAL PILIH</button>`;
   const vis = () => [...tw.querySelectorAll('tbody tr')].filter(tr => tr.style.display !== 'none');
   function paint() { tw.querySelectorAll('[data-ck]').forEach(c => { const on = sel.has(c.dataset.ck); c.classList.toggle('on', on); c.closest('tr').classList.toggle('dk-sl', on); });
@@ -370,4 +377,55 @@ function dkCodes(mn) {
   new MutationObserver(draw).observe(cl, { childList: true });
   $('#dkcq').oninput = draw; $$('[data-cf]').forEach(c => c.onclick = () => { cf = c.dataset.cf; $$('[data-cf]').forEach(x => x.classList.toggle('on', x === c)); draw(); });
   if (cl.children.length) draw();
+}
+
+
+/* ---------- Hak klaim desktop (mockup dsm-klaim-hak-desktop.html, disetujui 2026-11-26) ---------- */
+const dkCovers = (a, reg) => { const al = a.areas ? String(a.areas).split(',').filter(Boolean) : []; return al.length ? al.includes(reg) : (!a.region || a.region === reg); };
+function dkHak(mn) {
+  const sec = mn.querySelector('#hq')?.closest('.sec'); if (!sec) return;
+  const rows = DKH.rows, me = S.me, isSA = curMode() === 'sa';
+  const mine = r => isSA ? +r.handler_id === +me.id : (r.handler_id ? +r.handler_id === +me.id : dkCovers(me, r.region));
+  const entOf = r => Object.fromEntries((r.ent || []).map(e => [e.category, e]));
+  const cols = ['Transportasi', 'Entertain', 'Perdin', 'Operasional', 'Support dealer'];
+  const regs = {}; rows.forEach(r => { if (r.region) regs[r.region] = (regs[r.region] || 0) + 1; });
+  const ents = [...new Set(rows.flatMap(r => (r.entity || '').split(',').map(x => x.trim()).filter(Boolean)))].sort();
+  const admById = Object.fromEntries((window.DKU?.rows || []).map(r => [r.id, r]));
+  let pf = 'all', sf = '', arSel = new Set(), en = '', q = ''; try { pf = localStorage.getItem('kl_hakf') || 'all'; } catch (e) {}
+  const sel = new Set();
+  const cell = (r, c) => { const e = entOf(r)[c]; if (!e || !+e.enabled) return '<span class="dk-rlc" style="--c:#94A3B8">MATI</span>'; return NOBUD.includes(c) ? '<span class="dk-rlc" style="--c:#12866A">AKTIF</span>' : rp(+e.budget); };
+  const who = r => r.handler_id ? (+r.handler_id === +me.id ? '<span class="dk-rlc" style="--c:#12866A">SAYA</span>' : `<span class="dk-rlc" style="--c:#1E5FB8">${esc((admById[r.handler_id] || rows.find(x => +x.id === +r.handler_id) || {}).name || 'Admin')}</span>`) : (!isSA && dkCovers(me, r.region) ? '<span class="dk-rlc" style="--c:#12866A">SAYA</span>' : '<span class="mut">Otomatis</span>');
+  sec.innerHTML = `<div class="dk-ufb"><div class="dk-chp" id="dkhp"><span data-p="all">SEMUA ORANG <em>${rows.length}</em></span><span data-p="mine">YANG SAYA TANGANI <em>${rows.filter(mine).length}</em></span><span data-p="other">BUKAN YANG SAYA TANGANI <em>${rows.filter(r => !mine(r)).length}</em></span></div></div>
+   <div class="dk-ufb"><input id="dkhq" placeholder="Cari nama, jabatan, region"><div class="dk-chp" id="dkhs"><span data-s="">SEMUA</span><span data-s="boleh">BOLEH MENGAJUKAN <em>${rows.filter(r => +r.can_submit).length}</em></span><span data-s="belum">BELUM DIBERI HAK <em>${rows.filter(r => !+r.can_submit).length}</em></span><span data-s="pc">PETTY CASH <em>${rows.filter(r => +r.can_petty).length}</em></span></div>
+     <div class="dk-pop"><button class="dk-b2" id="dkhrb" type="button">REGION: Semua ▾</button><div class="dk-pp" id="dkhrl" hidden><input id="dkhrq" placeholder="Cari region…">${Object.keys(regs).sort().map(x => `<label data-rg="${esc(x)}"><input type="checkbox"> ${esc(x)} <em>${regs[x]}</em></label>`).join('')}</div></div>
+     <select id="dkhe"><option value="">Semua badan usaha</option>${ents.map(x => `<option>${esc(x)}</option>`).join('')}</select></div>
+   <div class="dk-tw"><table class="dk-tb"><thead><tr><th style="width:26px"><span class="dk-cb" id="dkhall"></span></th><th>NAMA</th><th>JABATAN</th><th>REGION</th><th>DITANGANI ADMIN</th><th>BADAN USAHA</th><th>PENGAJUAN</th>${cols.map(c => `<th>${c.toUpperCase()}</th>`).join('')}<th>PETTY CASH</th><th></th></tr></thead><tbody>${rows.map(r => `<tr data-h="${r.id}"><td class="dk-ck"><span class="dk-cb" data-ck="${r.id}"></span></td><td><b>${esc(r.name)}</b></td><td>${esc(r.job || '-')}</td><td>${esc(r.region || '-')}</td><td>${who(r)}</td><td>${esc(r.entity || '-')}</td><td>${+r.can_submit ? '<span class="dk-rlc" style="--c:#12866A">BOLEH</span>' : '<span class="dk-rlc" style="--c:#94A3B8">BELUM</span>'}</td>${cols.map(c => `<td>${cell(r, c)}</td>`).join('')}<td>${+r.can_petty ? `<span class="dk-rlc" style="--c:#6D3FD8">PLAFON ${fmtN(r.petty_ceiling)}</span>` : '-'}</td><td class="dk-ac">ATUR ›</td></tr>`).join('')}</tbody></table></div>
+   <div class="dk-sel" id="dkhact" style="display:none"><b id="dkhn"></b><select id="dkhsrc"><option value="">Salin hak dari…</option>${rows.filter(r => +r.can_submit).map(r => `<option value="${r.id}">${esc(r.name)} · ${esc(r.job || '')}</option>`).join('')}</select><button class="dk-b" id="dkhgo">SALIN KE YANG DIPILIH</button><button class="dk-b2" id="dkhx">BATAL PILIH</button></div>`;
+  const tw = sec.querySelector('.dk-tw'), trs = () => [...tw.querySelectorAll('tbody tr')];
+  const ok = r => { if (q && !(r.name + ' ' + (r.job || '') + ' ' + (r.region || '')).toLowerCase().includes(q)) return false;
+    if (pf === 'mine' && !mine(r)) return false; if (pf === 'other' && mine(r)) return false;
+    if (sf === 'boleh' && !+r.can_submit) return false; if (sf === 'belum' && +r.can_submit) return false; if (sf === 'pc' && !+r.can_petty) return false;
+    if (arSel.size && !arSel.has(r.region)) return false; if (en && !(r.entity || '').split(',').map(x => x.trim()).includes(en)) return false; return true; };
+  const paint = () => { const by = Object.fromEntries(rows.map(r => [r.id, r]));
+    trs().forEach(tr => { tr.style.display = ok(by[tr.dataset.h]) ? '' : 'none'; const on = sel.has(tr.dataset.h); tr.classList.toggle('dk-sl', on); tr.querySelector('[data-ck]').classList.toggle('on', on); });
+    sec.querySelectorAll('#dkhp [data-p]').forEach(x => x.classList.toggle('on', x.dataset.p === pf)); sec.querySelectorAll('#dkhs [data-s]').forEach(x => x.classList.toggle('on', x.dataset.s === sf));
+    $('#dkhrb').textContent = 'REGION: ' + (arSel.size ? arSel.size + ' dipilih' : 'Semua') + ' ▾';
+    const v = trs().filter(t => t.style.display !== 'none'); $('#dkhall').classList.toggle('on', !!v.length && v.every(t => sel.has(t.dataset.h)));
+    $('#dkhact').style.display = sel.size ? '' : 'none'; $('#dkhn').textContent = sel.size + ' orang dipilih'; };
+  sec.querySelectorAll('#dkhp [data-p]').forEach(x => x.onclick = () => { pf = x.dataset.p; try { localStorage.setItem('kl_hakf', pf); } catch (e) {} paint(); });
+  sec.querySelectorAll('#dkhs [data-s]').forEach(x => x.onclick = () => { sf = x.dataset.s; paint(); });
+  $('#dkhq').oninput = e => { q = e.target.value.trim().toLowerCase(); paint(); }; $('#dkhe').onchange = e => { en = e.target.value; paint(); };
+  $('#dkhrb').onclick = () => { $('#dkhrl').hidden = !$('#dkhrl').hidden; };
+  $('#dkhrq').oninput = e => { const t = e.target.value.toLowerCase(); sec.querySelectorAll('[data-rg]').forEach(l => l.style.display = l.dataset.rg.toLowerCase().includes(t) ? '' : 'none'); };
+  sec.querySelectorAll('[data-rg] input').forEach(i => i.onchange = () => { const v = i.parentElement.dataset.rg; i.checked ? arSel.add(v) : arSel.delete(v); paint(); });
+  tw.querySelectorAll('td.dk-ck').forEach(td => td.onclick = e => { e.stopPropagation(); const id = td.parentElement.dataset.h; sel.has(id) ? sel.delete(id) : sel.add(id); paint(); });
+  tw.querySelectorAll('tbody tr').forEach(tr => tr.onclick = e => { if (e.target.closest('.dk-ck')) return; location.hash = '#/a/hak/' + tr.dataset.h; });
+  $('#dkhall').onclick = e => { e.stopPropagation(); const v = trs().filter(t => t.style.display !== 'none'), all = v.every(t => sel.has(t.dataset.h)); v.forEach(t => all ? sel.delete(t.dataset.h) : sel.add(t.dataset.h)); paint(); };
+  $('#dkhx').onclick = () => { sel.clear(); paint(); };
+  $('#dkhgo').onclick = () => { const src = +$('#dkhsrc').value; if (!src) return toast('Pilih sumber hak dulu.'); const to = [...sel].map(Number).filter(i => i !== src); if (!to.length) return toast('Pilih penerima selain sumber.');
+    const req = dry => ({ from_user_id: src, to_ids: to, parts: { submit: 1, cats: 1, meal: 1, petty: 0 }, skip_existing: 0, dry });
+    guard(async () => { const r = await api('entitlement_copy', req(1)); const sn = rows.find(x => x.id == src).name;
+      if (!confirm(`Salin hak ${sn} ke ${r.new + r.over} orang?\n${r.new} belum punya hak (diisi), ${r.over} sudah punya hak (DITIMPA). Rekening tidak ikut.`)) return;
+      const d = await api('entitlement_copy', req(0)); toast(`Selesai. ${d.done} orang diperbarui.`); route(); }); };
+  paint();
 }

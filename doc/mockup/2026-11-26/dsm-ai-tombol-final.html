@@ -1,0 +1,35 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tombol AI · logo gelembung robot</title><style>
+*{box-sizing:border-box;font-family:Inter,"Segoe UI",system-ui,sans-serif}body{margin:0;background:#EEF2F6;color:#10394E;font-size:12px;padding:12px;max-width:430px;margin:auto}
+.pk{display:flex;gap:6px;margin:8px 0;flex-wrap:wrap}.pk button{border:1px solid #CBD5E0;background:#fff;border-radius:8px;padding:7px 10px;font-weight:700;cursor:pointer;font-size:11px}.pk button.on{background:#0B5CAD;color:#fff;border-color:#0B5CAD}
+.ph{position:relative;width:100%;height:620px;background:#F6F8FB;border-radius:22px;border:6px solid #1E2D63;overflow:hidden}
+.top{height:46px;background:#fff;display:flex;align-items:center;padding:0 12px;border-bottom:1px solid #E3E9F1;font-weight:700}
+.ln{margin:12px;height:70px;border-radius:12px;background:#fff;box-shadow:0 1px 5px rgba(16,57,78,.1)}
+.nav{position:absolute;left:0;right:0;bottom:0;height:60px;background:#fff;border-top:1px solid #E3E9F1;display:flex;justify-content:space-around;align-items:center;font-size:9px;color:#64748B;font-weight:700}
+.nav span{display:grid;gap:3px;justify-items:center}.nav i{width:18px;height:18px;border:1.8px solid #94A3B8;border-radius:5px}.nav .on{color:#0B5CAD}
+.fab{position:absolute;left:0;top:0;touch-action:none;user-select:none;cursor:grab;display:flex;flex-direction:column;align-items:center;gap:2px;filter:drop-shadow(0 3px 6px rgba(37,99,235,.4))}
+.fab.snap{transition:left .18s,top .18s}.fab.drag{cursor:grabbing;transform:scale(1.08)}
+.fab svg{width:48px;height:48px;display:block}.fab.R svg{transform:scaleX(-1)}
+.lb{background:#2563EB;color:#fff;font-weight:800;font-size:8.5px;border-radius:6px;padding:2px 6px;letter-spacing:.04em;display:none;white-space:nowrap}
+.m2 .lb{display:block}.m2.fade .lb{opacity:0;transition:opacity .4s}
+.m3{flex-direction:row}.m3 .lb{display:block;font-size:10px;padding:8px 10px;border-radius:0 20px 20px 0;margin-left:-6px}
+.toast{position:absolute;left:50%;bottom:76px;transform:translateX(-50%);background:#10394E;color:#fff;border-radius:10px;padding:8px 12px;font-weight:700;font-size:11px;display:none}
+.cap{color:#64748B;margin:6px 0;line-height:1.5}
+</style></head><body><b style="font-size:14px">Tombol AI · logo gelembung robot</b>
+<div class="cap">Geser tombolnya (tahan lalu geser). Lepas = nempel ke tepi terdekat, ekor gelembung ikut menghadap ke arah layar.</div>
+<div class="pk" id="p"><button data-m="m1" class="on">1 · IKON SAJA</button><button data-m="m2">2 · TULISAN 4 DETIK</button><button data-m="m3">3 · PIL + TULISAN</button></div>
+<svg width="0" height="0" style="position:absolute"><defs><symbol id="lg" viewBox="0 0 48 48"><path d="M24 3C12.4 3 3 11 3 21c0 5.4 2.8 10.2 7.2 13.5-.3 3-1.6 6-3.7 8.5 4.6-.4 8.6-2.1 11.4-4.3 1.9.4 3.9.6 6.1.6 11.6 0 21-8 21-18S35.600 3 24 3z" fill="#2563EB"/><rect x="11" y="13" width="26" height="17" rx="7" fill="#fff"/><rect x="8.200" y="19" width="3" height="6" rx="1.500" fill="#fff"/><rect x="36.800" y="19" width="3" height="6" rx="1.500" fill="#fff"/><rect x="13.500" y="15.500" width="21" height="12" rx="5" fill="#2563EB"/><circle cx="19.500" cy="20.500" r="1.800" fill="#fff"/><circle cx="28.500" cy="20.500" r="1.800" fill="#fff"/><path d="M21 24.200q3 2.400 6 0" fill="none" stroke="#fff" stroke-width="1.500" stroke-linecap="round"/></symbol></defs></svg>
+<div class="ph" id="ph"><div class="top">DSM · Brand</div><div class="ln"></div><div class="ln"></div><div class="ln"></div>
+<div class="fab m1" id="fab"><svg><use href="#lg"/></svg><span class="lb">ASSISTANT</span></div><div class="toast" id="ts">Ketuk biasa = buka AI Assistant</div>
+<div class="nav"><span class="on"><i></i>BERANDA</span><span><i></i>DEALER</span><span><i></i>BRAND</span><span><i></i>TRANSAKSI</span><span><i></i>KLAIM</span><span><i></i>LAINNYA</span></div></div>
+<script>
+const S=48,TOP=54,BOT=68;let st=null,tm=null;
+const W=()=>ph.clientWidth,H=()=>ph.clientHeight;
+function place(x,y,snap){const w=W(),h=H(),fw=fab.offsetWidth;x=Math.max(6,Math.min(w-fw-6,x));y=Math.max(TOP,Math.min(h-fab.offsetHeight-BOT,y));fab.classList.toggle('snap',!!snap);fab.style.left=x+'px';fab.style.top=y+'px';fab.classList.toggle('R',x+fw/2<w/2);return{x,y}}
+function init(){place(W()-fab.offsetWidth-8,H()-fab.offsetHeight-BOT-6,false)}
+function mode(m){fab.className='fab '+m+(fab.classList.contains('R')?' R':'');[...p.children].forEach(x=>x.classList.toggle('on',x.dataset.m===m));clearTimeout(tm);if(m==='m2'){tm=setTimeout(()=>fab.classList.add('fade'),4000)}init()}
+p.onclick=e=>{const b=e.target.closest('button');if(b)mode(b.dataset.m)};
+fab.addEventListener('pointerdown',e=>{fab.setPointerCapture(e.pointerId);st={sx:e.clientX,sy:e.clientY,x:fab.offsetLeft,y:fab.offsetTop,m:false}});
+fab.addEventListener('pointermove',e=>{if(!st)return;const dx=e.clientX-st.sx,dy=e.clientY-st.sy;if(!st.m&&Math.hypot(dx,dy)>6){st.m=true;fab.classList.add('drag')}if(st.m)place(st.x+dx,st.y+dy,false)});
+fab.addEventListener('pointerup',e=>{if(!st)return;fab.classList.remove('drag');if(st.m){const mid=fab.offsetLeft+fab.offsetWidth/2<W()/2;place(mid?6:W()-fab.offsetWidth-6,fab.offsetTop,true)}else{ts.style.display='block';setTimeout(()=>ts.style.display='none',1400)}st=null});
+mode('m1');
+</script></body></html>

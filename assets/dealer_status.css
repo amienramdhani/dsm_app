@@ -116,6 +116,17 @@ td .dsStrip{display:inline-block;margin:0 0 0 4px;padding:2px 6px}
  .dsMr .nn{text-align:right}.dsMr .nn b{font-size:16px;font-weight:900;display:block;line-height:1.1}.dsMr .nn small{font-size:10px;color:#7B8A98}
  .dsMr.on{box-shadow:inset 0 0 0 2px var(--c);background:var(--bg)}
  .dsMl.dim .dsMr:not(.on){opacity:.4}
+ /* Status pola: 2 kolom ringkas tanpa ikon (mockup dsm-status-pola-2kolom.html opsi B) */
+ .dsMl{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+ .dsMr{grid-template-columns:1fr auto;gap:0 6px;border:1px solid #E3E9F1;border-left:4px solid var(--c);border-radius:10px;padding:7px 9px;align-items:center}
+ .dsMr+.dsMr{border-top:1px solid #E3E9F1}
+ .dsMr .ic{display:none}
+ .dsMr .tx{display:contents}
+ .dsMr .tx b{grid-column:1;grid-row:1}
+ .dsMr .nn{grid-column:2;grid-row:1}.dsMr .nn b{font-size:17px;font-weight:800;line-height:1}.dsMr .nn small{display:none}
+ .dsMr .mb{grid-column:1/-1;grid-row:2;margin-top:7px}
+ .dsMr .tx small{grid-column:1/-1;grid-row:3;font-size:9.5px;margin-top:3px}
+ .dsMr:last-child:nth-child(odd){grid-column:1/-1}
  .dsMn{font-size:10.5px;color:#7B8A98;margin:8px 0 0}
 }
 /* ---- Admin › Aturan Status Dealer (dsm-admin-aturan-status-hp.html) ---- */

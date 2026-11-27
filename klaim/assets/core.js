@@ -291,8 +291,9 @@ function menuDef(m) {
     hos: { q: [kal, ['💵', 'Petty cash', 'o', '#/pcmon'], ['⚙️', 'Aturan BA', 's', '#/a/atur'], ['⬇️', 'Export', 'g', '#/rekap']], g: [] },
     fm: { q: [kal, ['📚', 'Semua klaim', 'b', '#/all'], ['⚙️', 'Aturan BA', 's', '#/a/atur'], ['⬇️', 'Export', 'g', '#/rekap']], g: [] },
     ft: { q: [kal, ['💵', 'Petty cash', 'o', '#/pcq/FT'], ['🔐', 'Kode pengganti', 'p', '#/sa/codes'], ['⬇️', 'Export', 'g', '#/rekap']], g: [] },
-    sa: { q: [['⛽', 'Harga BBM', 'o', '#/sa/harga'], ['🏢', 'Badan usaha', 'b', '#/sa/bu'], kal, ['🧪', 'Mode demo', 'y', '#/sa/demo']],
-      g: [['PENGATURAN KLAIM', [['⛽', 'o', 'Harga BBM', 'Harga per liter terbaru', '#/sa/harga'], ['🏢', 'b', 'Badan usaha', 'PT / CV yang dipakai', '#/sa/bu'], ['⚙️', 's', 'Aturan & batas', 'Hari menunggu, reset uji', '#/sa/settings']]],
+    sa: { q: [['⛽', 'Harga BBM', 'o', '#/sa/harga'], ['🏢', 'Badan usaha', 'b', '#/sa/bu'], kal, ['⬇️', 'Export', 'g', '#/rekap'], ['📊', 'Budget', 'b', '#/monitor'], ['🧪', 'Mode demo', 'y', '#/sa/demo']],
+      g: [['PENGATURAN KLAIM', [['👥', 'b', 'Hak klaim', 'Budget & akses pemohon', '#/a/hak'], ['📇', 't', 'Update massal WA & rekening', 'Unggah file Excel', '#/a/massal'], ['🏷️', 'o', 'Jenis klaim', 'Aktif / nonaktif jenis', '#/a/jenis'], ['⚙️', 's', 'Pengaturan klaim', 'Aturan BA & batas', '#/a/atur'], ['⛽', 'o', 'Harga BBM', 'Harga per liter terbaru', '#/sa/harga'], ['🏢', 'b', 'Badan usaha', 'PT / CV yang dipakai', '#/sa/bu'], ['⚙️', 's', 'Aturan & batas', 'Hari menunggu, reset uji', '#/sa/settings']]],
+        ['ALAT ADMIN', [['📝', 's', 'BA', 'Berita acara', '#/ba'], ['↩️', 'r', 'Revisi di Admin', 'Klaim dikembalikan', '#/revisi'], ['⏳', 'o', 'Diproses', 'Klaim dalam proses', '#/proses'], ['📚', 'b', 'Semua klaim', 'Seluruh klaim', '#/all'], ['✅', 'g', 'Selesai', 'Klaim yang sudah ditransfer', '#/selesai'], ['💵', 'o', 'Petty cash Admin', 'Menunggu Admin', '#/pcq/ADMIN', c.pcq_ADMIN ? String(c.pcq_ADMIN) : ''], ['🏢', 'b', 'Ajukan untuk divisi', 'Klaim di luar sales', '#/new?div=1']]],
         ['UJI & DEMO', [['🧪', 'y', 'Mode demo', S.testMode ? 'NYALA · akun demo aktif' : 'Mati · nyalakan untuk tes semua peran', '#/sa/demo'], ...(S.testMode ? [['🎭', 'p', 'Masuk sebagai…', 'Pilih akun demo per peran', '#/sa/demo']] : [])]]] },
   };
   return D[m] || { q: [], g: [] };

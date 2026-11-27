@@ -2,8 +2,8 @@
 @media (pointer:fine){
   html body #app #view #v6tBox .v6tTable td{padding:0 8px!important;height:30px!important;line-height:1.2}
   html body #app #view #v6tBox .v6tTable th{padding:6px 8px!important}
-  html body #app #view #v6tBox .v6tTable .v6tIn{min-height:22px!important;height:22px!important;padding:0 6px!important;font-size:11px!important;border-radius:6px;width:72px;margin:0}
-  html body #app #view #v6tBox .v6tTable .v6tIn.w{width:112px}
+  html body #app #view #v6tBox .v6tTable .v6tIn{min-height:22px!important;height:22px!important;padding:0 6px!important;font-size:11px!important;border-radius:6px;width:46px;margin:0}
+  html body #app #view #v6tBox .v6tTable .v6tIn.w{width:64px}
   html body #app #view #v6tBox .v6tTable .v6tName{white-space:nowrap}
   html body #app #view #v6tBox .v6tTable .v6tName small.cellsub{display:inline;margin-left:6px;font-size:9px}
   html body #app #view #v6tBox .v6tTable .v6tMissN{font-size:9px}
@@ -12,3 +12,39 @@
 .v6tKps{display:flex;gap:8px;margin:0 0 8px}.v6tKp{flex:1;background:#E3F5EE;border:1px solid #C9EADF;border-top:4px solid #2FB58F;border-radius:8px;padding:6px 8px;font-size:10px}
 .v6tKp b{display:block;font-size:15px;color:#12866A}.v6tKp.e{background:#FDECEA;border-color:#F5C6C2;border-top-color:#D2453F}.v6tKp.e b{color:#D2453F}
 .v6tPv{width:100%;border-collapse:collapse;font-size:10px}.v6tPv th{background:#E6EBF1;text-align:left;padding:5px 8px;position:sticky;top:0}.v6tPv td{padding:4px 8px;border-top:1px solid #EEF2F6}.v6tPv s{color:#94A3B8}.v6tPv b{color:#12866A}.v6tPv .v6tEr{color:#D2453F;font-weight:700}
+  html body #app #view #v6tBox .v6tTable tr.v6tAsm>td,html body #app #view #v6tBox .v6tTable tr.v6tAsm>td:first-child{background:#DCE6F2!important;font-weight:700;border-top:2px solid #15303F!important}
+
+/* Edit target: warna zigzag per grup ASM (mockup dsm-edit-target-asm-zigzag.html, opsi B) */
+html body #app #view #v6tBox .v6tTable tr.v6tz0:not(.v6tAsm)>td,html body #app #view #v6tBox .v6tTable tr.v6tz0:not(.v6tAsm)>td.v6tName{background:#F3F8FD!important}
+html body #app #view #v6tBox .v6tTable tr.v6tz1:not(.v6tAsm)>td,html body #app #view #v6tBox .v6tTable tr.v6tz1:not(.v6tAsm)>td.v6tName{background:#F2FAF6!important}
+html body #app #view #v6tBox .v6tTable tr.v6tAsm.v6tz0>td,html body #app #view #v6tBox .v6tTable tr.v6tAsm.v6tz0>td:first-child{background:#D6E4F5!important}
+html body #app #view #v6tBox .v6tTable tr.v6tAsm.v6tz1>td,html body #app #view #v6tBox .v6tTable tr.v6tAsm.v6tz1>td:first-child{background:#D3EFE4!important}
+
+/* Edit target: ukuran huruf proporsional + tabel tidak melebar (desktop) */
+@media (pointer:fine){
+  html body #app #view #v6tBox .v6tTable{width:auto!important;min-width:0!important}
+  html body #app #view #v6tBox .v6tTable thead th{font-size:11px!important;letter-spacing:.05em!important;padding:7px 14px!important}
+  html body #app #view #v6tBox .v6tTable td{font-size:12px!important}
+  html body #app #view #v6tBox .v6tTable .v6tName,html body #app #view #v6tBox .v6tTable tr.v6tAsm>td:first-child{font-size:12px!important}
+  html body #app #view #v6tBox .v6tTable .v6tName small.cellsub{font-size:9.5px!important}
+  html body #app #view #v6tBox .v6tTable .v6tIn{font-size:12px!important}
+  html body #app #view #v6tBox .v6tTable .v6tAsmBd{font-size:8.5px!important}
+}
+@media (pointer:fine){html body #app #view #v6tBox .v6tTable tr.v6tAsm>td:first-child small.cellsub{display:inline!important;margin-left:6px;font-size:9.5px!important;font-weight:400}}
+
+/* Edit target: bentuk tabel seperti Pencapaian (mockup dsm-edit-target-gaya-pencapaian.html) */
+html body #app #view #v6tBox .v6tTable thead th{background:#EEF2F6!important;color:#334155!important;font-size:9.5px!important;font-weight:800!important;text-transform:uppercase;letter-spacing:.03em!important;padding:7px 10px!important;border:0!important;border-bottom:1px solid #D5DDE8!important;text-align:right;white-space:nowrap}
+html body #app #view #v6tBox .v6tTable thead th.v6tNo,html body #app #view #v6tBox .v6tTable thead th.v6tName,html body #app #view #v6tBox .v6tTable thead th.v6tSr{text-align:left}
+html body #app #view #v6tBox .v6tTable td{font-weight:400!important;border-bottom:1px solid #EEF2F6;border-top:0}
+html body #app #view #v6tBox .v6tTable td.n{text-align:right}
+html body #app #view #v6tBox .v6tTable .v6tNo{width:30px;min-width:30px;text-align:center!important;color:#64748B;position:sticky;left:0;z-index:2;background:inherit}
+html body #app #view #v6tBox .v6tTable .v6tName{min-width:170px;left:30px!important;font-size:12px!important;font-weight:400!important}
+html body #app #view #v6tBox .v6tTable .v6tSr{font-size:11px;color:#475569;text-align:left}
+html body #app #view #v6tBox .v6tTable tr.v6tAsm>td{border-top:0!important;border-bottom:1px solid #D5DDE8!important;font-weight:400!important}
+html body #app #view #v6tBox .v6tTable tr.v6tAsm.v6tz0>td.v6tNo{box-shadow:inset 4px 0 #1F5FA8}
+html body #app #view #v6tBox .v6tTable tr.v6tAsm.v6tz1>td.v6tNo{box-shadow:inset 4px 0 #2FB58F}
+html body #app #view #v6tBox .v6tTable tr.totalRow>td{background:#EEF2F6!important;color:#10394E!important;font-weight:800!important;border-top:1px solid #D5DDE8!important}
+html body #app #view #v6tBox .v6tTable .v6tIn{border:1px solid #DDE5EF!important;border-bottom:1.5px solid #AFC0D6!important;background:rgba(255,255,255,.7)!important;border-radius:5px!important}
+html body #app #view #v6tBox .v6tTable .v6tIn:hover,html body #app #view #v6tBox .v6tTable .v6tIn:focus{border-color:#0B5CAD!important;background:#fff!important}
+html body #app #view #v6tBox .v6tTable .v6tIn::placeholder{color:#B8C4D3;opacity:1}
+html body #app #view #v6tBox .v6tTable thead th.v6tName{font-size:9.5px!important;font-weight:800!important;min-width:170px}

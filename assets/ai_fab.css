@@ -1,0 +1,8 @@
+#dsmAiFab{position:fixed;left:0;top:0;z-index:60;border:0;background:none;padding:0;margin:0;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;display:flex;flex-direction:column;align-items:center;gap:2px;filter:drop-shadow(0 3px 6px rgba(37,99,235,.4));-webkit-tap-highlight-color:transparent}
+#dsmAiFab[hidden]{display:none}
+#dsmAiFab.snap{transition:left .18s,top .18s}
+#dsmAiFab.drag{cursor:grabbing;transform:scale(1.08)}
+#dsmAiFab svg{width:48px;height:48px;display:block}
+#dsmAiFab.R svg{transform:scaleX(-1)}
+#dsmAiFab .lb{background:#2563EB;color:#fff;font:800 8.5px/1 Inter,"Segoe UI",system-ui,sans-serif;letter-spacing:.04em;border-radius:6px;padding:3px 6px;white-space:nowrap;display:none}
+#dsmAiFab.lab .lb{display:block}

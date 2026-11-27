@@ -1,0 +1,27 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Edit target · sorot baris ASM</title>
+<style>
+*{box-sizing:border-box;font-family:Inter,"Segoe UI",system-ui,sans-serif}body{margin:0;background:#EEF2F6;color:#10394E;font-size:11px;padding:12px;max-width:900px;margin:auto}
+.pick{display:flex;gap:6px;margin:8px 0}.pick button{border:1px solid #CBD5E0;background:#fff;border-radius:8px;padding:7px 14px;font-weight:700;cursor:pointer}.pick button.on{background:#0B5CAD;color:#fff;border-color:#0B5CAD}
+.card{background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(16,57,78,.1);padding:10px;overflow:auto}
+table{border-collapse:collapse;width:100%}th{background:#E6EBF1;text-align:left;padding:7px 8px;border-bottom:2px solid #15303F}
+td{padding:5px 8px;border-top:1px solid #EEF2F6;white-space:nowrap}.n{text-align:right}
+.in{display:inline-block;width:70px;height:20px;border:1px solid #CBD5E0;border-radius:6px;text-align:right;padding:2px 6px}
+.badge{font-size:9px;font-weight:700;border-radius:5px;padding:1px 6px;margin-left:6px;background:#DCE6F2;color:#334155}
+small{color:#64748B}
+/* A: latar + garis kiri */
+.A tr.asm td{background:#E3EEFA;font-weight:700}.A tr.asm td:first-child{border-left:5px solid #1F5FA8}
+/* B: latar abu kebiruan + badge OTOMATIS oranye */
+.B tr.asm td{background:#EEF2F8;font-weight:700;border-top:2px solid #94A3B8}.B tr.asm .badge{background:#FFF0CC;color:#7A5200}
+/* C: ASM seperti sub judul penuh, sales menjorok */
+.C tr.asm td{background:#DCE6F2;font-weight:700;border-top:2px solid #15303F}.C tr.sl td:first-child{padding-left:26px}.C tr.asm .badge{background:#fff;color:#1F5FA8}
+</style></head><body>
+<b style="font-size:14px">Edit target · sorot baris ASM (otomatis)</b><div style="color:#64748B">Baris ASM = jumlah otomatis dari sales di bawahnya, tidak bisa diisi. Pilih A / B / C.</div>
+<div class="pick" id="p"><button data-c="A" class="on">A · LATAR + GARIS</button><button data-c="B">B · BADGE OTOMATIS</button><button data-c="C">C · SUB JUDUL</button></div>
+<div class="card"><table id="t" class="A"><tr><th>SALES</th><th class="n">ST ITEL</th><th class="n">ST MOTOPAD</th><th class="n">ST REALME</th><th class="n">DA ITEL</th></tr>
+<tr class="asm"><td>ASM SUSILA SODIKIN <span class="badge">OTOMATIS</span> <small>BIG CIREBON</small></td><td class="n">2.251</td><td class="n">62</td><td class="n">1.469</td><td class="n">78</td></tr>
+<tr class="sl"><td><small>2026.04.13.04</small> ADRI MIFTAHULL FATH</td><td class="n"><span class="in">324</span></td><td class="n"><span class="in">10</span></td><td class="n"><span class="in">554</span></td><td class="n"><span class="in">27</span></td></tr>
+<tr class="sl"><td><small>2025.05.06.02</small> DIMAS AJIPRATAMA</td><td class="n"><span class="in">320</span></td><td class="n"><span class="in">15</span></td><td class="n"><span class="in">343</span></td><td class="n"><span class="in">27</span></td></tr>
+<tr class="asm"><td>ASM ACHMAD ROBBY <span class="badge">OTOMATIS</span> <small>BIG CISUKA</small></td><td class="n">644</td><td class="n">25</td><td class="n">897</td><td class="n">54</td></tr>
+<tr class="sl"><td><small>2026.08.03.02</small> MUHAMMAD DWI SETIAJI</td><td class="n"><span class="in">542</span></td><td class="n"><span class="in">12</span></td><td class="n"><span class="in">617</span></td><td class="n"><span class="in">20</span></td></tr>
+</table></div>
+<script>document.getElementById('p').onclick=e=>{const b=e.target.closest('button');if(!b)return;[...p.children].forEach(x=>x.classList.toggle('on',x===b));t.className=b.dataset.c}</script></body></html>

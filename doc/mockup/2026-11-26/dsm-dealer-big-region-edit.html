@@ -1,0 +1,28 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Edit dealer · ubah Big Region default</title><style>
+*{box-sizing:border-box;font-family:Inter,"Segoe UI",system-ui,sans-serif}body{margin:0;background:#EEF2F6;color:#10394E;font-size:12px;padding:12px;max-width:620px;margin:auto}
+.mode{display:inline-flex;background:#CBD5E0;border-radius:10px;padding:3px;margin:6px 0 10px}.mode button{border:0;background:none;padding:7px 16px;border-radius:8px;font-weight:700;cursor:pointer;font-size:11px}.mode button.on{background:#fff}
+.card{background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(16,57,78,.1);padding:14px}
+label{display:block;font-size:11px;color:#475569;margin-bottom:10px}input,select{display:block;width:100%;height:30px;border:1px solid #CBD5E0;border-radius:8px;padding:0 8px;font-size:11px;margin-top:3px;background:#fff}input[readonly]{background:#F4F7FB}
+.hint{display:block;color:#64748B;font-size:10.5px;margin-top:3px;line-height:1.4}
+.chg{display:none;background:#FFF7E0;border-left:4px solid #E0A100;border-radius:8px;padding:10px;margin:4px 0 10px}.N .chg.show{display:block}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn{display:inline-block;background:#0B5CAD;color:#fff;border-radius:8px;padding:8px 14px;font-weight:700;font-size:11px;margin-top:6px}
+.O .only{display:none}
+.N .ro{display:none}
+</style></head><body><b style="font-size:14px">Edit dealer · ubah Big Region default</b>
+<div class="mode" id="m"><button data-c="O">SEKARANG</button><button data-c="N" class="on">USULAN</button></div>
+<div class="card N" id="c">
+<label>NIK Sales default / fallback<input readonly value="2025.12.08.01 · MUH RIDHA ADHARI"><span class="hint">Dipakai jika brand belum punya PIC khusus</span></label>
+<label class="ro">Big Region default<input readonly value="SULAWESI SELATAN"><span class="hint">PIC per brand dapat berbeda / lintas region</span></label>
+<div class="only" style="display:none"></div>
+<label class="only2" id="bg" style="display:none"></label>
+<div id="new">
+<label>Big Region default<select id="sel"><option>SULAWESI SELATAN (sekarang)</option><option>KALIMANTAN SELATAN</option><option>KALIMANTAN TIMUR</option><option>JAWA TIMUR 1</option></select><span class="hint">Pilih Big Region baru. Sales dan PIC per brand tidak ikut berubah.</span></label>
+<div class="chg" id="chg"><div class="row2"><label>Berlaku mulai<input type="date" value="2026-12-01"><span class="hint">Transaksi sebelum tanggal ini tetap di Big Region lama.</span></label><label>Alasan<input placeholder="Contoh: dealer pindah area"></label></div><span class="hint">Perubahan tercatat di riwayat (Dealer_Region) dan ikut tersimpan saat tombol Simpan perubahan ditekan.</span></div>
+</div>
+<span class="btn">Simpan perubahan</span></div>
+<script>
+const c=document.getElementById('c'),m=document.getElementById('m'),sel=document.getElementById('sel'),chg=document.getElementById('chg');
+sel.onchange=()=>chg.classList.toggle('show',sel.selectedIndex>0);
+m.onclick=e=>{const b=e.target.closest('button');if(!b)return;[...m.children].forEach(x=>x.classList.toggle('on',x===b));c.className='card '+b.dataset.c;document.getElementById('new').style.display=b.dataset.c==='N'?'block':'none';if(b.dataset.c==='O')chg.classList.remove('show')}
+</script></body></html>

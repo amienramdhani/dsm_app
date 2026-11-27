@@ -128,6 +128,14 @@ function dealerTxCount_(array $db, $induk, $uniq): array {
     foreach (js_keys($db['so']['raw'] ?? []) as $p) { try { foreach (dataRows_((string) $db['so']['raw'][$p]) as $t) if (text_($t['customer'] ?? null) === $uniq) $so++; } catch (Throwable $e) {} }
     return ['induk' => $n, 'uniq' => $own, 'so' => $so];
 }
+// Ubah Big Region dealer (Dealer_Region, berlaku per tanggal) dari form Edit dealer. Khusus Super Admin, sama seperti panel Big Region per dealer.
+function dealerBigEdit_(array $db, array $u, $kode, $nik) {
+    if (($u['role'] ?? '') !== 'SUPER ADMIN') return null;
+    try {
+        $now = text_(RegionCore::route($db, ['customer' => $kode, 'date' => jkt_date('Y-m-d'), 'nik' => $nik], 'ST'));
+        return ['now' => $now, 'bigs' => js_sort_default($db['meta']['regionList'] ?? []), 'min' => dealerRegionMin_($db), 'today' => jkt_date('Y-m-d')];
+    } catch (Throwable $e) { return null; }
+}
 function apiDealerEditDetail($token, $uniq) {
     $db = snapshot_(); $u = adminGuard_($token, $db); $g = mcGrid_(); $uniq = text_($uniq);
     $r = findRow_($g['rows'], fn($x) => mcUniq_($x) === $uniq); if (!$r) fail_('Dealer ' . $uniq . ' tidak ditemukan.');
@@ -145,7 +153,7 @@ function apiDealerEditDetail($token, $uniq) {
     } catch (Throwable $e) {}
     $fields = [];
     foreach ($g['heads'] as $h) if (!in_array($h, [UNIQ_COL, 'KODE CUSTOMER', 'NIK SALES', 'NAMA INDUK CUSTOMER'], true)) $fields[] = ['key' => $h, 'value' => text_($r[$h] ?? null)];
-    return ['uniq' => $uniq, 'induk' => $k, 'namaInduk' => text_($r['NAMA INDUK CUSTOMER'] ?? null), 'namaIndukList' => $names, 'nik' => text_($r['NIK SALES'] ?? null), 'sales' => $p ? $p['nama'] : '', 'big' => $p ? ($p['wilayah'] ?? null) : '', 'fields' => $fields, 'siblings' => $sib, 'closed' => js_or($closed[$k] ?? null, ''), 'tx' => dealerTxCount_($db, $k, $uniq), 'history' => $hist, 'superuser' => $u['role'] === 'SUPER ADMIN'];
+    return ['uniq' => $uniq, 'induk' => $k, 'namaInduk' => text_($r['NAMA INDUK CUSTOMER'] ?? null), 'namaIndukList' => $names, 'nik' => text_($r['NIK SALES'] ?? null), 'sales' => $p ? $p['nama'] : '', 'big' => $p ? ($p['wilayah'] ?? null) : '', 'bigEdit' => dealerBigEdit_($db, $u, $k, text_($r['NIK SALES'] ?? null)), 'fields' => $fields, 'siblings' => $sib, 'closed' => js_or($closed[$k] ?? null, ''), 'tx' => dealerTxCount_($db, $k, $uniq), 'history' => $hist, 'superuser' => $u['role'] === 'SUPER ADMIN'];
 }
 function apiDealerIndukPeek($token, $uniq, $baru) {
     $db = snapshot_(); adminGuard_($token, $db); $g = mcGrid_(); $r = findRow_($g['rows'], fn($x) => mcUniq_($x) === text_($uniq));

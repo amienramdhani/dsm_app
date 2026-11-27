@@ -715,4 +715,18 @@ t('Sinkron otomatis: Kue/Karangan pindah ke Support dealer, hak Entertain -> hak
   sync_claim_types(); eq((string) val("SELECT category FROM claim_types WHERE name='Karangan bunga'"), 'Support dealer', 'pindah');
   eq((int) val("SELECT enabled FROM claim_entitlement WHERE user_id=? AND category='Support dealer'", [$dewi['id']]), 1, 'hak otomatis'); });
 
+echo "== Atas nama orang lain (2026-11-26) ==\n";
+t('Admin mengajukan atas nama Sales: klaim milik Sales, budget Sales berkurang, Admin pengaju tak bisa menyetujui', function () use ($dewi, $rina) {
+  $p = bbm($rina, 51234); $p['on_behalf'] = $dewi['id']; $id = claim_save($rina, $p); $c = get_claim($id);
+  eq((int) $c['claimant_id'], (int) $dewi['id'], 'pemohon'); eq((int) $c['created_by'], (int) $rina['id'], 'pengaju');
+  claim_submit($rina, $id, []); $c = get_claim($id); eq($c['status'], 'WAIT');
+  $b = budget_info((int) $dewi['id'], 'Transportasi', date('Y-m')); eq($b['reserved'] >= 51234, true, 'budget Sales terpakai');
+  throws(fn() => claim_act($rina, $id, ['action' => 'approve']), ''); });
+t('Pemohon biasa tidak boleh atas nama orang lain', function () use ($dewi) {
+  $eko = U('eko'); $p = bbm($eko, 10000); $p['on_behalf'] = $dewi['id']; throws(fn() => claim_save($eko, $p), 'Admin'); });
+t('Admin boleh atas nama HOS dan tahap HOS dilewati', function () use ($rina, $hos) {
+  $cat = (string) val("SELECT category FROM claim_types WHERE name='Meeting'");
+  eq(can_claim_for($rina, $hos), true, 'HOS dalam cakupan');
+  eq(in_array('HOS', build_route(['requires_hos' => 1, 'acct_own' => 1, 'outside_sales' => 0, 'ba_required' => 0, 'claimant_id' => $hos['id']]), true), false, 'tanpa HOS'); });
+
 echo "\nHasil: $pass lolos, $failc gagal\n"; exit($failc ? 1 : 0);

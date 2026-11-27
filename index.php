@@ -4,7 +4,7 @@
 document.addEventListener('submit',function(event){event.preventDefault();},true);
 
 
-</script><link rel="stylesheet" href="assets/dsm.css?v=<?=@filemtime(__DIR__.'/assets/dsm.css')?>"><link rel="stylesheet" href="assets/trx_daily_hp.css?v=<?=@filemtime(__DIR__.'/assets/trx_daily_hp.css')?>"><link rel="stylesheet" href="assets/dealer_status.css?v=<?=@filemtime(__DIR__.'/assets/dealer_status.css')?>"><link rel="stylesheet" href="assets/ui_prefs.css?v=<?=@filemtime(__DIR__.'/assets/ui_prefs.css')?>"><link rel="stylesheet" href="assets/topnav.css?v=<?=@filemtime(__DIR__.'/assets/topnav.css')?>"><link rel="stylesheet" href="assets/publish_queue.css?v=<?=@filemtime(__DIR__.'/assets/publish_queue.css')?>"><link rel="stylesheet" href="assets/form_kit.css?v=<?=@filemtime(__DIR__.'/assets/form_kit.css')?>"><link rel="stylesheet" href="assets/dealer_detail.css?v=<?=@filemtime(__DIR__.'/assets/dealer_detail.css')?>"><link rel="stylesheet" href="assets/page_tidy.css?v=<?=@filemtime(__DIR__.'/assets/page_tidy.css')?>"><link rel="stylesheet" href="assets/page_header.css?v=<?=@filemtime(__DIR__.'/assets/page_header.css')?>"><link rel="stylesheet" href="assets/table_head.css?v=<?=@filemtime(__DIR__.'/assets/table_head.css')?>"><link rel="stylesheet" href="assets/table_theme.css?v=<?=@filemtime(__DIR__.'/assets/table_theme.css')?>"><link rel="stylesheet" href="assets/analisa_cross.css?v=<?=@filemtime(__DIR__.'/assets/analisa_cross.css')?>"><link rel="stylesheet" href="assets/analisa_rombak.css?v=<?=@filemtime(__DIR__.'/assets/analisa_rombak.css')?>"><link rel="stylesheet" href="assets/brand_tabs.css?v=<?=@filemtime(__DIR__.'/assets/brand_tabs.css')?>"><link rel="stylesheet" href="assets/dropdown_std.css?v=<?=@filemtime(__DIR__.'/assets/dropdown_std.css')?>"><script src="assets/dropdown_std.js?v=<?=@filemtime(__DIR__.'/assets/dropdown_std.js')?>" defer></script><link rel="stylesheet" href="assets/kpi_tabel.css?v=<?=@filemtime(__DIR__.'/assets/kpi_tabel.css')?>"><link rel="stylesheet" href="assets/tim_v2.css?v=<?=@filemtime(__DIR__.'/assets/tim_v2.css')?>"><link rel="stylesheet" href="assets/ai_v7.css?v=<?=@filemtime(__DIR__.'/assets/ai_v7.css')?>"><link rel="stylesheet" href="assets/ai_visual.css?v=<?=@filemtime(__DIR__.'/assets/ai_visual.css')?>"><link rel="stylesheet" href="assets/target_excel.css?v=<?=@filemtime(__DIR__.'/assets/target_excel.css')?>"><link rel="stylesheet" href="assets/sub_region.css?v=<?=@filemtime(__DIR__.'/assets/sub_region.css')?>"><script src="panduan-content.js?v=<?= @filemtime(__DIR__.'/panduan-content.js') ?: 1 ?>"></script><script src="panduan.js?v=<?= @filemtime(__DIR__.'/panduan.js') ?: 1 ?>"></script><script>addEventListener("DOMContentLoaded",()=>{(function(){const bg=document.createElement('div');bg.id='v12bg';bg.innerHTML='<i></i><i></i><i></i>';document.body.prepend(bg);let y0=null,dy=0,el=null;const th=70;
+</script><link rel="stylesheet" href="assets/dsm.css?v=<?=@filemtime(__DIR__.'/assets/dsm.css')?>"><link rel="stylesheet" href="assets/trx_daily_hp.css?v=<?=@filemtime(__DIR__.'/assets/trx_daily_hp.css')?>"><link rel="stylesheet" href="assets/dealer_status.css?v=<?=@filemtime(__DIR__.'/assets/dealer_status.css')?>"><link rel="stylesheet" href="assets/ui_prefs.css?v=<?=@filemtime(__DIR__.'/assets/ui_prefs.css')?>"><link rel="stylesheet" href="assets/topnav.css?v=<?=@filemtime(__DIR__.'/assets/topnav.css')?>"><link rel="stylesheet" href="assets/publish_queue.css?v=<?=@filemtime(__DIR__.'/assets/publish_queue.css')?>"><link rel="stylesheet" href="assets/form_kit.css?v=<?=@filemtime(__DIR__.'/assets/form_kit.css')?>"><link rel="stylesheet" href="assets/dealer_detail.css?v=<?=@filemtime(__DIR__.'/assets/dealer_detail.css')?>"><link rel="stylesheet" href="assets/page_tidy.css?v=<?=@filemtime(__DIR__.'/assets/page_tidy.css')?>"><link rel="stylesheet" href="assets/page_header.css?v=<?=@filemtime(__DIR__.'/assets/page_header.css')?>"><link rel="stylesheet" href="assets/table_head.css?v=<?=@filemtime(__DIR__.'/assets/table_head.css')?>"><link rel="stylesheet" href="assets/table_theme.css?v=<?=@filemtime(__DIR__.'/assets/table_theme.css')?>"><link rel="stylesheet" href="assets/analisa_cross.css?v=<?=@filemtime(__DIR__.'/assets/analisa_cross.css')?>"><link rel="stylesheet" href="assets/analisa_rombak.css?v=<?=@filemtime(__DIR__.'/assets/analisa_rombak.css')?>"><link rel="stylesheet" href="assets/brand_tabs.css?v=<?=@filemtime(__DIR__.'/assets/brand_tabs.css')?>"><link rel="stylesheet" href="assets/dropdown_std.css?v=<?=@filemtime(__DIR__.'/assets/dropdown_std.css')?>"><script src="assets/dropdown_std.js?v=<?=@filemtime(__DIR__.'/assets/dropdown_std.js')?>" defer></script><link rel="stylesheet" href="assets/kpi_tabel.css?v=<?=@filemtime(__DIR__.'/assets/kpi_tabel.css')?>"><link rel="stylesheet" href="assets/tim_v2.css?v=<?=@filemtime(__DIR__.'/assets/tim_v2.css')?>"><link rel="stylesheet" href="assets/ai_v7.css?v=<?=@filemtime(__DIR__.'/assets/ai_v7.css')?>"><link rel="stylesheet" href="assets/ai_visual.css?v=<?=@filemtime(__DIR__.'/assets/ai_visual.css')?>"><link rel="stylesheet" href="assets/target_excel.css?v=<?=@filemtime(__DIR__.'/assets/target_excel.css')?>"><link rel="stylesheet" href="assets/sub_region.css?v=<?=@filemtime(__DIR__.'/assets/sub_region.css')?>"><link rel="stylesheet" href="assets/ai_fab.css?v=<?=@filemtime(__DIR__.'/assets/ai_fab.css')?>"><script src="panduan-content.js?v=<?= @filemtime(__DIR__.'/panduan-content.js') ?: 1 ?>"></script><script src="panduan.js?v=<?= @filemtime(__DIR__.'/panduan.js') ?: 1 ?>"></script><script>addEventListener("DOMContentLoaded",()=>{(function(){const bg=document.createElement('div');bg.id='v12bg';bg.innerHTML='<i></i><i></i><i></i>';document.body.prepend(bg);let y0=null,dy=0,el=null;const th=70;
  const ind=()=>el||(el=Object.assign(document.createElement('div'),{id:'v12ptr',textContent:'↻'}),document.body.appendChild(el),el);
  addEventListener('touchstart',e=>{if(!isMobile()||scrollY>0||document.querySelector('.mask:not([hidden]),.modal'))return y0=null;y0=e.touches[0].clientY;dy=0},{passive:true});
  addEventListener('touchmove',e=>{if(y0==null)return;dy=e.touches[0].clientY-y0;if(dy>0&&scrollY<=0){ind().style.top=Math.min(dy/2,60)-40+'px';ind().style.transform='rotate('+dy*3+'deg)'}},{passive:true});
@@ -91,7 +91,7 @@ document.addEventListener('submit',function(event){event.preventDefault();},true
 <script src="assets/notif.js?v=<?=@filemtime(__DIR__.'/assets/notif.js')?>"></script>
 <link rel="stylesheet" href="assets/presentasi.css?v=<?=@filemtime(__DIR__.'/assets/presentasi.css')?>">
 <script src="assets/presentasi.js?v=<?=@filemtime(__DIR__.'/assets/presentasi.js')?>"></script>
-<script src="assets/searchable.js?v=<?=@filemtime(__DIR__.'/assets/searchable.js')?>"></script>
+<script src="assets/searchable.js?v=<?=@filemtime(__DIR__.'/assets/searchable.js')?>"></script><script src="assets/ai_fab.js?v=<?=@filemtime(__DIR__.'/assets/ai_fab.js')?>" defer></script>
 <script src="assets/kpi_export.js?v=<?=@filemtime(__DIR__.'/assets/kpi_export.js')?>"></script>
 <script src="assets/telemarketing/tm_order_mockup.js?v=<?=@filemtime(__DIR__.'/assets/telemarketing/tm_order_mockup.js')?>"></script>
 <script src="assets/telemarketing/tm_popup.js?v=<?=@filemtime(__DIR__.'/assets/telemarketing/tm_popup.js')?>"></script>
@@ -432,16 +432,29 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
 
  /* =================== FASE 2 · BERANDA =================== */
- const BTABS=[['r','RINGKASAN'],['w','WILAYAH'],['t','TREN'],['m','TIM & KPI'],['a','AKSI']];
+ const BTABS=[['r','RINGKASAN'],['w','WILAYAH'],['t','TREN'],['m','TIM & KPI'],['a','AKSI'],['k','KOMITMEN']];
  function secTab(t){t=t.toUpperCase();if(/HEATMAP|BRAND PER|SUB REGION|PER ASM|PER SALES/.test(t))return 'w';if(/TREN BULANAN|RATA-RATA HARIAN|KALENDER/.test(t))return 't';if(/^ASM|ASM ·|KPI ·|KPI\b.*OMZET|OMZET PER/.test(t))return 'm';if(/RINGKASAN|PROYEKSI|KESEHATAN/.test(t))return 'r';return null;}
+
+ /* Heatmap nasional: panel lipat, bawaan TERTUTUP, diingat per perangkat (mockup dsm-beranda-heatmap-lipat.html) */
+ function v7HeatFold(){
+  const pn=$q('#view #v6xnatheatpanel');if(!pn)return;const HEAT_HIDE=true;/* sementara disembunyikan (permintaan user); ubah ke false untuk memunculkan lagi sebagai panel lipat */if(HEAT_HIDE){pn.style.setProperty('display','none','important');const pb=pn.previousElementSibling;if(pb&&pb.classList.contains('dsmFoldBar'))pb.remove();return;}if(pn.previousElementSibling&&pn.previousElementSibling.classList.contains('dsmFoldBar'))return;
+  let open=false;try{open=localStorage.getItem('dsmHeatOpen')==='1';}catch(e){}
+  const bar=document.createElement('div');bar.className='dsmFoldBar';bar.setAttribute('role','button');bar.setAttribute('tabindex','0');
+  bar.innerHTML='<span class="dsmFoldAr">›</span><b>HEATMAP NASIONAL · REGION × BRAND</b><span class="dsmFoldSt"></span>';
+  pn.parentNode.insertBefore(bar,pn);pn.classList.add('dsmFold');
+  const set=o=>{pn.classList.toggle('open',o);bar.classList.toggle('open',o);$q('.dsmFoldSt',bar).textContent=o?'TUTUP':'BUKA';};
+  set(open);
+  const tg=()=>{const o=!pn.classList.contains('open');set(o);try{localStorage.setItem('dsmHeatOpen',o?'1':'0');}catch(x){}};
+  bar.addEventListener('click',tg);bar.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();tg();}});
+ }
  function v7Beranda(){
   if(typeof PAGE==='undefined'||PAGE!=='beranda')return;
   const wrap=$q('#view .v6xwrap');if(!wrap)return;
   /* sub-tab hanya di level nasional (bukan saat drill ke region) */
-  if($q(':scope > .v6xback',wrap)){$q(':scope > .v7btabs',wrap)?.remove();delete wrap.dataset.v7tab;v7Heat();v7RegionCards();return;} /* drill-down region: tampil penuh tanpa sub-tab */
+  if($q(':scope > .v6xback',wrap)){$q(':scope > .v7btabs',wrap)?.remove();delete wrap.dataset.v7tab;v7Heat();v7HeatFold();v7RegionCards();return;} /* drill-down region: tampil penuh tanpa sub-tab */
   let cur='r';try{cur=localStorage.getItem('v7btab')||'r';}catch(e){}
   let tabs=$q(':scope > .v7btabs',wrap);
-  if(!tabs){tabs=document.createElement('div');tabs.className='v7btabs';tabs.setAttribute('role','tablist');tabs.innerHTML=BTABS.map(([k,l])=>`<button type="button" role="tab" data-v7bt="${k}">${l}</button>`).join('');wrap.prepend(tabs);
+  if(!tabs){tabs=document.createElement('div');tabs.className='v7btabs';tabs.setAttribute('role','tablist');tabs.innerHTML=BTABS.filter(([k])=>k!=='k'||isDesk()).map(([k,l])=>`<button type="button" role="tab" data-v7bt="${k}">${l}</button>`).join('');wrap.prepend(tabs);
    tabs.addEventListener('click',e=>{const b=e.target.closest('[data-v7bt]');if(!b)return;try{localStorage.setItem('v7btab',b.dataset.v7bt);}catch(x){}wrap.dataset.v7tab=b.dataset.v7bt;markTabs(tabs,b.dataset.v7bt);window.scrollTo({top:Math.max(0,wrap.getBoundingClientRect().top+window.scrollY-70)});});}
   let last='r';
   [...wrap.children].forEach(el=>{if(el===tabs||el.classList.contains('v6xaksi'))return;let t=null;const sec=el.matches('.v6xsec')?el:$q(':scope > .v6xsec',el);if(sec)t=secTab(sec.textContent);
@@ -452,9 +465,9 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   markTabs(tabs,wrap.dataset.v7tab);
   /* hero ganda di Brand per Big Region disembunyikan saat "Semua" brand */
   /* REVISI #1: kartu ringkasan brand tetap tampil juga saat "Semua" */
-  v7Heat();v7RegionCards();
+  v7Heat();v7HeatFold();v7RegionCards();
  }
- function markTabs(tabs,k){$$('[data-v7bt]',tabs).forEach(b=>{const on=b.dataset.v7bt===k;b.classList.toggle('on',on);b.setAttribute('aria-selected',String(on));});}
+ function markTabs(tabs,k){try{const ak=tabs.parentNode&&tabs.parentNode.querySelector(':scope > .v6xaksiTab');if(ak){ak.dataset.v7tab=k==='k'?'k':'a';ak.dataset.desk=k==='k'?'k':'a';}}catch(e){}$$('[data-v7bt]',tabs).forEach(b=>{const on=b.dataset.v7bt===k;b.classList.toggle('on',on);b.setAttribute('aria-selected',String(on));});}
 
  /* Heatmap: sembunyikan brand kosong (kecuali full screen), gradasi 5 tingkat */
  function v7Heat(){

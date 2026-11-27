@@ -76,6 +76,7 @@ html body #app #view .aksiSub th{color:#6b7a99;font-size:9.5px!important;font-we
 .aksiA ul{margin:0;padding-left:16px;font-size:11.5px;font-weight:600;color:#2a3a5c}
 .aksiCmWrap{display:grid;gap:12px}
 .aksiSeg{display:none}.aksiFab,.aksiDim,.aksiMore,.aksiSheetH{display:none}
+@media(min-width:701px){.v6xaksiTab[data-desk=k] .aksiHd,.v6xaksiTab[data-desk=k] .aksiSec:not([data-sec=k]){display:none}.v6xaksiTab[data-desk=a] .aksiSec[data-sec=k]{display:none}}
 .aksiAh{display:flex;gap:8px;align-items:center;justify-content:space-between}.aksiAh i{font-style:normal;color:#6b7a99}
 .aksiTg .aksiAd{margin-top:3px}
 .aksiCmH{display:flex;gap:8px;align-items:flex-start;justify-content:space-between}.aksiCmH .aksiCmT{flex:1}
