@@ -248,6 +248,24 @@ function apiDealerStatusImpact($token, $cfg) {
     $st = array_merge(DS_BASE, [DS_NEVER]); $all = dsEligible_($db);
     return ['period' => $p, 'months' => dsMonths_($p, $new), 'before' => dsCount_(dsComputeRaw_($db, $p, $old), DS_BASE, $all), 'after' => dsCount_(dsComputeRaw_($db, $p, $new), DS_BASE, $all), 'statuses' => $st];
 }
+/** Alat cek (Super Admin): qty per bulan per brand yang dipakai rumus status, hasil hitung ulang vs status tersimpan/terkunci untuk satu dealer. */
+function apiDealerStatusDiag($token, $cust = null) {
+    $u = brandGuard_($token); if (($u['role'] ?? '') !== 'SUPER ADMIN') fail_('Khusus Super Admin.');
+    $cust = trim((string) $cust); if ($cust === '') fail_('Isi kode dealer.');
+    $snap = snapshot_(); $db = dsBase_($snap); $c = dsConfig_(); $p = dsLatest_($db);
+    $p0 = dsMi_($c['since']); $p1 = dsMi_($p); $n = max(0, $p1 - $p0); $months = []; $qs = [];
+    for ($i = 0; $i < $n; $i++) { $months[] = dsPm_($p0 + $i); foreach ($db['cubes'][dsPm_($p0 + $i)] ?? [] as $r) if ((string) $r['customer'] === $cust) { $b = (string) $r['brand']; $qs[$b][$i] = ($qs[$b][$i] ?? 0) + $r['q']; } }
+    $L = dsLocked_($snap, $p); $off = array_flip($c['off']); $rows = []; $sum = array_fill(0, $n, 0);
+    ksort($qs, SORT_STRING);
+    $mk = function (string $name, array $row, ?array $stored, bool $isTotal) use ($c, $n) {
+        $x = dsClassify_($row, $c); $cnt = 0; for ($i = max(0, $n - $c['win']); $i < $n; $i++) if (($row[$i] ?? 0) > 0) $cnt++;
+        return ['brand' => $name, 'qty' => array_map(fn($i) => $row[$i] ?? 0, range(0, max(0, $n - 1))), 'cnt' => $cnt, 'hitung' => $x ? $x[0] : DS_NEVER, 'tersimpan' => $stored ? $stored[0] : DS_NEVER, 'total' => $isTotal];
+    };
+    foreach ($qs as $b => $h) { $row = []; for ($i = 0; $i < $n; $i++) { $row[$i] = $h[$i] ?? 0; if (!isset($off[js_upper($b)])) $sum[$i] += $row[$i]; } $rows[] = $mk($b, $row, $L['brand'][$cust][$b] ?? null, false); }
+    array_unshift($rows, $mk('TOTAL', $sum, $L['total'][$cust] ?? null, true));
+    return ['kode' => $cust, 'adaDiMaster' => isset($db['meta']['customers'][$cust]), 'nama' => js_or($db['meta']['customers'][$cust]['nama'] ?? '', ''), 'period' => $p, 'months' => $months, 'win' => $c['win'], 'act' => $c['act'], 'since' => $c['since'],
+        'rows' => $rows, 'locked' => (bool) ($L['locked'] ?? false), 'lockAt' => $L['at'] ?? null, 'adaHistory' => isset($snap['_iddleHistory']), 'bulanAdaData' => count(array_filter($months, fn($m) => !empty($db['cubes'][$m])))];
+}
 function apiDealerStatusSave($token, $cfg, $reason = '') {
     $u = brandGuard_($token); $new = dsClean_(is_array($cfg) ? $cfg : []);
     $reason = trim((string) $reason); if (mb_strlen($reason) < 5) fail_('Isi alasan perubahan (minimal 5 huruf).');

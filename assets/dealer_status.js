@@ -178,7 +178,7 @@
   function dsAdm() {
     const box = document.getElementById('dsAdm'); if (!box) return; const d = ST.data, c = ST.cfg, M = dsMon(d.period), mon = M.charAt(0) + M.slice(1).toLowerCase();
     const nxt = (() => { const i = (+d.period.slice(0, 4)) * 12 + (+d.period.slice(5, 7)); return dsMon(`${Math.floor(i / 12)}-${String(i % 12 + 1).padStart(2, '0')}`); })();
-    const tabs = [['rumus', 'RUMUS STATUS'], ['brand', 'BRAND'], ['dampak', 'CEK DAMPAK']].map(([k, t]) => `<span class="${ST.tab === k ? 'on' : ''}" data-dst="${k}">${t}</span>`).join('');
+    const tabs = [['rumus', 'RUMUS STATUS'], ['brand', 'BRAND'], ['dampak', 'CEK DAMPAK'], ['cek', 'CEK DEALER']].map(([k, t]) => `<span class="${ST.tab === k ? 'on' : ''}" data-dst="${k}">${t}</span>`).join('');
     let body = '';
     if (ST.tab === 'rumus') {
       const yrs = []; for (let y = 2024; y <= new Date().getFullYear(); y++) yrs.push(y);
@@ -201,6 +201,15 @@
       body = `<div class="dsAc"><div class="dsAh">BRAND DI "ALL BRAND" <small>${on} dari ${d.brands.length} brand</small></div>
         ${d.brands.concat(extra).map(b => { const off = c.off.includes(b); return `<div class="dsAb${off ? ' off' : ''}" data-dsbr="${esc(b)}"><b>${esc(b)}</b><small>${off ? 'tidak ikut TOTAL' : ''}</small><span class="dsSw${off ? ' off' : ''}"></span></div>`; }).join('')}</div>
         <div class="dsAl">ⓘ <div>Per brand: dealer yang belum pernah ambil brand itu sejak basis data = <b>PROSPECT</b>. ALL BRAND = order brand mana pun yang dinyalakan. Status untuk <b>analisa</b>, tidak mempengaruhi KPI.</div></div>`;
+    } else if (ST.tab === 'cek') {
+      const g = ST.dg || {}, r = g.r;
+      const cell = (q, i) => { const inWin = i >= r.months.length - r.win; return `<td style="text-align:center;padding:3px 4px;${inWin ? 'border-bottom:2px solid #15303F;' : ''}${q > 0 ? 'background:#d9f2e6;' : 'color:#94a3b8;'}" title="${esc(r.months[i])}">${num(q)}</td>`; };
+      body = `<div class="dsAc"><div class="dsAh">CEK DEALER <small>qty per bulan yang dipakai rumus status</small></div>
+        <div class="toolbar"><input class="fi" id="dsDgK" placeholder="Kode dealer (KODE CUSTOMER)" value="${esc(g.kode || '')}" style="max-width:240px"><button type="button" class="chip primary" data-dsdg>CEK</button></div>
+        ${g.load ? '<p class="hint v6load">Menghitung…</p>' : g.err ? `<div class="banner bad">${esc(g.err)}</div>` : !r ? '<p class="hint">Isi kode dealer lalu tekan CEK.</p>' : `
+        <p class="hint"><b>${esc(r.kode)}</b> ${esc(r.nama || '(tidak ada di master)')} · periode ${esc(r.period)} · jendela ${r.win} bulan (garis bawah), ACTIVE bila order min ${r.act} · basis ${esc(r.since)} · status ${r.locked ? 'terkunci' : 'belum terkunci'}${r.lockAt ? ' (' + esc(String(r.lockAt).slice(0, 16)) + ')' : ''} · riwayat penuh ${r.adaHistory ? 'ada' : 'TIDAK ada'} · bulan berisi data ${r.bulanAdaData}/${r.months.length}</p>
+        <div class="table-scroll"><table style="font-size:10.5px"><thead><tr><th>BRAND</th>${r.months.map(m => `<th style="text-align:center">${esc(m.slice(5))}</th>`).join('')}<th>BULAN ORDER</th><th>HITUNG ULANG</th><th>TERSIMPAN</th></tr></thead><tbody>${r.rows.map(x => { const bad = x.hitung !== x.tersimpan; return `<tr style="${bad ? 'box-shadow:inset 4px 0 #D2453F;' : ''}"><td><b>${esc(x.brand)}</b></td>${x.qty.map(cell).join('')}<td style="text-align:center">${x.cnt}/${r.win}</td><td>${esc(x.hitung)}</td><td style="${bad ? 'color:#b91c1c;' : ''}">${esc(x.tersimpan)}${bad ? ' ≠' : ''}</td></tr>`; }).join('')}</tbody></table></div>
+        <p class="hint">Baris merah = status tersimpan beda dengan hitung ulang dari data sekarang. Kalau qty di jendela sudah terisi tapi tetap beda, kirim screenshot ini ke Claude.</p>`}</div>`;
     } else {
       const im = ST.imp;
       body = `<div class="dsAc"><div class="dsAh">CEK DAMPAK SEBELUM SIMPAN <small>status ${esc(mon)} · ALL BRAND</small></div>
@@ -220,6 +229,9 @@
     if (!ST || !e.target.closest('#dsAdm')) return; const t = e.target, c = ST.cfg;
     let x;
     if ((x = t.closest('[data-dst]'))) { ST.tab = x.dataset.dst; return dsAdm(); }
+    if (t.closest('[data-dsdg]')) { const k = (document.getElementById('dsDgK')?.value || '').trim(); ST.dg = { kode: k, load: true }; dsAdm();
+      try { ST.dg = { kode: k, r: await rpc('apiDealerStatusDiag', TOKEN, k) }; } catch (err) { ST.dg = { kode: k, err: err.message || String(err) }; }
+      return dsAdm(); }
     if ((x = t.closest('[data-dsn]'))) { const k = x.dataset.dsn, dv = +x.dataset.dv; c[k] += dv;
       if (k === 'win') { c.win = Math.max(1, Math.min(12, c.win)); c.act = Math.min(c.act, c.win); c.inact = Math.max(c.inact, c.win + 1); }
       if (k === 'act') c.act = Math.max(1, Math.min(c.win, c.act)); if (k === 'inact') c.inact = Math.max(c.win + 1, Math.min(36, c.inact));

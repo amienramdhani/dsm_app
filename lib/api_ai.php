@@ -957,12 +957,14 @@ function aiLlmGemini_(string $q, array $context, array &$x, array $brands, array
         $parts = $j['candidates'][0]['content']['parts'] ?? [];
         $calls = array_values(array_filter($parts, fn($p) => isset($p['functionCall'])));
         if (!$calls) { $text = trim(implode("\n", array_map(fn($p) => (string) ($p['text'] ?? ''), $parts))); if ($text === '') throw new RuntimeException('Gemini tidak memberi jawaban.'); return $text; }
+        // Gemini menolak args kosong berbentuk list ([]): functionCall.args harus objek ({}) — array kosong PHP perlu dipaksa jadi objek.
+        foreach ($parts as $pi => $pp) if (isset($pp['functionCall']) && empty($pp['functionCall']['args'])) $parts[$pi]['functionCall']['args'] = new stdClass();
         $contents[] = ['role' => 'model', 'parts' => $parts]; $resp = [];
         foreach ($calls as $c) {
             $name = (string) $c['functionCall']['name']; $args = (array) ($c['functionCall']['args'] ?? []);
             try { $r = aiRun_($name, $args, $x); } catch (Throwable $e) { $r = ['data' => ['error' => $e->getMessage()], 'blocks' => [], 'summary' => '']; }
             $intent = $intent ?: $name; foreach ($r['blocks'] as $b) $blocks[] = $b;
-            $resp[] = ['functionResponse' => ['name' => $name, 'response' => ['hasil' => $r['data']]]];
+            $resp[] = ['functionResponse' => ['name' => $name, 'response' => ['hasil' => (is_array($r['data']) && !$r['data']) ? new stdClass() : $r['data']]]];
         }
         $contents[] = ['role' => 'user', 'parts' => $resp];
     }

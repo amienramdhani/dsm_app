@@ -90,7 +90,7 @@
   document.addEventListener('click', async ev => {
     const t = ev.target;
     if (t.closest('[data-pqpop]')) { pop = !pop; draw(); return; }
-    if (t.closest('[data-pqopen]')) { ev.preventDefault(); pop = false; draw(); try { const b = document.querySelector('#navigation button[data-page="admin"]'); if (b) b.click(); setTimeout(() => { const p = [...document.querySelectorAll('details.adminFeature')].find(d => /publikasi data/i.test(d.dataset.feature || '')); if (p) { p.open = true; p.scrollIntoView({ behavior: 'smooth' }); } }, 600); } catch (x) { } return; }
+    if (t.closest('[data-pqopen]')) { ev.preventDefault(); pop = false; draw(); try { const b = document.querySelector('#navigation button[data-page="admin"]'); if (b) b.click(); let n = 0; const tryOpen = () => { const p = [...document.querySelectorAll('details.adminFeature')].find(d => /publikasi data/i.test(d.dataset.feature || '')); const w = document.querySelector('.dsmAdm8'); if (p && w && w._dsmGoPanel) { w._dsmGoPanel(p); setTimeout(() => p.scrollIntoView({ behavior: 'smooth' }), 150); } else if (p) { p.open = true; p.scrollIntoView({ behavior: 'smooth' }); } else if (n++ < 12) setTimeout(tryOpen, 400); }; setTimeout(tryOpen, 500); } catch (x) { } return; }
     if (t.closest('[data-pqnow]')) {
       if (busy) return; if (!await dsmConfirm('Publikasikan semua perubahan sekarang? Data aktif akan dihitung ulang di belakang layar.')) return;
       busy = true; try { PQ = await rpc('apiPublishNow', G().T); pop = false; draw(); schedule(); } catch (x) { (typeof fail === 'function' ? fail : alert)(x); } finally { busy = false; } return;
